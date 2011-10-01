@@ -1,4 +1,6 @@
-  setClass("FLSAM",
+#for (i in names(getSlots("FLSAM"))[-21]) slot(sm,i)=slot(NSH.sam,i)
+
+setClass("FLSAM",
   	representation(
       "FLComp",
       nopar    = "integer",
