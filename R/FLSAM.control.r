@@ -4,6 +4,7 @@ setClass("FLSAM.control",
     desc            ="character",
     simulate        ="logical",
     range	    ="numeric",   ## min and max age represented internally in the assessment
+    fleet.names     ="character",  ## fleet name meta data
     plus.group      ="logical",   ## we model the maximum age as a plus group or not?
     states          ="matrix",   ## matrix describing the coupling of the states
     logN.vars       ="vector",   ## vector coupling the logN variances
@@ -34,8 +35,9 @@ FLSAM.control <- function(stck,tun) {
   ctrl <- new("FLSAM.control")
 
   #Populate metadata
-  ctrl@range <- stck@range[c("min","max","minfbar","maxfbar")]
+  ctrl@range <- stck@range
   ctrl@plus.group <- stck@range["plusgroup"]==stck@range["max"]
+  ctrl@fleet.names <- c("catch",sapply(tun,name))
   
   #Setup coupling structures
   default.coupling <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,
