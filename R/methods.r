@@ -52,3 +52,52 @@ setMethod("+", signature(e1="FLSAM", e2="FLStock"),
       stop("Input objects are not valid: validObject == FALSE")
     }
 )   # }}}
+
+
+
+#General helper function to extract a given parameter from an FLSAM object
+#and return it as a FLQuantPoint
+.params2flqp <- function(object,param) {
+   dat <- subset(object@params,name==param)
+   flq <- FLQuant(dat$value,dimnames=list(age="all",
+              year=object@range["minyear"]:object@range["maxyear"]))
+   flqp <- FLQuantPoint(flq)
+   uppq(flqp) <- dat$value + 0.674*dat$std.dev
+   lowq(flqp) <- dat$value - 0.674*dat$std.dev
+   return(flqp)
+}
+
+
+#ssb          {{{
+setMethod("ssb", signature(object="FLSAM"),
+        function(object, ...) {
+          flqp <- .params2flqp(object,"logssb")
+          flqp <- exp(flqp)
+          return(flqp) 
+        }
+)       # }}}
+
+setMethod("fbar", signature(object="FLSAM"),
+        function(object, ...) {
+          flqp <- .params2flqp(object,"logfbar")
+          flqp <- exp(flqp)
+          return(flqp) 
+        }
+)       # }}}
+
+setMethod("tsb", signature(object="FLSAM"),
+        function(object, ...) {
+          flqp <- .params2flqp(object,"logtsb")
+          flqp <- exp(flqp)
+          return(flqp)
+        }
+)       # }}}
+
+setMethod("rec", signature(object="FLSAM"),
+        function(object, ...) {
+          flqp <- object@stock.n[1,] 
+	  return(flqp)
+        }
+)       # }}}
+
+

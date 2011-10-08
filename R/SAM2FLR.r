@@ -6,13 +6,14 @@ SAM2FLR <-function(ctrl,run.dir="missing",admb.stem="ssass") {
   res       <- new("FLSAM")
   res@name  <- ctrl@name
   res@desc  <- ctrl@desc
+  res@range <- ctrl@range
+  res@control <- ctrl
   
   #Read parameter file
   par.fname    <- file.path(run.dir,sprintf("%s.par",admb.stem))
   parfile     <-  as.numeric(scan(par.fname,what="", n=16, quiet=TRUE)[c(6,11,16)])
   res@nopar   <-as.integer(parfile[1])
   res@nlogl   <-parfile[2]
-  res@maxgrad <-parfile[3]
   
   #Read report file
   rept.fname    <- file.path(run.dir,sprintf("%s.rep",admb.stem))
@@ -22,17 +23,15 @@ SAM2FLR <-function(ctrl,run.dir="missing",admb.stem="ssass") {
 
   #Read residual files
   res.fname    <- file.path(run.dir,sprintf("%s.res",admb.stem))
-  res@fit  <-  read.table(res.fname,header=FALSE,
+  res@residuals  <-  read.table(res.fname,header=FALSE,
                        col.names=c("year","fleet","age","log.obs","log.mdl","std.res"))
-  res@fit$fleet <- factor(res@fit$fleet)
-  levels(res@fit$fleet) <- ctrl@fleet.names 
+  res@residuals$fleet <- factor(res@residuals$fleet)
+  levels(res@residuals$fleet) <- names(ctrl@fleets)
 
   #Read standard deviation report
   std.fname <- file.path(run.dir,sprintf("%s.std",admb.stem))
   res@params <- read.table(std.fname,header=FALSE,skip=1,
                   col.names=c("index","name","value","std.dev"))
-  res@params$upper.cbnd <- res@params$value + 1.96*res@params$std.dev 
-  res@params$lower.cbnd <- res@params$value - 1.96*res@params$std.dev 
 
   #TODO: Following code reads the correlation matrix. I have left this
   #      out for the meantime, but it can be added back in later if required
@@ -67,21 +66,28 @@ SAM2FLR <-function(ctrl,run.dir="missing",admb.stem="ssass") {
 #  }
 
   #Extract the state variables
-  u<-subset(res@params,name=="U")$value
-  stateEst<-matrix(u,nrow=n.states, byrow=FALSE,dimnames=list(state=NULL,year=yrs))
+  u<-subset(res@params,name=="U")
+  stateEst<-matrix(u$value,nrow=n.states, byrow=FALSE,dimnames=list(state=NULL,year=yrs))
+  stateSd <-matrix(u$std.dev,nrow=n.states, byrow=FALSE,dimnames=list(state=NULL,year=yrs))
 
   #And copy into the appropriate slots as data.frames or FLQuants
   flq <- FLQuant(NA, dimnames=list(age=ctrl@range["min"]:ctrl@range["max"], 
                                    year=ctrl@range["minyear"]:ctrl@range["maxyear"]))
-  n.ages <- dims(flq)$age
-  n.stateEst <- stateEst[1:n.ages,]
-  f.stateEst <- stateEst[-c(1:n.ages),]
-  res@stock.n <- flq
-  res@stock.n@.Data[,,,,,] <- exp(n.stateEst)
-  res@harvest <- flq
+  flqp <- FLQuantPoint(flq)
+  n.ages <- dims(flqp)$age
+  res@stock.n <- flqp
+  mean(res@stock.n) <- exp(stateEst[1:n.ages,])
+  uppq(res@stock.n) <- exp(stateEst[1:n.ages,] + 0.674 * stateSd[1:n.ages,] )
+  lowq(res@stock.n) <- exp(stateEst[1:n.ages,] - 0.674 * stateSd[1:n.ages,] )
+  res@harvest <- flqp
   res@harvest@units <- "f"
+  f.stateEst <- stateEst[-c(1:n.ages),]
+  f.stateSd  <- stateSd[-c(1:n.ages),]
   for(a in  dimnames(ctrl@states)$age){
-    res@harvest@.Data[a,,,,,] <- exp(f.stateEst[ctrl@states["catch",a],])
+    states.key <- ctrl@states["catch",a] 
+    mean(res@harvest)[a,] <- exp(f.stateEst[states.key,])
+    uppq(res@harvest)[a,] <- exp(f.stateEst[states.key,]+0.674 * f.stateSd[states.key,])
+    lowq(res@harvest)[a,] <- exp(f.stateEst[states.key,]-0.674 * f.stateSd[states.key,])
   }
 
   #Finished! 

@@ -22,12 +22,9 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
    }
 
   #Setup meta data
-  fleet.types <- factor(sapply(tun,type),levels=c("con","number","biomass"))
-  fleet.types <- c(0,as.numeric(fleet.types))
-  names(fleet.types) <- ctrl@fleet.names
   samp.times <- c(miss.val,sapply(tun,function(x) mean(x@range[c("startf","endf")])))
   samp.times <- ifelse(is.na(samp.times),miss.val,samp.times)
-  names(samp.times) <- ctrl@fleet.names
+  names(samp.times) <- names(ctrl@fleets)
   yrs <- seq(stck@range["minyear"],stck@range["maxyear"])
   nyrs <- length(yrs)
 
@@ -35,11 +32,11 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   obs.dat <- as.data.frame(lapply(tun,index))
   obs.dat <- rbind(obs.dat,as.data.frame(FLQuants(catch=stck@catch.n)))
   obs.dat <- subset(obs.dat,obs.dat$year %in% yrs)
-  obs.dat$fleet <- as.numeric(factor(obs.dat$qname,levels=ctrl@fleet.names))
-  obs.dat$age[which(fleet.types[obs.dat$fleet]==3)] <- median(as.numeric(obs.dat$age),na.rm=TRUE)   #Set ssb indices equal to median age
+  obs.dat$fleet <- as.numeric(factor(obs.dat$qname,levels=names(ctrl@fleets)))
+  obs.dat$age[which(ctrl@fleets[obs.dat$fleet]==3)] <- median(as.numeric(obs.dat$age),na.rm=TRUE)   #Set ssb indices equal to median age
   obs.dat <- obs.dat[,c("year","fleet","age","data")]
   obs.dat <- obs.dat[order(obs.dat$year,obs.dat$fleet,obs.dat$age),]
-  obs.dat$fleet.name <- paste("#",ctrl@fleet.names[obs.dat$fleet],sep="")
+  obs.dat$fleet.name <- paste("#",names(ctrl@fleets)[obs.dat$fleet],sep="")
   obs.dat <- subset(obs.dat,!(obs.dat$data<=0 | is.na(obs.dat$data)))
   idx.start <-which(!duplicated(obs.dat$year))
   idx.end   <-c(idx.start[-1]-1,nrow(obs.dat))
@@ -53,8 +50,8 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   .file.header(dat.file,run.time)
 
   #Write meta data
-  cat("# Number of fleets (res+con+sur)\n",length(ctrl@fleet.names),"\n", file=dat.file, append=TRUE)
-  cat("# Fleet types (res=0, con=1, sur=2, ssb=3)\n",.format.matrix.ADMB(t(fleet.types)),file=dat.file, append=TRUE)
+  cat("# Number of fleets (res+con+sur)\n",length(ctrl@fleets),"\n", file=dat.file, append=TRUE)
+  cat("# Fleet types (res=0, con=1, sur=2, ssb=3)\n",.format.matrix.ADMB(t(ctrl@fleets)),file=dat.file, append=TRUE)
   cat("# Sample times (only relevent for sur)\n",.format.matrix.ADMB(t(samp.times)), file=dat.file, append=TRUE)
   cat("# Number of years\n",nyrs,"\n", file=dat.file, append=TRUE)
   cat("# Years\n",yrs,"\n", file=dat.file, append=TRUE)

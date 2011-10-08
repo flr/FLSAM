@@ -1,8 +1,8 @@
 Package: FLSAM
 Type: Package
 Title: State-space Stock Assessment Model for FLR
-Version: 0.10-1
-Date: 2011-09-29
+Version: 0.20
+Date: 2011-10-08
 Author: M.R. Payne <mpa@aqua.dtu.dk>
 Maintainer: M.R. Payne <mpa@aqua.dtu.dk>
 Description: FLR wrapper to Anders Nielsens state-space assessment model

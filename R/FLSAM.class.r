@@ -1,14 +1,13 @@
 setClass("FLSAM",
   	representation(
       "FLComp",
+      control  = "FLSAM.control",
       nopar    = "integer",
       nlogl    = "numeric",
-      maxgrad  = "numeric",
-      logDetHess = "numeric",
       params   = "data.frame",
-      stock.n  = "FLQuant",
-      harvest  ="FLQuant",
-      fit      = "data.frame"),
+      stock.n  = "FLQuantPoint",
+      harvest  ="FLQuantPoint",
+      residuals = "data.frame"),
   	prototype=prototype(),
   	validity=function(object){
                 	# Everything is fine
