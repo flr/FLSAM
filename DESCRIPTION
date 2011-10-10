@@ -9,4 +9,3 @@ Description: FLR wrapper to Anders Nielsens state-space assessment model
 Depends: R(>= 2.13.0), FLCore(>= 2.4)
 License: GPL 
 LazyLoad: yes
-Packaged: 2011-09-29 14:52:05 UTC; mpayne

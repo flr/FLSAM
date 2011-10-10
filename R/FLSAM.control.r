@@ -41,7 +41,7 @@ FLSAM.control <- function(stck,tun) {
   ctrl@fleets <- c(0,as.numeric(ctrl@fleets))
   names(ctrl@fleets) <- c("catch",sapply(tun,name))
 
-  #Setup coupling structures
+  #Setup coupling structures - default is for each parameter to be fitted independently
   default.coupling <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,
                         dimnames=list(fleet=c("catch",names(tun)),age=dimnames(stck@catch.n)$age))
   ctrl@states           <- default.coupling

@@ -1,4 +1,4 @@
-SAM2FLR <-function(ctrl,run.dir="missing",admb.stem="ssass") {
+SAM2FLR <-function(ctrl,run.dir,admb.stem="ssass") {
   #---------------------------------------------------
   # Read the results from the assessment
   #---------------------------------------------------
@@ -75,13 +75,13 @@ SAM2FLR <-function(ctrl,run.dir="missing",admb.stem="ssass") {
                                    year=ctrl@range["minyear"]:ctrl@range["maxyear"]))
   n.ages <- dims(flq)$age
   res@stock.n <- flq
-  res@stock.n <- exp(stateEst[1:n.ages,])
+  res@stock.n[,] <- exp(stateEst[1:n.ages,])
   res@harvest <- flq
   res@harvest@units <- "f"
   f.stateEst <- stateEst[-c(1:n.ages),]
   for(a in  dimnames(ctrl@states)$age){
     states.key <- ctrl@states["catch",a] 
-    res@harvest[a,] <- exp(f.stateEst[states.key,]
+    res@harvest[a,] <- exp(f.stateEst[states.key,])
   }
 
   #Finished! 
