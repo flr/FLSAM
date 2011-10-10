@@ -57,47 +57,42 @@ setMethod("+", signature(e1="FLSAM", e2="FLStock"),
 
 #General helper function to extract a given parameter from an FLSAM object
 #and return it as a FLQuantPoint
-.params2flqp <- function(object,param) {
+.params2flq <- function(object,param) {
    dat <- subset(object@params,name==param)
    flq <- FLQuant(dat$value,dimnames=list(age="all",
               year=object@range["minyear"]:object@range["maxyear"]))
-   flqp <- FLQuantPoint(flq)
-   uppq(flqp) <- dat$value + 0.674*dat$std.dev
-   lowq(flqp) <- dat$value - 0.674*dat$std.dev
-   return(flqp)
+   return(flq)
 }
 
 
 #ssb          {{{
 setMethod("ssb", signature(object="FLSAM"),
         function(object, ...) {
-          flqp <- .params2flqp(object,"logssb")
-          flqp <- exp(flqp)
-          return(flqp) 
+          flq <- .params2flq(object,"logssb")
+          flq <- exp(flq)
+          return(flq)
         }
 )       # }}}
 
 setMethod("fbar", signature(object="FLSAM"),
         function(object, ...) {
-          flqp <- .params2flqp(object,"logfbar")
-          flqp <- exp(flqp)
-          return(flqp) 
+          flq <- .params2flq(object,"logfbar")
+          flq <- exp(flq)
+          return(flq)
         }
 )       # }}}
 
 setMethod("tsb", signature(object="FLSAM"),
         function(object, ...) {
-          flqp <- .params2flqp(object,"logtsb")
-          flqp <- exp(flqp)
-          return(flqp)
+          flq <- .params2flq(object,"logtsb")
+          flq <- exp(flq)
+          return(flq)
         }
 )       # }}}
 
 setMethod("rec", signature(object="FLSAM"),
         function(object, ...) {
-          flqp <- object@stock.n[1,] 
-	  return(flqp)
+          flq <- object@stock.n[1,]
+	  return(flq)
         }
 )       # }}}
-
-

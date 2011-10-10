@@ -73,21 +73,15 @@ SAM2FLR <-function(ctrl,run.dir="missing",admb.stem="ssass") {
   #And copy into the appropriate slots as data.frames or FLQuants
   flq <- FLQuant(NA, dimnames=list(age=ctrl@range["min"]:ctrl@range["max"], 
                                    year=ctrl@range["minyear"]:ctrl@range["maxyear"]))
-  flqp <- FLQuantPoint(flq)
-  n.ages <- dims(flqp)$age
-  res@stock.n <- flqp
-  mean(res@stock.n) <- exp(stateEst[1:n.ages,])
-  uppq(res@stock.n) <- exp(stateEst[1:n.ages,] + 0.674 * stateSd[1:n.ages,] )
-  lowq(res@stock.n) <- exp(stateEst[1:n.ages,] - 0.674 * stateSd[1:n.ages,] )
-  res@harvest <- flqp
+  n.ages <- dims(flq)$age
+  res@stock.n <- flq
+  res@stock.n <- exp(stateEst[1:n.ages,])
+  res@harvest <- flq
   res@harvest@units <- "f"
   f.stateEst <- stateEst[-c(1:n.ages),]
-  f.stateSd  <- stateSd[-c(1:n.ages),]
   for(a in  dimnames(ctrl@states)$age){
     states.key <- ctrl@states["catch",a] 
-    mean(res@harvest)[a,] <- exp(f.stateEst[states.key,])
-    uppq(res@harvest)[a,] <- exp(f.stateEst[states.key,]+0.674 * f.stateSd[states.key,])
-    lowq(res@harvest)[a,] <- exp(f.stateEst[states.key,]-0.674 * f.stateSd[states.key,])
+    res@harvest[a,] <- exp(f.stateEst[states.key,]
   }
 
   #Finished! 
