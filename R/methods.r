@@ -96,3 +96,16 @@ setMethod("rec", signature(object="FLSAM"),
 	  return(flq)
         }
 )       # }}}
+
+lr.test <- function(...) {
+  mdls <- list(...)
+  dat.l <- lapply(mdls,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)}) 
+  tbl <- do.call(rbind,dat.l)
+  colnames(tbl)<-c('Neg. log likel','N. pars')
+  if(tbl[1,2]!=tbl[2,2]){
+    if(tbl[1,2]<tbl[2,2]){tbl<-tbl[2:1,]}
+    tbl<-cbind(tbl,'Degrees of freedom'=c(NA,tbl[1,2]-tbl[2,2]))
+    tbl<-cbind(tbl,'P value'=c(NA,1-pchisq(2*(tbl[2,1]-tbl[1,1]),tbl[2,3])))
+  }
+  return(tbl)
+}
