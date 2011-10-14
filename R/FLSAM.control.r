@@ -2,7 +2,6 @@ setClass("FLSAM.control",
  representation(
     name            ="character",
     desc            ="character",
-    simulate        ="logical",
     range	    ="numeric",   ## min and max age represented internally in the assessment
     fleets          ="numeric",  ## fleet meta data
     plus.group      ="logical",   ## we model the maximum age as a plus group or not?
@@ -14,7 +13,6 @@ setClass("FLSAM.control",
     obs.vars        ="matrix",   ## matrix coupling the observation variances
     srr             ="integer"),    ## stock recruitment relationship
   prototype=prototype(
-    simulate        = as.logical(FALSE),
     range           =as.numeric(1),   ## minimum age represented internally in the assessment
     plus.group      =as.logical(TRUE),   ## model the maximum age as a plus group?
     states          =as.matrix(0),   ## matrix describing the coupling of the states
