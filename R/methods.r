@@ -111,6 +111,9 @@ catchabilities <- function(object) {
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
        res <- merge(params,bindings)
+       res <- res[order(res$fleet,res$age),]
+       res$param <- res$name
+       res$name <- ifelse(length(object@name)==0,"<None>",object@name)
        return(res)
 }
 
@@ -123,6 +126,8 @@ obs.var <- function(object) {
        bindings <- subset(bindings,!is.na(bindings$no))
        res <- merge(params,bindings)
        res <- res[order(res$fleet,res$age),]
+       res$param <- res$name
+       res$name <- ifelse(length(object@name)==0,"<None>",object@name)
        return(res)
 }
 
