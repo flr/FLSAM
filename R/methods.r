@@ -103,7 +103,28 @@ setMethod("AIC",signature(object="FLSAM"),
         }
 )
 
+catchabilities <- function(object) {
+       #Extract data
+       params <- subset(object@params,name=="logFpar")
+       params$no <- 1:nrow(params)
+       bindings <-  as.data.frame(as.table(object@control@catchabilities),responseName="no")
+       #Merge
+       bindings <- subset(bindings,!is.na(bindings$no))
+       res <- merge(params,bindings)
+       return(res)
+}
 
+obs.var <- function(object) {
+       #Extract data
+       params <- subset(object@params,name=="logSdLogObs")
+       params$no <- 1:nrow(params)
+       bindings <-  as.data.frame(as.table(object@control@obs.vars),responseName="no")
+       #Merge
+       bindings <- subset(bindings,!is.na(bindings$no))
+       res <- merge(params,bindings)
+       res <- res[order(res$fleet,res$age),]
+       return(res)
+}
 
 lr.test <- function(...) {
   mdls <- list(...)
