@@ -97,6 +97,14 @@ setMethod("rec", signature(object="FLSAM"),
         }
 )       # }}}
 
+setMethod("AIC",signature(object="FLSAM"),
+        function(object, ...) {
+        return(2*object@nopar +2*object@nlogl)
+        }
+)
+
+
+
 lr.test <- function(...) {
   mdls <- list(...)
   dat.l <- lapply(mdls,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)}) 
