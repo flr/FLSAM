@@ -1,0 +1,4 @@
+FLSAM ChangeLog
+
+2011-10-26 v 0.20-2
+  * Added residual.diagnostics() function
