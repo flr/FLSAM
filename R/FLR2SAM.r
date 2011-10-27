@@ -4,7 +4,7 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   #---------------------------------------------------
   #General Setup
   if(missing(run.dir)) {run.dir <- tempdir() }
-  admb.stem <- "ssass" 
+  admb.stem <- "sam" 
   run.time <- Sys.time()
   miss.val <- -99999
 

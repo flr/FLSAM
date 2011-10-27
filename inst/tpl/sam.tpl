@@ -1,3 +1,10 @@
+//----------------------------------------------------------------
+//SAM State Space Assessment Model
+//--------------------------------
+//$Rev: 3 $
+//$LastChangedDate: 2011-10-26 18:06:44 +0200 (Wed, 26 Oct 2011) $
+//----------------------------------------------------------------
+
 GLOBALS_SECTION 
   #include <time.h>
   time_t StartTime;   //Time variables, for use in timing loop
@@ -72,9 +79,13 @@ DATA_SECTION
   init_ivector fleetTypes(1,noFleets)
   !! TRACE(fleetTypes);
   int ssbPhase
+  int ssbPowPhase
   !! ssbPhase=-1;
+  !! ssbPowPhase=-1;
   !! for(int i=1; i<=noFleets; ++i){if(fleetTypes(i)==3){ssbPhase=1;}} 
+  !! for(int i=1; i<=noFleets; ++i){if(fleetTypes(i)==4){ssbPhase=1;ssbPowPhase=1;}} 
   !! TRACE(ssbPhase);
+  !! TRACE(ssbPowPhase);
   init_vector fleetTimes(1,noFleets)
   !! TRACE(fleetTimes);
   init_int noYears
@@ -217,6 +228,7 @@ PARAMETER_SECTION
   init_number rec_logb(rec_phase);
   init_vector logScale(1,noScaledPar); 
   init_number logScaleSSB(ssbPhase);
+  init_number logPowSSB(ssbPowPhase);
   init_number logSdSSB(ssbPhase);  
   vector scaledLogObs(1,noObs);
   matrix X(1,noYears,1,stateDim);  
@@ -357,10 +369,10 @@ PROCEDURE_SECTION
     dmatrix subData=getSubMat(data,idxlow,idxhigh);     
     dvar_vector subObs=getSubVec(scaledLogObs,idxlow,idxhigh);  
     if(noQpow>0){
-      obs(U((y-1)*stateDim+1,y*stateDim),subData,subObs,logFpar,logSdLogObs,logQpow,logScaleSSB,logSdSSB);
+      obs(U((y-1)*stateDim+1,y*stateDim),subData,subObs,logFpar,logSdLogObs,logQpow,logScaleSSB,logPowSSB,logSdSSB);
     }else{
       dvar_vector fakeQpow(1,1);
-      obs(U((y-1)*stateDim+1,y*stateDim),subData,subObs,logFpar,logSdLogObs,fakeQpow,logScaleSSB,logSdSSB);
+      obs(U((y-1)*stateDim+1,y*stateDim),subData,subObs,logFpar,logSdLogObs,fakeQpow,logScaleSSB,logPowSSB,logSdSSB);
     }
   }
 
@@ -463,7 +475,7 @@ SEPARABLE_FUNCTION void step(const int y, const dvar_vector& u1,const dvar_vecto
     jnll+=0.5*(log(2.0*M_PI*var(i))+square(x2(i)-pred(i))/var(i));
   } 
  
-SEPARABLE_FUNCTION void obs(const dvar_vector& u, const dmatrix& data, const dvar_vector& obs, const dvar_vector& logFpar, const dvar_vector& logSdLogObs, const dvar_vector& logQpow, const dvariable& logScaleSSB, const dvariable& logSdSSB)
+SEPARABLE_FUNCTION void obs(const dvar_vector& u, const dmatrix& data, const dvar_vector& obs, const dvar_vector& logFpar, const dvar_vector& logSdLogObs, const dvar_vector& logQpow, const dvariable& logScaleSSB, const dvariable& logPowSSB, const dvariable& logSdSSB)
   int n1=data.rowmin();
   int n2=data.rowmax();
   dvar_vector pred(n1,n2);
@@ -538,6 +550,15 @@ SEPARABLE_FUNCTION void obs(const dvar_vector& u, const dmatrix& data, const dva
               ssb+=exp(x(a-minAge+1))*exp(-Ftot(a)*Fprop(yIdx,a)-natMor(yIdx,a)*Mprop(yIdx,a))*propMature(yIdx,a)*stockMeanWeight(yIdx,a);
             }
             pred(i)=log(ssb)+logScaleSSB;
+          }else{
+            if(ft==4){
+              dvariable ssb=0.0; 
+              for(int a=minAge; a<=maxAge; ++a){
+                yIdx=(int)(y-years(1)+1); 
+                ssb+=exp(x(a-minAge+1))*exp(-Ftot(a)*Fprop(yIdx,a)-natMor(yIdx,a)*Mprop(yIdx,a))*propMature(yIdx,a)*stockMeanWeight(yIdx,a);
+              }
+              pred(i)=exp(logPowSSB)*log(ssb)+logScaleSSB;
+            }
           }
         } 
       }
@@ -556,7 +577,7 @@ SEPARABLE_FUNCTION void obs(const dvar_vector& u, const dmatrix& data, const dva
       residuals(i,5)=0;     
       residuals(i,6)=0;     
     }else{
-      if(fleetTypes(f)==3){
+      if((fleetTypes(f)==3)||(fleetTypes(f)==4)){
         var=exp(2.0*logSdSSB); 
       }else{ 
         var=exp(2.0*logSdLogObs(keyVarObs(f,a)));
@@ -660,6 +681,10 @@ REPORT_SECTION
 
 
 TOP_OF_MAIN_SECTION
+  cout << "SAM State-space Assessment Model" << endl;
+  cout << "--------------------------------" << endl;
+  cout << "$Rev: 3 $" << endl << "$LastChangedDate: 2011-10-26 18:06:44 +0200 (Wed, 26 Oct 2011) $"  <<endl << endl;
+
   arrmblsize=2000000;
   gradient_structure::set_GRADSTACK_BUFFER_SIZE(150000);
   gradient_structure::set_CMPDIF_BUFFER_SIZE(800000);

@@ -1,4 +1,4 @@
-SAM2FLR <-function(ctrl,run.dir,admb.stem="ssass") {
+SAM2FLR <-function(ctrl,run.dir,admb.stem="sam") {
   #---------------------------------------------------
   # Read the results from the assessment
   #---------------------------------------------------

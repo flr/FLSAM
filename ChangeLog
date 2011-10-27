@@ -1,4 +1,12 @@
 FLSAM ChangeLog
 
+2011-10-27 v 0.30
+ * Replaced ADMB template and executables. Previous versions used the ADMB tpl
+   file called "ssass.tpl". This was a development version that dates from
+   somewhere around about mid-2010 or so, when SAM was first setup for North
+   Sea herring. SAM has recently been moved into a formal version control
+   system (SVN) and the version used here, revision 4, therefore represents
+   the newest vesion available.
+
 2011-10-26 v 0.20-2
   * Added residual.diagnostics() function

@@ -3,7 +3,7 @@ FLSAM <-function(stck,tun,ctrl,temp.dir=tempdir(),batch.mode=FALSE) {
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
   #General Setup
-  admb.stem <- "ssass" 
+  admb.stem <- "sam" 
   
   #Write output files
   FLR2SAM(stck,tun,ctrl,temp.dir)
