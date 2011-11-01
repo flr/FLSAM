@@ -1,5 +1,9 @@
 FLSAM ChangeLog
 
+<Date in future> v 0.32
+ * Incorporated new version of SUSAM diagnostics, with a smoother on the
+   Tukey-Anscombe plot
+
 2011-11-01 v 0.31
  * Implemented changes by Morten Vinther to account for year-ahead indices
  * Fixed problem with run.dir argument to FLSAM being wrongly named!
