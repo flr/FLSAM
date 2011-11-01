@@ -21,13 +21,14 @@ setMethod("merge", signature(x="FLStock", y="FLSAM"),
     # year ranges match?
     if(!all(dny[['year']] %in% dnx[['year']]))
     {
-      years <- as.numeric(unique(c(dnx$year, dny$year)))
-      x <- window(x, start=min(years), end=max(years))
-      y <- window(y, start=min(years), end=max(years))
-    }
+      x@stock.n <- window(y@stock.n,start=x@range["minyear"],end=x@range["maxyear"])
+      x@harvest <- window(y@harvest,start=x@range["minyear"],end=x@range["maxyear"])
+    } else {
+       x@stock.n <- y@stock.n
+       x@harvest <- y@harvest
+    } 
     x@desc <- paste(x@desc, "+ FLSAM:", y@name)
-    x@stock.n <- y@stock.n
-    x@harvest <- y@harvest
+    x@harvest@units <- y@harvest@units 
     x@range=c(unlist(dims(x)[c('min', 'max', 'plusgroup','minyear', 'maxyear')]),
       x@range[c('minfbar', 'maxfbar')])
         

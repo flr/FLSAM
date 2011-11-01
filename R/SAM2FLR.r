@@ -1,7 +1,9 @@
-SAM2FLR <-function(ctrl,run.dir,admb.stem="sam") {
+SAM2FLR <-function(ctrl,run.dir=tempdir()) {
   #---------------------------------------------------
   # Read the results from the assessment
   #---------------------------------------------------
+  admb.stem <- "sam"
+
   #Create return object
   res       <- new("FLSAM")
   res@name  <- ctrl@name

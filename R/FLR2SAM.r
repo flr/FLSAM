@@ -25,8 +25,23 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   samp.times <- c(miss.val,sapply(tun,function(x) mean(x@range[c("startf","endf")])))
   samp.times <- ifelse(is.na(samp.times),miss.val,samp.times)
   names(samp.times) <- names(ctrl@fleets)
-  yrs <- seq(stck@range["minyear"],stck@range["maxyear"])
+  yrs <- ctrl@range["minyear"]:ctrl@range["maxyear"]
+  lastYear <- ctrl@range["maxyear"]
   nyrs <- length(yrs)
+  
+  #Add a year to the stock object when tuning data are newer than catch data
+  #Other combinations are not taken into account. Credit to Morten Vinther for this patch
+  if (stck@range["maxyear"]<lastYear)  {  
+   stck<- window(stck,start=stck@range["minyear"],end=ctrl@range["maxyear"],
+              frequency=1,extend=TRUE)  # extend by one year
+   stck@mat[,as.character(lastYear),,,,]<-stck@mat[,as.character(lastYear-1),,,,]      # MV (there must be an easier way!!
+   stck@stock.wt[,as.character(lastYear),,,,]<-stck@stock.wt[,as.character(lastYear-1),,,,]
+   stck@catch.wt[,as.character(lastYear),,,,]<-stck@catch.wt[,as.character(lastYear-1),,,,]
+   stck@m[,as.character(lastYear),,,,]<-stck@m[,as.character(lastYear-1),,,,]
+   stck@landings.n[,as.character(lastYear),,,,]<-stck@landings.n[,as.character(lastYear-1),,,,]
+   stck@harvest.spwn[,as.character(lastYear),,,,]<-stck@harvest.spwn[,as.character(lastYear-1),,,,]
+   stck@m.spwn[,as.character(lastYear),,,,]<-stck@m.spwn[,as.character(lastYear-1),,,,]
+  }
 
   #Generate observation matrix
   obs.dat <- as.data.frame(lapply(tun,index))

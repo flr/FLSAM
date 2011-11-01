@@ -1,5 +1,9 @@
 FLSAM ChangeLog
 
+2011-11-01 v 0.31
+ * Implemented changes by Morten Vinther to account for year-ahead indices
+ * Fixed problem with run.dir argument to FLSAM being wrongly named!
+
 2011-10-27 v 0.30
  * Replaced ADMB template and executables. Previous versions used the ADMB tpl
    file called "ssass.tpl". This was a development version that dates from

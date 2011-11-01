@@ -34,6 +34,8 @@ FLSAM.control <- function(stck,tun) {
 
   #Populate metadata
   ctrl@range <- stck@range
+  ctrl@range["maxyear"] <- max(stck@range["maxyear"],
+                            max(sapply(tun,function(x) max(x@range[c("maxyear")])))) 
   ctrl@plus.group <- stck@range["plusgroup"]==stck@range["max"]
   ctrl@fleets <-factor(sapply(tun,type),levels=c("con","number","biomass"))
   ctrl@fleets <- c(0,as.numeric(ctrl@fleets))
