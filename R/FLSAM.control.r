@@ -27,7 +27,7 @@ setClass("FLSAM.control",
                	return(TRUE)}
 )
 
-FLSAM.control <- function(stck,tun) {
+FLSAM.control <- function(stck,tun,default="full") {
   #Default constructor
   #Create object
   ctrl <- new("FLSAM.control")
@@ -50,6 +50,23 @@ FLSAM.control <- function(stck,tun) {
   ctrl@f.vars           <- default.coupling
   ctrl@obs.vars         <- default.coupling
 
+  if(default=="full"){
+    idx                 <- lapply(tun,function(x){return(if(x@type == "biomass"){ NA
+                                                         }else{ seq(as.numeric(range(x)["min"]),as.numeric(range(x)["max"]),1)})})
+    idx[[names(ctrl@fleets)[ctrl@fleets==0]]] <- seq(as.numeric(range(stck)["min"]),as.numeric(range(stck)["max"]),1)
+
+    full.coupling       <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,
+                            dimnames=list(fleet=c("catch",names(tun)),age=dimnames(stck@catch.n)$age))
+    for(iFlt in names(ctrl@fleets[ctrl@fleets!=3]))
+      full.coupling[iFlt,ac(idx[[iFlt]])] <- (sum(is.finite(full.coupling),na.rm=T)+1):(sum(is.finite(full.coupling),na.rm=T)+length(idx[[iFlt]]))
+
+    ctrl@states           <- full.coupling
+    ctrl@catchabilities   <- full.coupling
+    ctrl@power.law.exps   <- full.coupling
+    ctrl@f.vars           <- full.coupling
+    ctrl@obs.vars         <- full.coupling
+  }
+
   #Other variables
   ctrl@logN.vars            <- default.coupling[1,]
   ctrl@srr <- as.integer(0)
@@ -57,3 +74,44 @@ FLSAM.control <- function(stck,tun) {
   #Finished!
   return(ctrl)
 }
+
+setMethod("update", signature(object="FLSAM.control"),
+  function(object){
+
+  for(iSlt in slotNames(object)){
+    if(class(slot(object,iSlt))=="matrix"){
+      idx     <- is.finite(slot(object,iSlt))
+      idxpos  <- na.omit(c(slot(object,iSlt)))
+      dub     <- c(1,diff(sort(slot(object,iSlt)[idx])))
+      dub[which(dub > 1)]   <- 1
+      slot(object,iSlt)[idx]  <- cumsum(dub)[idxpos]
+    }
+  }
+  return(object)}
+)
+
+setValidity("FLSAM.control",
+  function(object){
+    #-1 All slot populated
+    if(object@plus.group) if(is.na(object@range["plusgroup"])==T){stop("Specify plusgroup in object@range")}
+    if(any(is.na(object@range[-3])==T)) stop("Specify values in object@range")
+    if(any(is.na(object@logN.vars)==T)) stop("Not all ages in logN.vars specified")
+
+    #-2 Settings within range
+    if(object@srr < 0 | object@srr > 2) stop("SRR type outisde possible setting range")
+    if(range(object@fleets)[1] < 0 | range(object@fleets)[2] > 4) stop(paste("Fleet type",names(object@fleets)[which(object@fleets < 0 | object@fleets > 4)],"outside possible setting range"))
+
+    #-3 Dimension and dimnames check
+    dmns <- list()
+    dms  <- list()
+    for(iSlt in slotNames(object)){
+      if(class(slot(object,iSlt)) == "matrix"){
+        dmns[[iSlt]]  <- dimnames(slot(object,iSlt))
+        dms[[iSlt]]   <- dim(slot(object,iSlt))
+      }
+    }
+    if(any(apply(matrix(unlist(dmns),length(unlist(dmns[[1]])),length(dmns)),1,duplicated)[2,]==F)) stop("Dimnames are not the same for parameter sections")
+    if(any(apply(matrix(unlist(dms), length(unlist(dms[[1]])), length(dms)), 1,duplicated)[2,]==F)) stop("Dimensions are not the same for parameter sections")
+  }
+)
+
