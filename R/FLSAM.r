@@ -92,7 +92,9 @@ setValidity("FLSAMinput",
   tun  <- object@tun
   
   #- Check ranges between stck and ctrl
-  if(any(apply(cbind(range(stck),ctrl@range),1,duplicated)[2,]==F)) stop("Range in stock object different from range in control object")
+  idxstock <- grep("maxyear",names(range(stck))); idxctrl <- grep("maxyear",names(ctrl@range))
+  if(any(apply(cbind(range(stck)[-idxstock],ctrl@range[-idxctrl]),1,duplicated)[2,]==F)) stop("Range in stock object different from range in control object")
+  if(ctrl@range[idxctrl] > (range(stck)[idxstock]+1)) stop("Year range in control larger than in stock+1. Only 1 year ahead tuning series are implemented")
 
   #- Check if number of fleets specified matches stck and tun
   if(length(ctrl@fleets) != (length(dimnames(stck@catch)$area)+length(tun))) stop("Number of fleets specified does not match stock and tun object")
