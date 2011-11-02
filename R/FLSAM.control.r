@@ -50,6 +50,11 @@ FLSAM.control <- function(stck,tun,default="full") {
   ctrl@f.vars           <- default.coupling
   ctrl@obs.vars         <- default.coupling
 
+  #Other variables
+  ctrl@logN.vars            <- default.coupling[1,]
+  ctrl@srr <- as.integer(0)
+
+  #Handle full coupling case
   if(default=="full"){
     idx                 <- lapply(tun,function(x){return(if(x@type == "biomass"){ NA
                                                          }else{ seq(as.numeric(range(x)["min"]),as.numeric(range(x)["max"]),1)})})
@@ -60,16 +65,17 @@ FLSAM.control <- function(stck,tun,default="full") {
     for(iFlt in names(ctrl@fleets[ctrl@fleets!=3]))
       full.coupling[iFlt,ac(idx[[iFlt]])] <- (sum(is.finite(full.coupling),na.rm=T)+1):(sum(is.finite(full.coupling),na.rm=T)+length(idx[[iFlt]]))
 
-    ctrl@states           <- full.coupling
-    ctrl@catchabilities   <- full.coupling
-    ctrl@power.law.exps   <- full.coupling
-    ctrl@f.vars           <- full.coupling
+    ctrl@states["catch",] <- 1                 #Fixed selection pattern
+    ctrl@catchabilities   <- full.coupling   
+    ctrl@catchabilities["catch",] <- NA        #Catchabilities don't make sense for "catch"
+    ctrl@power.law.exps   <- default.coupling  #Don't fit power laws by default
     ctrl@obs.vars         <- full.coupling
+    #Random walks default to a single variance
+    ctrl@logN.vars[]      <- 1
+    ctrl@f.vars["catch",] <- 1
+    ctrl <- update(ctrl)
   }
 
-  #Other variables
-  ctrl@logN.vars            <- default.coupling[1,]
-  ctrl@srr <- as.integer(0)
 
   #Finished!
   return(ctrl)
@@ -80,11 +86,7 @@ setMethod("update", signature(object="FLSAM.control"),
 
   for(iSlt in slotNames(object)){
     if(class(slot(object,iSlt))=="matrix"){
-      idx     <- is.finite(slot(object,iSlt))
-      idxpos  <- na.omit(c(slot(object,iSlt)))
-      dub     <- c(1,diff(sort(slot(object,iSlt)[idx])))
-      dub[which(dub > 1)]   <- 1
-      slot(object,iSlt)[idx]  <- cumsum(dub)[idxpos]
+      slot(object,iSlt)[]  <-  as.numeric(factor(slot(object,iSlt)))
     }
   }
   return(object)}
