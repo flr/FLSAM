@@ -92,7 +92,7 @@ setMethod("update", signature(object="FLSAM.control"),
 
 setValidity("FLSAM.control",
   function(object){
-    #-1 All slot populated
+    #-1 All slots populated
     if(object@plus.group) if(is.na(object@range["plusgroup"])==T){stop("Specify plusgroup in object@range")}
     if(any(is.na(object@range[-3])==T)) stop("Specify values in object@range")
     if(any(is.na(object@logN.vars)==T)) stop("Not all ages in logN.vars specified")
