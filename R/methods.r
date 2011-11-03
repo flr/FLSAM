@@ -131,7 +131,6 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control"),
         if(class(slot(ctrl,iSlot))=="matrix") slot(ctrl,iSlot) <- slot(e3,iSlot)[c(names(which(e3@fleets==0)),names(which(overview[iRun,]==1))),]
       ctrl@logN.vars        <- e3@logN.vars
       ctrl@srr              <- e3@srr
-      stck@range["maxyear"] <- max(sapply(tun,function(x) max(x@range[c("maxyear")])))
 
       #- Run the assessment
       FLSAMs[[iRun]]        <- FLSAM(stck,tun,ctrl)
