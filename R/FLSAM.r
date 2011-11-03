@@ -112,3 +112,44 @@ setValidity("FLSAMinput",
   if(dims(stck)$iter > 1 | any(unlist(lapply(tun,function(x)return(dims(x)$iter)))>1)) stop("Only 1 iteration is allowed")
   }
 )
+
+# class
+setClass("FLSAMs", contains="FLlst")
+
+# constructor
+setGeneric("FLSAMs", function(object, ...){
+	standardGeneric("FLSAMs")
+	}
+)
+
+setMethod("FLSAMs", signature(object="ANY"), function(object, ...){
+	lst1 <- list(...)
+	nlst <- length(lst1)
+	lst <- list()
+	length(lst) <- nlst + 1
+	lst[[1]] <- object
+	lst[-1] <- lst1
+	new("FLSAMs", lst)
+})
+
+setMethod("FLSAMs", signature(object="FLSAM"), function(object, ...) {
+    lst <- c(object, list(...))
+    FLSAMs(lst)
+})
+
+setMethod("FLSAMs", "missing", function(...){
+	if(missing(...)){
+		new("FLSAMs")
+	} else {
+		lst <- list(...)
+		new("FLSAMs", lst)
+	}
+})
+
+setMethod("FLSAMs", "list", function(object){
+	new("FLSAMs", object)
+})
+
+setMethod("FLSAMs", "FLSAMs", function(object){
+	return(object)
+}) # }}}
