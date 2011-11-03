@@ -1,80 +1,57 @@
 \name{FLSAM.control}
 \alias{FLSAM.control}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{FLSAM.control
-%%  ~~function to do ... ~~
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Creates an FLSAM.control that can be used to control an FLSAM assessment
 }
 \usage{
-FLSAM.control(stck, tun)
+FLSAM.control(stck, tun, default="full")
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{stck}{
-%%     ~~Describe \code{stck} here~~
+  \item{stck}{An FLSAM object
 }
-  \item{tun}{
-%%     ~~Describe \code{tun} here~~
+  \item{tun}{An FLIndices object
+}
+  \item{default}{Specifies how the control object should be populated. Default option is "full", which takes a reasonable first guess at a configuration
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+An FLSAM assessment requires three elements - an FLStock object, an FLIndices object and a FLSAM.control object. The FLSAM.control object contains the configuration options for the model, and is therefore key to the process. However, there are a great many configuration options and therefore setting up the control object is a relatively complex process. The purpose of the FLSAM.control function is to create a template (possibly containing sensible first guesses at a configuration) object that can then be populated by the user according to their wishes.
+
+The key concept with the configuration of a SAM model is that some parameters are bound together, so that the model fits just a single parameter, but uses it in multiple places e.g. by using a single parameter for the catchabilites of ages 5-9 in a survey. We refer to this concept as "binding" the parameters together. The FLSAM.control object contains the definition bindings - 
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+Returns a FLSAM.control object with the following slots
+
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+\author{
+Mark Payne and Niels Hintzen
+}
+
+
+ \section{Warning }{It is important to realise that the default configuration returned by FLSAM.control is almost certaintly not the best configuration of your model - it is merely a first guess setup for your convenience. Similarly, there is no guarantee that this model will lead to a converged solution.} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+FLSAM
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+#Load data
+library(FLSAM)
+data(NSH)
+#Create an object
+ctrl <- FLSAM.control(NSH,NSH.tun)
+ctrl
+#Bind HERAS catchabilities on ages 5:9
+ctrl@catchabilities["HERAS",as.character(5:9)] <- 11 
+#Alternatively can also use update functionality
+ctrl@catchabilities["HERAS",as.character(5:9)] <- 101
+ctrl <- update(ctrl)
+#See example of full control object
+data(NSH.sam)
+NSH.ctrl
 
-## The function is currently defined as
-function(stck,tun) {
-  #Default constructor
-  #Create object
-  ctrl <- new("FLSAM.control")
-
-  #Populate metadata
-  ctrl@range <- stck@range[c("min","max","minfbar","maxfbar")]
-  ctrl@plus.group <- stck@range["plusgroup"]==stck@range["max"]
-  
-  #Setup coupling structures
-  default.coupling <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,
-                        dimnames=list(fleet=c("catch",names(tun)),age=dimnames(stck@catch.n)$age))
-  ctrl@states           <- default.coupling
-  ctrl@catchabilities   <- default.coupling
-  ctrl@power.law.exps   <- default.coupling
-  ctrl@f.vars           <- default.coupling
-  ctrl@obs.vars         <- default.coupling
-
-  #Other variables
-  ctrl@logN.vars            <- default.coupling[1,]
-  ctrl@srr <- as.integer(0)
-
-  #Finished!
-  return(ctrl)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
