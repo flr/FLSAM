@@ -104,6 +104,43 @@ setMethod("AIC",signature(object="FLSAM"),
         }
 )
 
+#- Create generic function for 'looi'
+setGeneric('looi', function(e1,e2,e3, ...) standardGeneric('looi'))
+
+setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control"),
+  function(e1,e2,e3,type="full",...){
+  
+    #- Create run scheme with all possible combinations
+    overview          <- matrix(NA,nrow=2^length(e2),ncol=length(e2),dimnames=list(run=1:2^length(e2),fleet=names(e2)))
+    for(iFlt in 1:length(e2))
+      overview[,iFlt] <- rep(c(rep(1,(2^length(e2))/(2^(iFlt))),rep(0,(2^length(e2))/(2^(iFlt)))),2^(iFlt-1))
+    overview          <- overview[-nrow(overview),] #Remove 'no-fleet-included' option
+    rownames(overview)<- unlist(lapply(apply(overview,1,function(x){names(which(x==1))}),paste,collapse="+"))
+    
+    if(type=="LOO") overview <- overview[c(1,which(rowSums(overview) == (length(e2)-1))),]
+    if(type=="LOI") overview <- overview[c(1,which(rowSums(overview) == 1)),]
+    
+    #- Create object to save outcomes
+    result <- new("FLSAMs")
+    for(iRun in rownames(overview)){
+      stck                  <- e1
+      tun                   <- e2[which(overview[iRun,]==1)]
+      ctrl                  <- FLSAM.control(stck,tun)
+      #- Update the ctrl and stck object given the changed tuning object
+      for(iSlot in slotNames(e3))
+        if(class(slot(ctrl,iSlot))=="matrix") slot(ctrl,iSlot) <- slot(e3,iSlot)[c(names(which(e3@fleets==0)),names(which(overview[iRun,]==1))),]
+      ctrl@logN.vars        <- e3@logN.vars
+      ctrl@srr              <- e3@srr
+      stck@range["maxyear"] <- max(sapply(tun,function(x) max(x@range[c("maxyear")])))
+
+      #- Run the assessment
+      FLSAMs[[iRun]]        <- FLSAM(stck,tun,ctrl)
+    }
+  return(list(overview,FLSAMs))}
+)
+
+
+
 catchabilities <- function(object) {
        #Extract data
        params <- subset(object@params,name=="logFpar")
