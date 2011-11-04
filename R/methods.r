@@ -138,33 +138,54 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control"),
   return(list(overview,FLSAMs))}
 )
 
-
-
 catchabilities <- function(object) {
-       #Extract data
-       params <- subset(object@params,name=="logFpar")
+       #Extract numbers at age parameters
+       params <- subset(object@params,name=="logFpar")[,c("name","value","std.dev")]
+       if(nrow(params)==0) stop("No catchabiltities fitted in model.")
        params$no <- 1:nrow(params)
        bindings <-  as.data.frame(as.table(object@control@catchabilities),responseName="no")
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
        res <- merge(params,bindings)
+       #Tidy up
        res <- res[order(res$fleet,res$age),]
-       res$param <- res$name
-       res$name <- ifelse(length(object@name)==0,"<None>",object@name)
+       res$no <- NULL
+       colnames(res)[which(colnames(res)=="name")] <- "param.name"
+       res <- res[,c("fleet","age","param.name","value","std.dev")] 
        return(res)
 }
 
 obs.var <- function(object) {
        #Extract data
        params <- subset(object@params,name=="logSdLogObs")
+       if(nrow(params)==0) stop("No observation variance fitted in model.")
        params$no <- 1:nrow(params)
        bindings <-  as.data.frame(as.table(object@control@obs.vars),responseName="no")
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
        res <- merge(params,bindings)
+       #Tidy up
        res <- res[order(res$fleet,res$age),]
-       res$param <- res$name
-       res$name <- ifelse(length(object@name)==0,"<None>",object@name)
+       res$no <- NULL
+       colnames(res)[which(colnames(res)=="name")] <- "param.name"
+       res <- res[,c("fleet","age","param.name","value","std.dev")] 
+       return(res)
+}
+
+power.law.exps <- function(object) {
+       #Extract data
+       params <- subset(object@params,name=="logQpow")
+       if(nrow(params)==0) { stop("No power law exponents fitted in model.")}
+       params$no <- 1:nrow(params)
+       bindings <-  as.data.frame(as.table(object@control@power.law.exps),responseName="no")
+       #Merge
+       bindings <- subset(bindings,!is.na(bindings$no))
+       res <- merge(params,bindings)
+       #Tidy up
+       res <- res[order(res$fleet,res$age),]
+       res$no <- NULL
+       colnames(res)[which(colnames(res)=="name")] <- "param.name"
+       res <- res[,c("fleet","age","param.name","value","std.dev")] 
        return(res)
 }
 
