@@ -9,26 +9,26 @@ Returns Akaike's information criterion for a set of FLSAM objects
 AIC(object, ..., k = 2)
 }
 \arguments{
-  \item{object}{An FLSAM object
+  \item{object}{An \code{\link{FLSAM}} object
 }
-  \item{\dots}{Further FLSAM objects 
+  \item{\dots}{Further \code{\link{FLSAM}}objects 
 }
   \item{k}{the _penalty_ per parameter to be used; the default
           ‘k = 2’ is the classical AIC.
 }
 }
 \details{
-The AIC criteria can be used as a basis for comparing model fits in situations where a likelihood ratio test is not appropriate (i.e. the models are not nested). For more information see the help for AIC in the stats package i.e. ?stats::AIC 
+The AIC criteria can be used as a basis for comparing model fits in situations where a likelihood ratio test is not appropriate (i.e. the models are not nested). For more information see the help for \code{\link[stats]{AIC}} in the stats package.
 }
 \value{
 Numeric value
 }
 \author{
-Based on code by Anders Nielsen in SAM. Adapted to FLSAM by Mark Payne
+Based on code by Anders Nielsen in SAM. Adapted to FLSAM by Mark R. Payne.
 }
 
 \seealso{
-"lr.test", "stats::AIC"
+\code{\link{lr.test}}, \code{\link[stats]{AIC}}
 }
 \examples{
 #Load assessment
