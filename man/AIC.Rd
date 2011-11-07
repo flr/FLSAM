@@ -7,9 +7,12 @@ Returns Akaike's information criterion for a set of FLSAM objects
 }
 \usage{
 AIC(object, ..., k = 2)
+AIC(objects, ..., k = 2)
 }
 \arguments{
   \item{object}{An \code{\link{FLSAM}} object
+}
+  \item{object}{An \code{\link{FLSAMs}} object
 }
   \item{\dots}{Further \code{\link{FLSAM}}objects 
 }
@@ -36,6 +39,9 @@ library(FLSAM)
 data(NSH.sam)
 #Extract AIC
 AIC(NSH.sam)
+#For more an FLSAMs
+data(IBTS.sams)
+plot(AIC(IBTS.sams),pch=16)
 }
 \keyword{ ~kwd1 }
 \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

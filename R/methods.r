@@ -104,6 +104,12 @@ setMethod("AIC",signature(object="FLSAM"),
         }
 )
 
+setMethod("AIC",signature(object="FLSAMs"),
+        function(object, ...) {
+        return(sapply(object,AIC,...))
+        }
+)
+
 #- Create generic function for 'looi'
 setGeneric('looi', function(e1,e2,e3, ...) standardGeneric('looi'))
 

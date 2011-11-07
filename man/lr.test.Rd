@@ -1,6 +1,5 @@
 \name{lr.test}
 \alias{lr.test}
-Log ratio test for FLSAM object
 \title{
 Perform a log-ratio test for all models specified
 }
@@ -22,8 +21,8 @@ lr.test(FLSAMs)
 }
 \value{
 A summary table of the test characteristics is returned}
-\warnings{Log-likelihood tests can only be used for nested models (i.e. model parameterisation is different)
-and won't work for different input data or different model types.
+
+\section{Warning!}{Log-likelihood tests can only be used for nested models (i.e. model parameterisation is different) and are not appropriate for different input data or different model types.
 }
 \author{
 Code by Anders Nielsen, implemented by Niels T. Hintzen and Mark R. Payne
@@ -33,11 +32,11 @@ Code by Anders Nielsen, implemented by Niels T. Hintzen and Mark R. Payne
 }
 \examples{
 #- Load the data
-data(NSH.sam)
+data(IBTS.sams)
 
-#- Run lr ratio test on FLSAMs object
-lr.ratio(NSH.sams)
+#- Run lr ratio test on example FLSAMs object
+lr.test(IBTS.sams)
 
 #- Run lr ratio test on FLSAM objects
-lr.ratio(NSH.sam,NSH.sam,NSH.sam)
+lr.test(IBTS.sams[[1]],IBTS.sams[[2]])
 }

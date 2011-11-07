@@ -1,8 +1,9 @@
 \name{looi}
 \alias{looi}
-Leave one out / one in
+\alias{loo}
+\alias{loi}
 \title{
-Run a sequence of assessments leaving one fleet (non-catch) in our out
+Run a sequence of assessments leaving one fleet (non-catch) in or out
 }
 \description{
 Perform a sequence of assessments where each of the fleets are excluded or included from
@@ -24,10 +25,10 @@ looi(stck, tun, ctrl, type)
   \item{ctrl}{
       FLSAM.control object that specifies the assessment settings
 }
-  \item{\dots}{
-      type: 'full' runs all combinations of leaving fleets in and out (may take a long time to run)\n
-      type: 'LOI'  runs all combinations keeping only 1 fleet in\n
-      type: 'LOO'  runs all combinations leaving only 1 fleet out.
+  \item{\dots}{\itemize{
+      \item type: 'full' runs all combinations of leaving fleets in and out (may take a long time to run)
+      \item type: 'LOI'  runs all combinations keeping only 1 fleet in
+      \item type: 'LOO'  runs all combinations leaving only 1 fleet out.}
 }
 }
 \value{
