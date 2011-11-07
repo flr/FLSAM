@@ -1,36 +1,46 @@
 \name{lr.test}
 \alias{lr.test}
-\title{Likelihood Ratio Test for FLSAM
+Log ratio test for FLSAM object
+\title{
+Perform a log-ratio test for all models specified
 }
 \description{
-Likelihood ratio test to compare the fit of two nested FLSAM assessment models
+Compare model fit performance among the models specified based on log-likelihood ratio's.
+Different in log-likelihood is calculated and degrees of freedom are given. P values
+are specified assuming a chi-quared distribution.
 }
 \usage{
-lr.test(...)
+lr.test(FLSAM,...)
+lr.test(FLSAMs)
 }
 \arguments{
+  \item{FLSAM}{ FLSAM object}
+  \item{FLSAMs}{FLSAMs object}
   \item{\dots}{
-\code{\link{FLSAM}} assessment objects. Currently limited to a maximum of two objects
-}
-}
-\details{
-A likelihood ratio test is an appropriate way to compare two nested models. 
+    In combination with FLSAM object: additional objects of the same type (need at least 1)
+  }
 }
 \value{
-A table detailing the results of the likelihood ratio test
+A summary table of the test characteristics is returned}
+\references{
+%% ~put references to the literature/web site here ~
 }
-\section{Warning! }{
-lr.test() assumes that the user knowns what they are doing! A likelihood ratio test is only appropriate when the models in question can be considered as "nested" ie one model can be expressed as a subset of the other model. The lr.test() does not (and cannot) check for this nesting. In situations where the models to be compared cannot be considered to be nested, the use of the Akaike Information Criterion (\code{\link[FLSAM]{AIC}}) is more appropriate.
-} 
+\warnings{Log-likelihood tests can only be used for nested models (i.e. model parameterisation is different)
+and won't work for different input data or different model types.
+}
 \author{
-Based on code for SAM by Anders Nielsen. Implemented here by Mark R. Payne
+Code by Anders Nielsen, implemented by Niels T. Hintzen and Mark R. Payne
 }
-
 \seealso{
-\code{\link[FLSAM]{"AIC"}}
+\code{\link{looi}}
 }
 \examples{
-#None
+#- Load the data
+data(NSH.sam)
+
+#- Run lr ratio test on FLSAMs object
+lr.ratio(NSH.sams)
+
+#- Run lr ratio test on FLSAM objects
+lr.ratio(NSH.sam,NSH.sam,NSH.sam)
 }
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

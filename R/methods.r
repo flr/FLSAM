@@ -135,7 +135,7 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control"),
       #- Run the assessment
       FLSAMs[[iRun]]        <- FLSAM(stck,tun,ctrl)
     }
-  return(list(overview,FLSAMs))}
+  return(FLSAMs)}
 )
 
 catchabilities <- function(object) {
@@ -189,15 +189,119 @@ power.law.exps <- function(object) {
        return(res)
 }
 
-lr.test <- function(...) {
-  mdls <- list(...)
-  dat.l <- lapply(mdls,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)}) 
-  tbl <- do.call(rbind,dat.l)
-  colnames(tbl)<-c('Neg. log likel','N. pars')
-  if(tbl[1,2]!=tbl[2,2]){
-    if(tbl[1,2]<tbl[2,2]){tbl<-tbl[2:1,]}
-    tbl<-cbind(tbl,'Degrees of freedom'=c(NA,tbl[1,2]-tbl[2,2]))
-    tbl<-cbind(tbl,'P value'=c(NA,1-pchisq(2*(tbl[2,1]-tbl[1,1]),tbl[2,3])))
+
+#- Create generic function for 'lr.test'
+setGeneric('lr.test', function(...) standardGeneric('lr.test'))
+
+setMethod("lr.test",signature("FLSAMs"),
+  function(mdls,type="sequential"){
+    sams    <- mdls
+    
+    #- Get negative log likelihood and number of parameter values
+    dat.l <- lapply(mdls,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
+
+    #- Give each model a name
+    modNames <- unlist(lapply(sams,name))
+    if(any(nchar(modNames)==0) | any(length(nchar(modNames))==0))    modNames[which(nchar(modNames)==0 | length(nchar(modNames))==0)] <- paste("FLSAM",which(nchar(modNames)==0 | length(nchar(modNames))==0))
+    if(any(duplicated(modNames)==T)) modNames[which(duplicated(modNames)==T)] <- paste(modNames[which(duplicated(modNames)==T)],which(duplicated(modNames)==T))
+    modNames <- paste(1:length(modNames),modNames)
+
+    tbl <- matrix(NA,nrow=length(sams),ncol=6,dimnames=list(models=modNames,statistics=c("Comparison","Neg. log likel","# Parameters","Likel difference","Degrees of freedom","P value")))
+    #- Perform Log-ratio test in sequential mode
+    if(type == "sequential"){
+      tbl[2:length(modNames),"Comparison"]      <- paste(2:length(modNames),"vs.",1:(length(modNames)-1))
+      tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
+      for(i in 2:length(modNames)){
+        if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[i-1,"# Parameters"])){
+          tbl[i,  "Likel difference"]     <- as.numeric(tbl[i-1,"Neg. log likel"])            - as.numeric(tbl[i,  "Neg. log likel"])
+          tbl[i,  "Degrees of freedom"]   <- as.numeric(tbl[i-1,"# Parameters"])              - as.numeric(tbl[i,  "# Parameters"])
+          tbl[i,  "P value"]              <- 1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[i-1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"]))
+        }
+        if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[i-1,"# Parameters"])){
+          tbl[i-1,"Comparison"]           <- paste(i-1,"vs.",i); tbl[i,"Comparison"] <- NA
+          tbl[i-1,"Likel difference"]     <- as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[i-1,"Neg. log likel"])
+          tbl[i-1,"Degrees of freedom"]   <- as.numeric(tbl[i,"# Parameters"])                - as.numeric(tbl[i-1,  "# Parameters"])
+          tbl[i-1,"P value"]              <- 1-pchisq(2*(as.numeric(tbl[i-1,"Neg. log likel"])- as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[i-1,"Degrees of freedom"]))
+        }
+      }
+    }
+
+    #- Perform Log-ratio test between each models and the baseline (first) model
+    if(type == "first"){
+      tbl[2:length(modNames),"Comparison"]      <- paste(2:length(modNames),"vs.",1)
+      tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
+      for(i in 2:length(modNames)){
+        if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[1,"# Parameters"])){
+          tbl[i,  "Likel difference"]     <- as.numeric(tbl[1,"Neg. log likel"])              - as.numeric(tbl[i,  "Neg. log likel"])
+          tbl[i,  "Degrees of freedom"]   <- as.numeric(tbl[1,"# Parameters"])                - as.numeric(tbl[i,  "# Parameters"])
+          tbl[i,  "P value"]              <- 1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"]))
+        }
+        if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[1,"# Parameters"])){
+          tbl[1,"Likel difference"]       <- as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[1,"Neg. log likel"])
+          tbl[1,"Degrees of freedom"]     <- as.numeric(tbl[i,"# Parameters"])                - as.numeric(tbl[1,  "# Parameters"])
+          tbl[1,"P value"]                <- 1-pchisq(2*(as.numeric(tbl[1,"Neg. log likel"])  - as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[1,"Degrees of freedom"]))
+        }
+      }
+    }
+    return(as.table(tbl))
   }
-  return(tbl)
-}
+)
+    
+    
+    
+setMethod("lr.test",signature("FLSAM"),
+  function(...,type="sequential"){
+    mdls    <- list(...)
+    sams    <- new("FLSAMs")
+    for(i in 1:length(mdls)) sams[[i]] <- mdls[[i]]
+
+    #- Get negative log likelihood and number of parameter values
+    dat.l <- lapply(mdls,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
+
+    #- Give each model a name
+    modNames <- unlist(lapply(sams,name))
+    if(any(nchar(modNames)==0) | any(length(nchar(modNames))==0))    modNames[which(nchar(modNames)==0 | length(nchar(modNames))==0)] <- paste("FLSAM",which(nchar(modNames)==0 | length(nchar(modNames))==0))
+    if(any(duplicated(modNames)==T)) modNames[which(duplicated(modNames)==T)] <- paste(modNames[which(duplicated(modNames)==T)],which(duplicated(modNames)==T))
+    modNames <- paste(1:length(modNames),modNames)
+
+    tbl <- matrix(NA,nrow=length(sams),ncol=6,dimnames=list(models=modNames,statistics=c("Comparison","Neg. log likel","# Parameters","Likel difference","Degrees of freedom","P value")))
+    #- Perform Log-ratio test in sequential mode
+    if(type == "sequential"){
+      tbl[2:length(modNames),"Comparison"]      <- paste(2:length(modNames),"vs.",1:(length(modNames)-1))
+      tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
+      for(i in 2:length(modNames)){
+        if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[i-1,"# Parameters"])){
+          tbl[i,  "Likel difference"]     <- as.numeric(tbl[i-1,"Neg. log likel"])            - as.numeric(tbl[i,  "Neg. log likel"])
+          tbl[i,  "Degrees of freedom"]   <- as.numeric(tbl[i-1,"# Parameters"])              - as.numeric(tbl[i,  "# Parameters"])
+          tbl[i,  "P value"]              <- 1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[i-1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"]))
+        }
+        if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[i-1,"# Parameters"])){
+          tbl[i-1,"Comparison"]           <- paste(i-1,"vs.",i); tbl[i,"Comparison"] <- NA
+          tbl[i-1,"Likel difference"]     <- as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[i-1,"Neg. log likel"])
+          tbl[i-1,"Degrees of freedom"]   <- as.numeric(tbl[i,"# Parameters"])                - as.numeric(tbl[i-1,  "# Parameters"])
+          tbl[i-1,"P value"]              <- 1-pchisq(2*(as.numeric(tbl[i-1,"Neg. log likel"])- as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[i-1,"Degrees of freedom"]))
+        }
+      }
+    }
+
+    #- Perform Log-ratio test between each models and the baseline (first) model
+    if(type == "first"){
+      tbl[2:length(modNames),"Comparison"]      <- paste(2:length(modNames),"vs.",1)
+      tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
+      for(i in 2:length(modNames)){
+        if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[1,"# Parameters"])){
+          tbl[i,  "Likel difference"]     <- as.numeric(tbl[1,"Neg. log likel"])              - as.numeric(tbl[i,  "Neg. log likel"])
+          tbl[i,  "Degrees of freedom"]   <- as.numeric(tbl[1,"# Parameters"])                - as.numeric(tbl[i,  "# Parameters"])
+          tbl[i,  "P value"]              <- 1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"]))
+        }
+        if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[1,"# Parameters"])){
+          tbl[1,"Likel difference"]       <- as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[1,"Neg. log likel"])
+          tbl[1,"Degrees of freedom"]     <- as.numeric(tbl[i,"# Parameters"])                - as.numeric(tbl[1,  "# Parameters"])
+          tbl[1,"P value"]                <- 1-pchisq(2*(as.numeric(tbl[1,"Neg. log likel"])  - as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[1,"Degrees of freedom"]))
+        }
+      }
+    }
+    return(as.table(tbl))
+  }
+)
+
