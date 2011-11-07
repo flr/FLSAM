@@ -3,6 +3,7 @@
 \alias{NSH.tun}
 \alias{NSH.ctrl}
 \alias{NSH.sam}
+\alias{IBTS.sams}
 \docType{data}
 \title{
 North Sea Autumn Spawning Herring Stock Assessment
@@ -11,9 +12,10 @@ North Sea Autumn Spawning Herring Stock Assessment
 A set of FLR objects used to perform the 2011 North Sea Autumn Spawning Herring Stock Assessment 
 }
 \usage{data(NSH)
-data(NSH.sam)}
+data(NSH.sam)
+data(IBTS.sams)}
 \format{
-The data is split into two separate classes. The first of these, returned by \code{data(NSH)} contains objects relating to the North Sea herring stock
+The data is split into three separate groups. The first of these, returned by \code{data(NSH)} contains objects relating to the North Sea herring stock
 \itemize{
 \item NSH - \code{\link[FLCore]{FLStock}} object for the North Sea herring stock, containing data relating to the stock e.g. catch numbers at age
 \item NSH.tun - \code{\link[FLCore]{FLIndices}} object containing the results of surveys on the North Sea herring stock. The four surveys are 
@@ -28,6 +30,8 @@ In addition the results of an assessment of this stock performed using FLSAM are
 \item NSH.sam - An \code{\link{FLSAM}} object containg the results of the assessment
 \item NSH.ctrl - An \code{\link{FLSAM.control}} object containg the configuration used to perform the assessment
 }
+The third group is an example of an \code{\link{FLSAMs}} object and is called \code{IBTS.sams}. It contains five \code{\link{FLSAM}} objects resulting from a scan across the IBTS indices, successively tying the catchabilities and observation variances for the oldest ages together i.e. starting with all ages free, then binding age 4+, then 3+, then 2+ etc...
+
 }
 
 \details{
@@ -44,6 +48,10 @@ plot(NSH.sam)
 #Update NSH FLStock object
 NSH <- NSH + NSH.sam
 plot(NSH)
+#Example of FLSAMs object
+data(IBTS.sams)
+#Likelihood ratio test to choose best combination
+lr.test(IBTS.sams)
 
 }
 \keyword{datasets}
