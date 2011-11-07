@@ -129,9 +129,11 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   cat("#varLogFsta\n 0.5\n",file=init.file,append=TRUE)
   cat("#varLogN\n0.5 \n",file=init.file,append=TRUE)
   cat("#varLogObs \n 0.5\n",file=init.file,append=TRUE)
-  cat("#logFpar \n, 0.3 \n",file=init.file,append=TRUE)
-  cat("#rec_loga \n, 1 \n",file=init.file,append=TRUE)
-  cat("#rec_logb \n, -12 \n",file=init.file,append=TRUE)
+  cat("#logFpar \n 0.3 \n",file=init.file,append=TRUE)
+  cat("#rec_loga \n 1 \n",file=init.file,append=TRUE)
+  cat("#rec_logb \n -12 \n",file=init.file,append=TRUE)
+  cat("\n\n# Checksums to ensure correct reading of input data \n",90210, 90210,"\n", file=init.file, append=TRUE)
+
 
   #---------------------------------------------------
   # Create reduced run file
@@ -145,8 +147,9 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
       "#    -1: all data for that fleet is excluded\n",
       "#     n: n is a positive integer the corresponding fleet's data is reduced\n",
       "#        by n years starting from the most recent year.\n",
-      "0 0 0 0 0\n", file=red.file,append=TRUE)
-
+      rep(0,length(ctrl@fleets)),"\n", 
+      "\n\n# Checksums to ensure correct reading of input data \n",3142, 3142,"\n",
+      file=red.file,append=TRUE) 
   return(invisible(NULL))
 }
 

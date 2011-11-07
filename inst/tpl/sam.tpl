@@ -1,8 +1,17 @@
+// 
+//  ----------------------------------------------------------------------------
+//  "THE BEER-WARE LICENSE" (invented by Poul-Henning Kamp):
+//  Anders Nielsen <an@aqua.dtu.dk> wrote this file. As long as you retain this 
+//  notice you can do whatever you want with this stuff. If we meet some day, 
+//  and you think this stuff is worth it, you can buy me a beer in return. 
+//  ----------------------------------------------------------------------------
+// 
+
 //----------------------------------------------------------------
 //SAM State Space Assessment Model
 //--------------------------------
-//$Rev: 3 $
-//$LastChangedDate: 2011-10-26 18:06:44 +0200 (Wed, 26 Oct 2011) $
+//$Rev: 6 $
+//$LastChangedDate: 2011-11-07 01:41:17 +0100 (Mon, 07 Nov 2011) $
 //----------------------------------------------------------------
 
 GLOBALS_SECTION 
@@ -71,8 +80,21 @@ GLOBALS_SECTION
     return ret;
   }
 
+  //Check that data has been read correctly
+  bool checksums_ok(ivector checksum) {
+    if(checksum(1)!=checksum(2)) {
+      cout << endl << "CHECKSUM FAILURE!!!" << endl;
+      cout << "Expected amount of input does not agree with amount read." << endl;
+      cout << "Please check your data and configuration files." << endl;
+      cout << "Checksum values : \t " <<checksum << endl;
+      exit(1);
+    }
+  return 1;
+  };
+
 DATA_SECTION
-  !! cout<<"DATASECTION"; cout.flush(); 
+  !! cout<<"DATASECTION " << endl; cout.flush(); 
+  !! cout << "sam.dat...";
   !! time(&StartTime);  
   init_int noFleets
   !! TRACE(noFleets);
@@ -127,7 +149,11 @@ DATA_SECTION
   !! TRACE(Fprop);
   init_matrix Mprop(1,noYears,minAgeObs,maxAgeObs)
   !! TRACE(Mprop);
+  init_ivector dat_checksums(1,2)
+  !! if(checksums_ok(dat_checksums)) cout << "OK. " ;
+
   !! ad_comm::change_datafile_name("model.cfg");
+  !! cout << "model.cfg...";
   init_int minAge  
   !! TRACE(minAge);
   init_int maxAge 
@@ -187,17 +213,26 @@ DATA_SECTION
   !! TRACE(stateDim); 
   init_ivector fbarRange(1,2)  
   !! TRACE(fbarRange); 
+  init_ivector cfg_checksums(1,2)
+  !! if(checksums_ok(cfg_checksums)) cout << "OK. " ;
   
   !! ad_comm::change_datafile_name("model.init");
+  !! cout << "model.init...";
   init_number varLogFstaInit;
   init_number varLogNInit;
   init_number varLogObsInit;
   init_number logFparInit;
   init_number rec_logaInit;
   init_number rec_logbInit;
+  init_ivector ini_checksums(1,2)
+  !! if(checksums_ok(ini_checksums)) cout << "OK. " ;
 
   !! ad_comm::change_datafile_name("reduced.cfg");
+  !! cout << "reduced.cfg...";
   init_ivector retro(1,noFleets);
+  init_ivector red_checksums(1,2)
+  !! if(checksums_ok(red_checksums)) cout << "OK. " ;
+
   int reducedRun;
   !! if(sum(square(retro))>0){reducedRun=1;}else{reducedRun=0;} 
 
@@ -676,14 +711,15 @@ REPORT_SECTION
   report<<stateDim<<endl;
   report<<years<<endl; 
 
-  ofstream resout("ssass.res");
+  ofstream resout("sam.res");
   resout<<residuals<<endl;
 
 
 TOP_OF_MAIN_SECTION
   cout << "SAM State-space Assessment Model" << endl;
+  cout << "More info at: http://www.stockassessment.org" << endl;
   cout << "--------------------------------" << endl;
-  cout << "$Rev: 3 $" << endl << "$LastChangedDate: 2011-10-26 18:06:44 +0200 (Wed, 26 Oct 2011) $"  <<endl << endl;
+  cout << "$Rev: 6 $" << endl << "$LastChangedDate: 2011-11-07 01:41:17 +0100 (Mon, 07 Nov 2011) $"  <<endl << endl;
 
   arrmblsize=2000000;
   gradient_structure::set_GRADSTACK_BUFFER_SIZE(150000);

@@ -57,7 +57,7 @@ Mark R. Payne and Niels Hintzen
 \section{Warning }{It is important to realise that the default configuration returned by FLSAM.control is almost certaintly not the best configuration of your model - it is merely a first guess setup for your convenience. Similarly, there is no guarantee that this model will lead to a converged solution. It is the users responsibility to find the most appropriate ("best" configuration of the model.} 
 
 \seealso{
-FLSAM
+\code{\link{FLSAM}}
 }
 \examples{
 #Load data

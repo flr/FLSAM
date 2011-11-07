@@ -1,6 +1,18 @@
 FLSAM ChangeLog
 
 <Date in future> v 0.32
+ * Autoconfiguration in FLSAM.control() now has the option of taking a
+   reasonable first guess at a configuration, or leaving configuration
+   completely blank (see "default" argument). (Issue 11)
+ * power.law.exps() accessor function added
+ * Validity checks to ensure that the FLR data is configured 
+   correctly (Issue 7)
+ * Addition of FLSAMs plural class (Issue 14)
+ * Addition of cheat sheet to the wiki (Issue 15)
+ * Addition of Leave-one-out, leave-one-in functionality (Issue 16) 
+ * Help files all round! (Issue 13) 
+ * Added checks internally to sam.tpl to ensure correct reading of 
+   data (Issue 22)
  * Incorporated new version of SUSAM diagnostics, with a smoother on the
    Tukey-Anscombe plot
 
