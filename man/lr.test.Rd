@@ -22,9 +22,6 @@ lr.test(FLSAMs)
 }
 \value{
 A summary table of the test characteristics is returned}
-\references{
-%% ~put references to the literature/web site here ~
-}
 \warnings{Log-likelihood tests can only be used for nested models (i.e. model parameterisation is different)
 and won't work for different input data or different model types.
 }
