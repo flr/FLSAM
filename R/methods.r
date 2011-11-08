@@ -111,10 +111,10 @@ setMethod("AIC",signature(object="FLSAMs"),
 )
 
 #- Create generic function for 'looi'
-setGeneric('looi', function(e1,e2,e3, ...) standardGeneric('looi'))
+setGeneric('looi', function(e1,e2,e3,type="full") standardGeneric('looi'))
 
-setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control"),
-  function(e1,e2,e3,type="full",...){
+setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="character"),
+  function(e1,e2,e3,type="full"){
   
     #- Create run scheme with all possible combinations
     overview          <- matrix(NA,nrow=2^length(e2),ncol=length(e2),dimnames=list(run=1:2^length(e2),fleet=names(e2)))
@@ -123,8 +123,8 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control"),
     overview          <- overview[-nrow(overview),] #Remove 'no-fleet-included' option
     rownames(overview)<- unlist(lapply(apply(overview,1,function(x){names(which(x==1))}),paste,collapse="+"))
     
-    if(type=="LOO") overview <- overview[c(1,which(rowSums(overview) == (length(e2)-1))),]
-    if(type=="LOI") overview <- overview[c(1,which(rowSums(overview) == 1)),]
+    if(type=="LOO"){ overview <- overview[c(1,which(rowSums(overview) == (length(e2)-1))),];  print("Running LOO analyses")}
+    if(type=="LOI"){ overview <- overview[c(1,which(rowSums(overview) == 1)),];               print("Running LOI analyses")}
     
     #- Create object to save outcomes
     result <- new("FLSAMs")
@@ -197,14 +197,14 @@ power.law.exps <- function(object) {
 
 
 #- Create generic function for 'lr.test'
-setGeneric('lr.test', function(...) standardGeneric('lr.test'))
+setGeneric('lr.test', function(object,...,type="sequential") standardGeneric('lr.test'))
 
 setMethod("lr.test",signature("FLSAMs"),
-  function(mdls,type="sequential"){
-    sams    <- mdls
+  function(object,...,type="sequential"){
+    sams    <- object
     
     #- Get negative log likelihood and number of parameter values
-    dat.l <- lapply(mdls,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
+    dat.l <- lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
 
     #- Give each model a name
     modNames <- unlist(lapply(sams,name))
@@ -219,16 +219,15 @@ setMethod("lr.test",signature("FLSAMs"),
       tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
       for(i in 2:length(modNames)){
         if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[i-1,"# Parameters"])){
-          tbl[i,  "Likel difference"]     <- round(as.numeric(tbl[i-1,"Neg. log likel"])            - as.numeric(tbl[i,  "Neg. log likel"]),2)
-          tbl[i,  "Degrees of freedom"]   <- as.numeric(tbl[i,"# Parameters"])              - as.numeric(tbl[i-1,  "# Parameters"])
-          tbl[i,  "P value"]              <- 1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[i-1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"]))
+          tbl[i,  "Likel difference"]           <- round(as.numeric(tbl[i-1,"Neg. log likel"])            - as.numeric(tbl[i,  "Neg. log likel"]),2)
+          tbl[i,  "Degrees of freedom"]         <- as.numeric(      tbl[i,"# Parameters"])                - as.numeric(tbl[i-1,"# Parameters"])
+          tbl[i,  "P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[i-1,"Neg. log likel"])- as.numeric(tbl[i,  "Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"])),4)
         }
         if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[i-1,"# Parameters"])){
-          tbl[i-1,"Comparison"]           <- paste(i-1,"vs.",i); tbl[i,"Comparison"] <- NA
-
-          tbl[i-1,"Likel difference"]     <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[i-1,"Neg. log likel"]),2)
-          tbl[i-1,"Degrees of freedom"]   <- as.numeric(tbl[i-1,"# Parameters"])                - as.numeric(tbl[i,  "# Parameters"])
-          tbl[i-1,"P value"]              <- 1-pchisq(2*(as.numeric(tbl[i-1,"Neg. log likel"])- as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[i-1,"Degrees of freedom"]))
+          tbl[i-1,"Comparison"]                 <- paste(i-1,"vs.",i); tbl[i,"Comparison"] <- NA
+          tbl[i-1,"Likel difference"]           <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[i-1,"Neg. log likel"]),2)
+          tbl[i-1,"Degrees of freedom"]         <- as.numeric(      tbl[i-1,"# Parameters"])              - as.numeric(tbl[i,  "# Parameters"])
+          tbl[i-1,"P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[i-1,"Neg. log likel"])),as.numeric(tbl[i-1,"Degrees of freedom"])),4)
         }
       }
     }
@@ -239,14 +238,14 @@ setMethod("lr.test",signature("FLSAMs"),
       tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
       for(i in 2:length(modNames)){
         if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[1,"# Parameters"])){
-          tbl[i,  "Likel difference"]     <- round(as.numeric(tbl[1,"Neg. log likel"])              - as.numeric(tbl[i,  "Neg. log likel"]),2)
-          tbl[i,  "Degrees of freedom"]   <- as.numeric(tbl[i,"# Parameters"])                - as.numeric(tbl[1,  "# Parameters"])
-          tbl[i,  "P value"]              <- 1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"]))
+          tbl[i,  "Likel difference"]           <- round(as.numeric(tbl[1,"Neg. log likel"])              - as.numeric(tbl[i,"Neg. log likel"]),2)
+          tbl[i,  "Degrees of freedom"]         <- as.numeric(      tbl[i,"# Parameters"])                - as.numeric(tbl[1,"# Parameters"])
+          tbl[i,  "P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[1,"Neg. log likel"])  - as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"])),4)
         }
         if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[1,"# Parameters"])){
-          tbl[1,"Likel difference"]       <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[1,"Neg. log likel"]),2)
-          tbl[1,"Degrees of freedom"]     <- as.numeric(tbl[1,"# Parameters"])                - as.numeric(tbl[i,  "# Parameters"])
-          tbl[1,"P value"]                <- 1-pchisq(2*(as.numeric(tbl[1,"Neg. log likel"])  - as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[1,"Degrees of freedom"]))
+          tbl[1,"Likel difference"]             <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[1,"Neg. log likel"]),2)
+          tbl[1,"Degrees of freedom"]           <- as.numeric(      tbl[1,"# Parameters"])                - as.numeric(tbl[i,"# Parameters"])
+          tbl[1,"P value"]                      <- round(1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[1,"Neg. log likel"])),as.numeric(tbl[1,"Degrees of freedom"])),4)
         }
       }
     }
@@ -257,13 +256,13 @@ setMethod("lr.test",signature("FLSAMs"),
     
     
 setMethod("lr.test",signature("FLSAM"),
-  function(...,type="sequential"){
-    mdls    <- list(...)
+  function(object,...,type="sequential"){
+    mdls    <- list(object,...)
     sams    <- new("FLSAMs")
     for(i in 1:length(mdls)) sams[[i]] <- mdls[[i]]
 
     #- Get negative log likelihood and number of parameter values
-    dat.l <- lapply(mdls,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
+    dat.l <- lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
 
     #- Give each model a name
     modNames <- unlist(lapply(sams,name))
@@ -278,15 +277,15 @@ setMethod("lr.test",signature("FLSAM"),
       tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
       for(i in 2:length(modNames)){
         if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[i-1,"# Parameters"])){
-          tbl[i,  "Likel difference"]     <- round(as.numeric(tbl[i-1,"Neg. log likel"])            - as.numeric(tbl[i,  "Neg. log likel"]),2)
-          tbl[i,  "Degrees of freedom"]   <- as.numeric(tbl[i,"# Parameters"])              - as.numeric(tbl[i-1,  "# Parameters"])
-          tbl[i,  "P value"]              <- 1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[i-1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"]))
+          tbl[i,  "Likel difference"]           <- round(as.numeric(tbl[i-1,"Neg. log likel"])            - as.numeric(tbl[i,  "Neg. log likel"]),2)
+          tbl[i,  "Degrees of freedom"]         <- as.numeric(      tbl[i,"# Parameters"])                - as.numeric(tbl[i-1,"# Parameters"])
+          tbl[i,  "P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[i-1,"Neg. log likel"])- as.numeric(tbl[i,  "Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"])),4)
         }
         if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[i-1,"# Parameters"])){
-          tbl[i-1,"Comparison"]           <- paste(i-1,"vs.",i); tbl[i,"Comparison"] <- NA
-          tbl[i-1,"Likel difference"]     <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[i-1,"Neg. log likel"]),2)
-          tbl[i-1,"Degrees of freedom"]   <- as.numeric(tbl[i-1,"# Parameters"])                - as.numeric(tbl[i,  "# Parameters"])
-          tbl[i-1,"P value"]              <- 1-pchisq(2*(as.numeric(tbl[i-1,"Neg. log likel"])- as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[i-1,"Degrees of freedom"]))
+          tbl[i-1,"Comparison"]                 <- paste(i-1,"vs.",i); tbl[i,"Comparison"] <- NA
+          tbl[i-1,"Likel difference"]           <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[i-1,"Neg. log likel"]),2)
+          tbl[i-1,"Degrees of freedom"]         <- as.numeric(      tbl[i-1,"# Parameters"])              - as.numeric(tbl[i,  "# Parameters"])
+          tbl[i-1,"P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[i-1,"Neg. log likel"])),as.numeric(tbl[i-1,"Degrees of freedom"])),4)
         }
       }
     }
@@ -297,14 +296,14 @@ setMethod("lr.test",signature("FLSAM"),
       tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
       for(i in 2:length(modNames)){
         if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[1,"# Parameters"])){
-          tbl[i,  "Likel difference"]     <- round(as.numeric(tbl[1,"Neg. log likel"])              - as.numeric(tbl[i,  "Neg. log likel"]),2)
-          tbl[i,  "Degrees of freedom"]   <- as.numeric(tbl[i,"# Parameters"])                - as.numeric(tbl[1,  "# Parameters"])
-          tbl[i,  "P value"]              <- 1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"]))
+          tbl[i,  "Likel difference"]           <- round(as.numeric(tbl[1,"Neg. log likel"])              - as.numeric(tbl[i,  "Neg. log likel"]),2)
+          tbl[i,  "Degrees of freedom"]         <- as.numeric(tbl[i,"# Parameters"])                      - as.numeric(tbl[1,  "# Parameters"])
+          tbl[i,  "P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[1,"Neg. log likel"])  - as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"])),4)
         }
         if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[1,"# Parameters"])){
-          tbl[1,"Likel difference"]       <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[1,"Neg. log likel"]),2)
-          tbl[1,"Degrees of freedom"]     <- as.numeric(tbl[1,"# Parameters"])                - as.numeric(tbl[i,  "# Parameters"])
-          tbl[1,"P value"]                <- 1-pchisq(2*(as.numeric(tbl[1,"Neg. log likel"])  - as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[1,"Degrees of freedom"]))
+          tbl[1,"Likel difference"]             <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[1,"Neg. log likel"]),2)
+          tbl[1,"Degrees of freedom"]           <- as.numeric(tbl[1,"# Parameters"])                      - as.numeric(tbl[i,  "# Parameters"])
+          tbl[1,"P value"]                      <- round(1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[1,"Neg. log likel"])),as.numeric(tbl[1,"Degrees of freedom"])),4)
         }
       }
     }
