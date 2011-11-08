@@ -54,6 +54,22 @@ setMethod("+", signature(e1="FLSAM", e2="FLStock"),
     }
 )   # }}}
 
+setMethod("+", signature(e1="FLStock", e2="FLSAMs"),
+  function(e1, e2) {
+    if(validObject(e1) & validObject(e2))
+      return(FLStocks(lapply(e2,merge,x=e1)))
+    else
+      stop("Input objects are not valid: validObject == FALSE")
+    }
+)
+setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
+	function(e1, e2) {
+    if(validObject(e1) & validObject(e2))
+      return(FLStocks(lapply(e1,merge,x=e2)))
+    else
+      stop("Input objects are not valid: validObject == FALSE")
+    }
+)   # }}}
 
 
 #General helper function to extract a given parameter from an FLSAM object
