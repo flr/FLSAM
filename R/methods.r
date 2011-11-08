@@ -91,11 +91,23 @@ setMethod("ssb", signature(object="FLSAM"),
         }
 )       # }}}
 
+setMethod("ssb", signature(object="FLSAMs"),
+        function(object, ...) {
+          return(FLQuants(lapply(object,ssb)))
+        }
+)       # }}}
+
 setMethod("fbar", signature(object="FLSAM"),
         function(object, ...) {
           flq <- .params2flq(object,"logfbar")
           flq <- exp(flq)
           return(flq)
+        }
+)       # }}}
+
+setMethod("fbar", signature(object="FLSAMs"),
+        function(object, ...) {
+          return(FLQuants(lapply(object,fbar)))
         }
 )       # }}}
 
@@ -107,10 +119,22 @@ setMethod("tsb", signature(object="FLSAM"),
         }
 )       # }}}
 
+setMethod("tsb", signature(object="FLSAMs"),
+        function(object, ...) {
+          return(FLQuants(lapply(object,tsb)))
+        }
+)       # }}}
+
 setMethod("rec", signature(object="FLSAM"),
         function(object, ...) {
           flq <- object@stock.n[1,]
 	  return(flq)
+        }
+)       # }}}
+
+setMethod("rec", signature(object="FLSAMs"),
+        function(object, ...) {
+          return(FLQuants(lapply(object,rec)))
         }
 )       # }}}
 
