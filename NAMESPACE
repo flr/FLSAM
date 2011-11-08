@@ -1,0 +1,9 @@
+import("FLCore")
+exportClasses(
+    "FLSAM",
+    "FLSAMs",
+    "FLSAM.control")
+export(
+    "FLSAM",
+    "FLSAM.control")
+exportPattern("^[^\\.]")

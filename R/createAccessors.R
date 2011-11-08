@@ -1,4 +1,4 @@
-createFLAccesors <- function(class, exclude=character(1), include=missing) {
+FLSAMcreateFLAccesors <- function(class, exclude=character(1), include=missing) {
   
   object <- class
 
@@ -49,4 +49,6 @@ createFLAccesors <- function(class, exclude=character(1), include=missing) {
 	}
 	return(defined)}
 
-invisible(createFLAccesors("FLSAM", exclude=c("range","name","desc")))
+invisible(FLSAMcreateFLAccesors("FLSAM", exclude=c("range","name","desc")))
+
+rm(FLSAMcreateFLAccesors)
