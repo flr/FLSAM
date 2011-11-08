@@ -9,14 +9,12 @@ Different in log-likelihood is calculated and degrees of freedom are given. P va
 are specified assuming a chi-quared distribution.
 }
 \usage{
-lr.test(FLSAM,...)
-lr.test(FLSAMs)
+lr.test(object,...)
 }
 \arguments{
-  \item{FLSAM}{ FLSAM object}
-  \item{FLSAMs}{FLSAMs object}
+  \item{object}{An \code{\link{FLSAM}} or \code{\link{FLSAMs}} object}
   \item{\dots}{
-    In combination with FLSAM object: additional objects of the same type (need at least 1)
+    In combination with an \code{\link{FLSAM}} object: additional objects of the same type (need at least 1)
   }
 }
 \value{
@@ -37,6 +35,6 @@ data(IBTS.sams)
 #- Run lr ratio test on example FLSAMs object
 lr.test(IBTS.sams)
 
-#- Run lr ratio test on FLSAM objects
-lr.test(IBTS.sams[[1]],IBTS.sams[[2]])
+#- Run lr ratio test on individual FLSAM objects
+lr.test(IBTS.sams[[1]],IBTS.sams[[2]],IBTS.sams[[3]])
 }

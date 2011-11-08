@@ -7,12 +7,9 @@ Returns Akaike's information criterion for a set of FLSAM objects
 }
 \usage{
 AIC(object, ..., k = 2)
-AIC(objects, ..., k = 2)
 }
 \arguments{
-  \item{object}{An \code{\link{FLSAM}} object
-}
-  \item{object}{An \code{\link{FLSAMs}} object
+  \item{object}{An \code{\link{FLSAM}} or \code{\link{FLSAMs}} object
 }
   \item{\dots}{Further \code{\link{FLSAM}}objects 
 }

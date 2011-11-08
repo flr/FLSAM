@@ -11,7 +11,7 @@ the assessment run. It is also possible to run intermediate states where 2 or mo
 fleets are excluded or included from the assessment
 }
 \usage{
-looi(stck, tun, ctrl, type)
+looi(stck, tun, ctrl, type="full")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,15 +25,15 @@ looi(stck, tun, ctrl, type)
   \item{ctrl}{
       FLSAM.control object that specifies the assessment settings
 }
-  \item{\dots}{\itemize{
+  \item{type}{Selects the type of LOOI run to perform. Options are
+      \itemize{
       \item type: 'full' runs all combinations of leaving fleets in and out (may take a long time to run)
       \item type: 'LOI'  runs all combinations keeping only 1 fleet in
       \item type: 'LOO'  runs all combinations leaving only 1 fleet out.}
-}
+Default value is 'full'.}
 }
 \value{
-An FLSAMs object is returned where in the names(FLSAMs) returnes the combination of fleets used
-within the assessment}
+An FLSAMs object is returned where in the names(FLSAMs) returnes the combination of fleets used within the assessment}
 \references{
 }
 \author{
@@ -44,14 +44,15 @@ Niels T. Hintzen and Mark R. Payne
 }
 \examples{
 #- Load data
-data(NSH.sams)
+data(NSH)
+data(NSH.sam)
 
 #- Run a LOI
-looi(NSH,NSH.tun,NSH.ctrl,type="LOI")
+run1 <- looi(NSH,NSH.tun,NSH.ctrl,type="LOI")
 
 #- Run a LOO
-looi(NSH,NSH.tun,NSH.ctrl,type="LOO")
+run2 <- looi(NSH,NSH.tun,NSH.ctrl,type="LOO")
 
 #- Run a full evaluation of all combinations
-looi(NSH,NSH.tun,NSH.ctr)
+run3 <- looi(NSH,NSH.tun,NSH.ctr)
 }
