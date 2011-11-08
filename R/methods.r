@@ -206,6 +206,10 @@ setMethod("lr.test",signature("FLSAMs"),
     #- Get negative log likelihood and number of parameter values
     dat.l <- lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
 
+    #- Check if models are ordered by increasing or decreasing complexity
+    if(!all(diff(do.call(rbind,lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)}))$npar)>0) |
+       !all(diff(do.call(rbind,lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)}))$npar)>0)) stop("Models not ordered by increasing or decreasing complexity")
+
     #- Give each model a name
     modNames <- unlist(lapply(sams,name))
     if(any(nchar(modNames)==0) | any(length(nchar(modNames))==0))    modNames[which(nchar(modNames)==0 | length(nchar(modNames))==0)] <- paste("FLSAM",which(nchar(modNames)==0 | length(nchar(modNames))==0))
@@ -263,6 +267,10 @@ setMethod("lr.test",signature("FLSAM"),
 
     #- Get negative log likelihood and number of parameter values
     dat.l <- lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
+
+    #- Check if models are ordered by increasing or decreasing complexity
+    if(!all(diff(do.call(rbind,lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)}))$npar)>0) |
+       !all(diff(do.call(rbind,lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)}))$npar)>0)) stop("Models not ordered by increasing or decreasing complexity")
 
     #- Give each model a name
     modNames <- unlist(lapply(sams,name))
