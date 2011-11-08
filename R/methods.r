@@ -139,9 +139,9 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="
       ctrl@srr              <- e3@srr
 
       #- Run the assessment
-      FLSAMs[[iRun]]        <- FLSAM(stck,tun,ctrl)
+      result[[iRun]]        <- FLSAM(stck,tun,ctrl)
     }
-  return(FLSAMs)}
+  return(result)}
 )
 
 catchabilities <- function(object) {
