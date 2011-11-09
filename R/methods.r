@@ -74,33 +74,27 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 
 #General helper function to extract a given parameter from an FLSAM object
 #and return it as a data.frame
-.params2flq <- function(object,param) {
-   dat <- subset(object@params,name==param)
-   flq <- FLQuant(dat$value,dimnames=list(age="all",
-              year=object@range["minyear"]:object@range["maxyear"]))
-   return(flq)
-}
-
 .extract.params <- function(object,params) {
   #Extract numbers at age parameters
   ps <- subset(object@params,name%in%params)[,c("name","value","std.dev")]
-  colnames(ps)[which(colnames(ps)=="name")] <- "param.name"
+  ps$CV <- ps$std.dev
   ps$ubnd <- exp(ps$value + 1.96*ps$std.dev)
   ps$lbnd <- exp(ps$value - 1.96*ps$std.dev)
   ps$value <- exp(ps$value)
   ps$std.dev <- NULL
+  ps$name <- NULL
   return(ps)
 }
 .extract.states <- function(object) {
-          Us <- .extract.params(object,"U")
-          yrs <- seq(object@control@range["minyear"],
-                     object@control@range["maxyear"]) 
-          ages <- seq(object@control@range["min"],
-                      object@control@range["max"])
-          n.states <- nrow(Us)/length(yrs)
-          states <- c(ages,seq(-1,by=-1,length.out=n.states-length(ages)))
-          Us <- cbind(expand.grid(age=states,year=yrs),Us)
-          return(Us)
+  Us <- .extract.params(object,"U")
+  yrs <- seq(object@control@range["minyear"],
+             object@control@range["maxyear"]) 
+  ages <- seq(object@control@range["min"],
+              object@control@range["max"])
+  n.states <- nrow(Us)/length(yrs)
+  states <- c(ages,seq(-1,by=-1,length.out=n.states-length(ages)))
+  Us <- cbind(expand.grid(age=states,year=yrs),Us)
+  return(Us)
 }
 
 #ssb          {{{
@@ -162,6 +156,27 @@ setMethod("tsb", signature(object="FLSAMs"),
           length(res) <- length(object)
           for(i in seq(object)) {
             res[[i]] <- cbind(name=object[[i]]@name,tsb(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+setMethod("catch", signature(object="FLSAM"),
+        function(object, ...) {
+          res <- .extract.params(object,"logCatch")   
+          res <- cbind(year=seq(object@control@range["minyear"],
+                            object@control@range["maxyear"]),
+                       res)
+          return(res)
+        }
+)       # }}}
+
+setMethod("catch", signature(object="FLSAMs"),
+        function(object, ...) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,catch(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -292,9 +307,15 @@ setMethod("catchabilities",signature(object="FLSAM"),
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
        res <- merge(bindings,params)
+       res$no <- NULL
+       #Add in SSB indices (if any)
+       ssb.params <- .extract.params(object,"logScaleSSB")
+       ssb.fleets <- names(object@control@fleets)[object@control@fleets %in% c(3,4)] 
+       if(nrow(ssb.params)!=length(ssb.fleets)) {
+         stop("Number of fleets does not match number of parameters. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
+       res <- rbind(res,cbind(fleet=ssb.fleets,age=NA,ssb.params))
        #Tidy up
        res <- res[order(res$fleet,res$age),]
-       res$no <- NULL
        return(res)
 })
 
@@ -307,9 +328,15 @@ obs.var <- function(object) {
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
        res <- merge(bindings,params)
+       res$no <- NULL
+       #Add in SSB indices (if any)
+       ssb.params <- .extract.params(object,"logSdSSB")
+       ssb.fleets <- names(object@control@fleets)[object@control@fleets %in% c(3,4)] 
+       if(nrow(ssb.params)!=length(ssb.fleets)) {
+         stop("Number of fleets does not match number of parameters. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
+       res <- rbind(res,cbind(fleet=ssb.fleets,age=NA,ssb.params))
        #Tidy up
        res <- res[order(res$fleet,res$age),]
-       res$no <- NULL
        return(res)
 }
 
@@ -322,9 +349,15 @@ power.law.exps <- function(object) {
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
        res <- merge(bindings,params)
-       #Tidy up
-       res <- res[order(res$fleet,res$age),]
        res$no <- NULL
+       #Add in SSB indices (if any)
+       ssb.params <- .extract.params(object,"logPowSSB")
+       ssb.fleets <- names(object@control@fleets)[object@control@fleets==4] 
+       if(nrow(ssb.params)!=length(ssb.fleets)) {
+         stop("Number of fleets does not match number of parameters. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
+       res <- rbind(res,cbind(fleet=ssb.fleets,age=NA,ssb.params))
+        #Tidy up
+       res <- res[order(res$fleet,res$age),]
        return(res)
 }
 
