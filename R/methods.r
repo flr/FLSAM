@@ -286,6 +286,7 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="
         if(class(slot(ctrl,iSlot))=="matrix") slot(ctrl,iSlot) <- slot(e3,iSlot)[c(names(which(e3@fleets==0)),names(which(overview[iRun,]==1))),]
       ctrl@logN.vars        <- e3@logN.vars
       ctrl@srr              <- e3@srr
+      ctrl                  <- update(ctrl)
 
       #- Run the assessment
       result[[iRun]]        <- FLSAM(stck,tun,ctrl)
