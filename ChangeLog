@@ -10,7 +10,8 @@ FLSAM ChangeLog
  * Validity checks to ensure that the FLR data is configured 
    correctly (Issue 7)
  * Addition of FLSAMs plural class (Issue 14)
- * Addition of overloaded methods for merge, "+" and AIC that work for FLSAMs
+ * Addition of overloaded methods for merge, "+", ssb, rec, fbar and AIC 
+   that work for FLSAMs
  * Multiple objects can be supplied to lr.test() either as FLSAM objects, or
    as an FLSAMs object (Issue 10)
  * Addition of cheat sheet to the wiki (Issue 15)

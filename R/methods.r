@@ -73,7 +73,7 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 
 
 #General helper function to extract a given parameter from an FLSAM object
-#and return it as a FLQuantPoint
+#and return it as a data.frame
 .params2flq <- function(object,param) {
    dat <- subset(object@params,name==param)
    flq <- FLQuant(dat$value,dimnames=list(age="all",
@@ -81,60 +81,152 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
    return(flq)
 }
 
+.extract.params <- function(object,params) {
+  #Extract numbers at age parameters
+  ps <- subset(object@params,name%in%params)[,c("name","value","std.dev")]
+  colnames(ps)[which(colnames(ps)=="name")] <- "param.name"
+  ps$ubnd <- exp(ps$value + 1.96*ps$std.dev)
+  ps$lbnd <- exp(ps$value - 1.96*ps$std.dev)
+  ps$value <- exp(ps$value)
+  ps$std.dev <- NULL
+  return(ps)
+}
+.extract.states <- function(object) {
+          Us <- .extract.params(object,"U")
+          yrs <- seq(object@control@range["minyear"],
+                     object@control@range["maxyear"]) 
+          ages <- seq(object@control@range["min"],
+                      object@control@range["max"])
+          n.states <- nrow(Us)/length(yrs)
+          states <- c(ages,seq(-1,by=-1,length.out=n.states-length(ages)))
+          Us <- cbind(expand.grid(age=states,year=yrs),Us)
+          return(Us)
+}
 
 #ssb          {{{
 setMethod("ssb", signature(object="FLSAM"),
         function(object, ...) {
-          flq <- .params2flq(object,"logssb")
-          flq <- exp(flq)
-          return(flq)
+          res <- .extract.params(object,"logssb")   
+          res <- cbind(year=seq(object@control@range["minyear"],
+                            object@control@range["maxyear"]),
+                       res)
+          return(res)
         }
 )       # }}}
 
 setMethod("ssb", signature(object="FLSAMs"),
         function(object, ...) {
-          return(FLQuants(lapply(object,ssb)))
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,ssb(object[[i]]))
+          }
+          return(do.call(rbind,res))
         }
 )       # }}}
 
 setMethod("fbar", signature(object="FLSAM"),
         function(object, ...) {
-          flq <- .params2flq(object,"logfbar")
-          flq <- exp(flq)
-          return(flq)
+          res <- .extract.params(object,"logfbar")   
+          res <- cbind(year=seq(object@control@range["minyear"],
+                            object@control@range["maxyear"]),
+                       res)
+          return(res)
         }
 )       # }}}
 
 setMethod("fbar", signature(object="FLSAMs"),
         function(object, ...) {
-          return(FLQuants(lapply(object,fbar)))
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,fbar(object[[i]]))
+          }
+          return(do.call(rbind,res))
         }
 )       # }}}
 
 setMethod("tsb", signature(object="FLSAM"),
         function(object, ...) {
-          flq <- .params2flq(object,"logtsb")
-          flq <- exp(flq)
-          return(flq)
+          res <- .extract.params(object,"logtsb")   
+          res <- cbind(year=seq(object@control@range["minyear"],
+                            object@control@range["maxyear"]),
+                       res)
+          return(res)
         }
 )       # }}}
 
 setMethod("tsb", signature(object="FLSAMs"),
         function(object, ...) {
-          return(FLQuants(lapply(object,tsb)))
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,tsb(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+setMethod("n", signature(object="FLSAM"),
+        function(object, ...) {
+	  return(subset(.extract.states(object),age>=0))
+        }
+)       # }}}
+
+setMethod("n", signature(object="FLSAMs"),
+        function(object, ...) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,n(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+if (!isGeneric("f")) {
+    setGeneric("f", function(object) standardGeneric("f"))
+}
+setMethod("f", signature(object="FLSAM"),
+        function(object) {
+          f.states <- subset(.extract.states(object),age<0)
+          f.states$param <- -f.states$age 
+          f.bindings <- object@control@states["catch",]
+          f.bindings <- as.data.frame(as.table(f.bindings),responseName="param")
+          res <- merge(f.states,f.bindings,by="param") 
+          res$age <- res$Var1
+          res$Var1 <- NULL
+          res$param <- NULL
+          res <- res[order(res$year,res$age),]
+          return(res)
+        }
+)       # }}}
+
+setMethod("f", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,f(object[[i]]))
+          }
+          return(do.call(rbind,res))
         }
 )       # }}}
 
 setMethod("rec", signature(object="FLSAM"),
         function(object, ...) {
-          flq <- object@stock.n[1,]
-	  return(flq)
+          return(subset(n(object),age==object@control@range["min"]))
         }
 )       # }}}
 
 setMethod("rec", signature(object="FLSAMs"),
         function(object, ...) {
-          return(FLQuants(lapply(object,rec)))
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,rec(object[[i]]))
+          }
+          return(do.call(rbind,res))
         }
 )       # }}}
 
@@ -151,7 +243,9 @@ setMethod("AIC",signature(object="FLSAMs"),
 )
 
 #- Create generic function for 'looi'
-setGeneric('looi', function(e1,e2,e3,type="full") standardGeneric('looi'))
+if (!isGeneric("looi")) {
+  setGeneric('looi', function(e1,e2,e3,type="full") standardGeneric('looi'))
+}
 
 setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="character"),
   function(e1,e2,e3,type="full"){
@@ -184,60 +278,61 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="
   return(result)}
 )
 
-catchabilities <- function(object) {
+
+if (!isGeneric("catchabilities")) {
+  setGeneric('catchabilities', function(object) standardGeneric('catchabilities'))
+}
+setMethod("catchabilities",signature(object="FLSAM"),
+  function(object) {
        #Extract numbers at age parameters
-       params <- subset(object@params,name=="logFpar")[,c("name","value","std.dev")]
+       params <- .extract.params(object,"logFpar")
        if(nrow(params)==0) stop("No catchabiltities fitted in model.")
        params$no <- 1:nrow(params)
        bindings <-  as.data.frame(as.table(object@control@catchabilities),responseName="no")
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
-       res <- merge(params,bindings)
+       res <- merge(bindings,params)
        #Tidy up
        res <- res[order(res$fleet,res$age),]
        res$no <- NULL
-       colnames(res)[which(colnames(res)=="name")] <- "param.name"
-       res <- res[,c("fleet","age","param.name","value","std.dev")] 
        return(res)
-}
+})
 
 obs.var <- function(object) {
        #Extract data
-       params <- subset(object@params,name=="logSdLogObs")
+       params <- .extract.params(object,"logSdLogObs")
        if(nrow(params)==0) stop("No observation variance fitted in model.")
        params$no <- 1:nrow(params)
        bindings <-  as.data.frame(as.table(object@control@obs.vars),responseName="no")
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
-       res <- merge(params,bindings)
+       res <- merge(bindings,params)
        #Tidy up
        res <- res[order(res$fleet,res$age),]
        res$no <- NULL
-       colnames(res)[which(colnames(res)=="name")] <- "param.name"
-       res <- res[,c("fleet","age","param.name","value","std.dev")] 
        return(res)
 }
 
 power.law.exps <- function(object) {
        #Extract data
-       params <- subset(object@params,name=="logQpow")
+       params <- .extract.params(object,"logQpow")
        if(nrow(params)==0) { stop("No power law exponents fitted in model.")}
        params$no <- 1:nrow(params)
        bindings <-  as.data.frame(as.table(object@control@power.law.exps),responseName="no")
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
-       res <- merge(params,bindings)
+       res <- merge(bindings,params)
        #Tidy up
        res <- res[order(res$fleet,res$age),]
        res$no <- NULL
-       colnames(res)[which(colnames(res)=="name")] <- "param.name"
-       res <- res[,c("fleet","age","param.name","value","std.dev")] 
        return(res)
 }
 
 
 #- Create generic function for 'lr.test'
-setGeneric('lr.test', function(object,...,type="sequential") standardGeneric('lr.test'))
+if (!isGeneric("lr.test")) {
+  setGeneric('lr.test', function(object,...,type="sequential") standardGeneric('lr.test'))
+}
 
 setMethod("lr.test",signature("FLSAMs"),
   function(object,...,type="sequential"){
