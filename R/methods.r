@@ -306,20 +306,36 @@ setMethod("catchabilities",signature(object="FLSAM"),
        bindings <-  as.data.frame(as.table(object@control@catchabilities),responseName="no")
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
+       bindings$age <- as.numeric(as.character(bindings$age))
        res <- merge(bindings,params)
        res$no <- NULL
        #Add in SSB indices (if any)
        ssb.params <- .extract.params(object,"logScaleSSB")
        ssb.fleets <- names(object@control@fleets)[object@control@fleets %in% c(3,4)] 
        if(nrow(ssb.params)!=length(ssb.fleets)) {
-         stop("Number of fleets does not match number of parameters. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
-       res <- rbind(res,cbind(fleet=ssb.fleets,age=NA,ssb.params))
+         stop("Number of fleets does not match number of catchabilities. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
+       res <- rbind(res,cbind(fleet=ssb.fleets,age=as.integer(NA),ssb.params))
        #Tidy up
        res <- res[order(res$fleet,res$age),]
        return(res)
 })
 
-obs.var <- function(object) {
+setMethod("catchabilities", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,catchabilities(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+if (!isGeneric("obs.var")) {
+  setGeneric('obs.var', function(object) standardGeneric('obs.var'))
+}
+setMethod("obs.var",signature(object="FLSAM"),
+    function(object) {
        #Extract data
        params <- .extract.params(object,"logSdLogObs")
        if(nrow(params)==0) stop("No observation variance fitted in model.")
@@ -327,20 +343,36 @@ obs.var <- function(object) {
        bindings <-  as.data.frame(as.table(object@control@obs.vars),responseName="no")
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
+       bindings$age <- as.numeric(as.character(bindings$age))
        res <- merge(bindings,params)
        res$no <- NULL
        #Add in SSB indices (if any)
        ssb.params <- .extract.params(object,"logSdSSB")
        ssb.fleets <- names(object@control@fleets)[object@control@fleets %in% c(3,4)] 
        if(nrow(ssb.params)!=length(ssb.fleets)) {
-         stop("Number of fleets does not match number of parameters. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
+         stop("Number of fleets does not match number of observation variances. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
        res <- rbind(res,cbind(fleet=ssb.fleets,age=NA,ssb.params))
        #Tidy up
        res <- res[order(res$fleet,res$age),]
        return(res)
-}
+})
 
-power.law.exps <- function(object) {
+setMethod("obs.var", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,obs.var(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+if (!isGeneric("power.law.exps")) {
+  setGeneric('power.law.exps', function(object) standardGeneric('power.law.exps'))
+}
+setMethod("power.law.exps",signature(object="FLSAM"),
+   function(object) {
        #Extract data
        params <- .extract.params(object,"logQpow")
        if(nrow(params)==0) { stop("No power law exponents fitted in model.")}
@@ -348,19 +380,30 @@ power.law.exps <- function(object) {
        bindings <-  as.data.frame(as.table(object@control@power.law.exps),responseName="no")
        #Merge
        bindings <- subset(bindings,!is.na(bindings$no))
+       bindings$age <- as.numeric(as.character(bindings$age))
        res <- merge(bindings,params)
        res$no <- NULL
        #Add in SSB indices (if any)
        ssb.params <- .extract.params(object,"logPowSSB")
        ssb.fleets <- names(object@control@fleets)[object@control@fleets==4] 
        if(nrow(ssb.params)!=length(ssb.fleets)) {
-         stop("Number of fleets does not match number of parameters. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
+         stop("Number of fleets does not match number of power law exponents. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
        res <- rbind(res,cbind(fleet=ssb.fleets,age=NA,ssb.params))
-        #Tidy up
+       #Tidy up
        res <- res[order(res$fleet,res$age),]
        return(res)
-}
+})
 
+setMethod("power.law.exps", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object[[i]]@name,power.law.exps(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
 
 #- Create generic function for 'lr.test'
 if (!isGeneric("lr.test")) {
