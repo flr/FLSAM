@@ -289,7 +289,7 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="
       ctrl                  <- update(ctrl)
 
       #- Run the assessment
-      result[[iRun]]        <- FLSAM(stck,tun,ctrl)
+      result[[iRun]]        <- FLSAM(stck,tun,ctrl,batch.mode=T)
     }
   return(result)}
 )
