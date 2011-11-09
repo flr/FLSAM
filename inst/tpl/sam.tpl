@@ -10,8 +10,8 @@
 //----------------------------------------------------------------
 //SAM State Space Assessment Model
 //--------------------------------
-//$Rev: 6 $
-//$LastChangedDate: 2011-11-07 01:41:17 +0100 (Mon, 07 Nov 2011) $
+//$Rev: 7 $
+//$LastChangedDate: 2011-11-09 15:54:35 +0100 (Wed, 09 Nov 2011) $
 //----------------------------------------------------------------
 
 GLOBALS_SECTION 
@@ -333,7 +333,7 @@ PRELIMINARY_CALCS_SECTION
 PROCEDURE_SECTION
   time_t currentTime;
   time(& currentTime);
-  if(difftime(currentTime,StartTime)>1200){ // Terminate after 20 minutes 
+  if(difftime(currentTime,StartTime)>1800){ // Terminate after 30 minutes 
     cout<<endl;
     cout<<"############################################################"<<endl; 
     cout<<"############################################################"<<endl; 
@@ -719,7 +719,7 @@ TOP_OF_MAIN_SECTION
   cout << "SAM State-space Assessment Model" << endl;
   cout << "More info at: http://www.stockassessment.org" << endl;
   cout << "--------------------------------" << endl;
-  cout << "$Rev: 6 $" << endl << "$LastChangedDate: 2011-11-07 01:41:17 +0100 (Mon, 07 Nov 2011) $"  <<endl << endl;
+  cout << "$Rev: 7 $" << endl << "$LastChangedDate: 2011-11-09 15:54:35 +0100 (Wed, 09 Nov 2011) $"  <<endl << endl;
 
   arrmblsize=2000000;
   gradient_structure::set_GRADSTACK_BUFFER_SIZE(150000);

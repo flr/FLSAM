@@ -209,7 +209,7 @@ setMethod("f", signature(object="FLSAM"),
           f.bindings <- object@control@states["catch",]
           f.bindings <- as.data.frame(as.table(f.bindings),responseName="param")
           res <- merge(f.states,f.bindings,by="param") 
-          res$age <- res$Var1
+          res$age <- as.numeric(as.character(res$Var1))
           res$Var1 <- NULL
           res$param <- NULL
           res <- res[order(res$year,res$age),]
