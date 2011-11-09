@@ -44,11 +44,12 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   }
 
   #Generate observation matrix
-  obs.dat <- as.data.frame(lapply(tun,index))
-  obs.dat <- rbind(obs.dat,as.data.frame(FLQuants(catch=stck@catch.n)))
+  catch.dat <- as.data.frame(FLQuants(catch=stck@catch.n))
+  tun.dat <- as.data.frame(lapply(tun,index))
+  obs.dat <- rbind(catch.dat,tun.dat)
   obs.dat <- subset(obs.dat,obs.dat$year %in% yrs)
   obs.dat$fleet <- as.numeric(factor(obs.dat$qname,levels=names(ctrl@fleets)))
-  obs.dat$age[which(ctrl@fleets[obs.dat$fleet]==3)] <- median(as.numeric(obs.dat$age),na.rm=TRUE)   #Set ssb indices equal to median age
+  obs.dat$age[which(ctrl@fleets[obs.dat$fleet]%in%c(3,4))] <- ctrl@range["max"]
   obs.dat <- obs.dat[,c("year","fleet","age","data")]
   obs.dat <- obs.dat[order(obs.dat$year,obs.dat$fleet,obs.dat$age),]
   obs.dat$fleet.name <- paste("#",names(ctrl@fleets)[obs.dat$fleet],sep="")

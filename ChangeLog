@@ -1,23 +1,30 @@
 FLSAM ChangeLog
 
 <Date in future> v 0.40
- * A "Weclome to SAM message", complete with health warning
- * Addition of NAMESPACE - required from R 2.14.0 onwards
+ * Help files all round! (Issue 13) 
+ * Addition of FLSAMs plural class (Issue 14)
  * Autoconfiguration in FLSAM.control() now has the option of taking a
    reasonable first guess at a configuration, or leaving configuration
    completely blank (see "default" argument). (Issue 11)
+ * Fixed bug in FLR2SAM that was not writing obs.dat correctly for SSB indices
+ * Redefined accessor functions for ssb, tsb, rec, fbar to return a data frame
+   rather than the previous FLQuant objects. Added n, f, and catch accessors. 
+ * All accessor functions methods are overloaded for both FLSAM and FLSAMs objects.
+ * Standardised return format of accessor functions, including output of CVs
  * power.law.exps() accessor function added
+ * Catchabilities, obs.var and power.law.exps accessor functions now return
+   parameters for SSB indices in addition to number-at-age indices. (Issue
+   12). Methods also overloaded for FLSAMs objects 
+ * A "Weclome to SAM message", complete with health warning
+ * Addition of NAMESPACE - required from R 2.14.0 onwards
  * Validity checks to ensure that the FLR data is configured 
    correctly (Issue 7)
- * Addition of FLSAMs plural class (Issue 14)
- * Addition of overloaded methods for merge, "+", ssb, rec, fbar and AIC 
-   that work for FLSAMs
+ * Overloaded methods for merge, "+" and AIC for FLSAMs
  * Multiple objects can be supplied to lr.test() either as FLSAM objects, or
    as an FLSAMs object (Issue 10)
  * Addition of cheat sheet to the wiki (Issue 15)
  * Addition of Leave-one-out, leave-one-in functionality (Issue 16) 
- * Help files all round! (Issue 13) 
- * Added checks internally to sam.tpl to ensure correct reading of 
+ * Added checks (checksums) internally to sam.tpl to ensure correct reading of 
    data (Issue 22)
  * Incorporated new version of SUSAM diagnostics, with a smoother on the
    Tukey-Anscombe plot
