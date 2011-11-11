@@ -1,6 +1,6 @@
 FLSAM ChangeLog
 
-<Date in future> v 0.40
+2011-11-11 v 0.40
  * Help files all round! (Issue 13) 
  * Addition of FLSAMs plural class (Issue 14)
  * Autoconfiguration in FLSAM.control() now has the option of taking a
@@ -9,6 +9,8 @@ FLSAM ChangeLog
  * Fixed bug in FLR2SAM that was not writing obs.dat correctly for SSB indices
  * Redefined accessor functions for ssb, tsb, rec, fbar to return a data frame
    rather than the previous FLQuant objects. Added n, f, and catch accessors. 
+ * Added looi() function for doing leave-one-in/leave-one-out runs, and a
+   retro function for doing retrospective runs (Issues 16 and 28)
  * All accessor functions methods are overloaded for both FLSAM and FLSAMs objects.
  * Standardised return format of accessor functions, including output of CVs
  * power.law.exps() accessor function added
