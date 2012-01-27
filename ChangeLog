@@ -1,5 +1,8 @@
 FLSAM ChangeLog
 
+<Date in Future> v 0.40-1
+ * Increased timeout to 7200s (120 mins)
+
 2011-11-11 v 0.40
  * Help files all round! (Issue 13) 
  * Addition of FLSAMs plural class (Issue 14)
