@@ -1,12 +1,12 @@
-\name{drop}
-\alias{drop}
+\name{drop.from.control}
+\alias{drop.from.control}
 \title{Drop an element from an FLSAM.control object
 }
 \description{
 Drops multiple surveys or age groups from an FLSAM.control object
 }
 \usage{
-drop(object, fleets="missing",ages="missing")
+drop.from.control(object, fleets="missing",ages="missing")
 }
 \arguments{
   \item{object}{An \code{\link{FLSAM.control}} object
@@ -36,9 +36,9 @@ data(NSH.sam)
 #NSH.ctrl before dropping
 NSH.ctrl
 #Drop MLAI index
-drop(NSH.ctrl,fleets="MLAI")
+drop.from.control(NSH.ctrl,fleets="MLAI")
 #Drop ages 8 and 9
-drop(NSH.ctrl,ages=8:9)
+drop.from.control(NSH.ctrl,ages=8:9)
 }
 \keyword{ ~kwd1 }
 \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

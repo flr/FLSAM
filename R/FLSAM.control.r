@@ -82,10 +82,10 @@ FLSAM.control <- function(stck,tun,default="full") {
 }
 
 #Function for dropping ages or surveys from a FLSAM.control
-if (!isGeneric("drop")) {
-    setGeneric("drop",function(object,...) standardGeneric("drop"))
+if (!isGeneric("drop.from.control")) {
+    setGeneric("drop.from.control",function(object,...) standardGeneric("drop.from.control"))
 }
-setMethod("drop",signature(object="FLSAM.control"),
+setMethod("drop.from.control",signature(object="FLSAM.control"),
   function(object,fleets="missing",ages="missing") {
     #Drop the fleets first
     if(!missing("fleets")) {
