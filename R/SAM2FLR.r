@@ -80,7 +80,7 @@ SAM2FLR <-function(ctrl,run.dir=tempdir()) {
   res@stock.n[,] <- exp(stateEst[1:n.ages,])
   res@harvest <- flq
   res@harvest@units <- "f"
-  f.stateEst <- stateEst[-c(1:n.ages),]
+  f.stateEst <- stateEst[-c(1:n.ages),,drop=F]
   for(a in  dimnames(ctrl@states)$age){
     states.key <- ctrl@states["catch",a] 
     res@harvest[a,] <- exp(f.stateEst[states.key,])
