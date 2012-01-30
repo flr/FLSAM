@@ -5,6 +5,7 @@ FLSAM ChangeLog
  * Added method for plotting FLSAM/FLSAMs together with a single FLStock
  * Added method for plotting two FLSAM objects in one command
  * Passed ... option to plotting methods, allowing for customisation of plots
+ * Added drop() function to quickly throw out a survey or age group
 
 2012-01-30 v 0.41
  * Increased SAM timeout to 7200s (120 mins)

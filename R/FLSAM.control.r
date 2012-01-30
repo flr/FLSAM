@@ -81,6 +81,34 @@ FLSAM.control <- function(stck,tun,default="full") {
   return(ctrl)
 }
 
+#Function for dropping ages or surveys from a FLSAM.control
+if (!isGeneric("drop")) {
+    setGeneric("drop",function(object,...) standardGeneric("drop"))
+}
+setMethod("drop",signature(object="FLSAM.control"),
+  function(object,fleets="missing",ages="missing") {
+    #Drop the fleets first
+    if(!missing("fleets")) {
+      for(slt.name in slotNames(object)) {
+        slt <- slot(object,slt.name)
+        if(class(slt)=="matrix") {
+            remaining.fleets <- setdiff(rownames(slt),fleets)
+            slot(object,slt.name) <- slt[remaining.fleets,,drop=FALSE]}}
+      object@fleets   <- object@fleets[setdiff(names(object@fleets),fleets)]}
+    #Then drop the ages 
+    if(!missing("ages")) {
+      for(slt.name in slotNames(object)) {
+        slt <- slot(object,slt.name)
+        if(class(slt)=="matrix") {
+            remaining.ages <- setdiff(colnames(slt),ages)
+            slot(object,slt.name) <- slt[,remaining.ages,drop=FALSE]}}
+      object@logN.vars   <- object@logN.vars[setdiff(names(object@logN.vars),ages)]}
+
+    #Finally, do an update
+    object <- update(object)
+    return(object)
+})
+
 setMethod("update", signature(object="FLSAM.control"),
   function(object){
 
