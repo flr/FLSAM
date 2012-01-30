@@ -39,11 +39,12 @@ FLSAM.control <- function(stck,tun,default="full") {
   ctrl@plus.group <- stck@range["plusgroup"]==stck@range["max"]
   ctrl@fleets <-factor(sapply(tun,type),levels=c("con","number","biomass"))
   ctrl@fleets <- c(0,as.numeric(ctrl@fleets))
-  names(ctrl@fleets) <- c("catch",names(tun))
+  fleet.names <- c("catch",names(tun))
+  names(ctrl@fleets) <- fleet.names
 
   #Setup coupling structures - default is for each parameter to be fitted independently
   default.coupling <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,
-                        dimnames=list(fleet=c("catch",names(tun)),age=dimnames(stck@catch.n)$age))
+                        dimnames=list(fleet=fleet.names,age=dimnames(stck@catch.n)$age))
   ctrl@states           <- default.coupling
   ctrl@catchabilities   <- default.coupling
   ctrl@power.law.exps   <- default.coupling
@@ -61,7 +62,7 @@ FLSAM.control <- function(stck,tun,default="full") {
     idx[[names(ctrl@fleets)[ctrl@fleets==0]]] <- seq(as.numeric(range(stck)["min"]),as.numeric(range(stck)["max"]),1)
 
     full.coupling       <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,
-                            dimnames=list(fleet=c("catch",names(tun)),age=dimnames(stck@catch.n)$age))
+                            dimnames=list(fleet=fleet.names,age=dimnames(stck@catch.n)$age))
     for(iFlt in names(ctrl@fleets[ctrl@fleets!=3]))
       full.coupling[iFlt,ac(idx[[iFlt]])] <- (sum(is.finite(full.coupling),na.rm=T)+1):(sum(is.finite(full.coupling),na.rm=T)+length(idx[[iFlt]]))
 
