@@ -39,7 +39,7 @@ FLSAM.control <- function(stck,tun,default="full") {
   ctrl@plus.group <- stck@range["plusgroup"]==stck@range["max"]
   ctrl@fleets <-factor(sapply(tun,type),levels=c("con","number","biomass"))
   ctrl@fleets <- c(0,as.numeric(ctrl@fleets))
-  names(ctrl@fleets) <- c("catch",sapply(tun,name))
+  names(ctrl@fleets) <- c("catch",names(tun))
 
   #Setup coupling structures - default is for each parameter to be fitted independently
   default.coupling <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,

@@ -6,6 +6,7 @@ FLSAM ChangeLog
  * Added method for plotting two FLSAM objects in one command
  * Passed ... option to plotting methods, allowing for customisation of plots
  * Added drop.from.control() function to quickly throw out a survey or age group
+ * Minor modification to FLSAM.control() to take names from consistent place
 
 2012-01-30 v 0.41
  * Increased SAM timeout to 7200s (120 mins)
