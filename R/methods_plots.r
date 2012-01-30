@@ -13,7 +13,7 @@ setMethod("plot",signature(x="FLSAM",y="missing"),
                        levels=c("Spawning stock biomass","Fishing mortality","Recruitment"))
 
     #Plot it
-    xyplot(value+ubnd+lbnd~year|name,data=plot.dat,
+    xyplot(value+ubnd+lbnd~year|name,data=plot.dat,...,
               prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
               main=list(x@name,cex=0.9),
               ylab=rev(c("SSB","Fbar","Rec")),xlab="Year",
@@ -27,6 +27,11 @@ setMethod("plot",signature(x="FLSAM",y="missing"),
                    panel.xyplot(d$value$x,d$value$y,col="black",lwd=2,type="l")
                      },
               scales=list(alternating=1,y=list(relation="free",rot=0)))
+})
+
+setMethod("plot",signature(x="FLSAM",y="FLSAM"),
+ function(x,y,main="",...) {
+    plot(FLSAMs(x,y),...)
 })
 
 setMethod("plot",signature(x="FLSAMs",y="missing"),
@@ -44,7 +49,7 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
                        levels=c("Spawning stock biomass","Fishing mortality","Recruitment"))
 
     #Plot it
-    xyplot(value~year|var,data=plot.dat,
+    xyplot(value~year|var,data=plot.dat,...,
               prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
               main=main,groups=name,type="l",
               ylab=rev(c("SSB","Fbar","Rec")),xlab="Year",
@@ -82,7 +87,7 @@ setMethod("plot",signature(x="FLSAMs",y="FLStock"),
                        levels=c("spawning stock biomass","fishing mortality","recruitment"))
 
     #plot it
-    xyplot(value~year|var,data=plot.dat,
+    xyplot(value~year|var,data=plot.dat,...,
               prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
               main=main,groups=name,type="l",
               ylab=rev(c("ssb","fbar","rec")),xlab="year",
