@@ -1,5 +1,9 @@
 FLSAM ChangeLog
 
+<Time in future> v 0.42
+ * Added method for plotting FLSAMs.
+ * Added method for plotting FLSAM/FLSAMs together with a single FLStock
+
 2012-01-30 v 0.41
  * Increased SAM timeout to 7200s (120 mins)
  * Split runSAM() functionality out of FLSAM() into separate function
