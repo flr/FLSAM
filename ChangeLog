@@ -1,7 +1,9 @@
 FLSAM ChangeLog
 
-<Date in Future> v 0.40-1
- * Increased timeout to 7200s (120 mins)
+2012-01-30 v 0.41
+ * Increased SAM timeout to 7200s (120 mins)
+ * Split runSAM() functionality out of FLSAM() into separate function
+ * Fixed bug in situations where all states are bound together 
 
 2011-11-11 v 0.40
  * Help files all round! (Issue 13) 

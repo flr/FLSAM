@@ -20,8 +20,6 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
   #General Setup
-  admb.stem <- "sam" 
-  
   inputSAM      <- new("FLSAMinput")
   inputSAM@stck <- stck
   inputSAM@tun  <- tun
@@ -33,9 +31,20 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
   #Write output files
   FLR2SAM(stck,tun,ctrl,run.dir)
 
-  #---------------------------------------------------
-  # We're ready! Run the executable
-  #---------------------------------------------------
+  #Run SAM
+  runSAM(run.dir,batch.mode)
+
+  #Read the results back in
+  res <- SAM2FLR(ctrl,run.dir)
+
+  return(res)
+}
+
+#---------------------------------------------------
+# We're ready! Run the executable
+#---------------------------------------------------
+runSAM <- function(run.dir=tempdir(),batch.mode=FALSE){
+  admb.stem <- "sam" 
   admb.args <-  "-nr 2 -noinit -iprint 1"
   #Platform specific issues
   if (.Platform$OS.type=="unix") {
@@ -62,15 +71,13 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
       stop(sprintf("An error occurred while running ADMB. Return code %s.",rtn))
     }
   }
-
-  #---------------------------------------------------
-  # Now read the results from the assessment
-  #---------------------------------------------------
-  res <- SAM2FLR(ctrl,run.dir)
-
-  return(res)
+  return(rtn)
 }
 
+ 
+#---------------------------------------------------
+# Validity checks
+#---------------------------------------------------
 setClass("FLSAMinput",
     representation(
       "list",
