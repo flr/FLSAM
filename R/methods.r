@@ -344,24 +344,39 @@ if (!isGeneric("power.law.exps")) {
 setMethod("power.law.exps",signature(object="FLSAM"),
    function(object) {
        #Extract data
-       params <- .extract.params(object,"logQpow")
-       if(nrow(params)==0) { stop("No power law exponents fitted in model.")}
-       params$no <- 1:nrow(params)
-       bindings <-  as.data.frame(as.table(object@control@power.law.exps),responseName="no")
-       #Merge
-       bindings <- subset(bindings,!is.na(bindings$no))
-       bindings$age <- as.numeric(as.character(bindings$age))
-       res <- merge(bindings,params)
-       res$no <- NULL
+       age.params <- .extract.params(object,"logQpow")
+       if(nrow(age.params)!=0) { 
+         age.params$no <- 1:nrow(age.params)
+         bindings <-  as.data.frame(as.table(object@control@power.law.exps),
+                          responseName="no")
+         #Merge
+         bindings <- subset(bindings,!is.na(bindings$no))
+         bindings$age <- as.numeric(as.character(bindings$age))
+         age.res <- merge(bindings,age.params)
+         age.res$no <- NULL
+       } else {
+         age.res <- .extract.params(object,"asfasfsdf") #space filler 
+       }
+
        #Add in SSB indices (if any)
        ssb.params <- .extract.params(object,"logPowSSB")
-       ssb.fleets <- names(object@control@fleets)[object@control@fleets==4] 
-       if(nrow(ssb.params)!=length(ssb.fleets)) {
-         stop("Number of fleets does not match number of power law exponents. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
-       res <- rbind(res,cbind(fleet=ssb.fleets,age=NA,ssb.params))
+       if(nrow(ssb.params)!=0) {
+         ssb.fleets <- names(object@control@fleets)[object@control@fleets==4] 
+         if(nrow(ssb.params)!=length(ssb.fleets)) {
+           stop(paste("Number of fleets does not match number of power law exponents.",
+                      "This is a bug. Please report it to the FLSAM users mailing",
+                      "list, FLSAM@googlegroups.com"))}
+         ssb.res <- cbind(fleet=ssb.fleets,age=NA,ssb.params)
+       } else {
+         ssb.res <- .extract.params(object,"asfasfsdf") #space filler 
+       }
        #Tidy up
-       res <- res[order(res$fleet,res$age),]
-       return(res)
+       res <- rbind(age.res,ssb.res)
+       if(nrow(res)==0) {
+         stop("FLSAM object does not contain power law parameters")
+       } else {
+         return(res[order(res$fleet,res$age),])
+       }
 })
 
 setMethod("power.law.exps", signature(object="FLSAMs"),
