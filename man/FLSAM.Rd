@@ -12,7 +12,7 @@
 FLSAM(stck, tun, ctrl, run.dir=tempdir(), batch.mode=FALSE) 
 
 FLR2SAM(stck, tun, ctrl, run.dir = tempdir())
-runSAM(run.dir=tempdir(),batch.mode=FALSE)
+runSAM(run.dir=tempdir())
 SAM2FLR(ctrl, run.dir = tempdir()) 
 }
 \arguments{
@@ -70,7 +70,7 @@ The typical return value is an object of the FLSAM class with the following slot
 
 The FLSAM function will return an FLSAM object in all cases when the model converges. If the model does not converge, FLSAM will return an error unless it is running in batch mode, in which case it will return "NULL".
 
-SAM2FLR will return an FLSAM object.FLR2SAM does not return any values.
+runSAM() returns an integer error code corresponding to the return value of the SAM model - 0 for a successful run, non-zero otherwise. SAM2FLR will return an FLSAM object. FLR2SAM does not return any values.
 }
 \references{
 Nielsen et al (2012) In prep.

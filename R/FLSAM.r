@@ -32,7 +32,14 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
   FLR2SAM(stck,tun,ctrl,run.dir)
 
   #Run SAM
-  runSAM(run.dir,batch.mode)
+  rtn <- runSAM(run.dir)
+  if(rtn!=0) {
+    if(batch.mode) {
+      return(NULL)
+    } else {
+      stop(sprintf("An error occurred while running ADMB. Return code %s.",rtn))
+    }
+  }
 
   #Read the results back in
   res <- SAM2FLR(ctrl,run.dir)
@@ -43,7 +50,7 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
 #---------------------------------------------------
 # We're ready! Run the executable
 #---------------------------------------------------
-runSAM <- function(run.dir=tempdir(),batch.mode=FALSE){
+runSAM <- function(run.dir=tempdir()){
   admb.stem <- "sam" 
   admb.args <-  "-nr 2 -noinit -iprint 1"
   #Platform specific issues
@@ -64,13 +71,6 @@ runSAM <- function(run.dir=tempdir(),batch.mode=FALSE){
   olddir <- setwd(run.dir)
   rtn <- system(cmd)
   setwd(olddir)
-  if(rtn!=0) {
-    if(batch.mode) {
-      return(NULL)
-    } else {
-      stop(sprintf("An error occurred while running ADMB. Return code %s.",rtn))
-    }
-  }
   return(rtn)
 }
 
