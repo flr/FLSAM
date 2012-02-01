@@ -7,6 +7,10 @@ FLSAM ChangeLog
  * Passed ... option to plotting methods, allowing for customisation of plots
  * Added drop.from.control() function to quickly throw out a survey or age group
  * Minor modification to FLSAM.control() to take names from consistent place
+ * Corrected bug in FLSAM() batch.mode that meant it wasn't trapping errors
+   correctly.
+ * Rewrote fleet parameter accessor functions to use one common extraction
+   function and thereby fix various nuisance errors
 
 2012-01-30 v 0.41
  * Increased SAM timeout to 7200s (120 mins)

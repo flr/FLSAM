@@ -261,33 +261,66 @@ setMethod("AIC",signature(object="FLSAMs"),
 )
 
 #-------------------------------------------------------------------------------
-# Extract model parameters
+# Extract fleet parameters
+# There are three types of fleet parameters - observation variances,
+# catchabilities, and power law exponents. Due to the way SAM is 
+# constructed, there is also a distinction between the parameters for
+# age structured fleets and SSB fleets. Here we use a common function
+# to try and deal with all these issues.
 #-------------------------------------------------------------------------------
+.extract.fleet.parameters <- function(object,type) {
+       #Setup parameter type to extract
+       ext <- switch(type,
+         "observation variance"=list(age="logSdLogObs",ssb="logSdSSB",
+                          slt="obs.vars",ssb.fleet=c(3,4)),
+         "catchability"=list(age="logFpar",ssb="logScaleSSB",
+                          slt="catchabilities",ssb.fleet=c(3,4)),
+         "power law"=list(age="logQpow",ssb="logPowSSB",
+                          slt="power.law.exps",ssb.fleet=4))
+  
+       #Extract data
+       age.params <- .extract.params(object,ext$age)
+       if(nrow(age.params)!=0) {
+         age.params$no <- 1:nrow(age.params)
+         bindings.mat <- slot(object@control,ext$slt) 
+         bindings <-  as.data.frame(as.table(bindings.mat),responseName="no")
+         #Merge
+         bindings <- subset(bindings,!is.na(bindings$no))
+         bindings$age <- as.numeric(as.character(bindings$age))
+         age.res <- merge(bindings,age.params)
+         age.res$no <- NULL
+       } else {
+         age.res <- .extract.params(object,"asfasfsdf") #space filler
+       }
+
+       #Add in SSB indices (if any)
+       ssb.params <- .extract.params(object,ext$ssb)
+       if(nrow(ssb.params)!=0) {
+         ssb.fleets <- names(object@control@fleets)[object@control@fleets%in%ext$ssb.fleet]
+         if(nrow(ssb.params)!=length(ssb.fleets)) {
+           stop(paste("Number of fleets does not match number of",type,"parameters.",
+                      "This is a bug. Please report it to the FLSAM users mailing",
+                      "list, FLSAM@googlegroups.com"))}
+         ssb.res <- cbind(fleet=ssb.fleets,age=NA,ssb.params)
+       } else {
+         ssb.res <- .extract.params(object,"asfasfsdf") #space filler
+       }
+       #Tidy up
+       res <- rbind(age.res,ssb.res)
+       if(nrow(res)==0) {
+         stop(paste("FLSAM object does not contain",type,"parameters"))
+       } else {
+         return(res[order(res$fleet,res$age),])
+       }
+}
+
 
 if (!isGeneric("catchabilities")) {
   setGeneric('catchabilities', function(object) standardGeneric('catchabilities'))
 }
 setMethod("catchabilities",signature(object="FLSAM"),
   function(object) {
-       #Extract numbers at age parameters
-       params <- .extract.params(object,"logFpar")
-       if(nrow(params)==0) stop("No catchabiltities fitted in model.")
-       params$no <- 1:nrow(params)
-       bindings <-  as.data.frame(as.table(object@control@catchabilities),responseName="no")
-       #Merge
-       bindings <- subset(bindings,!is.na(bindings$no))
-       bindings$age <- as.numeric(as.character(bindings$age))
-       res <- merge(bindings,params)
-       res$no <- NULL
-       #Add in SSB indices (if any)
-       ssb.params <- .extract.params(object,"logScaleSSB")
-       ssb.fleets <- names(object@control@fleets)[object@control@fleets %in% c(3,4)] 
-       if(nrow(ssb.params)!=length(ssb.fleets)) {
-         stop("Number of fleets does not match number of catchabilities. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
-       res <- rbind(res,cbind(fleet=ssb.fleets,age=as.integer(NA),ssb.params))
-       #Tidy up
-       res <- res[order(res$fleet,res$age),]
-       return(res)
+    .extract.fleet.parameters(object,"catchability")
 })
 
 setMethod("catchabilities", signature(object="FLSAMs"),
@@ -306,25 +339,7 @@ if (!isGeneric("obs.var")) {
 }
 setMethod("obs.var",signature(object="FLSAM"),
     function(object) {
-       #Extract data
-       params <- .extract.params(object,"logSdLogObs")
-       if(nrow(params)==0) stop("No observation variance fitted in model.")
-       params$no <- 1:nrow(params)
-       bindings <-  as.data.frame(as.table(object@control@obs.vars),responseName="no")
-       #Merge
-       bindings <- subset(bindings,!is.na(bindings$no))
-       bindings$age <- as.numeric(as.character(bindings$age))
-       res <- merge(bindings,params)
-       res$no <- NULL
-       #Add in SSB indices (if any)
-       ssb.params <- .extract.params(object,"logSdSSB")
-       ssb.fleets <- names(object@control@fleets)[object@control@fleets %in% c(3,4)] 
-       if(nrow(ssb.params)!=length(ssb.fleets)) {
-         stop("Number of fleets does not match number of observation variances. This is a bug. Please report it to the FLSAM users mailing list, FLSAM@googlegroups.com")}
-       res <- rbind(res,cbind(fleet=ssb.fleets,age=NA,ssb.params))
-       #Tidy up
-       res <- res[order(res$fleet,res$age),]
-       return(res)
+       .extract.fleet.parameters(object,"observation variance")
 })
 
 setMethod("obs.var", signature(object="FLSAMs"),
@@ -343,40 +358,7 @@ if (!isGeneric("power.law.exps")) {
 }
 setMethod("power.law.exps",signature(object="FLSAM"),
    function(object) {
-       #Extract data
-       age.params <- .extract.params(object,"logQpow")
-       if(nrow(age.params)!=0) { 
-         age.params$no <- 1:nrow(age.params)
-         bindings <-  as.data.frame(as.table(object@control@power.law.exps),
-                          responseName="no")
-         #Merge
-         bindings <- subset(bindings,!is.na(bindings$no))
-         bindings$age <- as.numeric(as.character(bindings$age))
-         age.res <- merge(bindings,age.params)
-         age.res$no <- NULL
-       } else {
-         age.res <- .extract.params(object,"asfasfsdf") #space filler 
-       }
-
-       #Add in SSB indices (if any)
-       ssb.params <- .extract.params(object,"logPowSSB")
-       if(nrow(ssb.params)!=0) {
-         ssb.fleets <- names(object@control@fleets)[object@control@fleets==4] 
-         if(nrow(ssb.params)!=length(ssb.fleets)) {
-           stop(paste("Number of fleets does not match number of power law exponents.",
-                      "This is a bug. Please report it to the FLSAM users mailing",
-                      "list, FLSAM@googlegroups.com"))}
-         ssb.res <- cbind(fleet=ssb.fleets,age=NA,ssb.params)
-       } else {
-         ssb.res <- .extract.params(object,"asfasfsdf") #space filler 
-       }
-       #Tidy up
-       res <- rbind(age.res,ssb.res)
-       if(nrow(res)==0) {
-         stop("FLSAM object does not contain power law parameters")
-       } else {
-         return(res[order(res$fleet,res$age),])
-       }
+    .extract.fleet.parameters(object,"power law")
 })
 
 setMethod("power.law.exps", signature(object="FLSAMs"),
@@ -460,60 +442,7 @@ setMethod("lr.test",signature("FLSAMs"),
     
 setMethod("lr.test",signature("FLSAM"),
   function(object,...,type="sequential"){
-    mdls    <- list(object,...)
-    sams    <- new("FLSAMs")
-    for(i in 1:length(mdls)) sams[[i]] <- mdls[[i]]
-
-    #- Get negative log likelihood and number of parameter values
-    dat.l <- lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)})
-
-    #- Check if models are ordered by increasing or decreasing complexity
-    if(!all(abs(diff(do.call(rbind,lapply(sams,function(mdl) {data.frame(nll=mdl@nlogl,npar=mdl@nopar)}))$npar))>0)) stop("Models not ordered by increasing or decreasing complexity")
-
-    #- Give each model a name
-    modNames <- unlist(lapply(sams,name))
-    if(any(nchar(modNames)==0) | any(length(nchar(modNames))==0))    modNames[which(nchar(modNames)==0 | length(nchar(modNames))==0)] <- paste("FLSAM",which(nchar(modNames)==0 | length(nchar(modNames))==0))
-    if(any(duplicated(modNames)==T)) modNames[which(duplicated(modNames)==T)] <- paste(modNames[which(duplicated(modNames)==T)],which(duplicated(modNames)==T))
-    modNames <- paste(1:length(modNames),modNames)
-
-    tbl <- matrix(NA,nrow=length(sams),ncol=6,dimnames=list(models=modNames,statistics=c("Comparison","Neg. log likel","# Parameters","Likel difference","Degrees of freedom","P value")))
-    #- Perform Log-ratio test in sequential mode
-    if(type == "sequential"){
-      tbl[2:length(modNames),"Comparison"]      <- paste(2:length(modNames),"vs.",1:(length(modNames)-1))
-      tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
-      for(i in 2:length(modNames)){
-        if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[i-1,"# Parameters"])){
-          tbl[i,  "Likel difference"]           <- round(as.numeric(tbl[i-1,"Neg. log likel"])            - as.numeric(tbl[i,  "Neg. log likel"]),2)
-          tbl[i,  "Degrees of freedom"]         <- as.numeric(      tbl[i,"# Parameters"])                - as.numeric(tbl[i-1,"# Parameters"])
-          tbl[i,  "P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[i-1,"Neg. log likel"])- as.numeric(tbl[i,  "Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"])),4)
-        }
-        if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[i-1,"# Parameters"])){
-          tbl[i-1,"Comparison"]                 <- paste(i-1,"vs.",i); tbl[i,"Comparison"] <- NA
-          tbl[i-1,"Likel difference"]           <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[i-1,"Neg. log likel"]),2)
-          tbl[i-1,"Degrees of freedom"]         <- as.numeric(      tbl[i-1,"# Parameters"])              - as.numeric(tbl[i,  "# Parameters"])
-          tbl[i-1,"P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[i-1,"Neg. log likel"])),as.numeric(tbl[i-1,"Degrees of freedom"])),4)
-        }
-      }
-    }
-
-    #- Perform Log-ratio test between each models and the baseline (first) model
-    if(type == "first"){
-      tbl[2:length(modNames),"Comparison"]      <- paste(2:length(modNames),"vs.",1)
-      tbl[,c("Neg. log likel","# Parameters")]  <- as.matrix(do.call(rbind,dat.l))
-      for(i in 2:length(modNames)){
-        if(as.numeric(tbl[i,"# Parameters"]) >  as.numeric(tbl[1,"# Parameters"])){
-          tbl[i,  "Likel difference"]           <- round(as.numeric(tbl[1,"Neg. log likel"])              - as.numeric(tbl[i,  "Neg. log likel"]),2)
-          tbl[i,  "Degrees of freedom"]         <- as.numeric(tbl[i,"# Parameters"])                      - as.numeric(tbl[1,  "# Parameters"])
-          tbl[i,  "P value"]                    <- round(1-pchisq(2*(as.numeric(tbl[1,"Neg. log likel"])  - as.numeric(tbl[i,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"])),4)
-        }
-        if(as.numeric(tbl[i,"# Parameters"]) <= as.numeric(tbl[1,"# Parameters"])){
-          tbl[i,"Likel difference"]             <- round(as.numeric(tbl[i,"Neg. log likel"])              - as.numeric(tbl[1,"Neg. log likel"]),2)
-          tbl[i,"Degrees of freedom"]           <- as.numeric(tbl[1,"# Parameters"])                      - as.numeric(tbl[i,  "# Parameters"])
-          tbl[i,"P value"]                      <- round(1-pchisq(2*(as.numeric(tbl[i,"Neg. log likel"])  - as.numeric(tbl[1,"Neg. log likel"])),as.numeric(tbl[i,"Degrees of freedom"])),4)
-        }
-      }
-    }
-    return(as.table(tbl))
+    lr.test(FLSAMs(object,...),type=type)
   }
 )
 
