@@ -11,7 +11,8 @@ setClass("FLSAM.control",
     power.law.exps  ="matrix",   ## matrix coupling the power law expoonents
     f.vars          ="matrix",   ## matrix of fishing mortality couplings
     obs.vars        ="matrix",   ## matrix coupling the observation variances
-    srr             ="integer"),    ## stock recruitment relationship
+    srr             ="integer",   ## stock recruitment relationship
+    timeout         ="numeric"), ## number of seconds before model timesout 
   prototype=prototype(
     range           =as.numeric(1),   ## minimum age represented internally in the assessment
     plus.group      =as.logical(TRUE),   ## model the maximum age as a plus group?
@@ -21,7 +22,8 @@ setClass("FLSAM.control",
     power.law.exps  =as.matrix(0),   ## matrix of survey catchabilities
     f.vars          =as.matrix(0),   ## matrix of fishing mortality couplings
     obs.vars        =as.matrix(0),   ## matrix coupling the observation variances
-    srr             =as.integer(0)),    ## stock recruitment relationship
+    srr             =as.integer(0),  ## stock recruitment relationship
+    timeout         =3600),          ## defaults to one hour 
   validity=function(object){
                	# Everything is fine
                	return(TRUE)}

@@ -118,6 +118,7 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   cat("\n# Stock recruitment model code (0=RW, 1=Ricker, 2=BH, ... more in time\n",ctrl@srr,"\n",file=cfg.file,append=TRUE)
   cat("# Years in which catch data are to be scaled by an estimated parameter (mainly cod related)\n",0,"\n",file=cfg.file,append=TRUE)
   cat("# Fbar range \n",ctrl@range[c("minfbar","maxfbar")],"\n",file=cfg.file,append=TRUE)
+  cat("# Model timeout \n",ctrl@timeout,"\n",file=cfg.file,append=TRUE)
   
   #Finally, write the checksums
   cat("\n\n# Checksums to ensure correct reading of input data \n",123456,123456,"\n", file=cfg.file, append=TRUE)

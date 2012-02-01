@@ -47,6 +47,7 @@ Returns an FLSAM.control object with the following slots
 \item{f.vars}{Binds the variances of the fishing mortality random-walks together (as opposed to "states", which binds the value of the random walks i.e. to bind one random walk to multiple fishing-mortalties at age).}
 \item{obs.vars}{Binds the variances (standard deviations) of the observations together}
 \item{srr}{Stock recruitment relationships. Value options are 0= Random walk. 1= Ricker. 2=Beverton-Holt.}
+\item{timeout}{Model timeout setting (in secods). If the model fails to finish within this timeframe, it exits and returns and error. Default is 3600s (one hour).}
 }
 
 \author{

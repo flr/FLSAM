@@ -213,6 +213,8 @@ DATA_SECTION
   !! TRACE(stateDim); 
   init_ivector fbarRange(1,2)  
   !! TRACE(fbarRange); 
+  init_int timeout  
+  !! TRACE(timeout); 
   init_ivector cfg_checksums(1,2)
   !! if(checksums_ok(cfg_checksums)) cout << "OK. " ;
   
@@ -333,7 +335,7 @@ PRELIMINARY_CALCS_SECTION
 PROCEDURE_SECTION
   time_t currentTime;
   time(& currentTime);
-  if(difftime(currentTime,StartTime)>7200){ // Terminate after 120 minutes 
+  if(difftime(currentTime,StartTime)>timeout){ // Terminate after user defined time 
     cout<<endl;
     cout<<"############################################################"<<endl; 
     cout<<"############################################################"<<endl; 
