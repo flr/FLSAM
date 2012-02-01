@@ -260,15 +260,11 @@ setMethod("AIC",signature(object="FLSAMs"),
         }
 )
 
-if (!isGeneric("coef")) {
-    setGeneric("coef", useAsDefault=coef)
-}
-if (!isGeneric("coefficients")) {
-    setGeneric("coefficients", useAsDefault=coefficients)
-}
+setGeneric("coef",useAsDefault=coef)
+setGeneric("coefficients",useAsDefault=coefficients)
 setMethod("coef",signature(object="FLSAM"),
-        function(object, ...) {
-          return(params(object)[1:object@nopar,])
+        function(object,...) {
+          return(object@params[1:object@nopar,])
         }
 )
 setMethod("coef", signature(object="FLSAMs"),
@@ -276,7 +272,7 @@ setMethod("coef", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,coef(object[[i]]))
+            res[[i]] <- cbind(object.name=object[[i]]@name,coef(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -284,8 +280,7 @@ setMethod("coef", signature(object="FLSAMs"),
 setMethod("coefficients",signature(object="FLSAM"),
         function(object, ...) {
           return(coef(object))
-        }
-)
+        })
 setMethod("coefficients",signature(object="FLSAMs"),
         function(object, ...) {
           return(coef(object))

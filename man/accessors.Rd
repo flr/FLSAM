@@ -1,4 +1,5 @@
-\name{parameter.accessors}
+\name{accessors}
+\alias{accessors}
 \alias{catchabilities}
 \alias{obs.var}
 \alias{power.law.exps}
@@ -12,7 +13,7 @@
 \title{Accessor functions for FLSAM
 }
 \description{
-Returns parameters fitted by the FLSAM asessment model 
+Returns results from the FLSAM asessment model 
 }
 \usage{
 catchabilities(object)
@@ -36,7 +37,7 @@ catch(object)
 }
 }
 \details{
-Extracting many of the fitted parameters directly from the parameter slot of an \code{\link{FLSAM}} object can lead to difficulties in interpretation, due to the binding of parameters (i.e. fitting one parameter to multiple time series) and the fitting of parameters in log-space. These accessor functions provide easy access to these key results, correcting for these issues and providing both estimates of the parameter concerned and the associated confidence intervals.
+Extracting many of the fitted values directly from the parameter slot of an \code{\link{FLSAM}} object can lead to difficulties in interpretation, due to the binding of parameters (i.e. fitting one parameter to multiple time series) and the fitting of parameters in log-space. These accessor functions provide easy access to these key results, correcting for these issues and providing both estimates of the parameter concerned and the associated confidence intervals.
 
 The following accessor functions are currently supported: \itemize{
 \item catchabilities - linear proportionality parameter relating the observations (e.g. survey indices) to the modelled values (e.g. numbers at age, SSB) 
@@ -74,7 +75,7 @@ Mark R. Payne
 }
 
 \seealso{
-\code{\link{FLSAM}}
+\code{\link{FLSAM}}, \code{\link{params}}, \code{\link{coef}}, \code{\link{coefficients}}
 }
 \examples{
 #Load data
