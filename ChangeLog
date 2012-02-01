@@ -1,5 +1,8 @@
 FLSAM ChangeLog
 
+<Future date> v 0.43-1
+ * Addition of coef method to extract fitted parameters from FLSAM object  
+
 2012-02-01 v 0.43
  * Added timeout argument to FLSAM.control to allow manual control over this
    value
