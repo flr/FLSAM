@@ -89,27 +89,14 @@ residual.diagnostics <- function(x) {
 
 # Plot 4 Tukey-Anscombe plot, Standardised residuals vs Fitted values, log x-axis
 
-  plot(std.res ~mdl, index.res.l[[i]], ylab="Standardised Residuals", ylim=res.lim, xlim=idx.lim,
+  plot(std.res ~mdl, index.res.l[[i]], ylab="Standardised Residuals", 
+        ylim=res.lim, xlim=idx.lim,pch=19,cex=0.75,
         xlab=paste("Fitted ",idx.label,sep=""),log="x")
-        points(std.res ~mdl, index.res.l[[i]], pch=19,cex=0.75)
-        abline(h=0)        
+  plt.dat <- index.res.l[[i]]
+  abline(h=0)  
+  smoother <- loess.smooth(plt.dat$mdl,plt.dat$std.res)
+  lines(smoother,col="red")
   title("d) Tukey-Anscombe plot")
-
-# Add a smoothed line
-  
-  #fitting loess smoother
-  resid.loess   <- loess(std.res ~ mdl,data=index.res.l[[i]])
-  
-  #Range for which the smoother should predict values
-  resid.scale   <-seq(min(index.res.l[[i]]$mdl),max(index.res.l[[i]]$mdl),
-                  (max(index.res.l[[i]]$mdl)-min(index.res.l[[i]]$mdl))/50)
-  
-  #Predict smoothed residuals for chosen set of values 
-  resid.predict <- predict(resid.loess,data.frame(mdl=resid.scale))
-  
-  #draw smooth line on plot
-  lines(resid.predict~resid.scale,col="red")
-
 
 #plot 5 Normal Q-Q plot
 
