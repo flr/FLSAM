@@ -42,6 +42,7 @@ The typical return value is an object of the FLSAM class with the following slot
 \item{control}{The \code{\link{FLSAM.control}} object used to configure the assessment.}
 \item{nopar}{The number of parameters fitted by the model}
 \item{nlogl}{The negative log-likelihood of the fitted parameters}
+\item{vcov}{The variance-covariance matrix of the fitted parameters}
 \item{params}{The parameters fitted by the model, stored as a data.frame. The columns of the data frame are \itemize{
 \item index - A numeric index for the parameter
 \item name - The name of parameter
@@ -90,6 +91,7 @@ library(FLSAM)
 data(NSH)
 data(NSH.sam)
 #Perform assessment
+#Takes about two minutes on a 2.4GHz workstation
 sam <- FLSAM(NSH,NSH.tun,NSH.ctrl)
 #View results
 plot(sam)

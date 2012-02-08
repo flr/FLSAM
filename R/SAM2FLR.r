@@ -13,9 +13,9 @@ SAM2FLR <-function(ctrl,run.dir=tempdir()) {
   
   #Read parameter file
   par.fname    <- file.path(run.dir,sprintf("%s.par",admb.stem))
-  parfile     <-  as.numeric(scan(par.fname,what="", n=16, quiet=TRUE)[c(6,11,16)])
-  res@nopar   <-as.integer(parfile[1])
-  res@nlogl   <-parfile[2]
+  par.hdr     <-  as.numeric(scan(par.fname,what="", n=16, quiet=TRUE)[c(6,11,16)])
+  res@nopar   <-  as.integer(par.hdr[1])
+  res@nlogl   <-  par.hdr[2]
   
   #Read report file
   rept.fname    <- file.path(run.dir,sprintf("%s.rep",admb.stem))
@@ -35,37 +35,30 @@ SAM2FLR <-function(ctrl,run.dir=tempdir()) {
   res@params <- read.table(std.fname,header=FALSE,skip=1,
                   col.names=c("index","name","value","std.dev"))
 
-  #TODO: Following code reads the correlation matrix. I have left this
-  #      out for the meantime, but it can be added back in later if required
-  #Read (parts of) the correlation matrix - first the determinant of the hessian
-  #cor.fname    <- file.path(run.dir,sprintf("%s.cor",admb.stem))
-  #lin             <-  readLines(cor.fname,n=1)
-  #res@logDetHess  <-  as.numeric(gsub("^.*=(.+)$","\\1",lin[1]))
-  
-  #Then the correlation matrix
-  #npar           <-  as.integer(length(lin)-2)
-  #cor.dat        <- read.table(cor.fname,skip=1,header=TRUE,fill=TRUE)
-  #cor.df         <- cor.dat[,c(1:4)]
-  #cor.mat        <- as.matrix(cor.dat[,-c(1:4)])
+  #Now read the variance-covariance matrix. However, the problem is
+  #is that the result return by ADMB is not a square file, but only
+  #the lower triangle
+  cor.fname    <- file.path(run.dir,sprintf("%s.cor",admb.stem))
+  cor.lines.in <- readLines(cor.fname)[-c(1:2)] #First lines are headers
+  cor.lines    <- strsplit(cor.lines.in," +") #Split into elements 
+  vcov.dim     <- length(cor.lines) #Size of (squqare) vcov matrix 
+  #Write individual lines into a matrix for further processing. I can't
+  #see a cleaner way to do this apart from a for-loop :-(
+  cor.file.mat      <- matrix(as.character(NA), vcov.dim, vcov.dim+5)
+  for(i in 1:vcov.dim){ 
+    cor.file.mat[i,seq(cor.lines[[i]])]<- cor.lines[[i]]
+  }
+  #Extract correlation matrix
+  cor.mat.lt  <- apply(cor.file.mat[,-c(1:5)],2,as.numeric)
+  cor.mat.lt[upper.tri(cor.mat.lt,diag=FALSE)] <- 0
+  cor.mat <- cor.mat.lt + t(cor.mat.lt)
+  diag(cor.mat) <- diag(cor.mat)/2   #Diagonals get included twice, so halve them
 
-  #Am not sure what is going on here. Will leave this out until we get clarification
-  #Problem is is that cor.mat is not square
-#  ret@cor<-matrix(NA, ret@npar, ret@npar)
-#  for(i in 1:ret@npar){
-#    ret@cor[1:i,i]<-as.numeric(unlist(lapply(sublin[i],
-#      function(x)x[5:(4+i)])))
-#    ret@cor[i,1:i]<-ret@cor[1:i,i]
-#  }
-#  ret@cov<-ret@cor*(ret@std%o%ret@std)
-
-  #Now extract parameter estimates together with uncertainties
-#  mslh<-function(variable){
-#    sub.df <- subset(cor.df,name==variable,select=c("value","std"))
-#    sub.df$low.bnd <- sub.df$value - 1.96 * sub.df$std
-#    sub.df$up.bnd <- sub.df$value + 1.96 * sub.df$std
-#    if(nrow(sub.df)==length(yrs)) rownames(sub.df) <- yrs
-#    return(sub.df)
-#  }
+  #Convert correlation matrix to vcov matrix
+  stds <- as.numeric(cor.file.mat[,5]) 
+  vcov.mat <- cor.mat*(stds%o%stds)
+  dimnames(vcov.mat) <- list(cor.file.mat[,3],cor.file.mat[,3])
+  res@vcov <- vcov.mat
 
   #Extract the state variables
   u<-subset(res@params,name=="U")

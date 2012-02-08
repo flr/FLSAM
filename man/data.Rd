@@ -32,6 +32,7 @@ In addition the results of an assessment of this stock performed using FLSAM are
 }
 The third group is an example of an \code{\link{FLSAMs}} object and is called \code{IBTS.sams}. It contains five \code{\link{FLSAM}} objects resulting from a scan across the IBTS indices, successively tying the catchabilities and observation variances for the oldest ages together i.e. starting with all ages free, then binding age 4+, then 3+, then 2+ etc...
 
+Note that these are not the full North Sea herring assessment objects, but rather have been truncated to cover the period 1992-2010 (i.e. the period common to all data sources), so as to allow the model to converge quickly. The full assessment can be found in the Herring Working Group repository, \link{http://hawg.googlecode.com}.
 }
 
 \details{
