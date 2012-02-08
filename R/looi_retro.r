@@ -96,7 +96,7 @@ function(stock, indices, control="missing", retro=0, year.range="missing"){
       control@name <- as.character(yr)
       control@range["maxyear"] <- max(Stock@range["maxyear"],
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
-      assess  <- FLSAM(Stock, Indices.temp,control) 
+      assess  <- FLSAM(Stock, Indices.temp,control,batch.mode=T)
       if(is.null(assess)) {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
