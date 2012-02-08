@@ -7,10 +7,11 @@ FLSAM assessment diagnostics
 Generate a set of assessment diagnostics from an FLSAM object.
 }
 \usage{
-residual.diagnostics(x)
+residual.diagnostics(x,title=x@name)
 }
 \arguments{
-\item{x}{An \code{\link{FLSAM}} object resulting from a stock assessment
+\item{x}{An \code{\link{FLSAM}} object resulting from a stock assessment.
+\item{title}{A text string to be displayed as part of the plot titles. Defaults to the name of the \code{\link{FLSAM}} object.
 }
 }
 \details{

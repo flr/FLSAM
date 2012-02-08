@@ -7,7 +7,7 @@
   #######################################################################
 
 
-residual.diagnostics <- function(x) {
+residual.diagnostics <- function(x,title=x@name) {
 # extracts residuals dataframe from x
   index.res <- x@residuals
 
@@ -32,9 +32,11 @@ residual.diagnostics <- function(x) {
 # create working titel to identify age and survey
 
   ind.age   <- unlist(strsplit(names(index.res.l[i]), "\\."))
-  ttl       <- ifelse(ind.age[2]!="MLAI",paste("Diagnostics ",ind.age[2]," age "
-                ,ind.age[1],sep=""),paste("Diagnostics ",ind.age[2],sep=""))
-
+  ttl.fmt   <- ifelse(x@control@fleets[ind.age[2]]%in%c(3,4),
+                 "Diagnostics - %s",   #SSB fleey
+                 "Diagnostics - %s, age %s")  #other fleet
+  ttl       <- sprintf(ttl.fmt,ind.age[2],ind.age[1])
+  ttl       <- paste(title,ttl)
 
 #Scale index axes
   idx.rng       <-  range(c(index.res.l[[i]]$obs,index.res.l[[i]]$mdl),na.rm=TRUE)
