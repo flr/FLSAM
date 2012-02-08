@@ -10,9 +10,8 @@ Generate a set of assessment diagnostics from an FLSAM object.
 residual.diagnostics(x,title=x@name)
 }
 \arguments{
-\item{x}{An \code{\link{FLSAM}} object resulting from a stock assessment.
-\item{title}{A text string to be displayed as part of the plot titles. Defaults to the name of the \code{\link{FLSAM}} object.
-}
+\item{x}{An \code{\link{FLSAM}} object resulting from a stock assessment.}
+\item{title}{A text string to be displayed as part of the plot titles. Defaults to the name of the \code{\link{FLSAM}} object.}
 }
 \details{
 The SAM model assumes that the residuals between the observed and fitted values are log-normally distributed, and independently and identically distributed (i.i.d.). This function produces a set of diagnostic plots allowing these assumptions to be validated, in much the same way as they would be done in a linear modelling situation. The function produces a set of plots (six in all) for each individual combination of age and fleet (including both catches and surveys). The six panels produced are
