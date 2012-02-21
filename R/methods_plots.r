@@ -114,4 +114,20 @@ setMethod("plot",signature(x="FLStock",y="FLSAMs"),
     plot(y,x,...)
 })
 
-
+#Correlation plot
+cor.plot <- function(sam,cols=c("#D7191C","#FDAE61","#FFFFBF","#ABDDA4","#2B83BA"),
+                      full=FALSE) {
+   n.coefs <- nrow(coef(sam))   
+   cor.mat <- cov2cor(sam@vcov)
+   if(!full) {cor.mat <- cor.mat[1:n.coefs,1:n.coefs]} #Don't show the full matrix 
+   var.names <- colnames(cor.mat)
+   var.names <- factor(var.names,unique(var.names))
+   var.names <- paste(var.names,do.call(c,lapply(table(var.names),seq,from=1)),sep=".")
+   dimnames(cor.mat) <- list(Var2=var.names,Var1=var.names)
+   plt.dat <- as.data.frame(as.table(cor.mat),responseName="cor")
+   levelplot(cor ~ Var2 * Var1,plt.dat,
+       at=seq(-1,1,by=0.02),zlim=c(-1,1),
+       scales=list(x=list(rot=90)),
+       xlab="",ylab="",main=sam@name,
+       col.regions=colorRampPalette(cols,space="Lab")(102))
+}

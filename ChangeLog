@@ -5,6 +5,7 @@ FLSAM ChangeLog
  * Added vcov matrix to FLSAM class
  * Truncated NSH objects so that they fit in a reasonable amount of time
  * Added title option to residual.diagnostics
+ * Added cor.plot
 
 2012-02-01 v 0.43
  * Added timeout argument to FLSAM.control to allow manual control over this
