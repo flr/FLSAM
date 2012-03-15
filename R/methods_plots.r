@@ -1,5 +1,5 @@
 setMethod("plot",signature(x="FLSAM",y="missing"),
- function(x,y,...) {
+ function(x,y,futureYrs=T,...) {
     #Extract data - ssb and fbar are easy but recs harder
     ssb.dat <- ssb(x)
     ssb.dat$name <- "Spawning stock biomass"
@@ -11,7 +11,7 @@ setMethod("plot",signature(x="FLSAM",y="missing"),
     plot.dat    <- rbind(ssb.dat, fbar.dat,rec.dat) 
     plot.dat$name <- factor(plot.dat$name,
                        levels=c("Spawning stock biomass","Fishing mortality","Recruitment"))
-
+    if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% range(x)["minyear"]:(range(x)["maxyear"]-1))
     #Plot it
     xyplot(value+ubnd+lbnd~year|name,data=plot.dat,...,
               prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
@@ -35,14 +35,17 @@ setMethod("plot",signature(x="FLSAM",y="FLSAM"),
 })
 
 setMethod("plot",signature(x="FLSAMs",y="missing"),
- function(x,y,main="",...) {
+ function(x,y,main="",futureYrs=T,...) {
     #Extract data - ssb and fbar are easy but recs harder
     ssb.dat <- ssb(x)
+    if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
     ssb.dat$var <- "Spawning stock biomass"
     rec.dat <- rec(x)
+    if(!futureYrs) rec.dat <- rec(x)[-c(which(diff(rec(x)$year)<0),nrow(rec(x))),]
     rec.dat$var <- "Recruitment"
     rec.dat$age <- NULL
     fbar.dat <- fbar(x)
+    if(!futureYrs) fbar.dat <- fbar(x)[-c(which(diff(fbar(x)$year)<0),nrow(fbar(x))),]
     fbar.dat$var <- "Fishing mortality"
     plot.dat    <- rbind(ssb.dat, fbar.dat,rec.dat) 
     plot.dat$var <- factor(plot.dat$var,
@@ -62,14 +65,17 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
 })
 
 setMethod("plot",signature(x="FLSAMs",y="FLStock"),
- function(x,y,main="",...) {
+ function(x,y,main="",futureYrs,...) {
     #extract data from FLSAMs first
     ssb.dat <- ssb(x)
+    if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
     ssb.dat$var <- "spawning stock biomass"
     rec.dat <- rec(x)
+    if(!futureYrs) rec.dat <- rec(x)[-c(which(diff(rec(x)$year)<0),nrow(rec(x))),]
     rec.dat$var <- "recruitment"
     rec.dat$age <- NULL
     fbar.dat <- fbar(x)
+    if(!futureYrs) fbar.dat <- fbar(x)[-c(which(diff(fbar(x)$year)<0),nrow(fbar(x))),]
     fbar.dat$var <- "fishing mortality"
     sams.dat    <- rbind(ssb.dat, fbar.dat,rec.dat) 
 
@@ -86,6 +92,8 @@ setMethod("plot",signature(x="FLSAMs",y="FLStock"),
     plot.dat$var <- factor(plot.dat$var,
                        levels=c("spawning stock biomass","fishing mortality","recruitment"))
 
+    if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% min(unlist(lapply(x,function(y){range(y)["minyear"]}))) :
+                                                            max(unlist(lapply(x,function(y){range(y)["maxyear"]-1}))))
     #plot it
     xyplot(value~year|var,data=plot.dat,...,
               prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
