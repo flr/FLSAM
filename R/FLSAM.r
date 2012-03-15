@@ -106,7 +106,8 @@ setValidity("FLSAMinput",
 
   #- Check if number of fleets specified matches stck and tun
   if(length(ctrl@fleets) != (length(dimnames(stck@catch)$area)+length(tun))) stop("Number of fleets specified does not match stock and tun object")
-  if(all(ctrl@fleets %in% c(0,3))) stop("Assessment cannot be run with only catch and SSB index, other survey fleet needs to be specified too")
+  if(all(ctrl@fleets %in% c(0,3))) stop("Assessment cannot (currently) be run with only catch and SSB index, other survey fleet needs to be specified too.
+                                         Contact the developers of SAM and FLSAM if you require this addition")
   
   #- Check if age dimensions match in stck ctrl and tun
   rng <- range(do.call(rbind,lapply(tun,function(x){cbind(range(x)["min"],range(x)["max"])})),na.rm=T)
