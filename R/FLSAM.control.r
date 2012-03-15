@@ -38,7 +38,7 @@ FLSAM.control <- function(stck,tun,default="full") {
   ctrl@range <- stck@range
   ctrl@range["maxyear"] <- max(stck@range["maxyear"],
                             max(sapply(tun,function(x) max(x@range[c("maxyear")])))) 
-  ctrl@plus.group <- stck@range["plusgroup"]==stck@range["max"]
+  ctrl@plus.group <- ifelse(is.na(stck@range["plusgroup"]==stck@range["max"])==F,stck@range["plusgroup"]==stck@range["max"],F)
   ctrl@fleets <-factor(sapply(tun,type),levels=c("con","number","biomass"))
   ctrl@fleets <- c(0,as.numeric(ctrl@fleets))
   fleet.names <- c("catch",names(tun))
