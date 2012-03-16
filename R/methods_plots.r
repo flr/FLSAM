@@ -43,7 +43,6 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
     rec.dat <- rec(x)
     if(!futureYrs) rec.dat <- rec(x)[-c(which(diff(rec(x)$year)<0),nrow(rec(x))),]
     rec.dat$var <- "Recruitment"
-    rec.dat$age <- NULL
     fbar.dat <- fbar(x)
     if(!futureYrs) fbar.dat <- fbar(x)[-c(which(diff(fbar(x)$year)<0),nrow(fbar(x))),]
     fbar.dat$var <- "Fishing mortality"
@@ -73,7 +72,6 @@ setMethod("plot",signature(x="FLSAMs",y="FLStock"),
     rec.dat <- rec(x)
     if(!futureYrs) rec.dat <- rec(x)[-c(which(diff(rec(x)$year)<0),nrow(rec(x))),]
     rec.dat$var <- "recruitment"
-    rec.dat$age <- NULL
     fbar.dat <- fbar(x)
     if(!futureYrs) fbar.dat <- fbar(x)[-c(which(diff(fbar(x)$year)<0),nrow(fbar(x))),]
     fbar.dat$var <- "fishing mortality"
@@ -125,6 +123,10 @@ setMethod("plot",signature(x="FLStock",y="FLSAMs"),
 #Correlation plot
 cor.plot <- function(sam,cols=c("#D7191C","#FDAE61","#FFFFBF","#ABDDA4","#2B83BA"),
                       full=FALSE) {
+   if(sam@control@nohess) {
+    stop(paste("Cannot generate a correlation plot for an FLSAM object that has been run",
+               "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
+               "try again."))}
    n.coefs <- nrow(coef(sam))   
    cor.mat <- cov2cor(sam@vcov)
    if(!full) {cor.mat <- cor.mat[1:n.coefs,1:n.coefs]} #Don't show the full matrix 

@@ -78,11 +78,18 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 #General helper function to extract a given parameter from an FLSAM object
 #and return it as a data.frame
 .extract.params <- function(object,params) {
+  #Check that this is sensible first
+  if(object@control@nohess & params %in% c("logssb","logtsb","logfbar","logCatch")) {
+    stop(paste("Cannot extract SSB, Fbar, TSB or modelled catch from an FLSAM object that",
+               "has been run with the nohess=TRUE option. To calculate these variables",
+               "please update the corresponding FLStock object e.g. <FLStock> <-",
+               "<FLStock> + <FLSAM> and the use the corresponding function"))}
+
   #Extract numbers at age parameters
   ps <- subset(object@params,name%in%params)[,c("name","value","std.dev")]
   ps$CV <- ps$std.dev
-  ps$ubnd <- exp(ps$value + 1.96*ps$std.dev)
   ps$lbnd <- exp(ps$value - 1.96*ps$std.dev)
+  ps$ubnd <- exp(ps$value + 1.96*ps$std.dev)
   ps$value <- exp(ps$value)
   ps$std.dev <- NULL
   ps$name <- NULL
@@ -233,7 +240,9 @@ setMethod("f", signature(object="FLSAMs"),
 
 setMethod("rec", signature(object="FLSAM"),
         function(object, ...) {
-          return(subset(n(object),age==object@control@range["min"]))
+          rec.rtn <- subset(n(object),age==object@control@range["min"])
+          rec.rtn$age <- NULL
+          return(rec.rtn)
         }
 )       # }}}
 

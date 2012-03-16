@@ -10,14 +10,15 @@
 //----------------------------------------------------------------
 //SAM State Space Assessment Model
 //--------------------------------
-//$Rev: 7 $
-//$LastChangedDate: 2011-11-09 15:54:35 +0100 (Wed, 09 Nov 2011) $
+//$Rev: 17 $
+//$LastChangedDate: 2011-11-10 17:52:12 +0100 (Thu, 10 Nov 2011) $
 //----------------------------------------------------------------
 
 GLOBALS_SECTION 
   #include <time.h>
   time_t StartTime;   //Time variables, for use in timing loop
   #include <df1b2fun.h>
+  #include "nLogNormal.h"
   ofstream clogf("program.log");
   #define TRACE(object) clogf<<"line "<<__LINE__<<", file "<<__FILE__<<", "<<#object" =\n"<<object<<endl<<endl; 
   #define STRACE(object) cout<<"line "<<__LINE__<<", file "<<__FILE__<<", "<<#object" =\n"<<object<<endl<<endl; 
@@ -79,6 +80,8 @@ GLOBALS_SECTION
     }    
     return ret;
   }
+
+
 
   //Check that data has been read correctly
   bool checksums_ok(ivector checksum) {
@@ -145,6 +148,10 @@ DATA_SECTION
   !! TRACE(natMor);
   init_matrix landFrac(1,noYears,minAgeObs,maxAgeObs)
   !! TRACE(landFrac);
+  init_matrix catchMeanWeightD(1,noYears,minAgeObs,maxAgeObs)
+  !! TRACE(catchMeanWeightD);  
+  init_matrix catchMeanWeightL(1,noYears,minAgeObs,maxAgeObs)
+  !! TRACE(catchMeanWeightL);
   init_matrix Fprop(1,noYears,minAgeObs,maxAgeObs)
   !! TRACE(Fprop);
   init_matrix Mprop(1,noYears,minAgeObs,maxAgeObs)
@@ -169,6 +176,8 @@ DATA_SECTION
   int noLogFsta
   !! noLogFsta=max(keyLogFsta); 
   !! TRACE(noLogFsta);
+  init_int corFlag
+  !! TRACE(corFlag);
   init_imatrix keyLogFpar(1,noFleets,minAge,maxAge)
   !! TRACE(keyLogFpar);
   int noLogFpar
@@ -217,7 +226,8 @@ DATA_SECTION
   !! TRACE(timeout); 
   init_ivector cfg_checksums(1,2)
   !! if(checksums_ok(cfg_checksums)) cout << "OK. " ;
-  
+
+
   !! ad_comm::change_datafile_name("model.init");
   !! cout << "model.init...";
   init_number varLogFstaInit;
@@ -229,14 +239,15 @@ DATA_SECTION
   init_ivector ini_checksums(1,2)
   !! if(checksums_ok(ini_checksums)) cout << "OK. " ;
 
+
   !! ad_comm::change_datafile_name("reduced.cfg");
   !! cout << "reduced.cfg...";
   init_ivector retro(1,noFleets);
+  int reducedRun;
+  !! if(sum(square(retro))>0){reducedRun=1;}else{reducedRun=0;} 
   init_ivector red_checksums(1,2)
   !! if(checksums_ok(red_checksums)) cout << "OK. " ;
 
-  int reducedRun;
-  !! if(sum(square(retro))>0){reducedRun=1;}else{reducedRun=0;} 
 
   ivector lastYearData(1,noFleets);
   !!  lastYearData=0;
@@ -263,6 +274,9 @@ PARAMETER_SECTION
   !! if(stockRecruitmentModelCode==0){rec_phase=-1;}
   init_number rec_loga(rec_phase);
   init_number rec_logb(rec_phase);
+  !! int cor_phase=1;
+  !! if(corFlag==0){cor_phase=-1;}
+  init_bounded_number rho(-0.99,0.99,cor_phase);
   init_vector logScale(1,noScaledPar); 
   init_number logScaleSSB(ssbPhase);
   init_number logPowSSB(ssbPowPhase);
@@ -397,7 +411,7 @@ PROCEDURE_SECTION
   }
 
   for(int y=1; y<=noYears-1; ++y){
-    step(y,U((y-1)*stateDim+1,y*stateDim),U(y*stateDim+1,(y+1)*stateDim),logFpar,rec_loga,rec_logb,logSdLogN,logSdLogFsta);
+    step(y,U((y-1)*stateDim+1,y*stateDim),U(y*stateDim+1,(y+1)*stateDim),logFpar,rec_loga,rec_logb,logSdLogN,logSdLogFsta,rho);
   }
 
   for(int y=1; y<=noYears; ++y){    
@@ -433,7 +447,7 @@ PROCEDURE_SECTION
 
   }
 
-SEPARABLE_FUNCTION void step(const int y, const dvar_vector& u1,const dvar_vector& u2, const dvar_vector& logFpar, const dvariable& rec_loga, const dvariable& rec_logb, const dvar_vector& logSdLogN, const dvar_vector& logSdLogFsta)
+SEPARABLE_FUNCTION void step(const int y, const dvar_vector& u1,const dvar_vector& u2, const dvar_vector& logFpar, const dvariable& rec_loga, const dvariable& rec_logb, const dvar_vector& logSdLogN, const dvar_vector& logSdLogFsta, const dvariable& rho)
   dvar_vector x1(1,stateDim);   
   int n1=u1.indexmin();
   int n2=u1.indexmax();
@@ -508,10 +522,37 @@ SEPARABLE_FUNCTION void step(const int y, const dvar_vector& u1,const dvar_vecto
     }
   }
 
-  for(int i=1; i<=stateDim; ++i){
-    jnll+=0.5*(log(2.0*M_PI*var(i))+square(x2(i)-pred(i))/var(i));
+  if(corFlag==0){ // not correlated 
+    for(int i=1; i<=stateDim; ++i){
+      jnll+=0.5*(log(2.0*M_PI*var(i))+square(x2(i)-pred(i))/var(i));
+    } 
+  }else{          // correlated
+    for(int i=1; i<=(maxAge-minAge+1); ++i){
+      jnll+=0.5*(log(2.0*M_PI*var(i))+square(x2(i)-pred(i))/var(i));
+    } 
+
+    int Fdim=stateDim-(maxAge-minAge+1);
+    dvar_matrix fvar(maxAge-minAge+2,stateDim,maxAge-minAge+2,stateDim);
+    dvar_matrix fcor(maxAge-minAge+2,stateDim,maxAge-minAge+2,stateDim);
+    dvar_vector fsd(maxAge-minAge+2,stateDim);
+
+    fvar.initialize();
+    for(int i=(maxAge-minAge+2); i<=stateDim; ++i){
+      for(int j=(maxAge-minAge+2); j<=stateDim; ++j){
+        if(i!=j){fcor(i,j)=rho;}else{fcor(i,j)=1.0;}
+      }
+    }
+    for(int i=(maxAge-minAge+2); i<=stateDim; ++i){
+      //fvar(i,i)=var(i);
+      fsd(i)=sqrt(var(i));
+      //fcor(i,i)=1.0;
+    }
+    fvar=elem_prod(outer_prod(fsd,fsd),fcor);
+    //cout<<fcor<<endl<<endl;
+    jnll+=nLogNormal(pred((maxAge-minAge+2),stateDim),x2(maxAge-minAge+2,stateDim),fvar);
   } 
- 
+
+
 SEPARABLE_FUNCTION void obs(const dvar_vector& u, const dmatrix& data, const dvar_vector& obs, const dvar_vector& logFpar, const dvar_vector& logSdLogObs, const dvar_vector& logQpow, const dvariable& logScaleSSB, const dvariable& logPowSSB, const dvariable& logSdSSB)
   int n1=data.rowmin();
   int n2=data.rowmax();
@@ -721,7 +762,7 @@ TOP_OF_MAIN_SECTION
   cout << "SAM State-space Assessment Model" << endl;
   cout << "More info at: http://www.stockassessment.org" << endl;
   cout << "--------------------------------" << endl;
-  cout << "$Rev: 7 $" << endl << "$LastChangedDate: 2011-11-09 15:54:35 +0100 (Wed, 09 Nov 2011) $"  <<endl << endl;
+  cout << "$Rev: 17 $" << endl << "$LastChangedDate: 2011-11-10 17:52:12 +0100 (Thu, 10 Nov 2011) $"  <<endl << endl;
 
   arrmblsize=2000000;
   gradient_structure::set_GRADSTACK_BUFFER_SIZE(150000);

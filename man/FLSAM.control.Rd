@@ -46,8 +46,10 @@ Returns an FLSAM.control object with the following slots
 \item{power.law.exps}{Allows power-law catchability models to be implemented, and possibly bound together. In the case where a value is set to NA, a linear model will be employed for that fleet-age combination}
 \item{f.vars}{Binds the variances of the fishing mortality random-walks together (as opposed to "states", which binds the value of the random walks i.e. to bind one random walk to multiple fishing-mortalties at age).}
 \item{obs.vars}{Binds the variances (standard deviations) of the observations together}
+\item{cor.F}{Logical variable indicating whether the fishing mortality random walks in a manner that incorporates correlations between the ages. Default is FALSE (i.e. the fishing mortalities are completely independent).}
 \item{srr}{Stock recruitment relationships. Value options are 0= Random walk. 1= Ricker. 2=Beverton-Holt.}
-\item{timeout}{Model timeout setting (in secods). If the model fails to finish within this timeframe, it exits and returns and error. Default is 3600s (one hour).}
+\item{nohess}{Logical variable indicating whether the hessian of the fitted model should be estimated. Default is TRUE. Turning on this variable can be used to increase the speed of the model but it does so at the cost of removing all uncertainty estimates and the variance-covariance matrix from the fitted object. Any methods that are dependent on these values will most likely fail as a result.   }
+\item{timeout}{Model timeout setting (in seconds). If the model fails to finish within this timeframe, it exits and returns and error. Default is 3600s (one hour).}
 }
 
 \author{
@@ -55,7 +57,7 @@ Mark R. Payne and Niels Hintzen
 }
 
 
-\section{Warning }{It is important to realise that the default configuration returned by FLSAM.control is almost certaintly not the best configuration of your model - it is merely a first guess setup for your convenience. Similarly, there is no guarantee that this model will lead to a converged solution. It is the users responsibility to find the most appropriate ("best" configuration of the model.} 
+\section{Warning }{It is important to realise that the default configuration returned by FLSAM.control is almost certaintly not the best configuration of your model - it is merely a first guess setup for your convenience. Similarly, there is no guarantee that this model will lead to a converged solution. It is the users responsibility to find the most appropriate "best" configuration of the model.} 
 
 \seealso{
 \code{\link{FLSAM}}

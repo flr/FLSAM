@@ -1,6 +1,7 @@
 FLSAM ChangeLog
 
 <Future date> v 0.43-1
+ * Updated sam tpl version from Revision 7 to Revision 18
  * Addition of coef method to extract fitted parameters from FLSAM object  
  * Added vcov matrix to FLSAM class
  * Truncated NSH objects so that they fit in a reasonable amount of time

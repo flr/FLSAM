@@ -12,6 +12,8 @@ setClass("FLSAM.control",
     f.vars          ="matrix",   ## matrix of fishing mortality couplings
     obs.vars        ="matrix",   ## matrix coupling the observation variances
     srr             ="integer",   ## stock recruitment relationship
+    cor.F           ="logical",   ## should we estimate the Fs a being correlated?
+    nohess          ="logical",   ## should the hessian be estimated?
     timeout         ="numeric"), ## number of seconds before model timesout 
   prototype=prototype(
     range           =as.numeric(1),   ## minimum age represented internally in the assessment
@@ -22,7 +24,9 @@ setClass("FLSAM.control",
     power.law.exps  =as.matrix(0),   ## matrix of survey catchabilities
     f.vars          =as.matrix(0),   ## matrix of fishing mortality couplings
     obs.vars        =as.matrix(0),   ## matrix coupling the observation variances
+    cor.F           =as.logical(FALSE),          ## Don't estimate by default
     srr             =as.integer(0),  ## stock recruitment relationship
+    nohess          =as.logical(FALSE),          ## Estimate hessian by default 
     timeout         =3600),          ## defaults to one hour 
   validity=function(object){
                	# Everything is fine

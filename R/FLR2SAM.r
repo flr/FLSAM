@@ -20,6 +20,11 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
      cat("# Auto generated file\n", file=fname)
      cat(sprintf("# Datetime : %s\n\n",ftime),file=fname,append=TRUE)
    }
+  .flqout <- function(desc,flq,na.replace="missing") { #Local export function
+                  cat("#",desc,"\n",file=dat.file, append=TRUE)
+                  cat(.format.matrix.ADMB(t(flq[,,drop=TRUE]@.Data),na.replace=na.replace), 
+                     file=dat.file, append=TRUE)
+                  return(invisible(NULL))}
 
   #Setup meta data
   samp.times <- c(miss.val,sapply(tun,function(x) mean(x@range[c("startf","endf")])))
@@ -37,6 +42,8 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
    stck@mat[,as.character(lastYear),,,,]<-stck@mat[,as.character(lastYear-1),,,,]      # MV (there must be an easier way!!
    stck@stock.wt[,as.character(lastYear),,,,]<-stck@stock.wt[,as.character(lastYear-1),,,,]
    stck@catch.wt[,as.character(lastYear),,,,]<-stck@catch.wt[,as.character(lastYear-1),,,,]
+   stck@discards.wt[,as.character(lastYear),,,,]<-stck@discards.wt[,as.character(lastYear-1),,,,]
+   stck@landings.wt[,as.character(lastYear),,,,]<-stck@landings.wt[,as.character(lastYear-1),,,,]
    stck@m[,as.character(lastYear),,,,]<-stck@m[,as.character(lastYear-1),,,,]
    stck@landings.n[,as.character(lastYear),,,,]<-stck@landings.n[,as.character(lastYear-1),,,,]
    stck@harvest.spwn[,as.character(lastYear),,,,]<-stck@harvest.spwn[,as.character(lastYear-1),,,,]
@@ -80,17 +87,16 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   write.table(obs.dat, row.names=FALSE, col.names=FALSE, quote=FALSE, file=dat.file, append=TRUE)
 
   #Now write the rest of the stock information
-  flqout <- function(desc,flq) { #Local export function
-                  cat("#",desc,"\n",file=dat.file, append=TRUE)
-                  cat(.format.matrix.ADMB(t(flq[,,drop=TRUE]@.Data)), file=dat.file, append=TRUE)
-                  return(invisible(NULL))}
-  flqout("Proportion mature",stck@mat)
-  flqout("Stock mean weights",stck@stock.wt)
-  flqout("Catch mean weights",stck@catch.wt)
-  flqout("Natural Mortality", stck@m)
-  flqout("Landing Fraction L/(L+D)",stck@landings.n*0+1)
-  flqout("Fprop",stck@harvest.spwn)
-  flqout("Mprop",stck@m.spwn)
+  .flqout("Proportion mature",stck@mat)
+  .flqout("Stock mean weights",stck@stock.wt)
+  .flqout("Catch mean weights",stck@catch.wt)
+  .flqout("Natural Mortality", stck@m)
+  .flqout("Landing Fraction L/(L+D)",
+       stck@landings.n/(stck@landings.n + stck@discards.n),na.replace=1)
+  .flqout("Catch mean weights DISCARD",stck@discards.wt)
+  .flqout("Catch mean weights LANDINGS",stck@landings.wt)
+  .flqout("Fprop",stck@harvest.spwn)
+  .flqout("Mprop",stck@m.spwn)
   
   #Finally, write the checksums
   cat("# Checksums to ensure correct reading of input data \n",42,42,"\n", file=dat.file, append=TRUE)
@@ -108,7 +114,8 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   
   #Coupling Matrices
   cat("\n# Coupling of fishing mortality STATES (ctrl@states)\n",.format.matrix.ADMB(ctrl@states,na.replace=0),file=cfg.file,append=TRUE)
-  cat("\n# Coupling of catchability PARAMETERS (ctrl@catchabilities)\n",.format.matrix.ADMB(ctrl@catchabilities,na.replace=0),file=cfg.file,append=TRUE)
+  cat("\n# Use correlated random walks for the fishing mortalities\n# ( 0 = independent, 1 = correlation estimated)\n",as.integer(ctrl@cor.F),file=cfg.file,append=TRUE)
+  cat("\n\n# Coupling of catchability PARAMETERS (ctrl@catchabilities)\n",.format.matrix.ADMB(ctrl@catchabilities,na.replace=0),file=cfg.file,append=TRUE)
   cat("\n# Coupling of power law model EXPONENTS (ctrl@power.law.exps)\n",.format.matrix.ADMB(ctrl@power.law.exps,na.replace=0),file=cfg.file,append=TRUE)
   cat("\n# Coupling of fishing mortality RW VARIANCES (ctrl@f.vars)\n",.format.matrix.ADMB(ctrl@f.vars,na.replace=0),file=cfg.file,append=TRUE)
   cat("\n# Coupling of log N RW VARIANCES (ctrl@logN.vars)\n",ctrl@logN.vars,file=cfg.file,append=TRUE)
@@ -116,7 +123,7 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
   
   #Final values
   cat("\n# Stock recruitment model code (0=RW, 1=Ricker, 2=BH, ... more in time\n",ctrl@srr,"\n",file=cfg.file,append=TRUE)
-  cat("# Years in which catch data are to be scaled by an estimated parameter (mainly cod related)\n",0,"\n",file=cfg.file,append=TRUE)
+  cat("# Years in which catch data are to be scaled by an estimated parameter \n",0,"\n",file=cfg.file,append=TRUE)
   cat("# Fbar range \n",ctrl@range[c("minfbar","maxfbar")],"\n",file=cfg.file,append=TRUE)
   cat("# Model timeout \n",ctrl@timeout,"\n",file=cfg.file,append=TRUE)
   

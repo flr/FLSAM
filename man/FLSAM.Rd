@@ -12,7 +12,7 @@
 FLSAM(stck, tun, ctrl, run.dir=tempdir(), batch.mode=FALSE) 
 
 FLR2SAM(stck, tun, ctrl, run.dir = tempdir())
-runSAM(run.dir=tempdir())
+runSAM(ctrl, run.dir=tempdir())
 SAM2FLR(ctrl, run.dir = tempdir()) 
 }
 \arguments{

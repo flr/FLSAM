@@ -33,7 +33,7 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
   FLR2SAM(stck,tun,ctrl,run.dir)
 
   #Run SAM
-  rtn <- runSAM(run.dir)
+  rtn <- runSAM(ctrl, run.dir)
   if(rtn!=0) {
     if(batch.mode) {
       return(NULL)
@@ -51,9 +51,11 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
 #---------------------------------------------------
 # We're ready! Run the executable
 #---------------------------------------------------
-runSAM <- function(run.dir=tempdir()){
+runSAM <- function(ctrl,run.dir=tempdir()){
   admb.stem <- "sam" 
   admb.args <-  "-nr 2 -noinit -iprint 1"
+  if(ctrl@nohess) {admb.args <- paste(admb.args,"-nohess")}
+
   #Platform specific issues
   if (.Platform$OS.type=="unix") {
     admb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
@@ -68,7 +70,7 @@ runSAM <- function(run.dir=tempdir()){
   }
 
   #Run!
-  cmd <- sprintf("./%s -nr 2 -noinit -iprint 1" ,basename(admb.exec))
+  cmd <- sprintf("./%s %s" ,basename(admb.exec),admb.args)
   olddir <- setwd(run.dir)
   rtn <- system(cmd)
   setwd(olddir)
