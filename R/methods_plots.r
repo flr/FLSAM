@@ -139,3 +139,149 @@ cor.plot <- function(sam,cols=c("#D7191C","#FDAE61","#FFFFBF","#ABDDA4","#2B83BA
        xlab="",ylab="",main=sam@name,
        col.regions=colorRampPalette(cols,space="Lab")(102))
 }
+
+#Otolith plot (resample from the variance co-variance matrix and create a plot of all the resampled value)
+#- Create generic function for 'looi'
+if (!isGeneric("otolith")) {
+  setGeneric("otolith", function(sam.out,year, ...)
+    standardGeneric("otolith"))
+}
+setMethod("otolith", signature(sam.out="FLSAM", year="numeric"),
+function(sam.out, year=2011, plot=TRUE, show.points=FALSE, do.contours=TRUE,
+                      margin.plots=TRUE, show.estimate=TRUE,
+                      n=100, pch=".", alpha=0.05, show.grid=TRUE,
+                      n.grid=50, contour.args=list(),...){
+
+  require(MASS)
+  debug <- FALSE
+  filled.contours <- FALSE
+
+  #Get the range of ages for fbar
+  f.ages        <-  sam.out@control@range["minfbar"]:sam.out@control@range["maxfbar"]
+
+  #set up year ranges and identify year which plot is being done for
+  years <- sam.out@control@range["minyear"]:sam.out@control@range["maxyear"]
+  year.index <- which(years==year)
+
+
+  # Generate n iterations of all the parameters
+  if(n > 200){
+    Fbar.all  <- numeric()
+    SSB.all   <- numeric()
+    paramvalue<- sam.out@params$value
+    samvcov   <- sam.out@vcov
+    for(i in 1:ceiling(n/200)){
+      d <- mvrnorm(n=200,paramvalue, samvcov)
+      Fbar.all  <- rbind(Fbar.all,d[,colnames(d)=="logfbar"])
+      SSB.all   <- rbind(SSB.all,d[,colnames(d)=="logssb"])
+    }
+    Fbar.all  <- Fbar.all[1:n,]
+    SSB.all   <- SSB.all[ 1:n,]
+  } else {
+      d <- mvrnorm(n=n,sam.out@params$value, sam.out@vcov)
+      Fbar.all <- d[,colnames(d)=="logfbar"]
+      SSB.all <-  d[,colnames(d)=="logssb"]
+    }
+
+  #Set these points up to be returned and return them to normal space
+  Fbar <- exp(Fbar.all[,year.index])
+  SSB <- exp(SSB.all[,year.index])
+  return.obj  <- data.frame(Fbar,SSB)
+
+  #Extract SSB and Fbar estimates from the assessment outputs for the year requested
+  SSB.est   <-  ssb(sam.out)$value[ssb(sam.out)$year==year]
+  Fbar.est  <-  fbar(sam.out)$value[fbar(sam.out)$year==year]
+
+
+  #Now calculate the contour lines, if requested
+  if(do.contours) {
+    #Calculate kernel density estimate
+    kern  <-  kde2d(Fbar,SSB,n=n.grid)
+    #Calculate cumulative distribution function
+    kz    <-  as.vector(kern$z)
+    ord   <-  order(kz)
+    cumfrac <-  cumsum(kz[ord])/sum(kz)
+    cumfrac.matrix  <-  matrix(cumfrac[rank(kz)],nrow=nrow(kern$z),ncol=ncol(kern$z))
+    if(is.null(contour.args$levels)) contour.args$levels <-   c(0.01,0.05,0.25,0.5,0.75)
+#      if(is.null(contour.args$lty))   contour.args$lty <-   c(1,1,2,3,4)
+#      if(is.null(contour.args$lwd))   contour.args$lwd <-   c(1,3,1,1,1)
+    if(is.null(contour.args$method))contour.args$method <-    "edge"
+#      if(filled.contours) {
+#       do.call(filled.contour,c(x=list(kern$x),y=list(kern$y),z=list(cumfrac.matrix),add=TRUE,nlevels=100,color.palette=heat.colors))
+#    }
+    otolith.obj  <-  c(x=list(kern$x),y=list(kern$y),z=list(cumfrac.matrix),add=TRUE,contour.args)
+    return.obj    <- otolith.obj
+  }
+
+  #Now do the plot
+  if(plot) {
+    if(!show.points) pch <- NA
+    if(margin.plots) {
+      par(mar=c(0.5,0.5,0.5,0.5),oma=c(4,4,1.5,0))
+      layout(matrix(c(1,4,3,2),2,2,byrow=TRUE), c(3,lcm(4)), c(lcm(4),3), respect=FALSE)
+    } else { #Else force to a 1x1 plot
+      par(mfrow=c(1,1))
+    }
+
+    x.lab <-  paste("Fbar (",ifelse(is.null(f.ages),"All Ages",paste(range(f.ages),collapse="-")),")",sep="")
+    xlim  <- range(pretty(Fbar))
+    ylim  <- range(pretty(SSB))
+
+    #First the horizontal plot
+    if(margin.plots) {
+      densF   <-  density(Fbar)
+      plot(densF,ann=FALSE,xaxt="n",yaxt="n",type="l",xlim=xlim)
+      if(show.grid) grid()
+      title(ylab="Probability\nDensity",xpd=NA,mgp=c(1,1,0))
+
+      #Calculate 95% confidence intervals
+      cumsumF.fun <-  approxfun(cumsum(densF$y)/sum(densF$y),densF$x)
+      densF.fun   <-  approxfun(densF$x,densF$y)
+      ul.F    <-  cumsumF.fun(1-alpha/2)
+      ul.dens <-  densF.fun(ul.F)
+      ll.F    <-  cumsumF.fun(alpha/2)
+      ll.dens <-  densF.fun(ll.F)
+      points(c(ll.F,ul.F),c(ll.dens,ul.dens),pch="|",cex=1.5)
+      text(c(ll.F,ul.F),c(ll.dens,ul.dens),label=sprintf("%.3f",round(c(ll.F,ul.F),3)),pos=4,xpd=NA)
+      if(show.estimate) {
+        points(Fbar.est,densF.fun(Fbar.est),pch=19,cex=1.5)
+        text(Fbar.est,densF.fun(Fbar.est),label=sprintf("%.3f",round(Fbar.est,3)),pos=4,xpd=NA)
+      }
+    }
+
+    #Now the vertical plot
+    if(margin.plots) {
+      densSSB <-  density(SSB)
+      plot(densSSB$y,densSSB$x,xaxt="n",yaxt="n",type="l",ylim=ylim)
+      abline(v=0,col="grey")
+      if(show.grid) grid()
+      title(xlab="Probability\nDensity",xpd=NA,mgp=c(2,1,0))
+      #Calculate 95% confidence intervals
+      cumsumSSB.fun <-  approxfun(cumsum(densSSB$y)/sum(densSSB$y),densSSB$x)
+      densSSB.fun   <-  approxfun(densSSB$x,densSSB$y)
+      ul.SSB    <-  cumsumSSB.fun(1-alpha/2)
+      ul.dens <-  densSSB.fun(ul.SSB)
+      ll.SSB    <-  cumsumSSB.fun(alpha/2)
+      ll.dens <-  densSSB.fun(ll.SSB)
+      points(c(ll.dens,ul.dens),c(ll.SSB,ul.SSB),pch="-",cex=2)
+      text(c(ll.dens,ul.dens),c(ll.SSB,ul.SSB),label=round(c(ll.SSB,ul.SSB),0),pos=4,xpd=NA)
+      if(show.estimate) {
+        points(densSSB.fun(SSB.est),SSB.est,pch=19,cex=1.5)
+        text(densSSB.fun(SSB.est),SSB.est,label=round(SSB.est,0),pos=2,xpd=NA)
+      }
+    }
+
+    #Now the main plot
+    plot(0,0,xlim=xlim,ylim=ylim,type="n",xlab="",ylab="")
+    if(show.points) points(Fbar,SSB,pch=pch)
+    title(xlab=x.lab,ylab="SSB",xpd=NA)
+    if(show.estimate) points(Fbar.est,SSB.est,pch=19,cex=1.5)
+    if(show.grid) grid()
+    if(do.contours) {
+      do.call(contour,otolith.obj)
+    }
+
+  }
+
+  return(invisible(return.obj))
+})
