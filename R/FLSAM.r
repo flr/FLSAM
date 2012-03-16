@@ -8,7 +8,8 @@ setClass("FLSAM",
       params   = "data.frame",
       stock.n  = "FLQuant",
       harvest  = "FLQuant",
-      residuals = "data.frame"),
+      residuals = "data.frame",
+      info     = "matrix"),
   	prototype=prototype(),
   	validity=function(object){
                 	# Everything is fine

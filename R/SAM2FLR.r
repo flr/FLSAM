@@ -30,6 +30,7 @@ SAM2FLR <-function(ctrl,run.dir=tempdir()) {
   res@residuals$fleet <- factor(res@residuals$fleet)
   levels(res@residuals$fleet) <- names(ctrl@fleets)
 
+
   #---------------------------
   #Handle missing std deviation if nohess=TRUE
   #---------------------------
@@ -104,6 +105,15 @@ SAM2FLR <-function(ctrl,run.dir=tempdir()) {
     states.key <- ctrl@states["catch",a] 
     res@harvest[a,] <- exp(f.stateEst[states.key,])
   }
+
+  #Populate the info slot as last step
+  info <- data.frame(FLSAM.version=packageDescription("FLSAM")$Version,
+                     FLCore.version=packageDescription("FLCore")$Version,
+                     R.version=R.version$version.string,
+                     platform=R.version$platform,
+                     run.date=Sys.time())
+  res@info <- t(info)
+  colnames(res@info) <- "_"
 
   #Finished! 
   return(res)

@@ -68,7 +68,7 @@ The typical return value is an object of the FLSAM class with the following slot
 \item minfbar - the younger limit of ages used in calcualting the average fishing mortality, fbar
 \item maxfbar - the older limit of ages used in calcualting the average fishing mortality, fbar
 }}
-
+\item{info}{Contains key information about the software versions and operating system used in running the assessment}
 The FLSAM function will return an FLSAM object in all cases when the model converges. If the model does not converge, FLSAM will return an error unless it is running in batch mode, in which case it will return "NULL".
 
 runSAM() returns an integer error code corresponding to the return value of the SAM model - 0 for a successful run, non-zero otherwise. SAM2FLR will return an FLSAM object. FLR2SAM does not return any values.
