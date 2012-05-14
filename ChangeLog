@@ -9,6 +9,9 @@ FLSAM ChangeLog
  * Truncated NSH objects so that they fit in a reasonable amount of time
  * Added title option to residual.diagnostics
  * Added cor.plot
+ * Added obsvar.plot & documentation
+ * Added obscv.plot & documentation
+ * Added FLSAM.out & documentation
 
 2012-02-01 v 0.43
  * Added timeout argument to FLSAM.control to allow manual control over this

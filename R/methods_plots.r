@@ -287,3 +287,25 @@ function(sam.out, year=2011, plot=TRUE, show.points=FALSE, do.contours=TRUE,
 
   return(invisible(return.obj))
 })
+
+#-Observation variance plot
+obsvar.plot <- function(FLSAM){
+                  obv <- obs.var(FLSAM)
+                  obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
+                  obv <- obv[order(obv$value),]
+                  bp <- barplot(obv$value,ylab="Observation Variance",
+                         main="Observation variances by data source",col=factor(obv$fleet))
+                  axis(1,at=bp,labels=obv$str,las=3,lty=0,mgp=c(0,0,0))
+                  legend("topleft",levels(obv$fleet),pch=15,col=1:nlevels(obv$fleet),pt.cex=1.5)
+              }
+
+#-CV versus observation variance plot
+obscv.plot  <- function(FLSAM){
+
+  obv <- obs.var(FLSAM)
+  obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
+  obv <- obv[order(obv$value),]
+  plot(obv$value,obv$CV,xlab="Observation variance",ylab="CV of estimate",log="x",
+    pch=16,col=obv$fleet,main="Observation variance vs uncertainty")
+  text(obv$value,obv$CV,obv$str,pos=4,cex=0.75,xpd=NA)
+}
