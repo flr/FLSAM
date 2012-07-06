@@ -1,4 +1,4 @@
-monteCarloStock <- function(stck,sam,realisations){
+monteCarloStock <- function(stck,sam,realisations,run.dir=tempdir()){
 
   require(MASS)
   ctrl              <- sam@control
@@ -11,6 +11,7 @@ monteCarloStock <- function(stck,sam,realisations){
 
   #-Generate new parameter realisations from vcov
   random.param      <- mvrnorm(realisations,sam@params$value,sam@vcov)
+  save(random.param,file=file.path(run.dir,"random.param.RData"))
   
   #-Control settings
   n.states          <- length(unique(ctrl@states[names(which(ctrl@fleets==0)),]))
