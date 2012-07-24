@@ -36,7 +36,8 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="
 
       #- Run the assessment
       cat(sprintf('\nRunning "%s" assessment...\n',iRun))
-      res <- FLSAM(stck,tun,ctrl,batch.mode=TRUE)
+      if(iRun == rownames(overview)[1]) res <- FLSAM(stck,tun,ctrl,run.dir=tempdir(),batch.mode=TRUE,pin.dir=NULL)
+      if(iRun != rownames(overview)[1]) res <- update(stck,result[[which(iRun==rownames(overview)[1])]],ctrl,run.dir=tempdir())
       if(is.null(res)) {
         warning(sprintf('"%s" run failed',iRun))
       } else {
@@ -82,7 +83,7 @@ function(stock, indices, control="missing", retro=0, year.range="missing"){
     cat("Running retrospective...\n")
     Indices.temp<-indices
     res <- new("FLSAMs")
-    for (yr in year.range){  #yr is the year in which the assessment is being simulated
+    for (yr in rev(year.range)){  #yr is the year in which the assessment is being simulated
       Stock <- trim(stock, year=stck.min.yr:yr)
       Indices.temp<-indices
       for (j in 1:length(indices)) {
@@ -96,7 +97,8 @@ function(stock, indices, control="missing", retro=0, year.range="missing"){
       control@name <- as.character(yr)
       control@range["maxyear"] <- max(Stock@range["maxyear"],
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
-      assess  <- FLSAM(Stock, Indices.temp,control,batch.mode=T)
+      if(yr == rev(year.range)[1]) assess  <- FLSAM(Stock, Indices.temp,control,run.dir=tempdir(),batch.mode=T,pin.dir=NULL)
+      if(yr != rev(year.range)[1]) assess  <- update(Stock,res[[as.character(yr+1)]],Indices.temp,run.dir=tempdir())
       if(is.null(assess)) {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {

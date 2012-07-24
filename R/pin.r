@@ -35,10 +35,9 @@ setMethod("update", signature(object="FLStock"),
 
   
   #-Update the assessment
-  ynew        <- FLSAM(object,z,ctrl,run.dir,batch.mode=FALSE,pin.dir=run.dir)
-  object      <- object + ynew
+  ynew        <- FLSAM(object,z,ctrl,run.dir,batch.mode=T,pin.dir=run.dir)
 
-  return(object)
+  return(ynew)
   }
 )
 
