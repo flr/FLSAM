@@ -17,7 +17,7 @@ setClass("FLSAM",
 )
 
 
-FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
+FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.dir=NULL) {
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
@@ -34,7 +34,7 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
   FLR2SAM(stck,tun,ctrl,run.dir)
 
   #Run SAM
-  rtn <- runSAM(ctrl, run.dir)
+  rtn <- runSAM(ctrl, run.dir,pin.dir)
   if(rtn!=0) {
     if(batch.mode) {
       return(NULL)
@@ -52,20 +52,26 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
 #---------------------------------------------------
 # We're ready! Run the executable
 #---------------------------------------------------
-runSAM <- function(ctrl,run.dir=tempdir()){
-  admb.stem <- "sam" 
-  admb.args <-  "-nr 2 -noinit -iprint 1"
+runSAM <- function(ctrl,run.dir=tempdir(),pin.dir=NULL){
+  admb.stem <- "sam"
+  admb.args <- "-nr 2 -noinit -iprint 1"
   if(ctrl@nohess) {admb.args <- paste(admb.args,"-nohess")}
 
   #Platform specific issues
   if (.Platform$OS.type=="unix") {
     admb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
-                   mustWork=TRUE), admb.stem)
+                                       mustWork=TRUE), ifelse(is.null(pin.dir)==T,admb.stem,"sampin"))
     file.copy(admb.exec, run.dir)
+    if(is.null(pin.dir)==F) file.rename(file.path(run.dir,"sampin"),file.path(run.dir,"sam"))
+    admb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
+                                       mustWork=TRUE), admb.stem)
   } else if (.Platform$OS.type == "windows") {
     admb.exec <- file.path(system.file("bin", "windows", package="FLSAM", mustWork=TRUE),
-      sprintf("%s.exe",admb.stem))
+      sprintf("%s.exe",ifelse(is.null(pin.dir)==T,admb.stem,"sampin")))
     file.copy(admb.exec, run.dir)
+    if(is.null(pin.dir)==F) file.rename(file.path(run.dir,"sampin.exe"),file.path(run.dir,"sam.exe"))
+    admb.exec <- file.path(system.file("bin", "windows", package="FLSAM", mustWork=TRUE),
+      sprintf("%s.exe",admb.stem))
   } else {
     stop(sprintf("Platform type, %s, is not currently supported.",R.version$os))
   }
