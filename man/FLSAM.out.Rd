@@ -7,7 +7,7 @@ Create FLSAM formatted output file
 Document the results of the FLSAM assessment including all input values, model settings and
 output in formatted tables}
 \usage{
-FLSAM.out(FLStock, FLIndices, FLSAM, format = "TABLE %i.")
+FLSAM.out(FLStock, FLIndices, FLSAM, format = "TABLE \%i.")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,7 +35,7 @@ N.T. Hintzen
 data(NSH)
 data(NSH.sam)
 
-sam.out <- FLSAM.out(NSH,NSH.tun,NSH.sam,format="Table %i")
+sam.out <- FLSAM.out(NSH,NSH.tun,NSH.sam,format="Table \%i")
 
 #-Write to file, set margins
 old.opt           <- options("width","scipen")

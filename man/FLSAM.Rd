@@ -11,8 +11,10 @@
 \usage{
 FLSAM(stck, tun, ctrl, run.dir=tempdir(), batch.mode=FALSE) 
 
+update(object, stck, tun, run.dir=tempdir(),batch.mode=FALSE)
+
 FLR2SAM(stck, tun, ctrl, run.dir = tempdir())
-runSAM(ctrl, run.dir=tempdir())
+runSAM(ctrl, run.dir=tempdir(),use.pin=FALSE)
 SAM2FLR(ctrl, run.dir = tempdir()) 
 }
 \arguments{
@@ -26,6 +28,10 @@ SAM2FLR(ctrl, run.dir = tempdir())
 }
   \item{batch.mode}{Logical variable indicating whether the code should be run in batch mode.
 }
+  \item{object}{An object of the  {\code{\link{FLSAM}}} class, resulting from e.g a call to FLSAM, that is to form the basis for the update.
+}
+  \item{use.pin}{A logical variable indicating whether the SAM executable should look for a file containing initial parameter estimates (i.e. a pin file)
+}
 }
 \details{
 FLSAM is an FLR wrapper to SAM, the state-space assessment model. SAM is written in the compiled ADMB language - compiled executables for each platform are included within the FLSAM package. The FLSAM function provides the interface between the data (\code{\link[FLCore]{FLStock}}, \code{\link[FLCore]{FLIndices}} objects) and configuration objects (\code{\link{FLSAM.control}}) stored in R, and the compiled exectable. 
@@ -34,7 +40,9 @@ Three helper functions provide the core of the FLSAM method. FLR2SAM accepts the
 
 The user can also specify the directory (via the 'run.dir' argument) in which the temporary files used to communication with SAM are stored. The default is to use the temporary directory of R.
 
-FLSAM can also be run in "batch-mode" through the 'batch.mode' argument. This is a particularly useful feature when running a large number of assessment in an unattended situation. If the SAM model fails to converge in when running in batch-mode, it will suppress the error and return a "NULL" value (instead of an FLSAM object). If the model fails to converge when not running in batch-mode (the default), an error is returned.
+FLSAM can also be run in "batch-mode" through the 'batch.mode' argument. This is a particularly useful feature when running a large number of assessments in an unattended situation. If the SAM model fails to converge in when running in batch-mode, it will suppress the error and return a "NULL" value (instead of an FLSAM object). If the model fails to converge when not running in batch-mode (the default), an error is returned.
+
+It is also possible, via the 'update' function, to "reuse" the results of a previous stock assessment to provide initial guesses for the new assessment. Such a feature may be desirablie in situations where the user is running a large number of assessments that are very similar and have the same parameter configuration e.g. in a management-strategy evaluation. The supplied FLSAM object is used to generate a parameter-initialisation ("pin") file - the 'use.pin' argument in runSAM is then activated in this case, to tell the ADMB SAM executable to use these values. At the moment, it is not possible to change the assessment configuration in this manner - future releases will hopefully incorporate this feature.
  
 }
 \value{
@@ -95,6 +103,14 @@ data(NSH.sam)
 sam <- FLSAM(NSH,NSH.tun,NSH.ctrl)
 #View results
 plot(sam)
+
+#Repeat the assessment using the previous result as an initial guess
+uninit.time <- system.time(sam.uninit <- FLSAM(NSH,NSH.tun,NSH.ctrl))
+init.time   <- system.time(sam.init   <- update(sam.uninit,NSH,NSH.tun))
+#Big speed increase! (your results may vary: ours are about 1.1x)
+uninit.time[3]/init.time[3]
+#But assessments are the sam (phew!)
+plot(FLSAMs(uninitialised=sam.uninit,initialised=sam.init))
 
 }
 \keyword{ ~kwd1 }

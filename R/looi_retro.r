@@ -28,7 +28,8 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="
       ctrl                  <- FLSAM.control(stck,tun)
       #- Update the ctrl and stck object given the changed tuning object
       for(iSlot in slotNames(e3))
-        if(class(slot(ctrl,iSlot))=="matrix") slot(ctrl,iSlot) <- slot(e3,iSlot)[c(names(which(e3@fleets==0)),names(which(overview[iRun,]==1))),]
+        if(class(slot(ctrl,iSlot))=="matrix") {
+            slot(ctrl,iSlot) <- slot(e3,iSlot)[c(names(which(e3@fleets==0)),names(which(overview[iRun,]==1))),]}
       ctrl@logN.vars        <- e3@logN.vars
       ctrl@srr              <- e3@srr
       ctrl@name             <- iRun
@@ -36,8 +37,11 @@ setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="
 
       #- Run the assessment
       cat(sprintf('\nRunning "%s" assessment...\n',iRun))
-      if(iRun == rownames(overview)[1]) res <- FLSAM(stck,tun,ctrl,run.dir=tempdir(),batch.mode=TRUE,pin.dir=NULL)
-      if(iRun != rownames(overview)[1]) res <- update(stck,result[[which(iRun==rownames(overview)[1])]],ctrl,run.dir=tempdir())
+      if(iRun == rownames(overview)[1]) {  #If first run
+           res <- FLSAM(stck,tun,ctrl,run.dir=tempdir(),batch.mode=TRUE)
+           first.res <- res  #Store first result separately, and use to initialise other runs 
+      } else {
+           res <- update(first.res,stck,tun,run.dir=tempdir())}
       if(is.null(res)) {
         warning(sprintf('"%s" run failed',iRun))
       } else {
@@ -97,8 +101,10 @@ function(stock, indices, control="missing", retro=0, year.range="missing"){
       control@name <- as.character(yr)
       control@range["maxyear"] <- max(Stock@range["maxyear"],
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
-      if(yr == rev(year.range)[1]) assess  <- FLSAM(Stock, Indices.temp,control,run.dir=tempdir(),batch.mode=T,pin.dir=NULL)
-      if(yr != rev(year.range)[1]) assess  <- update(Stock,res[[as.character(yr+1)]],Indices.temp,run.dir=tempdir())
+      if(yr == rev(year.range)[1]) {  #First run
+          assess  <- FLSAM(Stock, Indices.temp,control,run.dir=tempdir(),batch.mode=TRUE)
+      } else {
+          assess  <- update(res[[as.character(yr+1)]],Stock,Indices.temp,run.dir=tempdir()) }
       if(is.null(assess)) {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {

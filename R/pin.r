@@ -1,47 +1,59 @@
 
-setMethod("update", signature(object="FLStock"),
-  function(object,y,z,run.dir=tempdir())
+setMethod("update", signature(object="FLSAM"),
+  function(object,stck,tun,run.dir=tempdir(),batch.mode=FALSE)
   {
 
-  if(!validObject(object)) stop("FLStock object invalid")
-  if(!validObject(y))      stop("FLSAM object invalid")
-  if(!validObject(z))      stop("FLIndices object invalid")
+  #- Check validity of objects
+  ctrl <- object@control
+  inputSAM      <- new("FLSAMinput")
+  inputSAM@stck <- stck
+  inputSAM@tun  <- tun
+  inputSAM@ctrl <- ctrl
+  if(!all(c(validObject(stck),validObject(tun),validObject(object),validObject(inputSAM)))) {
+        stop("Validity checks on input objects failed") }
 
   #-Test if ranges of FLStock are smaller than of FLSAM
-  if(range(object)["minyear"] < range(y)["minyear"] |
-     range(object)["maxyear"] > range(y)["maxyear"])
-      stop("Year ranges of FLStock exceed those of the FLSAM object,
+  if(range(stck)["minyear"] < range(object)["minyear"] |
+     range(stck)["maxyear"] > range(object)["maxyear"])
+      stop("Year ranges of FLStock exceed those of the FLSAM stck,
       only previously estimated parameters can be used")
 
   #-Define starting and final year
-  strt  <- range(object)["minyear"]
-  nd    <- range(object)["maxyear"]
+  strt  <- range(stck)["minyear"]
+  nd    <- range(stck)["maxyear"]
 
-  #-Check for ranges of FLIndices object
-  if(all(unlist(lapply(z,function(x){return(range(x)["maxyear"])})) > nd))
+  #-Check for ranges of FLIndices stck
+  if(all(unlist(lapply(tun,function(x){return(range(x)["maxyear"])})) > nd))
     warning("All indices longer than maxyear in FLStock,
-    is the FLIndices object trimmed to the right years?")
-  if(any(unlist(lapply(z,function(x){return(range(x)["maxyear"])})) > nd)){
-    params2pin(  y,strt,nd+1,save.dir=run.dir)
+    is the FLIndices stck trimmed to the right years?")
+  if(any(unlist(lapply(tun,function(x){return(range(x)["maxyear"])})) > nd)){
+    params2pin(object,strt,nd+1,save.dir=run.dir)
   } else {
-      params2pin(y,strt,nd,  save.dir=run.dir)
+    params2pin(object,strt,nd,  save.dir=run.dir)
+  }
+  
+  #-Update FLSAM.control stck
+  #ctrl        <- FLSAM.control(stck,tun)
+  #for(iSlot in c("states","logN.vars","catchabilities","power.law.exps",
+  #               "f.vars","obs.vars","srr","cor.F","nohess","timeout"))
+  # {slot(ctrl,iSlot) <- slot(object@control,iSlot) }
+
+  
+  #-Run the assessment, "by hand" taking advantage of the usepin argument
+  FLR2SAM(stck,tun,ctrl,run.dir)
+  rtn <- runSAM(ctrl, run.dir, use.pin=TRUE)
+  if(rtn!=0) {
+    if(batch.mode) {
+      return(NULL)
+    } else {
+      stop(sprintf("An error occurred while running ADMB. Return code %s.",rtn))
     }
-  
-  #-Update FLSAM.control object
-  ctrl        <- FLSAM.control(object,z)
-  for(iSlot in c("states","logN.vars","catchabilities","power.law.exps",
-                 "f.vars","obs.vars","srr","cor.F","nohess","timeout"))
-    slot(ctrl,iSlot) <- slot(y@control,iSlot)
+  }
+  res <- SAM2FLR(ctrl,run.dir)
 
-  
-  #-Update the assessment
-  ynew        <- FLSAM(object,z,ctrl,run.dir,batch.mode=T,pin.dir=run.dir)
-
-  return(ynew)
+  return(res)
   }
 )
-
-
 
 
 params2pin <- function(FLSAM,start=NULL,end=NULL,save.dir=tempdir()){
@@ -53,11 +65,6 @@ params2pin <- function(FLSAM,start=NULL,end=NULL,save.dir=tempdir()){
   strt      <- ifelse(is.null(start)==T,range(FLSAM)["minyear"],start)
   nd        <- ifelse(is.null(end)==T  ,range(FLSAM)["maxyear"],end)
 
-  .file.header <- function(fname,ftime) {
-     cat("# Auto generated file\n", file=fname)
-     cat(sprintf("# Datetime : %s\n\n",ftime),file=fname,append=TRUE)
-  }
-  
   #---------------------------------------------------
   # Truncate data if necessary
   #---------------------------------------------------

@@ -33,7 +33,7 @@ observation variance with high CV are indications that the results need to be
 carefully scrutinized.
 }
 \seealso{
-\code{\link{obsvar.plot}},\code{\link{residual.diagnostics}}}
+\code{\link{obsvar.plot}},\code{\link{residual.diagnostics}}
 }
 \examples{
 data(NSH.sam)

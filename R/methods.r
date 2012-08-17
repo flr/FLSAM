@@ -123,7 +123,7 @@ setMethod("ssb", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,ssb(object[[i]]))
+            res[[i]] <- cbind(name=names(object)[i],ssb(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -144,7 +144,7 @@ setMethod("fbar", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,fbar(object[[i]]))
+            res[[i]] <- cbind(name=names(object)[i],fbar(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -165,7 +165,7 @@ setMethod("tsb", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,tsb(object[[i]]))
+            res[[i]] <- cbind(name=names(object)[i],tsb(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -186,7 +186,7 @@ setMethod("catch", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,catch(object[[i]]))
+            res[[i]] <- cbind(name=names(object)[i],catch(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -203,7 +203,7 @@ setMethod("n", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,n(object[[i]]))
+            res[[i]] <- cbind(name=names(object)[i],n(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -232,7 +232,7 @@ setMethod("f", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,f(object[[i]]))
+            res[[i]] <- cbind(name=names(object)[i],f(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -251,7 +251,7 @@ setMethod("rec", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,rec(object[[i]]))
+            res[[i]] <- cbind(name=names(object)[i],rec(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -281,7 +281,7 @@ setMethod("coef", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(object.name=object[[i]]@name,coef(object[[i]]))
+            res[[i]] <- cbind(object.name=names(object)[i],coef(object[[i]]))
           }
           return(do.call(rbind,res))
         }

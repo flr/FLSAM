@@ -16,10 +16,6 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
      tbl <- paste(tbl,"#",c(" ",rownames(mat)),"\n")
      return(tbl)
   }
-  .file.header <- function(fname,ftime) {
-     cat("# Auto generated file\n", file=fname)
-     cat(sprintf("# Datetime : %s\n\n",ftime),file=fname,append=TRUE)
-   }
   .flqout <- function(desc,flq,na.replace="missing") { #Local export function
                   cat("#",desc,"\n",file=dat.file, append=TRUE)
                   cat(.format.matrix.ADMB(t(flq[,,drop=TRUE]@.Data),na.replace=na.replace), 
@@ -160,5 +156,11 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
       "\n\n# Checksums to ensure correct reading of input data \n",3142, 3142,"\n",
       file=red.file,append=TRUE) 
   return(invisible(NULL))
+}
+
+#Helper function to automatically generate a file header
+.file.header <- function(fname,ftime) {
+     cat("# Auto generated file\n", file=fname)
+     cat(sprintf("# Datetime : %s\n\n",ftime),file=fname,append=TRUE)
 }
 

@@ -22,6 +22,7 @@ GLOBALS_SECTION
   ofstream clogf("program.log");
   #define TRACE(object) clogf<<"line "<<__LINE__<<", file "<<__FILE__<<", "<<#object" =\n"<<object<<endl<<endl; 
   #define STRACE(object) cout<<"line "<<__LINE__<<", file "<<__FILE__<<", "<<#object" =\n"<<object<<endl<<endl; 
+  bool usepin=false;    //Determines if model.init overrides pin file estimates or not
 
   ////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////
@@ -228,16 +229,21 @@ DATA_SECTION
   !! if(checksums_ok(cfg_checksums)) cout << "OK. " ;
 
 
-  !! ad_comm::change_datafile_name("model.init");
-  !! cout << "model.init...";
-  init_number varLogFstaInit;
-  init_number varLogNInit;
-  init_number varLogObsInit;
-  init_number logFparInit;
-  init_number rec_logaInit;
-  init_number rec_logbInit;
-  init_ivector ini_checksums(1,2)
-  !! if(checksums_ok(ini_checksums)) cout << "OK. " ;
+  //Read model initial guesses. These can either come from model.init
+  //or a pin file. The -usepin commandline argument selects a pinfile
+  //otherwise model.init is used
+  !!if(!usepin) { 
+     !! ad_comm::change_datafile_name("model.init");
+     !! cout << "model.init...";
+     init_number varLogFstaInit;
+     init_number varLogNInit;
+     init_number varLogObsInit;
+     init_number logFparInit;
+     init_number rec_logaInit;
+     init_number rec_logbInit;
+     init_ivector ini_checksums(1,2)
+     !! if(checksums_ok(ini_checksums)) cout << "OK. " ;
+  !!}
 
 
   !! ad_comm::change_datafile_name("reduced.cfg");
@@ -298,13 +304,19 @@ PARAMETER_SECTION
   !! cout<<"  ---  Done."<<endl; cout.flush(); 
 PRELIMINARY_CALCS_SECTION
   cout<<"PRELIMINARYSECTION"; cout.flush(); 
-  logSdLogFsta=log(sqrt(varLogFstaInit)); 
-  logSdLogN=log(sqrt(varLogNInit)); 
-  logSdLogObs=log(sqrt(varLogObsInit)); 
+  //Initialise model initial guesses. These can either come from model.init
+  //or a pin file. The -usepin commandline argument selects a pinfile
+  //otherwise model.init is used
+  if(!usepin) {  //Then initialise from values read from model.init
+     logSdLogFsta=log(sqrt(varLogFstaInit)); 
+     logSdLogN=log(sqrt(varLogNInit)); 
+     logSdLogObs=log(sqrt(varLogObsInit)); 
+   
+     logFpar=logFparInit;
+     rec_loga=rec_logaInit;
+     rec_logb=rec_logbInit;
+  }
 
-  logFpar=logFparInit;
-  rec_loga=rec_logaInit;
-  rec_logb=rec_logbInit;
   if(noQpow>0){ 
     logQpow=0.0;
   }
@@ -770,3 +782,7 @@ TOP_OF_MAIN_SECTION
   gradient_structure::set_MAX_NVAR_OFFSET(100000);
   gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000);
 
+  //Check for usepin command line argument using ADMB built-in option_match arg
+  if(option_match(argc,argv,"-usepin")>-1 || option_match(argc,argv,"--usepin")>-1) {usepin=true;}
+  if(usepin) {  cout << "Using pin file in preference to model.init" << endl;
+   } else {cout << "Using model.init" << endl;}

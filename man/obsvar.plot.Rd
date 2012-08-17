@@ -28,7 +28,7 @@ Mark Payne, Niels T. Hintzen
 }
 
 \seealso{
-\code{\link{obscv.plot}},\code{\link{residual.diagnostics}}}
+\code{\link{obscv.plot}},\code{\link{residual.diagnostics}}
 }
 \examples{
 data(NSH.sam)

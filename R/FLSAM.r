@@ -17,7 +17,7 @@ setClass("FLSAM",
 )
 
 
-FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.dir=NULL) {
+FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
@@ -34,7 +34,7 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.dir=NULL) 
   FLR2SAM(stck,tun,ctrl,run.dir)
 
   #Run SAM
-  rtn <- runSAM(ctrl, run.dir,pin.dir)
+  rtn <- runSAM(ctrl, run.dir)
   if(rtn!=0) {
     if(batch.mode) {
       return(NULL)
@@ -52,26 +52,21 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.dir=NULL) 
 #---------------------------------------------------
 # We're ready! Run the executable
 #---------------------------------------------------
-runSAM <- function(ctrl,run.dir=tempdir(),pin.dir=NULL){
-  admb.stem <- "sam"
-  admb.args <- "-nr 2 -noinit -iprint 1"
+runSAM <- function(ctrl,run.dir=tempdir(),use.pin=FALSE){
+  admb.stem <- "sam" 
+  admb.args <-  "-nr 2 -noinit -iprint 1"
   if(ctrl@nohess) {admb.args <- paste(admb.args,"-nohess")}
+  if(use.pin) {admb.args <- paste(admb.args,"-usepin")}
 
   #Platform specific issues
   if (.Platform$OS.type=="unix") {
     admb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
-                                       mustWork=TRUE), ifelse(is.null(pin.dir)==T,admb.stem,"sampin"))
+                   mustWork=TRUE), admb.stem)
     file.copy(admb.exec, run.dir)
-    if(is.null(pin.dir)==F) file.rename(file.path(run.dir,"sampin"),file.path(run.dir,"sam"))
-    admb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
-                                       mustWork=TRUE), admb.stem)
   } else if (.Platform$OS.type == "windows") {
     admb.exec <- file.path(system.file("bin", "windows", package="FLSAM", mustWork=TRUE),
-      sprintf("%s.exe",ifelse(is.null(pin.dir)==T,admb.stem,"sampin")))
-    file.copy(admb.exec, run.dir)
-    if(is.null(pin.dir)==F) file.rename(file.path(run.dir,"sampin.exe"),file.path(run.dir,"sam.exe"))
-    admb.exec <- file.path(system.file("bin", "windows", package="FLSAM", mustWork=TRUE),
       sprintf("%s.exe",admb.stem))
+    file.copy(admb.exec, run.dir)
   } else {
     stop(sprintf("Platform type, %s, is not currently supported.",R.version$os))
   }
@@ -148,7 +143,7 @@ setMethod("FLSAMs", signature(object="ANY"), function(object, ...){
 	length(lst) <- nlst + 1
 	lst[[1]] <- object
 	lst[-1] <- lst1
-	new("FLSAMs", lst)
+	FLSAMs(lst)
 })
 
 setMethod("FLSAMs", signature(object="FLSAM"), function(object, ...) {
@@ -161,12 +156,21 @@ setMethod("FLSAMs", "missing", function(...){
 		new("FLSAMs")
 	} else {
 		lst <- list(...)
-		new("FLSAMs", lst)
+		FLSAMs(lst)
 	}
 })
 
 setMethod("FLSAMs", "list", function(object){
-	new("FLSAMs", object)
+        #Check list contents are FLSAM objects
+        for(i in seq(object)) {
+          if(!is(object[[i]],"FLSAM")) {
+            stop(sprintf("Object %i in list is not an FLSAM",i)) }} 
+        #Setup unique names
+        list.names <- names(object)
+        obj.names <- sapply(object,name)
+        outnames <- if(is.null(list.names)) {obj.names} else {list.names}
+        if(any(table(outnames) !=1) | any(outnames=="") |is.null(outnames)) outnames <- as.character(seq(object))
+	new("FLSAMs", .Data=object,names=outnames)
 })
 
 setMethod("FLSAMs", "FLSAMs", function(object){
