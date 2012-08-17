@@ -3,7 +3,7 @@
    cat(sprintf("\nFLSAM %s (%s)\n",
           packageDescription("FLSAM")$Version,
           packageDescription("FLSAM")$Date))
-cat("--------------------------------------------------------------------------------
+cat('--------------------------------------------------------------------------------
 * This package is an FLR wrapper to SAM, the State-space Assessment Model
     developed by Anders Nielsen <an@aqua.dtu.dk>. It is intended to be used
     only in close collaboration with experts in stock assessment modelling.
@@ -17,7 +17,7 @@ cat("---------------------------------------------------------------------------
     wiki, <http://code.google.com/p/hawg/wiki/FLSAM>, where FLSAM is hosted, or
     the associated FLSAM users mailing list <http://groups.google.com/group/FLSAM>.
 
-* If a 'bug' occurs, that is suspected to be caused by the assessment model
+* If a "bug" occurs, that is suspected to be caused by the assessment model
     itself (and not the FLR-interface), then please verify that the current
     official version of SAM available at <http://www.stockassessment.org>
     contains the bug before contacting the author with a bug report.
@@ -26,8 +26,11 @@ cat("---------------------------------------------------------------------------
     all features that are available in SAM are available through FLSAM.
     Please consult <http://www.stockassessment.org> or the authors if your
     fish stock requires features not covered.
+
+* For help on FLSAM, try help(package="FLSAM"). For the full manual as a PDF file, 
+  use vignette("FLSAM")
 --------------------------------------------------------------------------------
-")
+')
 }
 
 
