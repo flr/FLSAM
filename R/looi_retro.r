@@ -59,7 +59,7 @@ if (!isGeneric("retro"))
     	standardGeneric("retro"))
 
 setMethod('retro', signature(stock='FLStock', indices='FLIndices', control='FLSAM.control',retro='numeric'),
-function(stock, indices, control="missing", retro=0, year.range="missing"){
+function(stock, indices, control, retro, year.range="missing"){
   # ---------- Checks ----------------------
     if (!inherits(stock, "FLStock"))
       stop("stock must be an 'FLStock' object!")
@@ -85,7 +85,6 @@ function(stock, indices, control="missing", retro=0, year.range="missing"){
       stop("Year range outside stock object range")
     # ---------- Run that retrospective -------------
     cat("Running retrospective...\n")
-    Indices.temp<-indices
     res <- new("FLSAMs")
     for (yr in rev(year.range)){  #yr is the year in which the assessment is being simulated
       Stock <- trim(stock, year=stck.min.yr:yr)
@@ -103,8 +102,9 @@ function(stock, indices, control="missing", retro=0, year.range="missing"){
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
       if(yr == rev(year.range)[1]) {  #First run
           assess  <- FLSAM(Stock, Indices.temp,control,run.dir=tempdir(),batch.mode=TRUE)
+          base.assess <- assess
       } else {
-          assess  <- update(res[[as.character(yr+1)]],Stock,Indices.temp,run.dir=tempdir()) }
+          assess  <- update(base.assess,Stock,Indices.temp,run.dir=tempdir()) }
       if(is.null(assess)) {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {

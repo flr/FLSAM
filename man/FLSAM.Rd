@@ -1,6 +1,8 @@
 \name{FLSAM}
 \alias{FLSAM}
+\alias{update}
 \alias{FLR2SAM}
+\alias{runSAM}
 \alias{SAM2FLR}
 \title{FLR Wrapper for the State-space assessment model (FLSAM)
 %%  ~~function to do ... ~~
@@ -107,7 +109,7 @@ plot(sam)
 #Repeat the assessment using the previous result as an initial guess
 uninit.time <- system.time(sam.uninit <- FLSAM(NSH,NSH.tun,NSH.ctrl))
 init.time   <- system.time(sam.init   <- update(sam.uninit,NSH,NSH.tun))
-#Big speed increase! (your results may vary: ours are about 1.1x)
+#Big speed increase! (your results may vary: ours are about 2x)
 uninit.time[3]/init.time[3]
 #But assessments are the sam (phew!)
 plot(FLSAMs(uninitialised=sam.uninit,initialised=sam.init))

@@ -56,7 +56,12 @@ runSAM <- function(ctrl,run.dir=tempdir(),use.pin=FALSE){
   admb.stem <- "sam" 
   admb.args <-  "-nr 2 -noinit -iprint 1"
   if(ctrl@nohess) {admb.args <- paste(admb.args,"-nohess")}
-  if(use.pin) {admb.args <- paste(admb.args,"-usepin")}
+  if(use.pin) {
+     admb.args <- paste(admb.args,"-usepin")
+  } else {
+     #Pin files are a contaigon if you don't want them!
+     unlink(file.path(run.dir,sprintf("%s.pin",admb.stem)))
+  }
 
   #Platform specific issues
   if (.Platform$OS.type=="unix") {

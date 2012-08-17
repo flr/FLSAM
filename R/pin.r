@@ -56,26 +56,27 @@ setMethod("update", signature(object="FLSAM"),
 )
 
 
-params2pin <- function(FLSAM,start=NULL,end=NULL,save.dir=tempdir()){
+params2pin <- function(object,start=NULL,end=NULL,save.dir=tempdir()){
 
   #---------------------------------------------------
   # Book keeping
   #---------------------------------------------------
+  if(!is(object,"FLSAM")) stop("Supplied object must be an FLSAM")
   run.time  <- Sys.time()
-  strt      <- ifelse(is.null(start)==T,range(FLSAM)["minyear"],start)
-  nd        <- ifelse(is.null(end)==T  ,range(FLSAM)["maxyear"],end)
+  strt      <- ifelse(is.null(start)==T,range(object)["minyear"],start)
+  nd        <- ifelse(is.null(end)==T  ,range(object)["maxyear"],end)
 
   #---------------------------------------------------
   # Truncate data if necessary
   #---------------------------------------------------
 
   #-Extract stock.n and harvest values from SAM object
-  n         <- log(window(FLSAM@stock.n,strt,nd))
-  f         <- log(window(FLSAM@harvest[!duplicated(FLSAM@control@states[names(which(FLSAM@control@fleets==0)),]),],strt,nd))
+  n         <- log(window(object@stock.n,strt,nd))
+  f         <- log(window(object@harvest[!duplicated(object@control@states[names(which(object@control@fleets==0)),]),],strt,nd))
 
   #-Define how many parameters are estimated
-  n.states  <- length(unique(FLSAM@control@states[names(which(FLSAM@control@fleets==0)),]))
-  ages      <- dims(FLSAM)$age
+  n.states  <- length(unique(object@control@states[names(which(object@control@fleets==0)),]))
+  ages      <- dims(object)$age
 
   idxNs     <- c(mapply(seq,from=seq(1,length(n)+length(f),ages+n.states),
                             to  =seq(1,length(n)+length(f),ages+n.states)+ages-1,
@@ -91,21 +92,24 @@ params2pin <- function(FLSAM,start=NULL,end=NULL,save.dir=tempdir()){
   U         <- data.frame(name="U",value=u,std.dev=NA)
 
   #-Merge U's with other parameters (even if truncated)
-  pars      <- FLSAM@params
+  par.list  <-  c("logFpar","logSdLogFsta","logSdLogN","logSdLogObs","rec_loga",
+                  "rec_logb","rho","logScaleSSB","logPowSSB","logSdSSB","U")
+  pars      <- object@params
   uidx      <- which(pars$name == "U")
   parsTop   <- pars[1:(uidx[1]-1),]
   pars      <- rbind(parsTop,U,if(nrow(pars)>max(uidx)){pars[(rev(uidx)[1]+1):nrow(pars),]})
-
-  parnames  <- ac(unique(pars$name))
-  parvals   <- pars$value
 
   #---------------------------------------------------
   # Create pin file
   #---------------------------------------------------
   pin.file  <- file.path(save.dir,"sam.pin")
-  for(iPar in parnames){
+  for(iPar in par.list){
+    #Get pars to write
+    par.vals <- pars[pars$name==iPar,"value"] 
+    if(length(par.vals)==0) par.vals <- 0 
+    #Write to file
     cat("#",iPar,": \n ",file=pin.file,append=TRUE,sep="")
-    cat(parvals[which(pars$name %in% iPar)]," \n ",file=pin.file,append=TRUE)
+    cat(par.vals," \n ",file=pin.file,append=TRUE)
   }
 invisible(NULL)}
 
