@@ -33,11 +33,11 @@ Code by Anders Nielsen, implemented by Niels T. Hintzen and Mark R. Payne
 }
 \examples{
 #- Load the data
-data(IBTS.sams)
+data(HERAS.sams)
 
 #- Run lr ratio test on example FLSAMs object
-lr.test(IBTS.sams)
+lr.test(HERAS.sams)
 
 #- Run lr ratio test on individual FLSAM objects
-lr.test(IBTS.sams[[1]],IBTS.sams[[2]],IBTS.sams[[3]])
+lr.test(HERAS.sams[[1]],HERAS.sams[[2]],HERAS.sams[[3]])
 }

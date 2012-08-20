@@ -37,8 +37,8 @@ data(NSH.sam)
 #Extract AIC
 AIC(NSH.sam)
 #For more an FLSAMs
-data(IBTS.sams)
-plot(AIC(IBTS.sams),pch=16)
+data(HERAS.sams)
+plot(AIC(HERAS.sams),pch=16)
 }
 \keyword{ ~kwd1 }
 \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

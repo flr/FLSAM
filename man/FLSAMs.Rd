@@ -41,21 +41,41 @@ Class \code{"\linkS4class{FLlst}"}, list vector
 Mark R. Payne and Niels Hintzen
 }
 \seealso{
-\code{\link{accessors}}
+\code{\link{accessors}}, \code{\link{HERAS.sams}}
 }
 \examples{
-data(IBTS.sams)
 data(NSH)
+data(NSH.sam)
+
+#Modify HERAS catchability bindings systematically
+#Note that this is the same code used to create the
+#HERAS.sams data object
+ctrl.list <- list(all.free=3:10,
+                  four.lvls=c(3,3,4,4,5,5,6,6),
+                  three.lvls=c(3,3,4,4,5,5,5,5),
+                  two.lvls=c(3,3,3,4,4,4,4,4))
+ctrls  <- lapply(ctrl.list,function(x) {
+            tmp.ctrl <- NSH.ctrl
+            tmp.ctrl@catchabilities["HERAS",ac(1:8)] <- x
+            return(tmp.ctrl)})
+sam.list <- lapply(ctrls,FLSAM,stck=NSH,tun=NSH.tun)                  
+HERAS.sams <- FLSAMs(sam.list)
 
 #Plot results
-plot(IBTS.sams)
+plot(HERAS.sams)
+
+#Plot catchability coefficients for different levels
+qs.dat <- catchabilities(HERAS.sams)
+xyplot(value ~ age,data=qs.dat,groups=name,type="b",
+    subset=fleet=="HERAS",auto.key=TRUE)  
 
 #Update stock object
-NSH.new <- NSH + IBTS.sams
+NSH.HERAS <- NSH + HERAS.sams
+plot(NSH.HERAS)
 
-#Compare model fits
-lr.test(IBTS.sams)
-AIC(IBTS.sams)
-
+#Compare models with AIC
+HERAS.aics <-AIC(HERAS.sams)
+plot(HERAS.aics,xaxt="n",xlab="Model",ylab="AIC")
+axis(1,at=seq(HERAS.aics),labels=names(HERAS.aics)) #three lvls looks best
 }
 \keyword{classes}

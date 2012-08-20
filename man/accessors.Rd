@@ -89,10 +89,10 @@ ssb(NSH.sam)
 fbar(NSH.sam)
 rec(NSH.sam)
 #And for FLSAMs
-data(IBTS.sams)
-ssb(IBTS.sams)
-rec(IBTS.sams)
-fbar(IBTS.sams)
+data(HERAS.sams)
+ssb(HERAS.sams)
+rec(HERAS.sams)
+fbar(HERAS.sams)
 }
 
 \keyword{ ~kwd1 }

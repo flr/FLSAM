@@ -364,7 +364,7 @@ setMethod("catchabilities", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,catchabilities(object[[i]]))
+            res[[i]] <- cbind(name=object@names[i],catchabilities(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -383,7 +383,7 @@ setMethod("obs.var", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,obs.var(object[[i]]))
+            res[[i]] <- cbind(name=objects@name[i],obs.var(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -402,7 +402,7 @@ setMethod("power.law.exps", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object[[i]]@name,power.law.exps(object[[i]]))
+            res[[i]] <- cbind(name=object@name[i],power.law.exps(object[[i]]))
           }
           return(do.call(rbind,res))
         }
