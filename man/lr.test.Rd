@@ -9,12 +9,15 @@ Different in log-likelihood is calculated and degrees of freedom are given. P va
 are specified assuming a chi-quared distribution.
 }
 \usage{
-lr.test(object,...)
+lr.test(object,...,type="sequential")
 }
 \arguments{
   \item{object}{An \code{\link{FLSAM}} or \code{\link{FLSAMs}} object}
   \item{\dots}{
     In combination with an \code{\link{FLSAM}} object: additional objects of the same type (need at least 1)
+  }
+  \item{type}{
+    The type of comparison to make. A "sequential" comparison compares object 1 against object 2, object 2 against object 3,... whilt a "first" comparison compares object 1 against object 2, object 1 against object 3,...
   }
 }
 \value{

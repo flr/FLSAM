@@ -7,23 +7,27 @@ Create FLSAM formatted output file
 Document the results of the FLSAM assessment including all input values, model settings and
 output in formatted tables}
 \usage{
-FLSAM.out(FLStock, FLIndices, FLSAM, format = "TABLE \%i.")
+FLSAM.out(stck, tun, sam, format = "TABLE \%i.")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{FLStock}{
-An FLStock object
+  \item{stck}{
+An FLStock object to be documented
 }
-  \item{FLIndices}{
-An FLIndices object
+  \item{tun}{
+An FLIndices object to be documented
 }
-  \item{FLSAM}{
+  \item{sam}{
 An FLSAM assessment model output object
 }
   \item{format}{
 The Title to be specified with each table.
 }
 }
+\details{
+This function produces a set of tables that can be used to directly document an assessment. Included in the tables are all (relevant) input data, the details of the tuning indices, the model parameter configuration, the estimated parameters and all estimated values. The structure and approach is inspired by the "ica.out" documentation from the ICA package.
+}
+
 \value{
 The output is a table that can be written to disk and pasted directly into
 any text editor.

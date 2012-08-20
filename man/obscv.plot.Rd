@@ -17,20 +17,14 @@ An FLSAM assessment output object
 }
 }
 \details{
+This plot can be used as rough and ready way to gauge how "tightly" the SAM model has converged on the observation variances. In cases where the observation variances are poorly defined, the associated CV of the estimate will be large. In such cases, the model convergence should be examined in more detail.
 }
 \value{
 A plot is returned with on the horizontal axis the observation variance of each
 data source versus on the vertical axis the CV estimate associated with the data
 source}
-\references{
-}
 \author{
 Mark Payne, Niels T. Hintzen
-}
-\note{
-Note that combinations of either high observation variance with low CV or low
-observation variance with high CV are indications that the results need to be
-carefully scrutinized.
 }
 \seealso{
 \code{\link{obsvar.plot}},\code{\link{residual.diagnostics}}

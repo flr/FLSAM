@@ -1,9 +1,8 @@
-FLR2SAM <-function(stck,tun,ctrl,run.dir="missing") {
+FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir()) {
   #---------------------------------------------------
   # Setup for output
   #---------------------------------------------------
   #General Setup
-  if(missing(run.dir)) {run.dir <- tempdir() }
   admb.stem <- "sam" 
   run.time <- Sys.time()
   miss.val <- -99999

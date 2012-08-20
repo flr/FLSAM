@@ -1,9 +1,7 @@
 .onLoad <- function(lib,pkg) {
-   require(methods)
-   cat(sprintf("\nFLSAM %s (%s)\n",
-          packageDescription("FLSAM")$Version,
-          packageDescription("FLSAM")$Date))
-cat('--------------------------------------------------------------------------------
+packageStartupMessage(sprintf("\nFLSAM %s (%s)",packageDescription("FLSAM")$Version,
+           packageDescription("FLSAM")$Date))
+dis.msg <- '--------------------------------------------------------------------------------
 * This package is an FLR wrapper to SAM, the State-space Assessment Model
     developed by Anders Nielsen <an@aqua.dtu.dk>. It is intended to be used
     only in close collaboration with experts in stock assessment modelling.
@@ -30,7 +28,8 @@ cat('---------------------------------------------------------------------------
 * For help on FLSAM, try help(package="FLSAM"). For the full manual as a PDF file, 
   use vignette("FLSAM")
 --------------------------------------------------------------------------------
-')
+'
+packageStartupMessage(dis.msg)
 }
 
 

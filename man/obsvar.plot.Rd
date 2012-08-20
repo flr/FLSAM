@@ -17,12 +17,11 @@ An FLSAM assessment output object
 }
 }
 \details{
+Observation variances in the SAM model are analogous to the "weightings" employed in other model - in this case, they represent how noisy each of the individual tuning fleets are. Close examination of the values of these observation variances can given valuable insight into what the model is doing, and where it thinks the most information is.
 }
 \value{
 A barplot is returned with fleets at the horizontal and observation variance at
 the vertical axis.}
-\references{
-}
 \author{
 Mark Payne, Niels T. Hintzen
 }

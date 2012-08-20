@@ -11,10 +11,10 @@ AIC(object, ..., k = 2)
 \arguments{
   \item{object}{An \code{\link{FLSAM}} or \code{\link{FLSAMs}} object
 }
-  \item{\dots}{Further \code{\link{FLSAM}}objects 
+  \item{\dots}{Further \code{\link{FLSAM}}objects
 }
   \item{k}{the _penalty_ per parameter to be used; the default
-          ‘k = 2’ is the classical AIC.
+          'k = 2' is the classical AIC.
 }
 }
 \details{
@@ -42,3 +42,4 @@ plot(AIC(IBTS.sams),pch=16)
 }
 \keyword{ ~kwd1 }
 \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

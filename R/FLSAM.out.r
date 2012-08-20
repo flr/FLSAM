@@ -1,11 +1,11 @@
   ### ======================================================================================================
   ### write.FLSAM.out - Used to generate a "pseudo-ica.out" file from FLSAM
   ### ======================================================================================================
-  FLSAM.out   <-  function(FLStock,FLIndices,FLSAM,format="TABLE %i.") {
+  FLSAM.out   <-  function(stck,tun,sam,format="TABLE %i.") {
     #Check  validity of objects
-    if(!validObject(FLStock) | !is.FLStock(FLStock)) {stop("\"FLStock\" argument is not a valid FLStock object")}
-    if(!validObject(FLIndices)) {stop("\"FLIndices\" argument is not a valid FLIndices object")}
-    if(!validObject(FLSAM)) {stop("\"FLSAM\" argument is not a valid FLSAM object")}
+    if(!validObject(stck) | !is.FLStock(stck)) {stop("\"stck\" argument is not a valid FLStock object")}
+    if(!validObject(tun)) {stop("\"tun\" argument is not a valid FLIndices object")}
+    if(!validObject(sam)) {stop("\"sam\" argument is not a valid FLSAM object")}
     #Also check that the FLSAM object corresponds to the FLStock and FLIndices object (somehow)
     
     #Initialise key values
@@ -23,89 +23,80 @@
     for(i in 1:nrow(output.structure)) {
       #First the title line, then the data
       opt <- c(opt, paste(sprintf(format,counter),output.structure[i,2]),"")
-      opt <- c(opt, format.quant(slot(FLStock,output.structure[i,1])),"","")
+      opt <- c(opt, formatQuant(slot(stck,output.structure[i,1])),"","")
       counter <- counter +1
     }  
   
     #Then the indices 
     opt <- c(opt, paste(sprintf(format,counter),"SURVEY INDICES"),"")
-    for(idx in FLIndices) {
+    for(idx in tun) {
       #First the survey configuration, then the index values, then the variances
       opt <- c(opt, paste(idx@name,"- Configuration"),"")
       opt <- c(opt, paste(idx@desc,collapse=" "))
       opt <- c(opt, capture.output(print(idx@range)))
       opt <- c(opt, paste("Index type :",idx@type),"")
       opt <- c(opt, paste(idx@name,"- Index Values"),"")
-      opt <- c(opt, format.quant(idx@index),"")
+      opt <- c(opt, formatQuant(idx@index),"")
     }  
     opt <- c(opt,"")
     counter <- counter +1
     
     #Now information about how the stock object is configured
     opt <- c(opt, paste(sprintf(format,counter),"STOCK OBJECT CONFIGURATION"),"")
-    opt <- c(opt, capture.output(FLStock@range),"","")
+    opt <- c(opt, capture.output(stck@range),"","")
     counter <- counter + 1
   
-    #Now the configuration of FLSAM
-    opt <- c(opt, paste(sprintf(format,counter),"FLSAM CONFIGURATION SETTINGS"),"")
-    longest.name  <-  max(sapply(slotNames(FLSAM@control),nchar))
+    #Now the configuration of sam
+    opt <- c(opt, paste(sprintf(format,counter),"sam CONFIGURATION SETTINGS"),"")
+    longest.name  <-  max(sapply(slotNames(sam@control),nchar))
     matrix.type   <-  c("range","fleets","states","catchabilities","power.law.exps","f.vars","obs.vars")
-    for(sltName in slotNames(FLSAM@control)) {
+    for(sltName in slotNames(sam@control)) {
       padded.name <-  paste(c(sltName,rep(" ",longest.name-nchar(sltName))),collapse="")
       if(sltName %in% matrix.type){
-        opt <- c(opt,  paste(padded.name,":",paste(format.matrix(slot(FLSAM@control,sltName)))))
+        opt <- c(opt,  paste(padded.name,":",paste(formatMatrix(slot(sam@control,sltName)))))
       } else {
-          opt <- c(opt,paste(padded.name,":",paste(slot(FLSAM@control,sltName),collapse=" ")))
+          opt <- c(opt,paste(padded.name,":",paste(slot(sam@control,sltName),collapse=" ")))
       }
     }
     opt <- c(opt,"","")
     counter <- counter + 1
     
-    #FLR and R Package Information
-    descrips <- list(packageDescription("FLSAM"),packageDescription("FLAssess"),packageDescription("FLCore"))
-    descrips <- lapply(descrips, function(b) {
-      rbind(paste("Package  :",b$Package),
-            paste("Version  :",b$Version),
-            paste("Packaged :",b$Packaged),
-            paste("Built    :",b$Built),
-            "")
-    })
-    descrip.str <- do.call(rbind,c(R.Version()$version.string,"",descrips))
+    #FLR and R Package Information (taken from the sam object)
     opt <- c(opt, paste(sprintf(format,counter),"FLR, R SOFTWARE VERSIONS"),"",
-              capture.output(write.table(descrip.str,row.names=FALSE,quote=FALSE,col.names=FALSE)),"")
+              formatMatrix(sam@info)[-1],"")
     counter <- counter + 1
   
     #Stock summary - the tricky one!
     opt <- c(opt, paste(sprintf(format,counter),"STOCK SUMMARY"),"")
     
-    if(length(ssb(FLSAM)$year)!=length(as.data.frame(ssb(FLStock))$year)){
-      landings=c(format(round(as.data.frame(FLStock@landings)$data,0)),"")
-      sop=     c(format(round(as.data.frame(sop(FLStock,"landings"))$data,4)),"")
+    if(length(ssb(sam)$year)!=length(as.data.frame(ssb(stck))$year)){
+      landings=c(format(round(as.data.frame(stck@landings)$data,0)),"")
+      sop=     c(format(round(as.data.frame(sop(stck,"landings"))$data,4)),"")
     } else {
-      landings=format(round(as.data.frame(FLStock@landings)$data,0))
-      sop=     format(round(as.data.frame(sop(FLStock,"landings"))$data,4))
+      landings=format(round(as.data.frame(stck@landings)$data,0))
+      sop=     format(round(as.data.frame(sop(stck,"landings"))$data,4))
     }
 
-    ss.df <-  cbind(year =format(as.data.frame(ssb(FLSAM))$year),
-                    recsm=format(round(as.data.frame(rec(FLSAM))$value,0)),
-                    recsl=format(round(as.data.frame(rec(FLSAM))$lbnd,0)),
-                    recsu=format(round(as.data.frame(rec(FLSAM))$ubnd,0)),
-                    tsbm=format(round(as.data.frame(tsb(FLSAM))$value,0)),
-                    tsbl=format(round(as.data.frame(tsb(FLSAM))$lbnd,0)),
-                    tsbu=format(round(as.data.frame(tsb(FLSAM))$ubnd,0)),
-                    ssbm=format(round(as.data.frame(ssb(FLSAM))$value,0)),
-                    ssbl=format(round(as.data.frame(ssb(FLSAM))$lbnd,0)),
-                    ssbu=format(round(as.data.frame(ssb(FLSAM))$ubnd,0)),
-                    fbarm=format(round(as.data.frame(fbar(FLSAM))$value,4)),
-                    fbarl=format(round(as.data.frame(fbar(FLSAM))$lbnd,4)),
-                    fbaru=format(round(as.data.frame(fbar(FLSAM))$ubnd,4)),
+    ss.df <-  cbind(year =format(as.data.frame(ssb(sam))$year),
+                    recsm=format(round(as.data.frame(rec(sam))$value,0)),
+                    recsl=format(round(as.data.frame(rec(sam))$lbnd,0)),
+                    recsu=format(round(as.data.frame(rec(sam))$ubnd,0)),
+                    tsbm=format(round(as.data.frame(tsb(sam))$value,0)),
+                    tsbl=format(round(as.data.frame(tsb(sam))$lbnd,0)),
+                    tsbu=format(round(as.data.frame(tsb(sam))$ubnd,0)),
+                    ssbm=format(round(as.data.frame(ssb(sam))$value,0)),
+                    ssbl=format(round(as.data.frame(ssb(sam))$lbnd,0)),
+                    ssbu=format(round(as.data.frame(ssb(sam))$ubnd,0)),
+                    fbarm=format(round(as.data.frame(fbar(sam))$value,4)),
+                    fbarl=format(round(as.data.frame(fbar(sam))$lbnd,4)),
+                    fbaru=format(round(as.data.frame(fbar(sam))$ubnd,4)),
                     landings=landings,
                     sop=sop)
 
-    ss.units  <-  c("",rep(units(FLStock@stock.n),3),rep("",3),rep("",3),rep(units(fbar(FLStock)),3),units(FLStock@landings),"")
+    ss.units  <-  c("",rep(units(stck@stock.n),3),rep("",3),rep("",3),rep(units(fbar(stck)),3),units(stck@landings),"")
     ss.units  <-  ifelse(ss.units=="NA","",ss.units)
     ss.df <-  rbind(c("Year","Recruitment","Low","High","TSB","Low","High","SSB","Low","High","Fbar","Low","High","Landings","Landings"),
-                    c("",paste("Age",dims(FLStock)$min),rep("",2),rep("",3),rep("",3),paste("(Ages ",FLStock@range["minfbar"],"-",FLStock@range["maxfbar"],")",sep=""),rep("",2),"","SOP"),
+                    c("",paste("Age",dims(stck)$min),rep("",2),rep("",3),rep("",3),paste("(Ages ",stck@range["minfbar"],"-",stck@range["maxfbar"],")",sep=""),rep("",2),"","SOP"),
                     ss.units,ss.df)
     ss.df <-  apply(ss.df,2,"format",justify="right")
     opt  <- c(opt,capture.output(write.table(ss.df,row.names=FALSE,quote=FALSE,col.names=FALSE)),"","")
@@ -118,14 +109,14 @@
     for(i in 1:nrow(output.structure)) {
       #First the title line, then the data
       opt <- c(opt, paste(sprintf(format,counter),output.structure[i,2]),"")
-      opt <- c(opt, format.quant(slot(FLSAM,output.structure[i,1])),"","")
+      opt <- c(opt, formatQuant(slot(sam,output.structure[i,1])),"","")
       counter <- counter +1
     }  
     
   #And now, the rest of the outputs from the assessment. Here just needs pred catch and catch resid
 
   #Subtracting pred catch and catch resid from NSH.sam  
-  x           <- subset(FLSAM@residuals,fleet=="catch")
+  x           <- subset(sam@residuals,fleet=="catch")
   year        <- x$year
   age         <- x$age
   pred.catch  <- FLQuant(exp(x$log.mdl),dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
@@ -135,7 +126,7 @@
     for(i in 1:nrow(output.structure)) {
       #First the title line, then the data
       opt <- c(opt, paste(sprintf(format,counter),output.structure[i,2]),"")
-      opt <- c(opt, format.quant(get(output.structure[i,1])),"","")
+      opt <- c(opt, formatQuant(get(output.structure[i,1])),"","")
       counter <- counter +1
     }
 
@@ -144,11 +135,11 @@
 
   
   #Predicted index values
-  flts  <- ac(unique(FLSAM@residuals$fleet))
+  flts  <- ac(unique(sam@residuals$fleet))
   for(j in flts[which(!flts %in% "catch")]){
-    x           <- subset(FLSAM@residuals,fleet==j)
+    x           <- subset(sam@residuals,fleet==j)
     year        <- x$year
-    if(j %in% names(FLSAM@control@fleets[which(FLSAM@control@fleets == 3)])){
+    if(j %in% names(sam@control@fleets[which(sam@control@fleets == 3)])){
       age         <- "all"
     } else { age <- x$age }
     pred.catch  <- FLQuant(exp(x$log.mdl),dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
@@ -159,7 +150,7 @@
     for(i in 1:nrow(output.structure)) {
       #First the title line, then the data
       opt <- c(opt, paste(sprintf(format,counter),output.structure[i,2],j),"")
-      opt <- c(opt, format.quant(get(output.structure[i,1])),"","")
+      opt <- c(opt, formatQuant(get(output.structure[i,1])),"","")
       counter <- counter +1
     }
   }
@@ -169,13 +160,13 @@
 
     #Parameter estimates
     opt <- c(opt, paste(sprintf(format,counter),"FIT PARAMETERS"),"")
-    opt <-  c(opt,capture.output(coef(FLSAM)),"")
+    opt <-  c(opt,capture.output(coef(sam)),"")
     opt <- c(opt,"")
     counter <- counter + 1
     
     #Negative log-likelihood
     opt <- c(opt, paste(sprintf(format,counter),"NEGATIVE LOG-LIKELIHOOD"),"")
-    opt <- c(opt, FLSAM@nlogl,"","")
+    opt <- c(opt, sam@nlogl,"","")
     counter <- counter + 1
     
     #And finish  
@@ -184,11 +175,11 @@
   }
   
   sam.out   <-  function(...) {
-    FLSAM.out(...)
+    sam.out(...)
   }
   
   
-  format.quant <- function(x) {
+  formatQuant <- function(x) {
     #Drop extraneous dimensions
     mat.obj <-  drop(x@.Data)   
     #Check that we haven't "overdropped", and are left with at least quant vs year
@@ -206,7 +197,7 @@
       
   }   #End function, end setMethod
 
-  format.matrix <- function(x){
+  formatMatrix <- function(x){
     #Write output
     opt <-  capture.output({
       print.default(x,quote=FALSE,right=TRUE)

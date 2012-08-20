@@ -121,8 +121,7 @@ setMethod("plot",signature(x="FLStock",y="FLSAMs"),
 })
 
 #Correlation plot
-cor.plot <- function(sam,cols=c("#D7191C","#FDAE61","#FFFFBF","#ABDDA4","#2B83BA"),
-                      full=FALSE) {
+cor.plot <- function(sam,cols=c("red","white","blue"),full=FALSE) {
    if(sam@control@nohess) {
     stop(paste("Cannot generate a correlation plot for an FLSAM object that has been run",
                "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",

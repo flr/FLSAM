@@ -4,10 +4,15 @@
 
 #- Create generic function for 'looi'
 if (!isGeneric("looi")) {
-  setGeneric('looi', function(stck,tun,ctrl,...) standardGeneric('looi'))
+  setGeneric('looi', function(stck,tun,ctrl,type) standardGeneric('looi'))
 }
 
-setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
+setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="missing"),
+  function(stck,tun,ctrl,type){
+     looi(stck,tun,ctrl,type="full")
+}) 
+
+setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="character"),
   function(stck,tun,ctrl,type="full"){
     #Check type argument
     if(is.na(pmatch(toupper(type),c("LOI","LOO","FULL")))) {
@@ -98,7 +103,7 @@ setMethod("loi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
 #-------------------------------------------------------------------------------
 
 if (!isGeneric("retro"))
-	setGeneric("retro", function(stock, indices, control, retro, ...)
+	setGeneric("retro", function(stock, indices, control, retro, year.range)
     	standardGeneric("retro"))
 
 setMethod('retro', signature(stock='FLStock', indices='FLIndices', control='FLSAM.control',retro='numeric'),

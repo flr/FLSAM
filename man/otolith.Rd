@@ -6,10 +6,7 @@
 	Generates and visualises the two-dimensional confidence interval from a stock assessment based on a parametric bootstrapping exercise.
 }
 \usage{
-   otolith(sam.out, year, plot=TRUE, show.points=FALSE, do.contours=TRUE, margin.plots=TRUE, show.estimate=TRUE,
-                      xlim="missing", ylim="missing",
-                      n=100, pch=".", alpha=0.05, show.grid=TRUE
-                      n.grid=50, contour.args=list(),...)
+   otolith(sam.out, year, plot=TRUE, show.points=FALSE, do.contours=TRUE, margin.plots=TRUE, show.estimate=TRUE,xlim="missing", ylim="missing",n=100, pch=".", alpha=0.05, show.grid=TRUE, n.grid=50, contour.args=list(),...)
 
 
 }

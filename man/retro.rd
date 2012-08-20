@@ -24,7 +24,7 @@ retro(stock, indices, control, retro, year.range)
 }
 \details{
 The argument 'year.range' is a numeric vector of years for which the assessment is to be performed.
-If this is not specified the integer ”retro” is used (default value = 0). If retro = 0
+If this is not specified the integer "retro" used (default value = 0). If retro = 0
 the assessment is run for final year only. If retro = 1, the assessment is run for the
 penultimate and final year and so on.}
 \value{

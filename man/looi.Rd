@@ -38,14 +38,12 @@ Default value is 'full'.}
 \details{
 The 'loo' and 'loi' methods call the 'looi' method with the appropriate type selected, and can be used as convenient shotcut}
 \value{
-An FLSAMs object is returned where in the names(FLSAMs) returns the combination of fleets used within the assessment}
-\references{
-}
+An \code{\link{FLSAMs}} object is returned where the \code{names} slot contains the combination of fleets used within the assessments}
 \author{
 Niels T. Hintzen and Mark R. Payne
 }
 \seealso{
-\code{\link{lr.ratio}},\code{\link{AIC}}
+\code{\link{FLSAMs}}
 }
 \examples{
 #- Load data
