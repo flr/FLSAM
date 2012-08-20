@@ -80,10 +80,12 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 .extract.params <- function(object,params) {
   #Check that this is sensible first
   if(object@control@nohess & params %in% c("logssb","logtsb","logfbar","logCatch")) {
-    stop(paste("Cannot extract SSB, Fbar, TSB or modelled catch from an FLSAM object that",
+    stop(paste("It is not possible to extract SSB, Fbar, TSB or modelled catch directly",
+               "from an FLSAM object that",
                "has been run with the nohess=TRUE option. To calculate these variables",
                "please update the corresponding FLStock object e.g. <FLStock> <-",
-               "<FLStock> + <FLSAM> and the use the corresponding function"))}
+               "<FLStock> + <FLSAM> and the use the corresponding function"))
+  }
 
   #Extract numbers at age parameters
   ps <- subset(object@params,name%in%params)[,c("name","value","std.dev")]

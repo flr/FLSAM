@@ -1,6 +1,11 @@
 setMethod("plot",signature(x="FLSAM",y="missing"),
  function(x,y,futureYrs=T,...) {
     #Extract data - ssb and fbar are easy but recs harder
+    if(x@control@nohess) {
+     stop(paste("FLSAM object has been run with the nohess=TRUE option - in this case it",
+          "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
+          "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAM>)"))
+    }
     ssb.dat <- ssb(x)
     ssb.dat$name <- "Spawning stock biomass"
     rec.dat <- rec(x)
@@ -36,6 +41,11 @@ setMethod("plot",signature(x="FLSAM",y="FLSAM"),
 
 setMethod("plot",signature(x="FLSAMs",y="missing"),
  function(x,y,main="",futureYrs=T,...) {
+    if(any(sapply(x,function(a) a@control@nohess))) {
+     stop(paste("At least one element of the FLSAMs object has been run with the nohess=TRUE option - in this case it",
+          "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
+          "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAMs>)"))
+    }
     #Extract data - ssb and fbar are easy but recs harder
     ssb.dat <- ssb(x)
     if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
@@ -65,6 +75,11 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
 
 setMethod("plot",signature(x="FLSAMs",y="FLStock"),
  function(x,y,main="",futureYrs,...) {
+    if(any(sapply(x,function(a) a@control@nohess))) {
+     stop(paste("At least one element of the FLSAMs object has been run with the nohess=TRUE option - in this case it",
+          "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
+          "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAMs>)"))
+    }
     #extract data from FLSAMs first
     ssb.dat <- ssb(x)
     if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
@@ -142,26 +157,29 @@ cor.plot <- function(sam,cols=c("red","white","blue"),full=FALSE) {
 }
 
 #Otolith plot (resample from the variance co-variance matrix and create a plot of all the resampled value)
-#- Create generic function for 'looi'
 if (!isGeneric("otolith")) {
-  setGeneric("otolith", function(sam.out,year, ...)
+  setGeneric("otolith", function(object, ...)
     standardGeneric("otolith"))
 }
-setMethod("otolith", signature(sam.out="FLSAM", year="numeric"),
-function(sam.out, year=2011, plot=TRUE, show.points=FALSE, do.contours=TRUE,
+setMethod("otolith", signature(object="FLSAM"),
+function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.contours=TRUE,
                       margin.plots=TRUE, show.estimate=TRUE,
                       n=100, pch=".", alpha=0.05, show.grid=TRUE,
                       n.grid=50, contour.args=list(),...){
+   if(object@control@nohess) {
+    stop(paste("Cannot generate an otolith plot for an FLSAM object that has been run",
+               "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
+               "try again."))}
 
   require(MASS)
   debug <- FALSE
   filled.contours <- FALSE
 
   #Get the range of ages for fbar
-  f.ages        <-  sam.out@control@range["minfbar"]:sam.out@control@range["maxfbar"]
+  f.ages        <-  object@control@range["minfbar"]:object@control@range["maxfbar"]
 
   #set up year ranges and identify year which plot is being done for
-  years <- sam.out@control@range["minyear"]:sam.out@control@range["maxyear"]
+  years <- object@control@range["minyear"]:object@control@range["maxyear"]
   year.index <- which(years==year)
 
 
@@ -169,17 +187,17 @@ function(sam.out, year=2011, plot=TRUE, show.points=FALSE, do.contours=TRUE,
   if(n > 200){
     Fbar.all  <- numeric()
     SSB.all   <- numeric()
-    paramvalue<- sam.out@params$value
-    samvcov   <- sam.out@vcov
+    paramvalue<- object@params$value
+    objectvcov   <- object@vcov
     for(i in 1:ceiling(n/200)){
-      d <- mvrnorm(n=200,paramvalue, samvcov)
+      d <- mvrnorm(n=200,paramvalue, objectvcov)
       Fbar.all  <- rbind(Fbar.all,d[,colnames(d)=="logfbar"])
       SSB.all   <- rbind(SSB.all,d[,colnames(d)=="logssb"])
     }
     Fbar.all  <- Fbar.all[1:n,]
     SSB.all   <- SSB.all[ 1:n,]
   } else {
-      d <- mvrnorm(n=n,sam.out@params$value, sam.out@vcov)
+      d <- mvrnorm(n=n,object@params$value, object@vcov)
       Fbar.all <- d[,colnames(d)=="logfbar"]
       SSB.all <-  d[,colnames(d)=="logssb"]
     }
@@ -190,8 +208,8 @@ function(sam.out, year=2011, plot=TRUE, show.points=FALSE, do.contours=TRUE,
   return.obj  <- data.frame(Fbar,SSB)
 
   #Extract SSB and Fbar estimates from the assessment outputs for the year requested
-  SSB.est   <-  ssb(sam.out)$value[ssb(sam.out)$year==year]
-  Fbar.est  <-  fbar(sam.out)$value[fbar(sam.out)$year==year]
+  SSB.est   <-  ssb(object)$value[ssb(object)$year==year]
+  Fbar.est  <-  fbar(object)$value[fbar(object)$year==year]
 
 
   #Now calculate the contour lines, if requested
@@ -288,8 +306,8 @@ function(sam.out, year=2011, plot=TRUE, show.points=FALSE, do.contours=TRUE,
 })
 
 #-Observation variance plot
-obsvar.plot <- function(FLSAM){
-                  obv <- obs.var(FLSAM)
+obsvar.plot <- function(sam){
+                  obv <- obs.var(sam)
                   obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
                   obv <- obv[order(obv$value),]
                   bp <- barplot(obv$value,ylab="Observation Variance",
@@ -299,9 +317,9 @@ obsvar.plot <- function(FLSAM){
               }
 
 #-CV versus observation variance plot
-obscv.plot  <- function(FLSAM){
+obscv.plot  <- function(sam){
 
-  obv <- obs.var(FLSAM)
+  obv <- obs.var(sam)
   obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
   obv <- obv[order(obv$value),]
   plot(obv$value,obv$CV,xlab="Observation variance",ylab="CV of estimate",log="x",

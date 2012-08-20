@@ -8,11 +8,11 @@ Plot the estimated observation variance of each data source in the assessment
 as a sorted barplot.
 }
 \usage{
-obsvar.plot(FLSAM)
+obsvar.plot(sam)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{FLSAM}{
+  \item{sam}{
 An FLSAM assessment output object
 }
 }

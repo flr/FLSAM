@@ -8,11 +8,11 @@ Plot the estimated observation variance of each data source in the assessment
 agains the CV of the estimate.
 }
 \usage{
-obscv.plot(FLSAM)
+obscv.plot(sam)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{FLSAM}{
+  \item{sam}{
 An FLSAM assessment output object
 }
 }

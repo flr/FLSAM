@@ -70,6 +70,10 @@ The second part of the data-frame is common and constant to all accessor functio
 \item lbnd - The lower bound (95\% confidence limit) for the parameter estimate
 }}
 
+\note{
+The \code{ssb}, \code{tsb}, \code{fbar} and \code{catch} accessor functions read the values estimated directly within the model. However, the estimation of these parameters is dependent on the calculation of the hessian: when the FLSAM control object has the \code{nohess} option set to true, however, the hessian will not be estimated. In these cases, these function calls will fail with a warning. If you still want to calculate the values in this case, update the corresponding stock object: see the examples.
+}
+
 \author{
 Mark R. Payne
 }
@@ -93,6 +97,16 @@ data(HERAS.sams)
 ssb(HERAS.sams)
 rec(HERAS.sams)
 fbar(HERAS.sams)
+
+#Handling "nohess" situation
+data(NSH)
+ctrl.nohess <- NSH.ctrl
+ctrl.nohess@nohess <- TRUE
+sam.nohess <- FLSAM(NSH,NSH.tun,ctrl.nohess)
+stck.nohess <- NSH + sam.nohess
+plot(stck.nohess)
+ssb(stck.nohess)
+
 }
 
 \keyword{ ~kwd1 }
