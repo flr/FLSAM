@@ -12,6 +12,9 @@ fleets are excluded or included from the assessment
 }
 \usage{
 looi(stck, tun, ctrl, type="full")
+
+loo(stck, tun, ctrl)
+loi(stck, tun, ctrl)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,8 +35,10 @@ looi(stck, tun, ctrl, type="full")
       \item type: 'LOO'  runs all combinations leaving only 1 fleet out.}
 Default value is 'full'.}
 }
+\details{
+The 'loo' and 'loi' methods call the 'looi' method with the appropriate type selected, and can be used as convenient shotcut}
 \value{
-An FLSAMs object is returned where in the names(FLSAMs) returnes the combination of fleets used within the assessment}
+An FLSAMs object is returned where in the names(FLSAMs) returns the combination of fleets used within the assessment}
 \references{
 }
 \author{
@@ -48,11 +53,14 @@ data(NSH)
 data(NSH.sam)
 
 #- Run a LOI
-run1 <- looi(NSH,NSH.tun,NSH.ctrl,type="LOI")
+one.in <- loi(NSH,NSH.tun,NSH.ctrl)
+plot(one.in)
 
 #- Run a LOO
-run2 <- looi(NSH,NSH.tun,NSH.ctrl,type="LOO")
+one.out <- loo(NSH,NSH.tun,NSH.ctrl)
+plot(one.out)
 
 #- Run a full evaluation of all combinations
-run3 <- looi(NSH,NSH.tun,NSH.ctr)
+all.comb <- looi(NSH,NSH.tun,NSH.ctr)
+plot(all.comb)
 }

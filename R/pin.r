@@ -5,12 +5,18 @@ setMethod("update", signature(object="FLSAM"),
 
   #- Check validity of objects
   ctrl <- object@control
-  inputSAM      <- new("FLSAMinput")
-  inputSAM@stck <- stck
-  inputSAM@tun  <- tun
-  inputSAM@ctrl <- ctrl
-  if(!all(c(validObject(stck),validObject(tun),validObject(object),validObject(inputSAM)))) {
-        stop("Validity checks on input objects failed") }
+  if(!validObject(object))    stop("FLSAM object invalid")
+  if(!validObject(stck))      stop("FLStock object invalid")
+  if(!validObject(tun))       stop("FLIndices object invalid")
+
+
+#  inputSAM      <- new("FLSAMinput")
+#  inputSAM@stck <- stck
+#  inputSAM@tun  <- tun
+#  inputSAM@ctrl <- ctrl
+#  if(!all(c(validObject(stck),validObject(tun),validObject(object),validObject(inputSAM)))) {
+#        stop("Validity checks on input objects failed") }
+
 
   #-Test if ranges of FLStock are smaller than of FLSAM
   if(range(stck)["minyear"] < range(object)["minyear"] |
@@ -32,12 +38,11 @@ setMethod("update", signature(object="FLSAM"),
     params2pin(object,strt,nd,  save.dir=run.dir)
   }
   
-  #-Update FLSAM.control stck
-  #ctrl        <- FLSAM.control(stck,tun)
-  #for(iSlot in c("states","logN.vars","catchabilities","power.law.exps",
-  #               "f.vars","obs.vars","srr","cor.F","nohess","timeout"))
-  # {slot(ctrl,iSlot) <- slot(object@control,iSlot) }
-
+  #-Update FLSAM.control stck by copying directly from the oject. Modifications
+  # may be necessary for revised year ranges 
+  ctrl       <- object@control
+  ctrl@range["maxyear"] <- max(sapply(tun,range)["maxyear",],stck@range["maxyear"])
+  ctrl@range["minyear"] <- min(sapply(tun,range)["minyear",],stck@range["minyear"])
   
   #-Run the assessment, "by hand" taking advantage of the usepin argument
   FLR2SAM(stck,tun,ctrl,run.dir)

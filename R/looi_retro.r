@@ -4,51 +4,94 @@
 
 #- Create generic function for 'looi'
 if (!isGeneric("looi")) {
-  setGeneric('looi', function(e1,e2,e3,type="full") standardGeneric('looi'))
+  setGeneric('looi', function(stck,tun,ctrl,...) standardGeneric('looi'))
 }
 
-setMethod("looi",signature(e1="FLStock",e2="FLIndices",e3="FLSAM.control",type="character"),
-  function(e1,e2,e3,type="full"){
-  
+setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
+  function(stck,tun,ctrl,type="full"){
+    #Check type argument
+    if(is.na(pmatch(toupper(type),c("LOI","LOO","FULL")))) {
+      stop(sprintf("Invalid 'type' argument: %s",type)) }
+    type <- toupper(type)
+   
     #- Create run scheme with all possible combinations
-    overview          <- matrix(NA,nrow=2^length(e2),ncol=length(e2),dimnames=list(run=1:2^length(e2),fleet=names(e2)))
-    for(iFlt in 1:length(e2))
-      overview[,iFlt] <- rep(c(rep(1,(2^length(e2))/(2^(iFlt))),rep(0,(2^length(e2))/(2^(iFlt)))),2^(iFlt-1))
+    overview          <- matrix(NA,nrow=2^length(tun),ncol=length(tun),dimnames=list(run=1:2^length(tun),fleet=names(tun)))
+    for(iFlt in 1:length(tun))
+      overview[,iFlt] <- rep(c(rep(1,(2^length(tun))/(2^(iFlt))),rep(0,(2^length(tun))/(2^(iFlt)))),2^(iFlt-1))
     overview          <- overview[-nrow(overview),] #Remove 'no-fleet-included' option
     rownames(overview)<- unlist(lapply(apply(overview,1,function(x){names(which(x==1))}),paste,collapse=" + "))
+    LOO.runs <- which(rowSums(overview==0)==1) 
+    rownames(overview)[LOO.runs] <-  paste("Drop",colnames(overview)[apply(overview[LOO.runs,]==0,1,which)])
+    LOI.runs <- which(rowSums(overview)==1) 
+    rownames(overview)[LOI.runs] <-  paste(colnames(overview)[apply(overview[LOI.runs,]==1,1,which)],"Only")
     
-    if(type=="LOO"){ overview <- overview[c(1,which(rowSums(overview) == (length(e2)-1))),];  cat("Running LOO analyses\n")}
+    if(type=="LOO"){ overview <- overview[c(1,which(rowSums(overview) == (length(tun)-1))),];  cat("Running LOO analyses\n")}
     if(type=="LOI"){ overview <- overview[c(1,which(rowSums(overview) == 1)),];               cat("Running LOI analyses\n")}
     
-    #- Create object to save outcomes
-    result <- new("FLSAMs")
-    for(iRun in rownames(overview)){
-      stck                  <- e1
-      tun                   <- e2[which(overview[iRun,]==1)]
-      ctrl                  <- FLSAM.control(stck,tun)
-      #- Update the ctrl and stck object given the changed tuning object
-      for(iSlot in slotNames(e3))
-        if(class(slot(ctrl,iSlot))=="matrix") {
-            slot(ctrl,iSlot) <- slot(e3,iSlot)[c(names(which(e3@fleets==0)),names(which(overview[iRun,]==1))),]}
-      ctrl@logN.vars        <- e3@logN.vars
-      ctrl@srr              <- e3@srr
-      ctrl@name             <- iRun
-      ctrl                  <- update(ctrl)
+    #Perform the initial base assessment i.e. "everybody-in"
+    rundir <- tempdir()
+    base.run <- FLSAM(stck,tun,ctrl,run.dir=rundir,batch.mode=FALSE)  #Has to work
+    result <- FLSAMs("All fleets"=base.run)
+
+    #- Now use the update functionality to do the LOO, LOI, LOO trickery really quickly
+    #  We achieve this using the reduced.cfg file in ADMB together with the pin functionality - 
+    #  in this way we don't need to stress about adjusting the parameters of the pin file
+    #  for changes in the number of fleets etc
+    for(iRun in rownames(overview)[-1]){
+      #
+
+      #Write the outputs
+      FLR2SAM(stck,tun,ctrl,run.dir=rundir)
+
+      #Write the pin file
+      params2pin(base.run,save.dir=rundir)
+
+      #Mark which surveys to use via the reduced.cfg file
+      flts <- ctrl@fleets
+      flts[] <- 0     #Everybody in
+      flts[colnames(overview)] <- overview[iRun,]-1   #-1 is out for reduced.cfg
+      cat("# This allows to exclude data in ways customized for retrospective runs\n",
+         "# The following specifies one integer for each fleet (catches and surveys)\n",
+         "# if:\n",
+         "#     0: all data for that fleet is used\n",
+         "#    -1: all data for that fleet is excluded\n",
+         "#     n: n is a positive integer the corresponding fleet's data is reduced\n",
+         "#        by n years starting from the most recent year.\n",
+         flts,"\n", 
+         "\n\n# Checksums to ensure correct reading of input data \n",3142, 3142,"\n",
+         file=file.path(rundir,"reduced.cfg"),append=FALSE) 
 
       #- Run the assessment
       cat(sprintf('\nRunning "%s" assessment...\n',iRun))
-      if(iRun == rownames(overview)[1]) {  #If first run
-           res <- FLSAM(stck,tun,ctrl,run.dir=tempdir(),batch.mode=TRUE)
-           first.res <- res  #Store first result separately, and use to initialise other runs 
-      } else {
-           res <- update(first.res,stck,tun,run.dir=tempdir())}
-      if(is.null(res)) {
-        warning(sprintf('"%s" run failed',iRun))
-      } else {
-        result[[iRun]] <- res
-      }}
+      rtn <- runSAM(ctrl, run.dir=rundir,use.pin=TRUE)
+      if(rtn!=0) {
+        warning(sprintf("%s run failed\n",iRun))
+        next  #Loop 
+      }
+
+      #- Collect the results
+      res <- SAM2FLR(ctrl,run.dir=rundir)    
+      result[[iRun]] <- res
+      }
   return(result)
 })
+
+#- Create generic function for 'loo' and 'loi'
+if (!isGeneric("loo")) {
+  setGeneric('loo', function(stck,tun,ctrl) standardGeneric('loo'))
+}
+
+if (!isGeneric("loi")) {
+  setGeneric('loi', function(stck,tun,ctrl) standardGeneric('loi'))
+}
+setMethod("loo",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
+  function(stck,tun,ctrl){
+     looi(stck,tun,ctrl,type="loo")
+}) 
+setMethod("loi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
+  function(stck,tun,ctrl){
+     looi(stck,tun,ctrl,type="loi")
+}) 
 
 #-------------------------------------------------------------------------------
 # Retro function
