@@ -318,7 +318,10 @@ obsvar.plot <- function(sam){
 
 #-CV versus observation variance plot
 obscv.plot  <- function(sam){
-
+   if(sam@control@nohess) {
+    stop(paste("Cannot generate a cv plot for an FLSAM object that has been run",
+               "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
+               "try again."))}
   obv <- obs.var(sam)
   obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
   obv <- obv[order(obv$value),]
