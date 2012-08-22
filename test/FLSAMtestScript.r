@@ -83,7 +83,7 @@ dev.off()
 ### Perform retro analyses and drop some surveys from the model to test performance
 ### ============================================================================
 
-system.time(retro.NSH <- retro(NSH,NSH.tun,NSH.ctrl,10))
+retro.NSH <- retro(NSH,NSH.tun,NSH.ctrl,5)
 
 looi.NSH  <- looi(NSH,NSH.tun,NSH.ctrl,type="LOO")
 
