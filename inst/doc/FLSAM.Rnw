@@ -5,7 +5,7 @@
 \SweaveOpts{engine=R}
 \title{Getting Started with FLSAM}
 \author{Mark R. Payne <mpa@aqua.dtud.dk>\\
-Niels Hinzten <niels.hintzen@wur.nl>}
+Niels T. Hintzen <niels.hintzen@wur.nl>}
 \date{\today}
 
 \begin{document}
