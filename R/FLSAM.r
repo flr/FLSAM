@@ -54,7 +54,7 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
 #---------------------------------------------------
 runSAM <- function(ctrl,run.dir=tempdir(),use.pin=FALSE){
   admb.stem <- "sam" 
-  admb.args <-  "-nr 2 -noinit -iprint 1"
+  admb.args <-  "-nr 2 -noinit -iprint 5"
   if(ctrl@nohess) {admb.args <- paste(admb.args,"-nohess")}
   if(use.pin) {
      admb.args <- paste(admb.args,"-usepin")

@@ -124,7 +124,7 @@ new_stck <- stck + sam
 
 \section{Plotting}
 
-The next step is to look at your results! Firstly, lets have a look at the results.
+The next step is to look at your results! 
 
 <<eval=FALSE>>=
 plot(sam)
@@ -233,7 +233,7 @@ plot(retro.sams)
 @
 \begin{figure}
 \begin{center}
-<<label=retrofig,fig=TRUE,echo=FALSE>>=
+<<label=retrofig,fig=TRUE,echo=FALSE,results=hide>>=
 if(!exists("retro.sams")) {
   retro.sams <- retro(stck,tun,ctrl,retro=5)}
 plot(retro.sams)

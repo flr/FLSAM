@@ -1,5 +1,6 @@
 \name{FLSAM.out}
 \alias{FLSAM.out}
+\alias{sam.out}
 \title{
 Create FLSAM formatted output file
 }
@@ -8,6 +9,8 @@ Document the results of the FLSAM assessment including all input values, model s
 output in formatted tables}
 \usage{
 FLSAM.out(stck, tun, sam, format = "TABLE \%i.")
+
+sam.out(stck, tun, sam, format = "TABLE \%i.")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +29,8 @@ The Title to be specified with each table.
 }
 \details{
 This function produces a set of tables that can be used to directly document an assessment. Included in the tables are all (relevant) input data, the details of the tuning indices, the model parameter configuration, the estimated parameters and all estimated values. The structure and approach is inspired by the "ica.out" documentation from the ICA package.
+
+\code{sam.out} is simply an alias for FLSAM.out.
 }
 
 \value{
