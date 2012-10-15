@@ -46,11 +46,12 @@ data(NSH.sam)
 
 sam.out <- FLSAM.out(NSH,NSH.tun,NSH.sam,format="Table \%i")
 
-#-Write to file, set margins
+#-Set margins to make prettier output
 old.opt           <- options("width","scipen")
 options("width"=80,"scipen"=1000)
 
-write(sam.out,file=paste("C:/","sam.out",sep="."))
+#Write the file to the working directory
+write(sam.out,file="sam.out")
 #-Reset margins
 options("width"=old.opt$width,"scipen"=old.opt$scipen)
 

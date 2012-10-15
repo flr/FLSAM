@@ -58,7 +58,4 @@ plot(one.in)
 one.out <- loo(NSH,NSH.tun,NSH.ctrl)
 plot(one.out)
 
-#- Run a full evaluation of all combinations
-all.comb <- looi(NSH,NSH.tun,NSH.ctr)
-plot(all.comb)
 }

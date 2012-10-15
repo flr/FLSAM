@@ -41,7 +41,7 @@ The function might become very slow when a large number of n is required while t
    otolith(NSH.sam,year=2010,n=150)
    otolith(NSH.sam,year=2010,n=1e4)
 
-   otolith(NSH.sam,year=2010,n=1e4,show.points=T)
+   otolith(NSH.sam,year=2010,n=1e4,show.points=TRUE)
    
 }
 \keyword{ classes }

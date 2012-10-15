@@ -66,10 +66,13 @@ data(NSH.sam)
 #Extract parameter
 catchabilities(NSH.sam)
 obs.var(NSH.sam)
-power.law.exps(NSH.sam) #Returns error, because no power-law exponents in model
 ssb(NSH.sam)
 fbar(NSH.sam)
 rec(NSH.sam)
+#Power law parameters could be extracted as follows, but this will
+#return an error in this case, as there are no power-law exponents in the model
+#power.law.exps(NSH.sam) 
+
 #And for FLSAMs
 data(HERAS.sams)
 ssb(HERAS.sams)

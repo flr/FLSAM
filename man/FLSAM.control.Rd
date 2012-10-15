@@ -69,10 +69,10 @@ data(NSH)
 #Create an object
 ctrl <- FLSAM.control(NSH,NSH.tun)
 ctrl
-#Bind HERAS catchabilities on ages 5:9
-ctrl@catchabilities["HERAS",as.character(5:9)] <- 11 
+#Bind HERAS catchabilities on ages 5:8
+ctrl@catchabilities["HERAS",as.character(5:8)] <- 11 
 #Alternatively can also use update functionality
-ctrl@catchabilities["HERAS",as.character(5:9)] <- 101
+ctrl@catchabilities["HERAS",as.character(5:8)] <- 101
 ctrl <- update(ctrl)
 #See example of full control object
 data(NSH.sam)
