@@ -7,5 +7,6 @@ exportClasses(
     "FLSAM.control")
 export(
     "FLSAM",
-    "FLSAM.control")
+    "FLSAM.control",
+    "kobeFLSAM")
 exportPattern("^[^\\.]")
