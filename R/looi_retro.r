@@ -103,11 +103,11 @@ setMethod("loi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
 #-------------------------------------------------------------------------------
 
 if (!isGeneric("retro"))
-	setGeneric("retro", function(stock, indices, control, retro, year.range)
+	setGeneric("retro", function(stock, indices, control, retro, year.range,base.assess)
     	standardGeneric("retro"))
 
 setMethod('retro', signature(stock='FLStock', indices='FLIndices', control='FLSAM.control',retro='numeric'),
-function(stock, indices, control, retro, year.range="missing"){
+function(stock, indices, control, retro, year.range="missing",base.assess="missing"){
   # ---------- Checks ----------------------
     if (!inherits(stock, "FLStock"))
       stop("stock must be an 'FLStock' object!")
@@ -149,8 +149,10 @@ function(stock, indices, control, retro, year.range="missing"){
       control@range["maxyear"] <- max(Stock@range["maxyear"],
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
       if(yr == rev(year.range)[1]) {  #First run
-          assess  <- FLSAM(Stock, Indices.temp,control,run.dir=tempdir(),batch.mode=TRUE)
-          base.assess <- assess
+        if(missing(base.assess)){
+            assess  <- FLSAM(Stock, Indices.temp,control,run.dir=tempdir(),batch.mode=TRUE)
+            base.assess <- assess
+        } else { assess <- update(base.assess,Stock,Indices.temp,run.dir=tempdir()); base.assess <- assess}
       } else {
           assess  <- update(base.assess,Stock,Indices.temp,run.dir=tempdir()) }
       if(is.null(assess)) {
