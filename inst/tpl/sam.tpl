@@ -592,7 +592,7 @@ SEPARABLE_FUNCTION void obs(const dvar_vector& u, const dmatrix& data, const dva
     }
   }
 
-  dvar_vector Z(Ftot.indexmin(),indexmax());
+  dvar_vector Z(Ftot.indexmin(),Ftot.indexmax());
   Z=Ftot; // missing M here
   int isMadded=0; 
   int f;
