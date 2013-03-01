@@ -44,6 +44,6 @@ plot(NSH)
 newStock <- monteCarloStock(NSH,NSH.sam,100)
 #Now does it look?
 summary(newStock)#iter = 100
-plot(newStock)  #Viola!
+plot(newStock)  #Voila!
 
 }
