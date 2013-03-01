@@ -97,8 +97,12 @@ params2pin <- function(object,start=NULL,end=NULL,save.dir=tempdir()){
   U         <- data.frame(name="U",value=u,std.dev=NA)
 
   #-Merge U's with other parameters (even if truncated)
-  par.list  <-  c("logFpar","logSdLogFsta","logSdLogN","logSdLogObs","rec_loga",
+  if(any(is.na(object@control@power.law.exps)==F)){
+    par.list<- c("logFpar","logQpow","logSdLogFsta","logSdLogN","logSdLogObs","rec_loga",
                   "rec_logb","rho","logScaleSSB","logPowSSB","logSdSSB","U")
+  } else {
+   par.list <- c("logFpar","logSdLogFsta","logSdLogN","logSdLogObs","rec_loga",
+                 "rec_logb","rho","logScaleSSB","logPowSSB","logSdSSB","U")}
   pars      <- object@params
   uidx      <- which(pars$name == "U")
   parsTop   <- pars[1:(uidx[1]-1),]
