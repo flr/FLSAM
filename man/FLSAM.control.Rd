@@ -6,7 +6,7 @@
 Creates an FLSAM.control that can be used to control an FLSAM assessment
 }
 \usage{
-FLSAM.control(stck, tun, default="full")
+FLSAM.control(stck, tun, default="full",sam.binary="missing")
 }
 \arguments{
   \item{stck}{An \code{\link[FLCore]{FLStock}} object
@@ -14,6 +14,8 @@ FLSAM.control(stck, tun, default="full")
   \item{tun}{An \code{\link[FLCore]{FLIndices}} object
 }
   \item{default}{Specifies how the control object should be populated. Default option is "full", which takes a reasonable first guess at a configuration. Any other value will populate all matrices with NA values.
+}
+  \item{sam.binary}{Path and name of the SAM executable file to run
 }
 }
 \details{
@@ -24,6 +26,8 @@ The key concept with the configuration of a SAM model is that some parameters ar
 Bindings are expressed in a matrix format in the FLSAM.control object. The rows of the matrix correspond to the fleets, whilst the column correspond to the ages - it is important to remember that while all age-fleet combinations are represented here, not all are valid i.e. a fleet may not contain information on all ages. Bindings are specified with integers - the integers indicate which parameter should be used in the specific fleet-age context represented by that point in the matrix. Repeating a number means that all those fleet-age combinations with the same number will be fitted with just one parameter i.e. bound together. Parameters that are not to be fitted, or are turned off, are specified by setting the value to NA.
 
 FLSAM.control can populate the template in two different ways, as indicated by the "default" argument. If default="full", a reasonable first guess at a configuration is supplied - this consists of linear catchability models for the surveys and a fixed selectivity pattern in the fishery. Alternatively, if "default" is set to any other value, all values are set to NA and therefore turned "off".
+
+Earlier versions of FLSAM contained the executable (binary) file within the package distribution. However, this version is designed to interface with customised versions of the sam model, which can be modified and compiled locally. The sam.binary slot in the FLSAM.control object can be used to specify the location of this executable file. If the file is not specified, FLSAM reverts to the versions stored within the package - however, in the future, these binaries may be removed.
 }
 \value{
 Returns an FLSAM.control object with the following slots
@@ -50,6 +54,7 @@ Returns an FLSAM.control object with the following slots
 \item{srr}{Stock recruitment relationships. Value options are 0= Random walk. 1= Ricker. 2=Beverton-Holt.}
 \item{nohess}{Logical variable indicating whether the hessian of the fitted model should be estimated. Default is TRUE. Turning on this variable can be used to increase the speed of the model but it does so at the cost of removing all uncertainty estimates and the variance-covariance matrix from the fitted object. Any methods that are dependent on these values will most likely fail as a result.   }
 \item{timeout}{Model timeout setting (in seconds). If the model fails to finish within this timeframe, it exits and returns and error. Default is 3600s (one hour).}
+\item{sam.binary}{Name and path of the executable file to be run}
 }
 
 \author{

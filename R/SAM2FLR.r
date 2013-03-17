@@ -2,7 +2,7 @@ SAM2FLR <-function(ctrl,run.dir=tempdir()) {
   #---------------------------------------------------
   # Read the results from the assessment
   #---------------------------------------------------
-  admb.stem <- "sam"
+  admb.stem <- .get.admb.stem(ctrl)
 
   #Create return object
   res       <- new("FLSAM")
@@ -24,7 +24,7 @@ SAM2FLR <-function(ctrl,run.dir=tempdir()) {
   yrs       <-  rept[-1]
 
   #Read residual files
-  res.fname    <- file.path(run.dir,sprintf("%s.res",admb.stem))
+  res.fname    <- file.path(run.dir,"sam.res") #Not ideal, but easier than changing it in tpl
   res@residuals  <-  read.table(res.fname,header=FALSE,
                        col.names=c("year","fleet","age","log.obs","log.mdl","std.res"))
   res@residuals$fleet <- factor(res@residuals$fleet)

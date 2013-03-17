@@ -14,7 +14,8 @@ setClass("FLSAM.control",
     srr             ="integer",   ## stock recruitment relationship
     cor.F           ="logical",   ## should we estimate the Fs a being correlated?
     nohess          ="logical",   ## should the hessian be estimated?
-    timeout         ="numeric"), ## number of seconds before model timesout 
+    timeout         ="numeric", ## number of seconds before model timesout 
+    sam.binary      ="character"),  ## path to sam binary
   prototype=prototype(
     range           =as.numeric(1),   ## minimum age represented internally in the assessment
     plus.group      =as.logical(TRUE),   ## model the maximum age as a plus group?
@@ -33,10 +34,11 @@ setClass("FLSAM.control",
                	return(TRUE)}
 )
 
-FLSAM.control <- function(stck,tun,default="full") {
+FLSAM.control <- function(stck,tun,default="full",sam.binary="missing") {
   #Default constructor
   #Create object
   ctrl <- new("FLSAM.control")
+  if(!missing("sam.binary")) ctrl@sam.binary <- sam.binary
 
   #Populate metadata
   ctrl@range <- stck@range

@@ -3,7 +3,7 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir()) {
   # Setup for output
   #---------------------------------------------------
   #General Setup
-  admb.stem <- "sam" 
+  admb.stem <- .get.admb.stem(ctrl)
   run.time <- Sys.time()
   miss.val <- -99999
 
@@ -163,3 +163,8 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir()) {
      cat(sprintf("# Datetime : %s\n\n",ftime),file=fname,append=TRUE)
 }
 
+.get.admb.stem <-function(ctrl) { 
+  if(length(ctrl@sam.binary)==0) {
+	admb.stem <- "sam" } else {
+	admb.stem <- gsub("\\.exe$","",basename(ctrl@sam.binary)) }
+}

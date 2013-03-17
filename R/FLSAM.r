@@ -53,7 +53,7 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
 # We're ready! Run the executable
 #---------------------------------------------------
 runSAM <- function(ctrl,run.dir=tempdir(),use.pin=FALSE){
-  admb.stem <- "sam" 
+  admb.stem <- .get.admb.stem(ctrl) 
   admb.args <-  "-nr 2 -noinit -iprint 5"
   if(ctrl@nohess) {admb.args <- paste(admb.args,"-nohess")}
   if(use.pin) {
@@ -63,18 +63,21 @@ runSAM <- function(ctrl,run.dir=tempdir(),use.pin=FALSE){
      unlink(file.path(run.dir,sprintf("%s.pin",admb.stem)))
   }
 
-  #Platform specific issues
-  if (.Platform$OS.type=="unix") {
+  #If binary is specified, use it. Otherwise copy it from
+  #the package distribution
+  if(length(ctrl@sam.binary)!=0) {  
+    admb.exec <- ctrl@sam.binary
+    if(!file.exists(admb.exec)) {stop(sprintf("Cannot find specified sam executable (binary) file: %s",admb.exec))}
+  } else if (.Platform$OS.type=="unix") {
     admb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
                    mustWork=TRUE), admb.stem)
-    file.copy(admb.exec, run.dir)
   } else if (.Platform$OS.type == "windows") {
     admb.exec <- file.path(system.file("bin", "windows", package="FLSAM", mustWork=TRUE),
       sprintf("%s.exe",admb.stem))
-    file.copy(admb.exec, run.dir)
   } else {
     stop(sprintf("Platform type, %s, is not currently supported.",R.version$os))
   }
+  file.copy(admb.exec, run.dir)
 
   #Run!
   cmd <- sprintf("./%s %s" ,basename(admb.exec),admb.args)
