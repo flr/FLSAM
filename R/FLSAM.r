@@ -17,7 +17,7 @@ setClass("FLSAM",
 )
 
 
-FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
+FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.sam=NULL) {
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
@@ -31,10 +31,14 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE) {
   if(any(c(validObject(stck),validObject(tun),validObject(ctrl),validObject(inputSAM))==F)) stop("Validity check failed")
   
   #Write output files
-  FLR2SAM(stck,tun,ctrl,run.dir)
+  FLR2SAM(stck,tun,ctrl,run.dir,pin.sam)
 
   #Run SAM
-  rtn <- runSAM(ctrl, run.dir)
+  if(is.null(pin.sam)==TRUE){
+    rtn <- runSAM(ctrl, run.dir)
+  } else {
+    rtn <- runSAM(ctrl,run.dir,use.pin=TRUE)
+  }
   if(rtn!=0) {
     if(batch.mode) {
       return(NULL)

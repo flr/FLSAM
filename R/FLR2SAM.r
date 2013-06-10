@@ -1,4 +1,4 @@
-FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir()) {
+FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir(),pin.sam=NULL) {
   #---------------------------------------------------
   # Setup for output
   #---------------------------------------------------
@@ -154,6 +154,16 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir()) {
       rep(0,length(ctrl@fleets)),"\n", 
       "\n\n# Checksums to ensure correct reading of input data \n",3142, 3142,"\n",
       file=red.file,append=TRUE) 
+
+  #---------------------------------------------------
+  # If pin file is given, write files to disk
+  #---------------------------------------------------
+  if(is.null(pin.sam)==FALSE){
+    print("# printing pin file to disk\n")
+    params2pin(pin.sam,save.dir=run.dir)
+  }
+
+
   return(invisible(NULL))
 }
 

@@ -11,11 +11,11 @@
  Performs a stock assessment using the State-Space assessment model (SAM)
 }
 \usage{
-FLSAM(stck, tun, ctrl, run.dir=tempdir(), batch.mode=FALSE) 
+FLSAM(stck, tun, ctrl, run.dir=tempdir(), batch.mode=FALSE,pin.sam=NULL)
 
 update(object, stck, tun, run.dir=tempdir(),batch.mode=FALSE)
 
-FLR2SAM(stck, tun, ctrl, run.dir = tempdir())
+FLR2SAM(stck, tun, ctrl, run.dir = tempdir(),pin.sam=NULL)
 runSAM(ctrl, run.dir=tempdir(),use.pin=FALSE)
 SAM2FLR(ctrl, run.dir = tempdir()) 
 }
@@ -32,6 +32,7 @@ SAM2FLR(ctrl, run.dir = tempdir())
 }
   \item{object}{An object of the  {\code{\link{FLSAM}}} class, resulting from e.g a call to FLSAM, that is to form the basis for the update.
 }
+  \item{pin.sam}{Provide an FLSAM object, to be used as pin file, to the FLSAM function call to speed up the estimation process}
   \item{use.pin}{A logical variable indicating whether the SAM executable should look for a file containing initial parameter estimates (i.e. a pin file)
 }
 }
@@ -103,6 +104,9 @@ data(NSH.sam)
 #Perform assessment
 #Takes about two minutes on a 2.4GHz workstation
 sam <- FLSAM(NSH,NSH.tun,NSH.ctrl)
+
+#If you want to re-use the sam object to create a pin file, use this:
+sam <- FLSAM(NSH,NSH.tun,NSH.ctrl,pin.sam=sam)
 #View results
 plot(sam)
 
