@@ -83,7 +83,7 @@ dev.off()
 ### Perform retro analyses and drop some surveys from the model to test performance
 ### ============================================================================
 
-retro.NSH <- retro(NSH,NSH.tun,NSH.ctrl,5)
+retro.NSH <- retro(NSH,NSH.tun,NSH.ctrl,10,base.assess=NSH.sam)
 
 looi.NSH  <- looi(NSH,NSH.tun,NSH.ctrl,type="LOO")
 
