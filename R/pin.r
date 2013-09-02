@@ -10,6 +10,7 @@ setMethod("update", signature(object="FLSAM"),
   if(!validObject(tun))       stop("FLIndices object invalid")
 
 
+
 #  inputSAM      <- new("FLSAMinput")
 #  inputSAM@stck <- stck
 #  inputSAM@tun  <- tun
