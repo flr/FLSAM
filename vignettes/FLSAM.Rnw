@@ -265,6 +265,7 @@ The HERAS survey clearly appears to have the strongest influence on the percepti
 \section{Documentation}
 Once the user is fully satisifed with the model fit, they will want to write a report and document their results. Fortunately, FLSAM provides a quick and easy function to generate the necessary tables:
 <<>>=
+sam@control@sam.binary  <- character()
 sam.out <- FLSAM.out(stck,tun,sam,
                 format="Table 1.%i North Sea herring assessment")
 @
