@@ -112,7 +112,7 @@ params2pin <- function(object,start=NULL,end=NULL,save.dir=tempdir()){
   #---------------------------------------------------
   # Create pin file
   #---------------------------------------------------
-  if(identical(object@control@sam.binary,character(0)){
+  if(identical(object@control@sam.binary,character(0))){
     pin.file  <- file.path(save.dir,"sam.pin")
   } else {
     pin.file  <- file.path(save.dir,paste(tolower(strsplit(rev(strsplit(object@control@sam.binary,"/")[[1]])[1],".exe")[[1]]),".pin",sep=""))
