@@ -32,10 +32,7 @@ residual.diagnostics <- function(x,title=x@name) {
 # create working titel to identify age and survey
 
   ind.age   <- unlist(strsplit(names(index.res.l[i]), "\\."))
-  ttl.fmt   <- ifelse(x@control@fleets[ind.age[2]]%in%c(3,4),
-                 "Diagnostics - %s",   #SSB fleey
-                 "Diagnostics - %s, age %s")  #other fleet
-  ttl       <- sprintf(ttl.fmt,ind.age[2],ind.age[1])
+  ttl       <- sprintf("Diagnostics - %s, age %s",ind.age[2],ind.age[1])
   ttl       <- paste(title,ttl)
 
 #Scale index axes

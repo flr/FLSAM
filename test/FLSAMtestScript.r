@@ -4,7 +4,7 @@
 # a simple wrapper to the ADMB stock assessment model SAM, developed by Anders
 # Nielsen (DTU-Aqua) and allows you to use the benefits of FLR and R in a convenient way.
 #-------------------------------------------------------------------------------
-
+rm(list=ls())
 ### ============================================================================
 ### Setup assessment
 ### ============================================================================
@@ -37,6 +37,12 @@ NSH.sam <- FLSAM(NSH,NSH.tun,NSH.ctrl)
 name(NSH.sam) <- "North Sea Herring"
 NSH     <- NSH + NSH.sam
 
+#And test the ability to read the results back from the SAM outputs
+sam.res <- SAM2FLR(run.dir=tempdir())
+plot(sam.res)
+cor.plot(sam.res)
+residual.diagnostics(sam.res)
+
 ### ============================================================================
 ### Investigate the results
 ### ============================================================================
@@ -50,6 +56,9 @@ tsb(NSH.sam)
 rec(NSH.sam)
 f(NSH.sam)
 n(NSH.sam)
+
+#AIC
+AIC(NSH.sam)
 
 # The residual diagnostic plots
 residual.diagnostics(NSH.sam)
@@ -77,18 +86,19 @@ otolith(NSH.sam,year=2011,plot=T,n=100)
 #- Plot the correlation of the parameters
 cor.plot(NSH.sam)
 
-dev.off()
 
 ### ============================================================================
 ### Perform retro analyses and drop some surveys from the model to test performance
 ### ============================================================================
 
-retro.NSH <- retro(NSH,NSH.tun,NSH.ctrl,10,base.assess=NSH.sam)
+retro.NSH <- retro(NSH,NSH.tun,NSH.ctrl,2,base.assess=NSH.sam)
+plot(retro.NSH)
 
-looi.NSH  <- looi(NSH,NSH.tun,NSH.ctrl,type="LOO")
+# looi.NSH  <- looi(NSH,NSH.tun,NSH.ctrl,type="LOO")
+# plot(looi.NSH)
 
-# Perform AIC to see which one performs best
-AIC(looi.NSH)
+
+dev.off()
 
 ### ============================================================================
 ### Sample from the model uncertainty and construct new stock realisations

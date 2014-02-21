@@ -1,8 +1,8 @@
 setMethod("plot",signature(x="FLSAM",y="missing"),
  function(x,y,futureYrs=T,...) {
     #Extract data - ssb and fbar are easy but recs harder
-    if(x@control@nohess) {
-     stop(paste("FLSAM object has been run with the nohess=TRUE option - in this case it",
+    if(x@nohess) {
+     stop(paste("SAM has been run with the nohess=TRUE option - in this case it",
           "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
           "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAM>)"))
     }
@@ -41,7 +41,7 @@ setMethod("plot",signature(x="FLSAM",y="FLSAM"),
 
 setMethod("plot",signature(x="FLSAMs",y="missing"),
  function(x,y,main="",futureYrs=T,...) {
-    if(any(sapply(x,function(a) a@control@nohess))) {
+    if(any(sapply(x,function(a) a@nohess))) {
      stop(paste("At least one element of the FLSAMs object has been run with the nohess=TRUE option - in this case it",
           "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
           "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAMs>)"))
@@ -75,7 +75,7 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
 
 setMethod("plot",signature(x="FLSAMs",y="FLStock"),
  function(x,y,main="",futureYrs,...) {
-    if(any(sapply(x,function(a) a@control@nohess))) {
+    if(any(sapply(x,function(a) a@nohess))) {
      stop(paste("At least one element of the FLSAMs object has been run with the nohess=TRUE option - in this case it",
           "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
           "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAMs>)"))
@@ -137,7 +137,7 @@ setMethod("plot",signature(x="FLStock",y="FLSAMs"),
 
 #Correlation plot
 cor.plot <- function(sam,cols=c("red","white","blue"),full=FALSE) {
-   if(sam@control@nohess) {
+   if(sam@nohess) {
     stop(paste("Cannot generate a correlation plot for an FLSAM object that has been run",
                "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
                "try again."))}
@@ -166,7 +166,7 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
                       margin.plots=TRUE, show.estimate=TRUE,
                       n=100, pch=".", alpha=0.05, show.grid=TRUE,
                       n.grid=50, contour.args=list(),...){
-   if(object@control@nohess) {
+   if(object@nohess) {
     stop(paste("Cannot generate an otolith plot for an FLSAM object that has been run",
                "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
                "try again."))}
@@ -176,10 +176,10 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
   filled.contours <- FALSE
 
   #Get the range of ages for fbar
-  f.ages        <-  object@control@range["minfbar"]:object@control@range["maxfbar"]
+  f.ages        <-  object@range["minfbar"]:object@range["maxfbar"]
 
   #set up year ranges and identify year which plot is being done for
-  years <- object@control@range["minyear"]:object@control@range["maxyear"]
+  years <- object@range["minyear"]:object@range["maxyear"]
   year.index <- which(years==year)
 
 
@@ -318,7 +318,7 @@ obsvar.plot <- function(sam){
 
 #-CV versus observation variance plot
 obscv.plot  <- function(sam){
-   if(sam@control@nohess) {
+   if(sam@nohess) {
     stop(paste("Cannot generate a cv plot for an FLSAM object that has been run",
                "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
                "try again."))}

@@ -1,20 +1,25 @@
 setClass("FLSAM",
-  	representation(
-      "FLComp",
-      control  = "FLSAM.control",
-      nopar    = "integer",
-      nlogl    = "numeric",
-      vcov     = "matrix",
-      params   = "data.frame",
-      stock.n  = "FLQuant",
-      harvest  = "FLQuant",
-      residuals = "data.frame",
-      info     = "matrix"),
-  	prototype=prototype(),
-  	validity=function(object){
-                	# Everything is fine
-                	return(TRUE)}
+         representation(
+           "FLComp",
+           control  = "FLSAM.control",
+           nohess   = "logical",
+           nopar    = "integer",
+           n.states  = "integer",
+           states = "matrix",
+           nlogl    = "numeric",
+           maxgrad  = "numeric",
+           vcov     = "matrix",
+           params   = "data.frame",
+           stock.n  = "FLQuant",
+           harvest  = "FLQuant",
+           residuals = "data.frame",
+           info     = "matrix"),
+         prototype=prototype(),
+         validity=function(object){
+           # Everything is fine
+           return(TRUE)}
 )
+
 
 
 FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.sam=NULL) {
@@ -48,8 +53,14 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.sam=NULL) 
   }
 
   #Read the results back in
-  res <- SAM2FLR(ctrl,run.dir)
+  res <- SAM2FLR(ctrl=ctrl,run.dir=run.dir)
 
+  #SAM2FLR is intended to just read in the results of a SAM run  
+  #We then need to upgrade that by adding the appropriate FLR objects etc
+
+  #Set the levels in the residuals
+  levels(res@residuals$fleet) <- names(ctrl@fleets)
+  
   return(res)
 }
 

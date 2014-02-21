@@ -79,7 +79,7 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 #and return it as a data.frame
 .extract.params <- function(object,params) {
   #Check that this is sensible first
-  if(object@control@nohess & params %in% c("logssb","logtsb","logfbar","logCatch")) {
+  if(object@nohess & params %in% c("logssb","logtsb","logfbar","logCatch")) {
     stop(paste("It is not possible to extract SSB, Fbar, TSB or modelled catch directly",
                "from an FLSAM object that",
                "has been run with the nohess=TRUE option. To calculate these variables",
@@ -99,12 +99,11 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 }
 .extract.states <- function(object) {
   Us <- .extract.params(object,"U")
-  yrs <- seq(object@control@range["minyear"],
-             object@control@range["maxyear"]) 
-  ages <- seq(object@control@range["min"],
-              object@control@range["max"])
-  n.states <- nrow(Us)/length(yrs)
-  states <- c(ages,seq(-1,by=-1,length.out=n.states-length(ages)))
+  yrs <- seq(object@range["minyear"],
+             object@range["maxyear"]) 
+  ages <- seq(object@range["min"],
+              object@range["max"])
+  states <- c(ages,seq(-1,by=-1,length.out=object@n.states-length(ages)))
   Us <- cbind(expand.grid(age=states,year=yrs),Us)
   return(Us)
 }
@@ -113,8 +112,8 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 setMethod("ssb", signature(object="FLSAM"),
         function(object, ...) {
           res <- .extract.params(object,"logssb")   
-          res <- cbind(year=seq(object@control@range["minyear"],
-                            object@control@range["maxyear"]),
+          res <- cbind(year=seq(object@range["minyear"],
+                            object@range["maxyear"]),
                        res)
           return(res)
         }
@@ -134,8 +133,8 @@ setMethod("ssb", signature(object="FLSAMs"),
 setMethod("fbar", signature(object="FLSAM"),
         function(object, ...) {
           res <- .extract.params(object,"logfbar")   
-          res <- cbind(year=seq(object@control@range["minyear"],
-                            object@control@range["maxyear"]),
+          res <- cbind(year=seq(object@range["minyear"],
+                            object@range["maxyear"]),
                        res)
           return(res)
         }
@@ -155,8 +154,8 @@ setMethod("fbar", signature(object="FLSAMs"),
 setMethod("tsb", signature(object="FLSAM"),
         function(object, ...) {
           res <- .extract.params(object,"logtsb")   
-          res <- cbind(year=seq(object@control@range["minyear"],
-                            object@control@range["maxyear"]),
+          res <- cbind(year=seq(object@range["minyear"],
+                            object@range["maxyear"]),
                        res)
           return(res)
         }
@@ -176,8 +175,8 @@ setMethod("tsb", signature(object="FLSAMs"),
 setMethod("catch", signature(object="FLSAM"),
         function(object, ...) {
           res <- .extract.params(object,"logCatch")   
-          res <- cbind(year=seq(object@control@range["minyear"],
-                            object@control@range["maxyear"]),
+          res <- cbind(year=seq(object@range["minyear"],
+                            object@range["maxyear"]),
                        res)
           return(res)
         }
@@ -242,7 +241,7 @@ setMethod("f", signature(object="FLSAMs"),
 
 setMethod("rec", signature(object="FLSAM"),
         function(object, ...) {
-          rec.rtn <- subset(n(object),age==object@control@range["min"])
+          rec.rtn <- subset(n(object),age==object@range["min"])
           rec.rtn$age <- NULL
           return(rec.rtn)
         }
@@ -307,6 +306,8 @@ setMethod("coefficients",signature(object="FLSAMs"),
 # to try and deal with all these issues.
 #-------------------------------------------------------------------------------
 .extract.fleet.parameters <- function(object,type) {
+       #
+  
        #Setup parameter type to extract
        ext <- switch(type,
          "observation variance"=list(age="logSdLogObs",ssb="logSdSSB",

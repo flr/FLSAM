@@ -104,7 +104,8 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir(),pin.sam=NULL) {
   .file.header(cfg.file,run.time)
 
   #Write the headers
-  cat("# Min, max age represented internally in model \n",ctrl@range[c("min","max")],"\n", file=cfg.file, append=TRUE)
+  cat("# Min age represented internally in model \n",ctrl@range["min"],"\n", file=cfg.file, append=TRUE)
+  cat("# Max age represented internally in model \n",ctrl@range["max"],"\n", file=cfg.file, append=TRUE)
   cat("# Max age considered a plus group? (0 = No, 1= Yes)\n",as.numeric(ctrl@plus.group[1]),"\n", file=cfg.file, append=TRUE)
   
   #Coupling Matrices

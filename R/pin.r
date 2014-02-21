@@ -55,7 +55,7 @@ setMethod("update", signature(object="FLSAM"),
       stop(sprintf("An error occurred while running ADMB. Return code %s.",rtn))
     }
   }
-  res <- SAM2FLR(ctrl,run.dir)
+  res <- SAM2FLR(ctrl,run.dir=run.dir)
 
   return(res)
   }
