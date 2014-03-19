@@ -119,8 +119,12 @@
   x           <- subset(sam@residuals,fleet=="catch")
   year        <- x$year
   age         <- x$age
-  pred.catch  <- FLQuant(exp(x$log.mdl),dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
-  catch.resid <- FLQuant(x$std.res,dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
+  pred.catch  <- FLQuant(NA,dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
+  openings    <- which(table(x$age,x$year)==1)
+  pred.catch@.Data[openings] <- exp(x$log.mdl)
+  #pred.catch  <- FLQuant(exp(x$log.mdl),dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
+  catch.resid <- FLQuant(NA,dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
+  catch.resid@.Data[openings] <- x$std.res
   output.structure <- rbind(c("pred.catch","PREDICTED CATCH NUMBERS AT AGE"),
                               c("catch.resid","CATCH AT AGE RESIDUALS"))
     for(i in 1:nrow(output.structure)) {
@@ -142,8 +146,11 @@
     if(j %in% names(sam@control@fleets[which(sam@control@fleets == 3)])){
       age         <- "all"
     } else { age <- x$age }
-    pred.catch  <- FLQuant(exp(x$log.mdl),dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
-    catch.resid <- FLQuant(x$std.res,dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
+    pred.catch  <- FLQuant(NA,dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
+    openings    <- which(table(x$age,x$year)==1)
+    pred.catch@.Data[openings] <- exp(x$log.mdl)
+    catch.resid <- FLQuant(NA,dimnames=list(age=sort(unique(age)),year=sort(unique(year)),unit="unique",season="all",area="unique",iter="1"))
+    catch.resid@.Data[openings] <- x$std.res
     output.structure <- rbind(c("pred.catch","PREDICTED INDEX AT AGE"),
                               c("catch.resid","INDEX AT AGE RESIDUALS"))
 
