@@ -329,3 +329,104 @@ obscv.plot  <- function(sam){
     pch=16,col=obv$fleet,main="Observation variance vs uncertainty")
   text(obv$value,obv$CV,obv$str,pos=4,cex=0.75,xpd=NA)
 }
+
+#-Processes error plot: expressed as deviation in type = "mort","n","tsb"
+procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
+
+      #- convert N-at-age, F-at-age and m-at-age
+      ns      <- as.data.frame(stck@stock.n) #N-at-age predicted by SAM
+      colnames(ns)[7]       <- "n"
+      fs      <- as.data.frame(stck@harvest) #F-at-age predicted by SAM
+      colnames(fs)[7]       <- "f"
+      ms      <- as.data.frame(stck@m)
+      colnames(ms)[7]       <- "m"
+      zs      <- merge(fs,ms,by=c("age","year","unit","season","area","iter"))
+      zs$z    <- zs$f+zs$m
+      if(weight=="stock.wt") ws      <- as.data.frame(stck@stock.wt)
+      if(weight=="catch.wt") ws      <- as.data.frame(stck@catch.wt)
+      colnames(ws)[7]       <- "ws"
+
+      #- Calculate difference in Ns
+      predns  <- ns; predns$year <- predns$year-1; predns$age <- predns$age-1   #N-at-age predicted by SAM, shift one year to align
+      colnames(predns)[7]   <- "predn"
+      ncomb   <- merge(ns,predns,by=c("age","year","unit","season","area","iter"))
+      sens    <- as.data.frame(stck@stock.n * exp(-stck@harvest - stck@m))      #N-at-age predicted by survivor equation
+      colnames(sens)[7]     <- "sens"
+      ncomb   <- merge(ncomb,sens,by=c("age","year","unit","season","area","iter"))
+      ncomb$ndiff <- ncomb$predn - ncomb$sens
+
+      #- Calculate difference in mortality
+      nmcomb  <- ncomb
+      nmcomb$predmort  <- log(nmcomb$n/nmcomb$predn)
+      nmcomb  <- merge(nmcomb,zs,by=c("age","year","unit","season","area","iter"))
+      nmcomb$mdiff <- nmcomb$predmort - nmcomb$z
+      
+      #- Calculate difference in biomass
+      nmwcomb <- nmcomb
+      nmwcomb <- merge(nmwcomb,ws,by=c("age","year","unit","season","area","iter"))
+      nmwcomb$bdiff <- nmwcomb$ndiff * nmwcomb$ws
+      nmwcomb$bnorm <- nmwcomb$n * nmwcomb$ws
+      bdiff   <- aggregate(nmwcomb$bdiff,by=as.list(nmwcomb[,c("year","unit","season","area","iter")]),FUN=sum,na.rm=T)
+      bnorm   <- aggregate(nmwcomb$bnorm,by=as.list(nmwcomb[,c("year","unit","season","area","iter")]),FUN=sum,na.rm=T)
+      colnames(bdiff)[6] <- "bdiff"
+      colnames(bnorm)[6] <- "bnorm"
+      
+      #- Make the plots
+      if(type=="n"){
+        #- Deviance from n
+        if(rel)
+          nmwcomb[,"ndiff"] <- nmwcomb[,"ndiff"] / nmwcomb[,"n"] * 100
+        inp   <- nmwcomb[,c(1:6,grep("ndiff",colnames(nmwcomb)))]
+        colnames(inp)[7] <- "data"
+        inpQ  <- as(inp,"FLQuant")
+        x_at <- pretty(1:(max(as.data.frame(inpQ)$year)-min(as.data.frame(inpQ)$year))+1)-1
+        x_labels <- formatC(pretty(as.data.frame(inpQ)$year), digits = 0, format = "f")
+        if(rel)
+          yTxt <- "% difference numbers at age"
+        if(rel==F)
+          yTxt <- "Numbers at age"
+        pic   <- barchart(data ~ year | as.factor(age),data=as.data.frame(inpQ),origin = 0, scales = list(x=list(at=x_at,labels=x_labels),y="free"),col=1,horizontal=F,
+                          xlab="Year",ylab=yTxt,main="Process error deviation in N",
+                          panel=function(...) {
+                            panel.grid(h=-1,v=0);
+                            panel.barchart(...)})
+        print(pic)
+      }
+      if(type=="mort"){
+        #- Deviance from mortality
+        if(rel){
+          inp   <- nmwcomb[,c(1:6,grep("mdiff",colnames(nmwcomb)))]
+          inp$mdiff <- nmwcomb[,"mdiff"] / nmwcomb[,"z"] * 100
+        }
+        if(rel==F)
+          inp   <- nmwcomb[,c(1:6,grep("mdiff",colnames(nmwcomb)))]
+        colnames(inp)[7] <- "data"
+        inpQ  <- as(inp,"FLQuant")
+        if(rel)
+          yTxt <- "% difference mortality (year)"
+        if(rel==F)
+          yTxt <- "Mortality (year)"
+        pic   <- bubbles(age ~ year,data=inpQ,bub.scale=5,col=c("black","red"),xlab="Years",ylab=yTxt,main="Process error deviation in M")
+        print(pic)
+      }
+      if(type=="tsb"){
+        x_at <- pretty(1:(max(bdiff$year)-min(bdiff$year)+1))-1
+        x_labels <- formatC(pretty(bdiff$year), digits = 0, format = "f")
+        
+        if(rel)
+          bdiff$bdiff <- bdiff$bdiff/bnorm$bnorm *100
+        if(rel)
+          yTxt <- "% difference in biomass (t)"
+        if(rel==F)
+          yTxt <- "Biomass (t)"
+        pic <- barchart(bdiff ~ year,data=bdiff,origin = 0, col=1,horizontal=F,scales = list(x=list(at=x_at,labels=x_labels)),
+                          xlab="Year",ylab=yTxt,main="Process error deviation in biomass",
+                          panel=function(...) {
+                            panel.grid(h=-1,v=0);
+                            panel.barchart(...)})
+        print(pic)
+      }
+}
+      
+      
+        
