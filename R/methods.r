@@ -485,3 +485,26 @@ setMethod("lr.test",signature("FLSAM"),
   }
 )
 
+#- Create generic function for 'lr.test'
+if (!isGeneric("mohns.rho")) {
+  setGeneric('mohns.rho', function(retro,ref.year,span,...) standardGeneric('mohns.rho'))
+}
+setMethod("mohns.rho",signature("FLSAMs"),
+function(retro,ref.year=max(an(names(retro)),na.rm=T),span=5,...){
+  retro.fbar  <- lapply(retro,fbar)
+  if(ref.year>max(an(names(retro)),na.rm=T)) stop("Reference year set higher than the latest assessment year")
+  if(span >= length(retro)){
+    span <- length(retro)-1
+    warning("Span longer than number of retro years available")
+  }
+  retro.fbar  <- retro.fbar[which(names(retro.fbar) %in% ref.year:(ref.year-span))]
+  rho         <- data.frame(rho=NA, year=c((ref.year-span):ref.year))
+  termFs      <- do.call(rbind,lapply(retro.fbar,tail,1))
+  refFs       <- retro.fbar[[ac(ref.year)]]
+  refFs       <- refFs[which(refFs$year %in% termFs$year),]
+  colnames(refFs) <- c("year","refvalue","refCV","reflbnd","refubnd")
+  combFs      <- merge(refFs,termFs,by="year")
+  combFs      <- combFs[order(combFs$year),]
+  rhos        <- (1-combFs$value/combFs$refvalue)*100
+  rho$rho     <- rhos
+return(rho)})
