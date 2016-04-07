@@ -499,7 +499,8 @@ function(retro,ref.year=max(an(names(retro)),na.rm=T),span=5,...){
   }
   retro.fbar  <- retro.fbar[which(names(retro.fbar) %in% ref.year:(ref.year-span))]
   rho         <- data.frame(rho=NA, year=c((ref.year-span):ref.year))
-  termFs      <- do.call(rbind,lapply(retro.fbar,tail,1))
+  termFs      <- do.call(rbind,lapply(as.list(names(retro.fbar)),
+                         function(x){return(retro.fbar[[ac(x)]][which(retro.fbar[[ac(x)]]$year==an(x)),])}))
   refFs       <- retro.fbar[[ac(ref.year)]]
   refFs       <- refFs[which(refFs$year %in% termFs$year),]
   colnames(refFs) <- c("year","refvalue","refCV","reflbnd","refubnd")
