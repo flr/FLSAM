@@ -1,0 +1,6 @@
+.travis.yml
+docs/
+man-roxygen/
+Makefile
+.git/
+^appveyor\.yml$
