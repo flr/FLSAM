@@ -1,6 +1,5 @@
 import("FLCore")
 import("utils")
-import("methods")
 exportClasses(
     "FLSAM",
     "FLSAMs",

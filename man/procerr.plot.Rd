@@ -25,7 +25,7 @@ Logical. Express error relative or absolute
 \value{
 A picture is returned}
 \author{
-Niels T. HIntzen (based on code from Einar Hjorleifsson}
+Niels T. HIntzen (based on code from Einar Hjorleifsson)
 }
 \examples{
 library(FLSAM)
@@ -33,11 +33,11 @@ library(FLSAM)
 data(NSH)
 
 procerr.plot(NSH,type="n")
-procerr.plot(NSH,type="n",rel=T)
+procerr.plot(NSH,type="n",rel=TRUE)
 procerr.plot(NSH,type="mort")
-procerr.plot(NSH,type="mort",rel=T)
-procerr.plot(NSH,type="tsb",weight="catch.wt",rel=F)
-procerr.plot(NSH,type="tsb",weight="catch.wt",rel=T)
-procerr.plot(NSH,type="tsb",weight="stock.wt",rel=F)
-procerr.plot(NSH,type="tsb",weight="stock.wt",rel=T)
+procerr.plot(NSH,type="mort",rel=TRUE)
+procerr.plot(NSH,type="tsb",weight="catch.wt",rel=FALSE)
+procerr.plot(NSH,type="tsb",weight="catch.wt",rel=TRUE)
+procerr.plot(NSH,type="tsb",weight="stock.wt",rel=FALSE)
+procerr.plot(NSH,type="tsb",weight="stock.wt",rel=TRUE)
 }

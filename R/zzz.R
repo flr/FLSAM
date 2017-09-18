@@ -9,7 +9,7 @@ dis.msg <- '--------------------------------------------------------------------
 * SAM and FLSAM come with ABSOLUTELY NO WARRANTY.
 
 * Please report all bugs, questions and feature requestions to the FLR
-    mailing list, flr-list@flr-project.org. We´re here to help! 
+    mailing list, flr-list@flr-project.org. We are here to help! 
 
 * For more information on learning to use FLSAM, run vignette("FLSAM"). For 
     the full manual as a PDF file, run vignette("FLSAM-manual"). Full
