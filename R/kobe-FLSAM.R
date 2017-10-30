@@ -31,6 +31,7 @@ kobeFLSamFn=function(object,what=c("trks","smry","pts","ellipse")[1],prob=c(0.75
 #### exported function
 kobeFLSAM=function(object,what=c("trks","smry","pts","ellipse")[1],prob=c(0.75,0.5,.25),nits=1000,bmsy=1,fmsy=1){
   
+  stop("Does not work yet")
   require(plyr)
   
   if (length(object)>1){

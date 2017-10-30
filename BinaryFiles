@@ -1,2 +1,2 @@
-inst/bin/linux/sam
-inst/bin/windows/sam.exe
+inst/bin/windows/sam.dll
+inst/bin/linux/sam.dll

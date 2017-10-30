@@ -11,10 +11,21 @@ setClass("FLSAM.control",
     power.law.exps  ="matrix",   ## matrix coupling the power law expoonents
     f.vars          ="matrix",   ## matrix of fishing mortality couplings
     obs.vars        ="matrix",   ## matrix coupling the observation variances
+    obs.weight      ="matrix",    ## weight of observations
     srr             ="integer",   ## stock recruitment relationship
-    cor.F           ="logical",   ## should we estimate the Fs a being correlated?
+    scaleNoYears    ="integer",  ## number of years for which to apply a catch multiplier
+    scaleYears      ="vector",   ## actual years for which scaling applies
+    scalePars       ="matrix",   ## parameter binding over years and ages
+    cor.F           ="vector",   ## should we estimate the Fs a being correlated?
+    cor.obs         ="matrix",    ## parameter binding for correlated observations
+    cor.obs.Flag    ="factor",    ## Type of observation correlation
+    biomassTreat    ="vector",    ## way biomass indices are treated
     nohess          ="logical",   ## should the hessian be estimated?
     timeout         ="numeric", ## number of seconds before model timesout 
+    likFlag         ="factor",  ## Likelihood flags
+    fixVarToWeight  ="logical",  ## Fixing variance to weight
+    simulate        ="logical",  ## Simulate data
+    residuals       ="logical",
     sam.binary      ="character"),  ## path to sam binary
   prototype=prototype(
     range           =as.numeric(1),   ## minimum age represented internally in the assessment
@@ -25,22 +36,38 @@ setClass("FLSAM.control",
     power.law.exps  =as.matrix(0),   ## matrix of survey catchabilities
     f.vars          =as.matrix(0),   ## matrix of fishing mortality couplings
     obs.vars        =as.matrix(0),   ## matrix coupling the observation variances
-    cor.F           =as.logical(FALSE),          ## Don't estimate by default
+    obs.weight      =as.matrix(NA),  ## weight set to NA by default
+    cor.F           =as.vector(0),   ## Don't estimate by default
+    cor.obs         =as.matrix(0),   ## matrix of correlation in observations
+    cor.obs.Flag    =factor(NA,levels=c("ID","AR","US")), ## Identity, auto-regressive or user defined
+    biomassTreat    =as.vector(0),   ## vector of biomassTreatment
     srr             =as.integer(0),  ## stock recruitment relationship
+    scaleNoYears    =as.integer(0),  ## number of years for which to apply a catch multiplier
+    scaleYears      =as.vector(0),  ## actual years for which scaling applies
+    scalePars       =as.matrix(NA),  ## parameter binding over years and ages
     nohess          =as.logical(FALSE),          ## Estimate hessian by default 
-    timeout         =3600),          ## defaults to one hour 
+    timeout         =3600,           ## defaults to one hour
+    likFlag         =factor(NA,levels=c("LN","ALN")),
+    fixVarToWeight  =as.logical(FALSE),
+    simulate        =as.logical(FALSE),
+    residuals       =as.logical(TRUE)),
   validity=function(object){
                	# Everything is fine
                	return(TRUE)}
 )
 
-FLSAM.control <- function(stck,tun,default="full",sam.binary="missing") {
+FLSAM.control <- function(stck,tun,default="full",scaleYears=integer(),sam.binary="missing") {
   #Default constructor
   #Create object
   ctrl <- new("FLSAM.control")
   if(!missing("sam.binary")) ctrl@sam.binary <- sam.binary
 
+  if(any(!sapply(tun,type) %in% c("con","number","biomass")))
+    stop("index type not recognized. Use con, number or biomass")
+
   #Populate metadata
+  ctrl@name  <- stck@name
+  ctrl@desc  <- stck@desc
   ctrl@range <- stck@range
   ctrl@range["maxyear"] <- max(stck@range["maxyear"],
                             max(sapply(tun,function(x) max(x@range[c("maxyear")])))) 
@@ -51,40 +78,64 @@ FLSAM.control <- function(stck,tun,default="full",sam.binary="missing") {
   names(ctrl@fleets) <- fleet.names
 
   #Setup coupling structures - default is for each parameter to be fitted independently
-  default.coupling <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,
+  default.coupling <- matrix(as.integer(NA),nrow=dims(stck)$area+length(tun),ncol=dims(stck)$age,
                         dimnames=list(fleet=fleet.names,age=dimnames(stck@catch.n)$age))
   ctrl@states           <- default.coupling
   ctrl@catchabilities   <- default.coupling
   ctrl@power.law.exps   <- default.coupling
   ctrl@f.vars           <- default.coupling
   ctrl@obs.vars         <- default.coupling
-
+  ctrl@obs.weight       <- default.coupling
+  ctrl@cor.obs          <- default.coupling[,-1]
+  colnames(ctrl@cor.obs)<- apply(cbind(dimnames(stck@catch.n)$age[-length(dimnames(stck@catch.n)$age)],dimnames(stck@catch.n)$age[-1]),1,paste,collapse="-")
+  ctrl@cor.obs.Flag     <- factor(rep("ID",length(fleet.names)),levels=c("ID","AR","US"))
+  ctrl@biomassTreat     <- rep(-1,length(fleet.names))
+  ctrl@biomassTreat[which(ctrl@fleets %in% c(3,4))] <- 0
+  ctrl@likFlag          <- factor(rep("LN",length(fleet.names)),levels=c("LN","ALN"))    #1=LN, 2=ALN
+  
   #Other variables
-  ctrl@logN.vars            <- default.coupling[1,]
-  ctrl@srr <- as.integer(0)
+  ctrl@logN.vars        <- default.coupling[1,]
+  ctrl@srr              <- as.integer(0)
+  
+  #Scaling variables
+  if(length(scaleYears)>0){
+    ctrl@scaleNoYears     <- length(scaleYears)
+    ctrl@scaleYears       <- sort(scaleYears)
+    ctrl@scalePars        <- matrix(as.integer(NA),nrow=ctrl@scaleNoYears,ncol=dims(stck)$age,
+                              dimnames=list(years=scaleYears,age=dimnames(stck@catch.n)$age))
+  } else {
+    ctrl@scaleNoYears     <- as.integer(0)
+    ctrl@scaleYears       <- NA
+    ctrl@scalePars        <- matrix(as.integer(NA),nrow=ctrl@scaleNoYears,ncol=dims(stck)$age,
+                              dimnames=list(years=scaleYears,age=dimnames(stck@catch.n)$age))
+  }
 
   #Handle full coupling case
   if(default=="full"){
-    idx                 <- lapply(tun,function(x){return(if(x@type == "biomass"){ NA
+    idx                 <- lapply(tun,function(x){return(if(x@type == "biomass"){ 1
                                                          }else{ seq(as.numeric(range(x)["min"]),as.numeric(range(x)["max"]),1)})})
-    idx[[names(ctrl@fleets)[ctrl@fleets==0]]] <- seq(as.numeric(range(stck)["min"]),as.numeric(range(stck)["max"]),1)
+    idx[[names(ctrl@fleets)[which(ctrl@fleets==0)]]] <- seq(as.numeric(range(stck)["min"]),as.numeric(range(stck)["max"]),1)
 
     full.coupling       <- matrix(as.integer(NA),nrow=1+length(tun),ncol=dims(stck)$age,
                             dimnames=list(fleet=fleet.names,age=dimnames(stck@catch.n)$age))
     for(iFlt in names(ctrl@fleets[ctrl@fleets!=3]))
-      full.coupling[iFlt,ac(idx[[iFlt]])] <- (sum(is.finite(full.coupling),na.rm=T)+1):(sum(is.finite(full.coupling),na.rm=T)+length(idx[[iFlt]]))
+      full.coupling[iFlt,ac(idx[[iFlt]])] <- (sum(is.finite(full.coupling),na.rm=T)+1):(sum(is.finite(full.coupling),na.rm=T)+length(idx[[iFlt]]))-1
+    for(iFlt in names(ctrl@fleets[ctrl@fleets==3]))
+      full.coupling[iFlt,idx[[iFlt]]] <- (sum(is.finite(full.coupling),na.rm=T)+1):(sum(is.finite(full.coupling),na.rm=T)+length(idx[[iFlt]]))-1
 
-    ctrl@states["catch",] <- 1                 #Fixed selection pattern
+    ctrl@states["catch",] <- 0:(length(ctrl@states["catch",])-1)                 #Fixed selection pattern
     ctrl@catchabilities   <- full.coupling   
     ctrl@catchabilities["catch",] <- NA        #Catchabilities don't make sense for "catch"
     ctrl@power.law.exps   <- default.coupling  #Don't fit power laws by default
     ctrl@obs.vars         <- full.coupling
     #Random walks default to a single variance
-    ctrl@logN.vars[]      <- 1
-    ctrl@f.vars["catch",] <- 1
-    ctrl <- update(ctrl)
+    ctrl@logN.vars[]      <- 0:(length(ctrl@logN.vars)-1)
+    ctrl@f.vars["catch",] <- 0:(length(ctrl@f.vars["catch",])-1)
+    if(length(scaleYears)>0)
+      ctrl@scalePars[]    <- 0:(length(c(ctrl@scalePars))-1)
+    ctrl@cor.obs[]        <- an(af(full.coupling[,-1]))-1
   }
-
+  ctrl <- update(ctrl)
 
   #Finished!
   return(ctrl)
@@ -103,16 +154,27 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
         if(class(slt)=="matrix") {
             remaining.fleets <- setdiff(rownames(slt),fleets)
             slot(object,slt.name) <- slt[remaining.fleets,,drop=FALSE]}}
-      object@fleets   <- object@fleets[setdiff(names(object@fleets),fleets)]}
+      whichFleet      <- which(names(object@fleets) %in% fleets)
+      object@fleets   <- object@fleets[setdiff(names(object@fleets),fleets)]
+      object@cor.obs.Flag <- object@cor.obs.Flag[-whichFleet]
+      object@biomassTreat <- object@biomassTreat[-whichFleet]
+      object@likFlag      <- object@likFlag[-whichFleet]}
     #Then drop the ages 
     if(!missing("ages")) {
       for(slt.name in slotNames(object)) {
         slt <- slot(object,slt.name)
         if(class(slt)=="matrix") {
-            remaining.ages <- setdiff(colnames(slt),ages)
-            slot(object,slt.name) <- slt[,remaining.ages,drop=FALSE]}}
-      object@logN.vars   <- object@logN.vars[setdiff(names(object@logN.vars),ages)]}
-
+          remaining.ages <- setdiff(colnames(slt),ages)
+          if(slt == "cor.obs"){
+            mincol <- unique(unlist(sapply(ages,grep,colnames(object@cor.obs))))
+            slot(object,slt.name) <- slt[,-mincol]
+          } else {
+              slot(object,slt.name) <- slt[,remaining.ages,drop=FALSE]
+            }
+        }
+      }
+      object@logN.vars   <- object@logN.vars[setdiff(names(object@logN.vars),ages)]
+    }
     #Finally, do an update
     object <- update(object)
     return(object)
@@ -123,8 +185,10 @@ setMethod("update", signature(object="FLSAM.control"),
 
   for(iSlt in slotNames(object)){
     if(class(slot(object,iSlt))=="matrix"){
-      slot(object,iSlt)[]  <-  as.numeric(factor(slot(object,iSlt)))
+      slot(object,iSlt)[]  <-  as.numeric(factor(slot(object,iSlt)))-1
     }
+    if(iSlt %in% c("logN.vars","scalePars"))
+      slot(object,iSlt)[]  <- as.numeric(factor(slot(object,iSlt)))-1
   }
   return(object)}
 )

@@ -39,7 +39,6 @@ setMethod("merge", signature(x="FLStock", y="FLSAM"),
   }
 )   # }}}
 
-# "+"      {{{
 setMethod("+", signature(e1="FLStock", e2="FLSAM"),
   function(e1, e2) {
     if(validObject(e1) & validObject(e2))
@@ -79,7 +78,7 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 #and return it as a data.frame
 .extract.params <- function(object,params) {
   #Check that this is sensible first
-  if(object@nohess & params %in% c("logssb","logtsb","logfbar","logCatch")) {
+  if(object@nohess & any(params %in% c("logssb","logtsb","logfbar","logCatch"))) {
     stop(paste("It is not possible to extract SSB, Fbar, TSB or modelled catch directly",
                "from an FLSAM object that",
                "has been run with the nohess=TRUE option. To calculate these variables",
@@ -98,13 +97,16 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
   return(ps)
 }
 .extract.states <- function(object) {
-  Us <- .extract.params(object,"U")
+  Ns <- .extract.params(object,c("logN"))
+  Fs <- .extract.params(object,c("logF"))
   yrs <- seq(object@range["minyear"],
              object@range["maxyear"]) 
   ages <- seq(object@range["min"],
               object@range["max"])
   states <- c(ages,seq(-1,by=-1,length.out=object@n.states-length(ages)))
-  Us <- cbind(expand.grid(age=states,year=yrs),Us)
+  storeNs <- expand.grid(age=states[states>=0],year=yrs)
+  storeFs <- expand.grid(age=states[states<0],year=yrs)
+  Us <- rbind(cbind(storeNs,Ns),cbind(storeFs,Fs))
   return(Us)
 }
 
@@ -216,10 +218,10 @@ if (!isGeneric("f")) {
 setMethod("f", signature(object="FLSAM"),
         function(object) {
           f.states <- subset(.extract.states(object),age<0)
-          f.states$param <- -f.states$age 
+          f.states$param <- -f.states$age-range(object)["min"]
           f.bindings <- object@control@states["catch",]
           f.bindings <- as.data.frame(as.table(f.bindings),responseName="param")
-          res <- merge(f.states,f.bindings,by="param") 
+          res <- merge(f.states,f.bindings,by="param")
           res$age <- as.numeric(as.character(res$Var1))
           res$Var1 <- NULL
           res$param <- NULL
@@ -310,42 +312,65 @@ setMethod("coefficients",signature(object="FLSAMs"),
   
        #Setup parameter type to extract
        ext <- switch(type,
-         "observation variance"=list(age="logSdLogObs",ssb="logSdSSB",
-                          slt="obs.vars",ssb.fleet=c(3,4)),
-         "catchability"=list(age="logFpar",ssb="logScaleSSB",
-                          slt="catchabilities",ssb.fleet=c(3,4)),
-         "power law"=list(age="logQpow",ssb="logPowSSB",
-                          slt="power.law.exps",ssb.fleet=4))
-  
+         "observation variance"=list(age="logSdLogObs",
+                          slt="obs.vars"),
+         "catchability"=list(age="logFpar",
+                          slt="catchabilities"),
+         "power law"=list(age="logQpow",
+                          slt="power.law.exps"),
+         "catch multiplier"=list(age="logScale",
+                          slt="scalePars"),
+         "number variance"=list(age="logSdLogN",
+                          slt="logN.vars"),
+         "harvest variance"=list(age="logSdLogFsta",
+                          slt="f.vars"),
+         "observation correlation"=list(age="transfIRARdist",
+                          slt="cor.obs"),
+         "recruitment"=list(val=c("rec_loga","rec_logb"),
+                          slt="srr"),
+         "harvest correlation"=list(val="itrans_rho",
+                          slt="cor.F"))
+
        #Extract data
        age.params <- .extract.params(object,ext$age)
        if(nrow(age.params)!=0) {
-         age.params$no <- 1:nrow(age.params)
+         age.params$no <- 0:(nrow(age.params)-1)
          bindings.mat <- slot(object@control,ext$slt) 
          bindings <-  as.data.frame(as.table(bindings.mat),responseName="no")
+         if(length(grep("age",colnames(bindings)))==0)
+          colnames(bindings)[1] <- "age"
+         if(type %in% c("number variance","harvest variance")){
+          if(length(grep("fleet",colnames(bindings)))>0){
+            bindings <- cbind(fleet=strsplit(type," ")[[1]][1],bindings[,-grep("fleet",colnames(bindings))])
+          } else {
+            bindings <- cbind(fleet=strsplit(type," ")[[1]][1],bindings)
+          }
+         }
          #Merge
          bindings <- subset(bindings,!is.na(bindings$no))
-         bindings$age <- as.numeric(as.character(bindings$age))
+         if(type!="observation correlation")
+           bindings$age <- as.numeric(as.character(bindings$age))
          age.res <- merge(bindings,age.params)
          age.res$no <- NULL
        } else {
          age.res <- .extract.params(object,"asfasfsdf") #space filler
        }
-
-       #Add in SSB indices (if any)
-       ssb.params <- .extract.params(object,ext$ssb)
-       if(nrow(ssb.params)!=0) {
-         ssb.fleets <- names(object@control@fleets)[object@control@fleets%in%ext$ssb.fleet]
-         if(nrow(ssb.params)!=length(ssb.fleets)) {
-           stop(paste("Number of fleets does not match number of",type,"parameters.",
-                      "This is a bug. Please report it to the FLSAM users mailing",
-                      "list, FLSAM@googlegroups.com"))}
-         ssb.res <- cbind(fleet=ssb.fleets,age=NA,ssb.params)
+       
+       #Extract data
+       val.params <- .extract.params(object,ext$val)
+       if(nrow(val.params)!=0){
+        rownames(val.params) <- NULL
+         if(type=="recruitment")
+           val.res <- cbind(expand.grid(fleet=c("srr a","srr b"),age=c(ctrl@range["min"])),val.params)
+         if(type=="harvest correlation")
+           val.res <- cbind(expand.grid(fleet=names(ctrl@fleets[which(ctrl@fleets==0)]),age="all"),val.params)
        } else {
-         ssb.res <- .extract.params(object,"asfasfsdf") #space filler
+         val.res <- .extract.params(object,"asfasfsdf") #space filler
        }
+
+
        #Tidy up
-       res <- rbind(age.res,ssb.res)
+       res <- rbind(age.res,val.res)
        if(nrow(res)==0) {
          stop(paste("FLSAM object does not contain",type,"parameters"))
        } else {
@@ -386,7 +411,7 @@ setMethod("obs.var", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=objects@name[i],obs.var(object[[i]]))
+            res[[i]] <- cbind(name=object@names[i],obs.var(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -405,7 +430,124 @@ setMethod("power.law.exps", signature(object="FLSAMs"),
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=object@name[i],power.law.exps(object[[i]]))
+            res[[i]] <- cbind(name=object@names[i],power.law.exps(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+if (!isGeneric("catch.scale")) {
+  setGeneric('catch.scale', function(object) standardGeneric('catch.scale'))
+}
+setMethod("catch.scale",signature(object="FLSAM"),
+   function(object) {
+    .extract.fleet.parameters(object,"catch multiplier")
+})
+
+setMethod("catch.scale", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object@names[i],catch.scale(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+
+if (!isGeneric("n.var")) {
+  setGeneric('n.var', function(object) standardGeneric('n.var'))
+}
+setMethod("n.var",signature(object="FLSAM"),
+   function(object) {
+    .extract.fleet.parameters(object,"number variance")
+})
+
+setMethod("n.var", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object@names[i],n.var(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+if (!isGeneric("f.var")) {
+  setGeneric('f.var', function(object) standardGeneric('f.var'))
+}
+setMethod("f.var",signature(object="FLSAM"),
+   function(object) {
+    .extract.fleet.parameters(object,"harvest variance")
+})
+
+setMethod("f.var", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object@names[i],f.var(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+
+if (!isGeneric("cor.F")) {
+  setGeneric('cor.F', function(object) standardGeneric('cor.F'))
+}
+setMethod("cor.F",signature(object="FLSAM"),
+   function(object) {
+    .extract.fleet.parameters(object,"harvest correlation")
+})
+
+setMethod("cor.F", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object@names[i],cor.F(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+
+if (!isGeneric("cor.obs")) {
+  setGeneric('cor.obs', function(object) standardGeneric('cor.obs'))
+}
+setMethod("cor.obs",signature(object="FLSAM"),
+   function(object) {
+    .extract.fleet.parameters(object,"observation correlation")
+})
+
+setMethod("cor.obs", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object@names[i],cor.obs(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+if (!isGeneric("rec.pars")) {
+  setGeneric('rec.pars', function(object) standardGeneric('rec.pars'))
+}
+setMethod("rec.pars",signature(object="FLSAM"),
+   function(object) {
+    .extract.fleet.parameters(object,"recruitment")
+})
+
+setMethod("rec.pars", signature(object="FLSAMs"),
+        function(object) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=object@names[i],rec.pars(object[[i]]))
           }
           return(do.call(rbind,res))
         }
@@ -487,11 +629,16 @@ setMethod("lr.test",signature("FLSAM"),
 
 #- Create generic function for 'lr.test'
 if (!isGeneric("mohns.rho")) {
-  setGeneric('mohns.rho', function(retro,ref.year,span,...) standardGeneric('mohns.rho'))
+  setGeneric('mohns.rho', function(retro,ref.year,span,type,...) standardGeneric('mohns.rho'))
 }
 setMethod("mohns.rho",signature("FLSAMs"),
-function(retro,ref.year=max(an(names(retro)),na.rm=T),span=5,...){
-  retro.fbar  <- lapply(retro,fbar)
+function(retro,ref.year=max(an(names(retro)),na.rm=T),span=5,type="fbar",...){
+  if(type == "fbar")
+    retro.fbar  <- lapply(retro,fbar)
+  if(type == "ssb")
+    retro.fbar  <- lapply(retro,ssb)
+  if(type == "rec")
+    retro.fbar  <- lapply(retro,rec)
   if(ref.year>max(an(names(retro)),na.rm=T)) stop("Reference year set higher than the latest assessment year")
   if(span >= length(retro)){
     span <- length(retro)-1

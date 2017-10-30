@@ -187,17 +187,21 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
   if(n > 200){
     Fbar.all  <- numeric()
     SSB.all   <- numeric()
-    paramvalue<- object@params$value
-    objectvcov   <- object@vcov
+    paramvalue<- subset(object@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
+                                                 "logfbar","logR","logssb","logtsb"))
     for(i in 1:ceiling(n/200)){
-      d <- mvrnorm(n=200,paramvalue, objectvcov)
+      d <- mvrnorm(n=200,paramvalue$value, object@rescov)
+      colnames(d) <- paramvalue$name
       Fbar.all  <- rbind(Fbar.all,d[,colnames(d)=="logfbar"])
       SSB.all   <- rbind(SSB.all,d[,colnames(d)=="logssb"])
     }
     Fbar.all  <- Fbar.all[1:n,]
     SSB.all   <- SSB.all[ 1:n,]
   } else {
-      d <- mvrnorm(n=n,object@params$value, object@vcov)
+      pars <- subset(object@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
+                                                      "logfbar","logR","logssb","logtsb"))
+      d <- mvrnorm(n=n,pars$value, object@rescov)
+      colnames(d) <- pars$name
       Fbar.all <- d[,colnames(d)=="logfbar"]
       SSB.all <-  d[,colnames(d)=="logssb"]
     }
@@ -328,6 +332,22 @@ obscv.plot  <- function(sam){
   plot(obv$value,obv$CV,xlab="Observation variance",ylab="CV of estimate",log="x",
     pch=16,col=obv$fleet,main="Observation variance vs uncertainty")
   text(obv$value,obv$CV,obv$str,pos=4,cex=0.75,xpd=NA)
+}
+
+#-Observation correlation plot
+obscor.plot <- function(sam){
+  require(ellipse)
+  oc <- sam@obscov
+  idx <- apply(sam@control@cor.obs,1,function(x){any(x>=0,na.rm=T)})
+  for(i in 1:length(oc)){
+    ridx <- which(!is.na(sam@control@cor.obs[idx,]))
+    dimnames(oc[[i]])[[1]] <- ridx[1]:(nrow(oc[[i]])+ridx[1]-1)
+    dimnames(oc[[i]])[[2]] <- dimnames(oc[[i]])[[1]]
+  }
+  cols <- ifelse(length(oc)==1,1,2)
+  par(mfrow=c(ceiling(length(oc)/2),cols))
+  for(i in 1:length(oc))
+    plotcorr(cov2cor(oc[[i]]),main=names(oc)[i])
 }
 
 #-Processes error plot: expressed as deviation in type = "mort","n","tsb"

@@ -93,8 +93,9 @@ residual.diagnostics <- function(x,title=x@name) {
         xlab=paste("Fitted ",idx.label,sep=""),log="x")
   plt.dat <- index.res.l[[i]]
   abline(h=0)  
-  smoother <- loess.smooth(plt.dat$mdl,plt.dat$std.res)
-  lines(smoother,col="red")
+  smoother <- try(loess.smooth(plt.dat$mdl,plt.dat$std.res))
+  if(class(smoother)!="try-error")
+    lines(smoother,col="red")
   title("d) Tukey-Anscombe plot")
 
 #plot 5 Normal Q-Q plot

@@ -1,25 +1,11 @@
-FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir(),pin.sam=NULL) {
+FLR2SAM <-function(stck,tun,ctrl,pin.sam=NULL,map=NULL) {
   #---------------------------------------------------
   # Setup for output
   #---------------------------------------------------
   #General Setup
-  admb.stem <- .get.admb.stem(ctrl)
+  sam.stem <- .get.stem(ctrl)
   run.time <- Sys.time()
-  miss.val <- -99999
-
-  #Internal Helper functions
-  .format.matrix.ADMB <- function(mat,na.replace="missing") {
-     if(na.replace!="missing") {mat[is.na(mat)] <- na.replace}
-     colnames(mat)[1] <- paste("#",colnames(mat)[1])
-     tbl <- capture.output(write.table(mat, row.names=FALSE, col.names=TRUE, quote=FALSE))
-     tbl <- paste(tbl,"#",c(" ",rownames(mat)),"\n")
-     return(tbl)
-  }
-  .flqout <- function(desc,flq,na.replace="missing") { #Local export function
-                  cat("#",desc,"\n",file=dat.file, append=TRUE)
-                  cat(.format.matrix.ADMB(t(flq[,,drop=TRUE]@.Data),na.replace=na.replace), 
-                     file=dat.file, append=TRUE)
-                  return(invisible(NULL))}
+  miss.val <- 0
 
   #Setup meta data
   samp.times <- c(miss.val,sapply(tun,function(x) mean(x@range[c("startf","endf")])))
@@ -31,151 +17,168 @@ FLR2SAM <-function(stck,tun,ctrl,run.dir=tempdir(),pin.sam=NULL) {
   
   #Add a year to the stock object when tuning data are newer than catch data
   #Other combinations are not taken into account. Credit to Morten Vinther for this patch
-  if (stck@range["maxyear"]<lastYear)  {  
+  extraYr  <- F
+  if (stck@range["maxyear"]<lastYear)  {
+   extraYr <- T
    stck<- window(stck,start=stck@range["minyear"],end=ctrl@range["maxyear"],
               frequency=1,extend=TRUE)  # extend by one year
-   stck@mat[,as.character(lastYear),,,,]<-stck@mat[,as.character(lastYear-1),,,,]      # MV (there must be an easier way!!
-   stck@stock.wt[,as.character(lastYear),,,,]<-stck@stock.wt[,as.character(lastYear-1),,,,]
-   stck@catch.wt[,as.character(lastYear),,,,]<-stck@catch.wt[,as.character(lastYear-1),,,,]
-   stck@discards.wt[,as.character(lastYear),,,,]<-stck@discards.wt[,as.character(lastYear-1),,,,]
-   stck@landings.wt[,as.character(lastYear),,,,]<-stck@landings.wt[,as.character(lastYear-1),,,,]
-   stck@m[,as.character(lastYear),,,,]<-stck@m[,as.character(lastYear-1),,,,]
-   stck@landings.n[,as.character(lastYear),,,,]<-stck@landings.n[,as.character(lastYear-1),,,,]
-   stck@harvest.spwn[,as.character(lastYear),,,,]<-stck@harvest.spwn[,as.character(lastYear-1),,,,]
-   stck@m.spwn[,as.character(lastYear),,,,]<-stck@m.spwn[,as.character(lastYear-1),,,,]
+   stck@mat[,as.character(lastYear),,,,]          <- stck@mat[,as.character(lastYear-1),,,,]      # MV (there must be an easier way!!
+   stck@stock.wt[,as.character(lastYear),,,,]     <- stck@stock.wt[,as.character(lastYear-1),,,,]
+   stck@catch.wt[,as.character(lastYear),,,,]     <- stck@catch.wt[,as.character(lastYear-1),,,,]
+   stck@discards.wt[,as.character(lastYear),,,,]  <- stck@discards.wt[,as.character(lastYear-1),,,,]
+   stck@landings.wt[,as.character(lastYear),,,,]  <- stck@landings.wt[,as.character(lastYear-1),,,,]
+   stck@m[,as.character(lastYear),,,,]            <- stck@m[,as.character(lastYear-1),,,,]
+   stck@landings.n[,as.character(lastYear),,,,]   <- stck@landings.n[,as.character(lastYear-1),,,,]
+   stck@harvest.spwn[,as.character(lastYear),,,,] <- stck@harvest.spwn[,as.character(lastYear-1),,,,]
+   stck@m.spwn[,as.character(lastYear),,,,]       <- stck@m.spwn[,as.character(lastYear-1),,,,]
   }
 
   #Generate observation matrix
-  catch.dat <- as.data.frame(FLQuants(catch=stck@catch.n))
-  tun.dat <- as.data.frame(lapply(tun,index))
-  obs.dat <- rbind(catch.dat,tun.dat)
-  obs.dat <- subset(obs.dat,obs.dat$year %in% yrs)
+  catch.dat     <- as.data.frame(FLQuants(catch=stck@catch.n))
+  tun.dat       <- as.data.frame(lapply(tun,index))
+  obs.dat       <- rbind(catch.dat,tun.dat)
+  obs.dat       <- subset(obs.dat,obs.dat$year %in% yrs)
   obs.dat$fleet <- as.numeric(factor(obs.dat$qname,levels=names(ctrl@fleets)))
-  obs.dat$age[which(ctrl@fleets[obs.dat$fleet]%in%c(3,4))] <- ctrl@range["max"]
-  obs.dat <- obs.dat[,c("year","fleet","age","data")]
-  obs.dat <- obs.dat[order(obs.dat$year,obs.dat$fleet,obs.dat$age),]
+  obs.dat$age[which(ctrl@fleets[obs.dat$fleet]%in%c(3,4))] <- -1
+  obs.dat       <- obs.dat[,c("year","fleet","age","data")]
+  obs.dat       <- obs.dat[order(obs.dat$year,obs.dat$fleet,obs.dat$age),]
   obs.dat$fleet.name <- paste("#",names(ctrl@fleets)[obs.dat$fleet],sep="")
-  obs.dat <- subset(obs.dat,!(obs.dat$data<=0 | is.na(obs.dat$data)))
-  idx.start <-which(!duplicated(obs.dat$year))
-  idx.end   <-c(idx.start[-1]-1,nrow(obs.dat))
-  nobs  <- nrow(obs.dat)
+  #obs.dat       <- subset(obs.dat,!(obs.dat$data<=0 | is.na(obs.dat$data)))
+  idx.start     <-which(!duplicated(obs.dat$year))
+  idx.end       <-c(idx.start[-1]-1,nrow(obs.dat))
+  nobs          <- nrow(obs.dat)
+
+  idx1          <- matrix(NA,nrow=length(unique(obs.dat$fleet)),ncol=nyrs,dimnames=list(names(ctrl@fleets),yrs))
+  idx2          <- matrix(NA,nrow=length(unique(obs.dat$fleet)),ncol=nyrs,dimnames=list(names(ctrl@fleets),yrs))
+  for(i in 1:nrow(obs.dat)){
+    iFlt        <- obs.dat[i,"fleet"]
+    iYr         <- obs.dat[i,"year"]
+    idx1[iFlt,ac(iYr)] <- min(idx1[iFlt,ac(iYr)],i-1,na.rm=T)
+    idx2[iFlt,ac(iYr)] <- max(idx2[iFlt,ac(iYr)],i-1,na.rm=T)
+  }
+  
 
   #---------------------------------------------------
   # Create data file
   #---------------------------------------------------
-  # Now write the data file!
-  dat.file <- file.path(run.dir,sprintf("%s.dat",admb.stem))
-  .file.header(dat.file,run.time)
 
-  #Write meta data
-  cat("# Number of fleets (res+con+sur)\n",length(ctrl@fleets),"\n", file=dat.file, append=TRUE)
-  cat("# Fleet types (res=0, con=1, sur=2, ssb=3)\n",.format.matrix.ADMB(t(ctrl@fleets)),file=dat.file, append=TRUE)
-  cat("# Sample times (only relevent for sur)\n",.format.matrix.ADMB(t(samp.times)), file=dat.file, append=TRUE)
-  cat("# Number of years\n",nyrs,"\n", file=dat.file, append=TRUE)
-  cat("# Years\n",yrs,"\n", file=dat.file, append=TRUE)
-  cat("# Number of observations \n",nobs,"\n", file=dat.file, append=TRUE)
-  cat("# Index1 (index of first obs in each year) \n",idx.start,"\n", file=dat.file, append=TRUE)
-  cat("# Index2 (index of last obs in each year) \n",idx.end,"\n", file=dat.file, append=TRUE)
+  #- data from the stock object
+  dat             <- list()
+  dat$noFleets    <- length(ctrl@fleets)
+  dat$fleetTypes  <- c(ctrl@fleets);      attr(dat$fleetTypes,"names")    <- NULL
+  dat$sampleTimes <- samp.times;          attr(dat$sampleTimes,"names")   <- NULL
+  dat$noYears     <- nyrs
+  dat$years       <- yrs
+  dat$minAgePerFleet <- c(catch=c(range(stck)["min"]),do.call(rbind,lapply(tun,range))[,"min"])
+    dat$minAgePerFleet[is.na(dat$minAgePerFleet)] <- -1
+  dat$maxAgePerFleet <- c(catch=c(range(stck)["max"]),do.call(rbind,lapply(tun,range))[,"max"])
+    dat$maxAgePerFleet[is.na(dat$maxAgePerFleet)] <- -1
+  dat$nobs        <- nobs
+  dat$idx1        <- idx1;                attr(dat$idx1,"dimnames")       <- NULL
+  dat$idx2        <- idx2;                attr(dat$idx2,"dimnames")       <- NULL
+  dat$aux         <- data.matrix(obs.dat[,c("year","fleet","age")])
+  dat$logobs      <- log(obs.dat$data)
+  dat$logobs[is.infinite(dat$logobs)] <- NA
+  dat$logobs[is.nan(dat$logobs)]      <- NA
+  weight          <- numeric(nobs)
+  for(i in 1:nobs)
+    weight[i]     <- ctrl@obs.weight[dat$aux[i,2],ac(abs(dat$aux[i,3]))]
+  dat$weight      <- weight
+  dat$propMat     <- t(stck@mat[,drop=T]);
+  dat$stockMeanWeight <- t(stck@stock.wt[,drop=T])
+  dat$catchMeanWeight <- t(stck@catch.wt[,drop=T])
+  dat$natMor      <- t(stck@m[,drop=T])
+  dat$landFrac    <- t((stck@landings.n/stck@catch.n)[,drop=T])
+  if(extraYr)
+    dat$landFrac[nrow(dat$landFrac),] <- dat$landFrac[nrow(dat$landFrac)-1,]
+  dat$disMeanWeight   <- t(stck@discards.wt[,drop=T])
+  dat$landMeanWeight  <- t(stck@landings.wt[,drop=T])
+  dat$propF       <- t(stck@harvest.spwn[,drop=T])
+  dat$propM       <- t(stck@m.spwn[,drop=T])
 
-  #Observations
-  cat("# The observation matrix \n#",colnames(obs.dat),"\n", file=dat.file, append=TRUE)
-  write.table(obs.dat, row.names=FALSE, col.names=FALSE, quote=FALSE, file=dat.file, append=TRUE)
-
-  #Now write the rest of the stock information
-  .flqout("Proportion mature",stck@mat)
-  .flqout("Stock mean weights",stck@stock.wt)
-  .flqout("Catch mean weights",stck@catch.wt)
-  .flqout("Natural Mortality", stck@m)
-  .flqout("Landing Fraction L/(L+D)",
-       stck@landings.n/(stck@landings.n + stck@discards.n),na.replace=1)
-  .flqout("Catch mean weights DISCARD",stck@discards.wt)
-  .flqout("Catch mean weights LANDINGS",stck@landings.wt)
-  .flqout("Fprop",stck@harvest.spwn)
-  .flqout("Mprop",stck@m.spwn)
-  
-  #Finally, write the checksums
-  cat("# Checksums to ensure correct reading of input data \n",42,42,"\n", file=dat.file, append=TRUE)
-  
-  #---------------------------------------------------
-  # Create configuration file
-  #---------------------------------------------------
-  #Write configuration file
-  cfg.file <- file.path(run.dir,"model.cfg")
-  .file.header(cfg.file,run.time)
-
-  #Write the headers
-  cat("# Min age represented internally in model \n",ctrl@range["min"],"\n", file=cfg.file, append=TRUE)
-  cat("# Max age represented internally in model \n",ctrl@range["max"],"\n", file=cfg.file, append=TRUE)
-  cat("# Max age considered a plus group? (0 = No, 1= Yes)\n",as.numeric(ctrl@plus.group[1]),"\n", file=cfg.file, append=TRUE)
-  
-  #Coupling Matrices
-  cat("\n# Coupling of fishing mortality STATES (ctrl@states)\n",.format.matrix.ADMB(ctrl@states,na.replace=0),file=cfg.file,append=TRUE)
-  cat("\n# Use correlated random walks for the fishing mortalities\n# ( 0 = independent, 1 = correlation estimated)\n",as.integer(ctrl@cor.F),file=cfg.file,append=TRUE)
-  cat("\n\n# Coupling of catchability PARAMETERS (ctrl@catchabilities)\n",.format.matrix.ADMB(ctrl@catchabilities,na.replace=0),file=cfg.file,append=TRUE)
-  cat("\n# Coupling of power law model EXPONENTS (ctrl@power.law.exps)\n",.format.matrix.ADMB(ctrl@power.law.exps,na.replace=0),file=cfg.file,append=TRUE)
-  cat("\n# Coupling of fishing mortality RW VARIANCES (ctrl@f.vars)\n",.format.matrix.ADMB(ctrl@f.vars,na.replace=0),file=cfg.file,append=TRUE)
-  cat("\n# Coupling of log N RW VARIANCES (ctrl@logN.vars)\n",ctrl@logN.vars,file=cfg.file,append=TRUE)
-  cat("\n\n# Coupling of OBSERVATION VARIANCES (ctrl@obs.vars)\n",.format.matrix.ADMB(ctrl@obs.vars,na.replace=0),file=cfg.file,append=TRUE)
-  
-  #Final values
-  cat("\n# Stock recruitment model code (0=RW, 1=Ricker, 2=BH, ... more in time\n",ctrl@srr,"\n",file=cfg.file,append=TRUE)
-  cat("# Years in which catch data are to be scaled by an estimated parameter \n",0,"\n",file=cfg.file,append=TRUE)
-  cat("# Fbar range \n",ctrl@range[c("minfbar","maxfbar")],"\n",file=cfg.file,append=TRUE)
-  cat("# Model timeout \n",ctrl@timeout,"\n",file=cfg.file,append=TRUE)
-  
-  #Finally, write the checksums
-  cat("\n\n# Checksums to ensure correct reading of input data \n",123456,123456,"\n", file=cfg.file, append=TRUE)
+  #- data on the control file
+  setNAtominone               <- function(x){for(i in slotNames(x)){idx <- which(is.na(slot(x,i)));if(length(idx)>0){slot(x,i)[idx] <- -1}};return(x)}
+  ctrlOrig        <- ctrl
+  ctrl            <- setNAtominone(ctrl)
+  dat$minAge      <- ctrl@range["min"];   attr(dat$minAge,"names")            <- NULL
+  dat$maxAge      <- ctrl@range["max"];   attr(dat$maxAge,"names")            <- NULL
+  dat$maxAgePlusGroup <- ifelse(ctrl@plus.group,1,0);   attr(dat$maxAgePlusGroup,"names")        <- NULL
+  dat$keyLogFsta  <- ctrl@states;         attr(dat$keyLogFsta,"dimnames")     <- NULL
+  dat$corFlag     <- ifelse(is.logical(ctrl@cor.F),ifelse(ctrl@cor.F,1,0),ctrl@cor.F)
+  dat$keyLogFpar  <- ctrl@catchabilities; attr(dat$keyLogFpar,"dimnames")     <- NULL
+  dat$keyQpow     <- ctrl@power.law.exps; attr(dat$keyQpow,"dimnames")        <- NULL
+  dat$keyVarF     <- ctrl@f.vars;         attr(dat$keyVarF,"dimnames")        <- NULL
+  dat$keyVarLogN  <- ctrl@logN.vars;      attr(dat$keyVarLogN,"dimnames")     <- NULL
+  dat$keyVarObs   <- ctrl@obs.vars;       attr(dat$keyVarObs,"dimnames")      <- NULL
+  dat$obsCorStruct<- factor(ctrl@cor.obs.Flag,levels=c("ID","AR","US"))
+  dat$keyCorObs   <- ctrl@cor.obs
+  dat$stockRecruitmentModelCode <- ctrl@srr
+  dat$noScaledYears <- ctrl@scaleNoYears
+  if(dat$noScaledYears>0){
+    dat$keyScaledYears  <- ctrl@scaleYears
+    dat$keyParScaledYA <- ctrl@scalePars
+  } else {
+    dat$keyScaledYears <- numeric()
+    dat$keyParScaledYA <- matrix(numeric(),nrow=0,ncol=0)
+  }
+  dat$fbarRange   <- c(ctrl@range[c("minfbar","maxfbar")])
+  dat$keyBiomassTreat <- rep(-1,dat$noFleets)
+  dat$keyBiomassTreat[which(dat$fleetTypes %in% c(3,4))] <- 0
+  dat$obsLikelihoodFlag <- factor(ctrl@likFlag,levels=c("LN","ALN"))
+  dat$fixVarToWeight <- 0
+  dat$simFlag     <- ifelse(ctrl@simulate,1,0)
+  dat$resFlag     <- 0
+  ctrl            <- ctrlOrig
 
   #---------------------------------------------------
   # Create initialisation file
   #---------------------------------------------------
-  init.file <- file.path(run.dir,"model.init")
-  .file.header(init.file,run.time)
-  cat("#varLogFsta\n 0.5\n",file=init.file,append=TRUE)
-  cat("#varLogN\n0.5 \n",file=init.file,append=TRUE)
-  cat("#varLogObs \n 0.5\n",file=init.file,append=TRUE)
-  cat("#logFpar \n 0.3 \n",file=init.file,append=TRUE)
-  cat("#rec_loga \n 1 \n",file=init.file,append=TRUE)
-  cat("#rec_logb \n -12 \n",file=init.file,append=TRUE)
-  cat("\n\n# Checksums to ensure correct reading of input data \n",90210, 90210,"\n", file=init.file, append=TRUE)
-
-
-  #---------------------------------------------------
-  # Create reduced run file
-  #---------------------------------------------------
-  red.file <- file.path(run.dir,"reduced.cfg")
-  .file.header(red.file,run.time)
-  cat("# This allows to exclude data in ways customized for retrospective runs\n",
-      "# The following specifies one integer for each fleet (catches and surveys)\n",
-      "# if:\n",
-      "#     0: all data for that fleet is used\n",
-      "#    -1: all data for that fleet is excluded\n",
-      "#     n: n is a positive integer the corresponding fleet's data is reduced\n",
-      "#        by n years starting from the most recent year.\n",
-      rep(0,length(ctrl@fleets)),"\n", 
-      "\n\n# Checksums to ensure correct reading of input data \n",3142, 3142,"\n",
-      file=red.file,append=TRUE) 
+  parameters <- list(logFpar = numeric(), logQpow = numeric(), logSdLogFsta = numeric(), logSdLogN = numeric(),
+                     logSdLogObs = numeric(), logSdLogTotalObs = numeric(), transfIRARdist = numeric(), sigmaObsParUS = numeric(),
+                     rec_loga = numeric(), rec_logb = numeric(), itrans_rho = numeric(), logScale = numeric(), logitReleaseSurvival = numeric(),
+                     logitRecapturePhi = numeric(), logF = numeric(), logN = numeric())
+  if(length(unique(na.omit(c(ctrl@catchabilities)))) > 0)
+    parameters$logFpar        <- rep(-5,length(unique(na.omit(c(ctrl@catchabilities)))))
+  if(length(unique(na.omit(c(ctrl@power.law.exps)))) > 0)
+    parameters$logQpow        <- rep(1,unique(na.omit(c(ctrl@power.law.exps))))
+  if(length(unique(na.omit(c(ctrl@f.vars)))) > 0)
+    parameters$logSdLogFsta   <- rep(-0.7,length(unique(na.omit(c(ctrl@f.vars)))))
+  if(length(unique(na.omit(c(ctrl@logN.vars)))) > 0)
+    parameters$logSdLogN      <- rep(-0.35,length(unique(na.omit(c(ctrl@logN.vars)))))
+  if(length(unique(na.omit(c(ctrl@obs.vars)))) > 0)
+    parameters$logSdLogObs    <- rep(-0.35,length(unique(na.omit(c(ctrl@obs.vars)))))
+  if(any(ctrl@likFlag %in% "ALN"))
+    parameters$logSdLogTotalObs <- 0
+  if(length(unique(na.omit(c(ctrl@cor.obs))))>0)
+    parameters$transfIRARdist <- rep(0.05,length(unique(na.omit(c(ctrl@cor.obs)))))
+  if(any(ctrl@cor.obs.Flag %in% "US")){
+    idx                       <- which(ctrl@cor.obs.Flag == "US")
+    len                       <- length(na.omit(c((ctrl@cor.obs.Flag[idx]))))
+    parameters$sigmaObsParUS  <- rep(0,len*(len-1)/2)
+  }
+  if(ctrl@srr > 0){
+    parameters$rec_loga       <- 1
+    parameters$rec_logb       <- 1
+  }
+  if(ctrl@cor.F)
+    parameters$itrans_rho     <- 0.5
+  if(length(unique(na.omit(c(ctrl@scalePars))))>0)
+    parameters$logScale       <- rep(0,length(unique(na.omit(c(ctrl@scalePars)))))
+  parameters$logF             <- matrix(0,nrow=length(unique(na.omit(c(ctrl@states)))),ncol=nyrs)
+  parameters$logN             <- matrix(0,nrow=length(dat$minAge:dat$maxAge),ncol=nyrs)
 
   #---------------------------------------------------
   # If pin file is given, write files to disk
   #---------------------------------------------------
   if(is.null(pin.sam)==FALSE){
-    print("# printing pin file to disk\n")
-    params2pin(pin.sam,save.dir=run.dir)
+    parameters                <- createPin(pin.sam,ctrl)
   }
 
-
-  return(invisible(NULL))
+  return(list(data=dat,parameters=parameters,map=map))
 }
 
-#Helper function to automatically generate a file header
-.file.header <- function(fname,ftime) {
-     cat("# Auto generated file\n", file=fname)
-     cat(sprintf("# Datetime : %s\n\n",ftime),file=fname,append=TRUE)
-}
-
-.get.admb.stem <-function(ctrl) { 
+.get.stem <-function(ctrl) {
   if(length(ctrl@sam.binary)==0) {
-	admb.stem <- "sam" } else {
-	admb.stem <- gsub("\\.exe$","",basename(ctrl@sam.binary)) }
+	.stem <- "sam" } else {
+	.stem <- gsub("\\.exe$","",basename(ctrl@sam.binary)) }
 }

@@ -1,19 +1,20 @@
 setClass("FLSAM",
          representation(
            "FLComp",
-           control  = "FLSAM.control",
-           nohess   = "logical",
-           nopar    = "integer",
-           n.states  = "integer",
-           states = "matrix",
-           nlogl    = "numeric",
-           maxgrad  = "numeric",
-           vcov     = "matrix",
-           params   = "data.frame",
-           stock.n  = "FLQuant",
-           harvest  = "FLQuant",
-           residuals = "data.frame",
-           info     = "matrix"),
+           control    = "FLSAM.control",
+           nohess     = "logical",
+           nopar      = "integer",
+           n.states   = "integer",
+           states     = "matrix",
+           nlogl      = "numeric",
+           vcov       = "matrix",
+           rescov     = "matrix",
+           obscov     = "list",
+           params     = "data.frame",
+           stock.n    = "FLQuant",
+           harvest    = "FLQuant",
+           residuals  = "data.frame",
+           info       = "matrix"),
          prototype=prototype(),
          validity=function(object){
            # Everything is fine
@@ -22,7 +23,7 @@ setClass("FLSAM",
 
 
 
-FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.sam=NULL) {
+FLSAM <-function(stck,tun,ctrl,batch.mode=FALSE,pin.sam=NULL,map=NULL,bounds=NULL,return.fit=FALSE){
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
@@ -33,76 +34,97 @@ FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.sam=NULL) 
   inputSAM@ctrl <- ctrl
 
   #- Check validity of objects
-  if(any(c(validObject(stck),validObject(tun),validObject(ctrl),validObject(inputSAM))==F)) stop("Validity check failed")
+  #if(any(c(validObject(stck),validObject(tun),validObject(ctrl),validObject(inputSAM))==F)) stop("Validity check failed")
   
   #Write output files
-  FLR2SAM(stck,tun,ctrl,run.dir,pin.sam)
-
-  #Run SAM
-  if(is.null(pin.sam)==TRUE){
-    rtn <- runSAM(ctrl, run.dir)
-  } else {
-    rtn <- runSAM(ctrl,run.dir,use.pin=TRUE)
-  }
-  if(rtn!=0) {
-    if(batch.mode) {
-      return(NULL)
-    } else {
-      stop(sprintf("An error occurred while running ADMB. Return code %s.",rtn))
-    }
-  }
-
-  #Read the results back in
-  res <- SAM2FLR(ctrl=ctrl,run.dir=run.dir)
-
-  #SAM2FLR is intended to just read in the results of a SAM run  
-  #We then need to upgrade that by adding the appropriate FLR objects etc
-
-  #Set the levels in the residuals
-  levels(res@residuals$fleet) <- names(ctrl@fleets)
+  fls2run     <- FLR2SAM(stck,tun,ctrl,pin.sam,map)
+  data        <- fls2run[["data"]]
+  parameters  <- fls2run[["parameters"]]
+  map         <- fls2run[["map"]]
   
-  return(res)
-}
+  #- Get the data in place to run the simulation
+  nmissing    <- sum(is.na(data$logobs))
+  parameters$missing <- numeric(nmissing)
 
-#---------------------------------------------------
-# We're ready! Run the executable
-#---------------------------------------------------
-runSAM <- function(ctrl,run.dir=tempdir(),use.pin=FALSE){
-  admb.stem <- .get.admb.stem(ctrl) 
-  admb.args <-  "-nr 2 -noinit -iprint 5"
-  if(ctrl@nohess) {admb.args <- paste(admb.args,"-nohess")}
-  if(use.pin) {
-     admb.args <- paste(admb.args,"-usepin")
-  } else {
-     #Pin files are a contaigon if you don't want them!
-     unlink(file.path(run.dir,sprintf("%s.pin",admb.stem)))
-  }
+  tmball      <- c(data)
+  ran         <- c("logN", "logF", "missing")
+  tmb.stem    <- .get.stem(ctrl)
 
-  #If binary is specified, use it. Otherwise copy it from
-  #the package distribution
-  if(length(ctrl@sam.binary)!=0) {  
-    admb.exec <- ctrl@sam.binary
-    if(!file.exists(admb.exec)) {stop(sprintf("Cannot find specified sam executable (binary) file: %s",admb.exec))}
+  #- Find the location of the dll
+  if(length(ctrl@sam.binary)!=0) {
+    tmb.exec <- ctrl@sam.binary
+    if(!file.exists(tmb.exec)) {stop(sprintf("Cannot find specified sam executable (binary) file: %s",tmb.exec))}
   } else if (.Platform$OS.type=="unix") {
-    admb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
-                   mustWork=TRUE), admb.stem)
+    tmb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
+                 mustWork=TRUE), tmb.stem)
   } else if (.Platform$OS.type == "windows") {
-    admb.exec <- file.path(system.file("bin", "windows", package="FLSAM", mustWork=TRUE),
-      sprintf("%s.exe",admb.stem))
+    tmb.exec <- file.path(system.file("bin", "windows", package="FLSAM", mustWork=TRUE),
+    sprintf(tmb.stem))
   } else {
     stop(sprintf("Platform type, %s, is not currently supported.",R.version$os))
   }
-  file.copy(admb.exec, run.dir)
+  
+  #- Load and run the model
+  dyn.load(dynlib(tmb.exec))
+  if(is.null(map))
+    obj     <- MakeADFun(tmball, parameters, random=ran, DLL="sam")
+  if(!is.null(map))
+    obj     <- MakeADFun(tmball, parameters, random=ran, DLL="sam",map=map)
 
-  #Run!
-  cmd <- sprintf("./%s %s" ,basename(admb.exec),admb.args)
-  olddir <- setwd(run.dir)
-  rtn <- system(cmd)
-  setwd(olddir)
-  return(rtn)
+  lower2    <- rep(-Inf,length(obj$par))
+  upper2    <- rep(Inf,length(obj$par))
+  if(!is.null(bounds)){
+    for(nn in rownames(bounds)) lower2[names(obj$par)==nn]=bounds[nn,"lower"]
+    for(nn in rownames(bounds)) upper2[names(obj$par)==nn]=bounds[nn,"upper"]
+  }
+
+  #- Fit the model
+  opt       <- nlminb(obj$par, obj$fn,obj$gr ,control=list(trace=1, eval.max=2000, iter.max=1000),lower=lower2,upper=upper2)
+  if(opt$convergence==0) print("Assessment converged")
+  if(opt$convergence!=0) warning("Assessment did not converge")
+  
+  # Take a few extra newton steps
+  for(i in seq_len(3)) {
+    g <- as.numeric( obj$gr(opt$par) )
+    h <- optimHess(opt$par, obj$fn, obj$gr)
+    opt$par <- opt$par - solve(h, g)
+    opt$objective <- obj$fn(opt$par)
+  }
+
+  #- Check if you want variance and covariance info
+  if(ctrl@nohess){
+    rep           <- obj$report()
+    fit           <- list(data=data,conf=parameters,opt=opt,obj=obj,rep=rep)
+  }
+  if(!ctrl@nohess){
+    rep           <- obj$report()
+    sdrep         <- sdreport(obj,opt$par)
+
+    # Last two states
+    idx           <- c(which(names(sdrep$value)=="lastLogN"),which(names(sdrep$value)=="lastLogF"))
+    sdrep$estY    <- sdrep$value[idx]
+    sdrep$covY    <- sdrep$cov[idx,idx]
+
+    idx           <- c(which(names(sdrep$value)=="beforeLastLogN"),which(names(sdrep$value)=="beforeLastLogF"))
+    sdrep$estYm1  <- sdrep$value[idx]
+    sdrep$covYm1  <- sdrep$cov[idx,idx]
+    
+    pl            <- as.list(sdrep,"Est")
+    plsd          <- as.list(sdrep,"Std")
+    fit           <- list(sdrep=sdrep, pl=pl, plsd=plsd, data=data, conf=parameters, opt=opt, obj=obj, rep=rep)
+  }
+
+  #- Get FLSAM object back
+  if(return.fit){
+    res <- fit
+  } else {
+    res <- SAM2FLR(fit,ctrl)
+  }
+
+  return(res)
 }
 
- 
+
 #---------------------------------------------------
 # Validity checks
 #---------------------------------------------------
@@ -137,7 +159,7 @@ setValidity("FLSAMinput",
                                          Contact the developers of SAM and FLSAM if you require this addition")
   
   #- Check if age dimensions match in stck ctrl and tun
-  rng <- range(do.call(rbind,lapply(tun,function(x){cbind(range(x)["min"],range(x)["max"])})),na.rm=T)
+  rng <- abs(range(do.call(rbind,lapply(tun,function(x){cbind(range(x)["min"],range(x)["max"])})),na.rm=T))
   if(rng[1] < range(stck)["min"] | rng[2] > range(stck)["max"]) stop("Age range in tuning series outside age range stock")
   
   #- Check if year dimensions match in stck ctrl and tun
