@@ -2,9 +2,9 @@ Package: FLSAM
 Type: Package
 Title: FLSAM, an implementation of the State-space Assessment Model for FLR
 Version: 2.01
-Date: 2017-08-22
-Author: M.R. Payne <mpa@aqua.dtu.dk>, N.T. Hintzen <niels.hintzen@wur.nl>
-Maintainer: M.R. Payne <mpa@aqua.dtu.dk>, N.T. Hintzen <niels.hintzen@wur.nl>
+Date: 2017-12-31
+Author: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpa@aqua.dtu.dk>
+Maintainer: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpay@aqua.dtu.dk>
 Description: FLR wrapper to the SAM state-space assessment model
 Depends: R(>= 3.0.0), FLCore(>= 2.6), utils, MASS, TMB, ellipse 
 Suggests: methods, reshape, plyr

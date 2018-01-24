@@ -1,6 +1,10 @@
 import("FLCore")
 import("utils")
 import("methods")
+importFrom(TMB,MakeADFun)
+importFrom(TMB,oneStepPredict)
+importFrom(TMB,sdreport)
+importFrom(ellipse,plotcorr)
 exportClasses(
     "FLSAM",
     "FLSAMs",
@@ -10,3 +14,4 @@ export(
     "FLSAM.control",
     "kobeFLSAM")
 exportPattern("^[^\\.]")
+useDynLib(stockassessment)
