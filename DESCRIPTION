@@ -6,7 +6,8 @@ Date: 2018-01-24
 Author: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpa@aqua.dtu.dk>
 Maintainer: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpay@aqua.dtu.dk>
 Description: FLR wrapper to the SAM state-space assessment model
-Depends: R(>= 3.0.0), FLCore(>= 2.6), utils, MASS, TMB, ellipse, stockassessment
-Suggests: methods, reshape, plyr
+Imports: FLCore, utils, TMB, ellipse, MASS, stockassessment
+LinkingTo: TMB, RcppEigen
+Suggests: methods, reshape, plyr, RColorBrewer
 License: GPL 
 LazyLoad: yes
