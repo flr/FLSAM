@@ -154,3 +154,17 @@ createPin <- function(sam,ctrl.new,...){
   return(parameters)}
 
 
+updateStart <- function(parameters,startVals){
+  parametersUp <- parameters
+  for(iName in names(startVals)){
+    if(identical(dim(parametersUp[[iName]]),dim(startVals[[iName]]))){
+      parametersUp[[iName]] <- startVals[[iName]]
+    } else {
+      if(iName %in% c("logF","logN","logPS")){
+        if((dim(parametersUp[[iName]])[2]-dim(startVals[[iName]])[2])==-1)
+          parametersUp[[iName]] <- startVals[[iName]][-ncol(startVals[[iName]]),]
+      }
+      warnings(paste("Could not update according to starting value",iName,"as number of parameters specified does not match"))
+    }
+  }
+  return(parametersUp)}

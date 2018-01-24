@@ -73,6 +73,29 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
     }
 )   # }}}
 
+setMethod("+", signature(e1="FLSAM", e2="FLStocks"),
+	function(e1, e2) {
+    if(validObject(e1) & validObject(e2)){
+    yrranges <- lapply(e2,function(x){return(x@range[c("minyear","maxyear")])})
+    for(iStk in 1:length(e2)){
+      x <- e2[[iStk]]
+      y <- window(e1,start=yrranges[[iStk]]["minyear"],end=yrranges[[iStk]]["maxyear"])
+      if(dims(x)$area > dims(y)$area){
+        x@stock.n[] <- y@stock.n
+        x@harvest[] <- y@harvest
+      }
+      if(dims(x)$area <= dims(y)$area){
+        x@stock.n[] <- y@stock.n
+        x@harvest[] <- areaSums(y@harvest,na.rm=T)
+      }
+      e2[[iStk]] <- x
+    }
+    return(e2)
+    } else {
+      stop("Input objects are not valid: validObject == FALSE")}
+    }
+)   # }}}
+
 
 #General helper function to extract a given parameter from an FLSAM object
 #and return it as a data.frame
@@ -125,26 +148,20 @@ setMethod("ssb", signature(object="FLSAMs"),
         }
 )       # }}}
 
-if (!isGeneric("ssbpart")) {
-    setGeneric("ssbpart", function(object) standardGeneric("ssbpart"))
+if (!isGeneric("components")) {
+    setGeneric("components", function(object) standardGeneric("components"))
 }
-setMethod("ssbpart", signature(object="FLSAM"),
+setMethod("components", signature(object="FLSAM"),
         function(object) {
-          res <- .extract.params(object,"logPS")
-          if(nrow(res)==0) stop("No partial SSB data available")
-          res <- cbind(year=seq(object@range["minyear"],
-                            object@range["maxyear"]),
-                       res)
-          return(res)
-        }
+        return(object@components)}
 )       # }}}
 
-setMethod("ssbpart", signature(object="FLSAMs"),
+setMethod("components", signature(object="FLSAMs"),
         function(object) {
           res <- list()
           length(res) <- length(object)
           for(i in seq(object)) {
-            res[[i]] <- cbind(name=names(object)[i],ssbpart(object[[i]]))
+            res[[i]] <- cbind(name=names(object)[i],components(object[[i]]))
           }
           return(do.call(rbind,res))
         }
