@@ -21,8 +21,12 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
 
     #- Create run scheme with all possible combinations
     overview          <- matrix(NA,nrow=2^length(tun),ncol=length(tun),dimnames=list(run=1:2^length(tun),fleet=names(tun)))
-    for(iFlt in 1:length(tun))
-      overview[,iFlt] <- rep(c(rep(1,(2^length(tun))/(2^(iFlt))),rep(0,(2^length(tun))/(2^(iFlt)))),2^(iFlt-1))
+    if(any(ctrl@fleets == 6)){
+      idxPart         <- which(ctrl@fleets == 6)
+      overview        <- matrix(NA,nrow=2^(length(tun)-(length(idxPart)-1)),ncol=(length(tun)-(length(idxPart)-1)),dimnames=list(run=1:2^(length(tun)-(length(idxPart)-1)),fleet=names(ctrl@fleets[c(which(!ctrl@fleets %in% c(0,6,7)),idxPart[1])])))
+    }
+    for(iFlt in 1:ncol(overview))
+      overview[,iFlt] <- rep(c(rep(1,(2^ncol(overview))/(2^(iFlt))),rep(0,(2^ncol(overview))/(2^(iFlt)))),2^(iFlt-1))
     overview          <- overview[-nrow(overview),] #Remove 'no-fleet-included' option
     rownames(overview)<- unlist(lapply(apply(overview,1,function(x){names(which(x==1))}),paste,collapse=" + "))
     LOO.runs <- which(rowSums(overview==0)==1)
@@ -34,7 +38,6 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
     if(type=="LOI"){ overview <- overview[c(1,which(rowSums(overview) == 1)),];               cat("Running LOI analyses\n")}
 
     #Perform the initial base assessment i.e. "everybody-in"
-    rundir <- tempdir()
     if(missing(base.run))
       base.run <- FLSAM(stck,tun,ctrl)  #Has to work
     result <- FLSAMs("All fleets"=base.run)
@@ -44,43 +47,75 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
     #  in this way we don't need to stress about adjusting the parameters of the pin file
     #  for changes in the number of fleets etc
     for(iRun in rownames(overview)[-1]){
-      #
-
-      #Write the outputs
-      FLR2SAM(stck,tun,ctrl,run.dir=rundir)
-
-      #Write the pin file
-      params2pin(base.run,save.dir=rundir)
-
-      #Mark which surveys to use via the reduced.cfg file
-      flts <- ctrl@fleets
-      flts[] <- 0     #Everybody in
-      flts[colnames(overview)] <- overview[iRun,]-1   #-1 is out for reduced.cfg
-      cat("# This allows to exclude data in ways customized for retrospective runs\n",
-         "# The following specifies one integer for each fleet (catches and surveys)\n",
-         "# if:\n",
-         "#     0: all data for that fleet is used\n",
-         "#    -1: all data for that fleet is excluded\n",
-         "#     n: n is a positive integer the corresponding fleet's data is reduced\n",
-         "#        by n years starting from the most recent year.\n",
-         flts,"\n",
-         "\n\n# Checksums to ensure correct reading of input data \n",3142, 3142,"\n",
-         file=file.path(rundir,"reduced.cfg"),append=FALSE)
-
-      #- Run the assessment
-      cat(sprintf('\nRunning "%s" assessment...\n',iRun))
-      rtn <- runSAM(ctrl, run.dir=rundir,use.pin=TRUE)
-      if(rtn!=0) {
-        warning(sprintf("%s run failed\n",iRun))
-        next  #Loop
-      }
-
-      #- Collect the results
-      res <- SAM2FLR(ctrl,run.dir=rundir)
-      result[[iRun]] <- res
-      }
+      keepTun       <- names(which(overview[iRun,]==1))
+      keepPart      <- which(names(ctrl@fleets) %in% keepTun & ctrl@fleets == 6)
+      if(length(keepPart)>0)
+        keepTun     <- unique(c(keepTun,names(which(ctrl@fleets==6))))
+      Indices.temp  <- tun[keepTun]
+      dropTun       <- names(tun)[which(!names(tun) %in% keepTun)]
+      Control.temp  <- drop.from.control(ctrl,fleets=dropTun)
+      Control.temp@range["maxyear"] <- max(stck@range["maxyear"],
+                                           max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
+      Control.temp@range["minyear"] <- min(stck@range["minyear"],
+                                           min(sapply(Indices.temp,function(x) min(x@range[c("minyear")]))))
+      res           <- try(FLSAM(stck,Indices.temp,Control.temp))
+      result[[iRun]]<- res
+    }
   return(result)
 })
+
+setMethod("looi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control",type="character",base.run="FLSAM"),
+  function(stck,tun,ctrl,type="full",base.run="missing"){
+    #Check type argument
+    if(is.na(pmatch(toupper(type),c("LOI","LOO","FULL")))) {
+      stop(sprintf("Invalid 'type' argument: %s",type)) }
+    type <- toupper(type)
+
+    #- Create run scheme with all possible combinations
+    overview          <- matrix(NA,nrow=2^length(tun),ncol=length(tun),dimnames=list(run=1:2^length(tun),fleet=names(tun)))
+    if(any(ctrl@fleets == 6)){
+      idxPart         <- which(ctrl@fleets == 6)
+      overview        <- matrix(NA,nrow=2^(length(tun)-(length(idxPart)-1)),ncol=(length(tun)-(length(idxPart)-1)),dimnames=list(run=1:2^(length(tun)-(length(idxPart)-1)),fleet=names(ctrl@fleets[c(which(!ctrl@fleets %in% c(0,6,7)),idxPart[1])])))
+    }
+    for(iFlt in 1:ncol(overview))
+      overview[,iFlt] <- rep(c(rep(1,(2^ncol(overview))/(2^(iFlt))),rep(0,(2^ncol(overview))/(2^(iFlt)))),2^(iFlt-1))
+    overview          <- overview[-nrow(overview),] #Remove 'no-fleet-included' option
+    rownames(overview)<- unlist(lapply(apply(overview,1,function(x){names(which(x==1))}),paste,collapse=" + "))
+    LOO.runs <- which(rowSums(overview==0)==1)
+    rownames(overview)[LOO.runs] <-  paste("Drop",colnames(overview)[apply(overview[LOO.runs,]==0,1,which)])
+    LOI.runs <- which(rowSums(overview)==1)
+    rownames(overview)[LOI.runs] <-  paste(colnames(overview)[apply(overview[LOI.runs,]==1,1,which)],"Only")
+
+    if(type=="LOO"){ overview <- overview[c(1,which(rowSums(overview) == (length(tun)-1))),];  cat("Running LOO analyses\n")}
+    if(type=="LOI"){ overview <- overview[c(1,which(rowSums(overview) == 1)),];               cat("Running LOI analyses\n")}
+
+    #Perform the initial base assessment i.e. "everybody-in"
+    if(missing(base.run))
+      base.run <- FLSAM(stck,tun,ctrl)  #Has to work
+    result <- FLSAMs("All fleets"=base.run)
+
+    #- Now use the update functionality to do the LOO, LOI, LOO trickery really quickly
+    #  We achieve this using the reduced.cfg file in ADMB together with the pin functionality -
+    #  in this way we don't need to stress about adjusting the parameters of the pin file
+    #  for changes in the number of fleets etc
+    for(iRun in rownames(overview)[-1]){
+      keepTun       <- names(which(overview[iRun,]==1))
+      keepPart      <- which(names(ctrl@fleets) %in% keepTun & ctrl@fleets == 6)
+      if(length(keepPart)>0)
+        keepTun     <- unique(c(keepTun,names(which(ctrl@fleets==6))))
+      Indices.temp  <- tun[keepTun]
+      dropTun       <- names(tun)[which(!names(tun) %in% keepTun)]
+      Control.temp  <- drop.from.control(ctrl,fleets=dropTun)
+      Control.temp@range["maxyear"] <- max(sapply(stck,function(x) max(x@range["maxyear"])),
+                                           max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
+      Control.temp@range["minyear"] <- min(sapply(stck,function(x) min(x@range["minyear"])),
+                                           min(sapply(Indices.temp,function(x) min(x@range[c("minyear")]))))
+      res           <- try(FLSAM(stck,Indices.temp,Control.temp))
+      result[[iRun]]<- res
+    }
+  return(result)
+})
+
 
 #- Create generic function for 'loo' and 'loi'
 if (!isGeneric("loo")) {
@@ -98,6 +133,15 @@ setMethod("loi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
   function(stck,tun,ctrl){
      looi(stck,tun,ctrl,type="loi")
 }) 
+
+setMethod("loo",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
+  function(stck,tun,ctrl){
+     looi(stck,tun,ctrl,type="loo")
+})
+setMethod("loi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
+  function(stck,tun,ctrl){
+     looi(stck,tun,ctrl,type="loi")
+})
 
 #-------------------------------------------------------------------------------
 # Retro function
@@ -150,8 +194,8 @@ function(stock, indices, control, retro, year.range="missing"){
       control@name <- as.character(yr)
       control@range["maxyear"] <- max(Stock@range["maxyear"],
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
-      assess  <- FLSAM(Stock, Indices.temp,control)
-      if(is.null(assess)) {
+      assess  <- try(FLSAM(Stock, Indices.temp,control))
+      if(class(assess)=="try-error") {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
         assess@desc    <-  paste(as.character(yr), "Retrospective")
@@ -218,8 +262,8 @@ function(stock, indices, control, retro, year.range="missing"){
       control@name <- as.character(yr)
       control@range["maxyear"] <- max(max(unlist(lapply(Stock,function(x){return(x@range["maxyear"])}))),
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
-      assess  <- FLSAM(Stock, Indices.temp,control)
-      if(is.null(assess)) {
+      assess  <- try(FLSAM(Stock, Indices.temp,control))
+      if(class(assess)=="try-error") {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
         assess@desc    <-  paste(as.character(yr), "Retrospective")

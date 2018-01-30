@@ -21,21 +21,6 @@ setClass("FLSAM",
            return(TRUE)}
 )
 
-updateStart <- function(parameters,startVals){
-  parametersUp <- parameters
-  for(iName in names(startVals)){
-    if(identical(dim(parametersUp[[iName]]),dim(startVals[[iName]]))){
-      parametersUp[[iName]] <- startVals[[iName]]
-    } else {
-      if(iName %in% c("logF","logN","logPS")){
-        if((dim(parametersUp[[iName]])[2]-dim(startVals[[iName]])[2])==-1)
-          parametersUp[[iName]] <- startVals[[iName]][-ncol(startVals[[iName]]),]
-      }
-      warnings(paste("Could not update according to starting value",iName,"as number of parameters specified does not match"))
-    }
-  }
-  return(parametersUp)}
-
 FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NULL,...){
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
@@ -46,7 +31,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
   par   <- defpar(data,conf)
   if(!is.null(starting.values))
     par <- updateStart(par,starting.values)
-  
+
   fit   <- sam.fit(data,conf,par,sim.condRE=ctrl@simulate,...)
 
   #- Check if you want variance and covariance info
@@ -54,7 +39,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
   if(return.fit){
     res <- fit
   } else {
-    res <- SAM2FLR(fit,ctrl)
+    res <- try(SAM2FLR(fit,ctrl))
   }
 
   return(res)

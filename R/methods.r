@@ -96,6 +96,31 @@ setMethod("+", signature(e1="FLSAM", e2="FLStocks"),
     }
 )   # }}}
 
+setMethod("+", signature(e1="FLStocks", e2="FLSAM"),
+	function(e1, e2) {
+    eone <- e2;    etwo <- e1
+    e1 <- eone;    e2 <- etwo
+    if(validObject(e1) & validObject(e2)){
+    yrranges <- lapply(e2,function(x){return(x@range[c("minyear","maxyear")])})
+    for(iStk in 1:length(e2)){
+      x <- e2[[iStk]]
+      y <- window(e1,start=yrranges[[iStk]]["minyear"],end=yrranges[[iStk]]["maxyear"])
+      if(dims(x)$area > dims(y)$area){
+        x@stock.n[] <- y@stock.n
+        x@harvest[] <- y@harvest
+      }
+      if(dims(x)$area <= dims(y)$area){
+        x@stock.n[] <- y@stock.n
+        x@harvest[] <- areaSums(y@harvest,na.rm=T)
+      }
+      e2[[iStk]] <- x
+    }
+    return(e2)
+    } else {
+      stop("Input objects are not valid: validObject == FALSE")}
+    }
+)   # }}}
+
 
 #General helper function to extract a given parameter from an FLSAM object
 #and return it as a data.frame
@@ -166,8 +191,6 @@ setMethod("components", signature(object="FLSAMs"),
           return(do.call(rbind,res))
         }
 )       # }}}
-
-
 
 setMethod("fbar", signature(object="FLSAM"),
         function(object, ...) {

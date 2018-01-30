@@ -196,7 +196,7 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
     Fbar.all  <- numeric()
     SSB.all   <- numeric()
     paramvalue<- subset(object@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
-                                                 "logfbar","logR","logssb","logtsb"))
+                                                 "logCatchByFleet","logfbar","logR","logssb","logtsb","comps"))
     for(i in 1:ceiling(n/200)){
       d <- mvrnorm(n=200,paramvalue$value, object@rescov)
       colnames(d) <- paramvalue$name
@@ -207,7 +207,7 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
     SSB.all   <- SSB.all[ 1:n,]
   } else {
       pars <- subset(object@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
-                                                      "logfbar","logR","logssb","logtsb"))
+                                                 "logCatchByFleet","logfbar","logR","logssb","logtsb","comps"))
       d <- mvrnorm(n=n,pars$value, object@rescov)
       colnames(d) <- pars$name
       Fbar.all <- d[,colnames(d)=="logfbar"]
