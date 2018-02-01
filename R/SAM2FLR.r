@@ -9,7 +9,6 @@ SAM2FLR <- function(fit,ctrl){
   res@nlogl   <- fit$opt$objective
   #- Get overall vcov and the cov of the observations
   res@vcov  <- fit$sdrep$cov.fixed
-  res@rescov<- fit$sdrep$cov
   if(length(fit$conf$transfIRARdist)>0){
     res@obscov  <- fit$rep$obsCov[apply(ctrl@cor.obs,1,function(x){any(x>=0,na.rm=T)})]
     names(res@obscov) <- rownames(ctrl@cor.obs)[apply(ctrl@cor.obs,1,function(x){any(x>=0,na.rm=T)})]
@@ -23,6 +22,12 @@ SAM2FLR <- function(fit,ctrl){
   colnames(parssummary) <- c("name","value","std.dev")
   parssummary[,1]       <- gsub('[0-9]+', '',parssummary[,1])
   res@params  <- parssummary
+
+  res@rescov<- fit$sdrep$cov
+  paramname<- subset(res@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
+                                                 "logCatchByFleet","logfbar","logR","logssb","logtsb","comps"))
+  rownames(res@rescov) <- paramname$name
+  colnames(res@rescov) <- paramname$name
 
   #- Get component information
   if(length(ctrl@logP.vars)>0){

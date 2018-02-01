@@ -509,6 +509,18 @@ retroParams <- function(x){
   print(xyplot(exp(value) ~ year | as.factor(nameOrig),data=subretroPars,groups=name,scale=list(y="free"),type="b",pch=19,xlab="Assessment year",ylab="Parameter value"))
   }
 
+#kobeplot
+plot.kobe <- function(object,fmsy=1,bmsy=1,nits=1000,prob=c(0.95),ref.year=NULL){
+  if(is.null(ref.year)) ref.year <- dims(NSH.sam)$maxyear
+  require(kobe)
+
+  yft <- kobeFLSAM(object,bmsy=bmsy,fmsy=fmsy,what="trks",prob=prob,nits=nits)
+  pts <- kobeFLSAM(object,bmsy=bmsy,fmsy=fmsy,what="pts",prob=prob,nits=nits)
+  kobePhase(subset(yft,quantity=="value"))+
+    #geom_point(aes(stock,harvest),data=pts,lty=2,pch=19,col="blue",cex=0.5) +
+    geom_path(aes(stock,harvest)) +
+    geom_point(aes(stock,harvest),data=subset(yft,year==ref.year & quantity=="value"),pch=19,cex=2)
+}
 
       
         

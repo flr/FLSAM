@@ -153,7 +153,7 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
     #Drop the fleets first
     if(!missing("fleets")){
       whichFleet      <- which(names(object@fleets) %in% fleets)
-      if(length(object@fleets[whichFleet==6])>0){
+      if(any(object@fleets[whichFleet]==6)){
         fleetsPart    <- names(object@fleets[which(object@fleets == 6)])
         object@logP.vars <- numeric()
         fleets        <- unique(c(fleets,fleetsPart))
