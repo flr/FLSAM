@@ -16,6 +16,8 @@ exportClasses(
 export(
     "FLSAM",
     "FLSAM.control",
+    "retro",
+    "looi",	
     "kobeFLSAM")
 exportPattern("^[^\\.]")
 useDynLib(stockassessment)
