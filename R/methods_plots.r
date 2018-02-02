@@ -481,7 +481,7 @@ retroSelectivity <- function(x,yrs){
 
       res <- subset(res,year %in% yrs)
 
-      print(xyplot(value ~ age | as.factor(year),data=res,type="l",groups=retro,
+      print(xyplot(value ~ an(age) | as.factor(year),data=res,type="l",groups=retro,
       auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Retrospective pattern in F at age"),
       ylab="F",xlab="Ages",
       panel = panel.superpose,
@@ -506,7 +506,7 @@ retroParams <- function(x){
                                              return(tmpy)})})
   subretroPars  <- do.call(rbind,lapply(subretroPars,function(y){do.call(rbind,y)}))
 
-  print(xyplot(exp(value) ~ year | as.factor(nameOrig),data=subretroPars,groups=name,scale=list(y="free"),type="b",pch=19,xlab="Assessment year",ylab="Parameter value"))
+  print(xyplot(exp(value) ~ an(year) | as.factor(nameOrig),data=subretroPars,groups=name,scale=list(y="free"),type="b",pch=19,xlab="Assessment year",ylab="Parameter value"))
   }
 
 #kobeplot

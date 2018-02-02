@@ -20,4 +20,3 @@ export(
     "looi",	
     "kobeFLSAM")
 exportPattern("^[^\\.]")
-useDynLib(stockassessment)

@@ -1,13 +1,15 @@
 Package: FLSAM
 Type: Package
 Title: FLSAM, an implementation of the State-space Assessment Model for FLR
-Version: 2.01
-Date: 2018-01-24
+Version: 2.1.0
+Date: 2018-02-02
 Author: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpa@aqua.dtu.dk>
 Maintainer: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpay@aqua.dtu.dk>
 Description: FLR wrapper to the SAM state-space assessment model
-Imports: FLCore, utils, TMB, ellipse, MASS, stockassessment
-LinkingTo: TMB, RcppEigen
+Depends: FLCore
+Imports: utils, TMB, ellipse, MASS, stockassessment
+LinkingTo: TMB, RcppEigen, stockassessment
+Remotes: stockassessment/components
 Suggests: methods, reshape, plyr, RColorBrewer
 License: GPL 
 LazyLoad: yes
