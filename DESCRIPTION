@@ -8,8 +8,8 @@ Maintainer: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpay@aqua.dtu.dk>
 Description: FLR wrapper to the SAM state-space assessment model
 Depends: FLCore
 Remotes: stockassessment/components
-Imports: utils, TMB, Matrix, ellipse, MASS, stockassessment/components
-LinkingTo: TMB, RcppEigen, stockassessment/components
+Imports: utils, TMB, Matrix, ellipse, MASS, stockassessment
+LinkingTo: TMB, RcppEigen, stockassessment
 Suggests: methods, reshape, plyr, RColorBrewer
 License: GPL 
 LazyLoad: yes
