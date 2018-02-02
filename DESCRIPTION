@@ -7,6 +7,7 @@ Author: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpa@aqua.dtu.dk>
 Maintainer: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpay@aqua.dtu.dk>
 Description: FLR wrapper to the SAM state-space assessment model
 Depends: FLCore
+Remotes: fishfollower/SAM/stockassessment@components
 Imports: utils, TMB, ellipse, MASS, stockassessment
 LinkingTo: TMB, RcppEigen, stockassessment
 Suggests: methods, reshape, plyr, RColorBrewer
