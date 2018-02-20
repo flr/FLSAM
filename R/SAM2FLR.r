@@ -10,7 +10,7 @@ SAM2FLR <- function(fit,ctrl){
   #- Get overall vcov and the cov of the observations
   res@vcov  <- fit$sdrep$cov.fixed
   if(length(fit$conf$transfIRARdist)>0){
-    res@obscov  <- fit$rep$obsCov[apply(ctrl@cor.obs,1,function(x){any(x>=0,na.rm=T)})]
+    res@obscov  <- fit$rep$obsCov[which(apply(ctrl@cor.obs,1,function(x){any(x>=0,na.rm=T)}))]
     names(res@obscov) <- rownames(ctrl@cor.obs)[apply(ctrl@cor.obs,1,function(x){any(x>=0,na.rm=T)})]
   }
   #- get parameters + sd value

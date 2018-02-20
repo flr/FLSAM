@@ -35,6 +35,9 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
   allMax <- max(sapply(stcks,function(x) max(x@range["maxyear"])),
             max(sapply(tun,function(x) max(x@range[c("maxyear")]))))
   stcksMax <- max(sapply(stcks,function(x) max(x@range["maxyear"])))
+  oldTunNames <- names(tun)
+  newTunNames <-lapply(as.list(names(tun)),function(x){gsub(" ","",x)})
+  names(tun) <- newTunNames
 
   if (stcksMax<allMax)  {
     stck <- stcks[[which.max(sapply(stcks,function(x) max(x@range["maxyear"])))]]
@@ -57,7 +60,11 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
   dmnsFLR     <- lapply(tun,dims)
   typeFLR     <- lapply(tun,function(x){return(x@type)})
   for(iSurv in names(surveysFLR)){
-    colnames(surveysFLR[[iSurv]]) <- seq(dmnsFLR[[iSurv]]$min,dmnsFLR[[iSurv]]$max,1)
+    if(is.na(dmnsFLR[[iSurv]]$min) & dimnames(tun[[iSurv]]@index)$age[1]=="all"){
+      colnames(surveysFLR[[iSurv]]) <- -1
+    } else {
+      colnames(surveysFLR[[iSurv]]) <- seq(dmnsFLR[[iSurv]]$min,dmnsFLR[[iSurv]]$max,1)
+    }
     attr(surveysFLR[[iSurv]],"time") <- c(dmnsFLR[[iSurv]]$startf,dmnsFLR[[iSurv]]$endf)
     if(typeFLR[[iSurv]]=="partial")
       attr(surveysFLR[[iSurv]],"part") <- which(names(which(unlist(typeFLR)=="partial"))==iSurv)
