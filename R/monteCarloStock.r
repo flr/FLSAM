@@ -25,27 +25,34 @@ monteCarloStock <- function(stck,tun,sam,realisations){
                                	object$obj$simulate(unlist(object$pl))["logobs"]),#simulated observations
                                	simplify=FALSE)
   #- Make cluster to speed up process
-  cl <- makeCluster(detectCores())
+  cl <- makeCluster(detectCores()-1)
   clusterEvalQ(cl,library(FLSAM))
   clusterEvalQ(cl,library(stockassessment))
   registerDoParallel(cl)
 
   #- Function to run a new assessment on each of the simulated datasets
-  runIter <- function(i,object,simdat,sam){
+  for(i in 1:realisations){
     if(length(which(is.na(object$data$logobs)))>0)
       simdat[[i]]$logobs[which(is.na(object$data$logobs))] <- NA
-    res <- try(sam.fit(simdat[[i]],object$conf,defpar(simdat[[i]],object$conf)))
-    stockharvest  <- try(SAM2FLR(res,sam@control))
-  return(stockharvest)}
+  }
+  clusterExport(cl,c("simdat","object"),envir=environment())
+  runs <- foreach(i = 1:realisations) %dopar% try(stockassessment::sam.fit(simdat[[i]],object$conf,defpar(simdat[[i]],object$conf)))
 
+#  setwd(tempdir())
+#  runIterSam <- function(i,data,conf,par){
+#                  require(stockassessment)
+#                  res <- sam.fit(data,conf,par)
+#                  save(res,file=paste0("run_",i,".RData"))
+#                return(res)}
+#
+#  runs <- foreach(i=1:2) %dopar% runIterSam(i,data=simdat[[i]],conf=object$conf,par=defpar(simdat[[i]],object$conf))
 
-  #- Load and run the model
-  runs <- foreach(i=1:realisations) %dopar% runIter(i,object=object,simdat=simdat,sam=sam)
   stopCluster(cl) #shut it down
   
   #- Fill the results of the simulations
   for(i in 1:realisations){
     if(class(runs[[i]])!="try-error"){
+      runs[[i]]              <- SAM2FLR(runs[[i]],sam@control)
       mcstck@stock.n[,,,,,i] <- runs[[i]]@stock.n
       mcstck@harvest[,,,,,i] <- runs[[i]]@harvest
       mcstck@catch[,,,,,i]   <- catch(runs[[i]])$value

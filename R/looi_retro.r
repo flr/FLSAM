@@ -180,6 +180,7 @@ function(stock, indices, control, retro, year.range="missing"){
     # ---------- Run that retrospective -------------
     cat("Running retrospective...\n")
     res <- new("FLSAMs")
+    starting.vals <- NULL
     for (yr in rev(year.range)){  #yr is the year in which the assessment is being simulated
       Stock <- trim(stock, year=stck.min.yr:yr)
       Indices.temp<-indices
@@ -194,12 +195,17 @@ function(stock, indices, control, retro, year.range="missing"){
       control@name <- as.character(yr)
       control@range["maxyear"] <- max(Stock@range["maxyear"],
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
-      assess  <- try(FLSAM(Stock, Indices.temp,control))
+      if(is.null(starting.vals)){
+        assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T))
+        starting.vals <- assess$pl
+      } else {
+        assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T,starting.values=starting.vals))
+      }
       if(class(assess)=="try-error") {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
-        assess@desc    <-  paste(as.character(yr), "Retrospective")
-        res[[as.character(yr)]] <- assess
+        res[[as.character(yr)]] <- SAM2FLR(assess,control)
+        res[[as.character(yr)]]@desc    <-  paste(as.character(yr), "Retrospective")
       }
     }
     res@desc   <- paste("Retrospective analysis from object", stock@desc)
@@ -241,6 +247,7 @@ function(stock, indices, control, retro, year.range="missing"){
     # ---------- Run that retrospective -------------
     cat("Running retrospective...\n")
     res <- new("FLSAMs")
+    starting.vals <- NULL
     for (yr in rev(year.range)){  #yr is the year in which the assessment is being simulated
       Stock <- new("FLStocks")
       for(iStk in 1:length(stock)){
@@ -262,12 +269,18 @@ function(stock, indices, control, retro, year.range="missing"){
       control@name <- as.character(yr)
       control@range["maxyear"] <- max(max(unlist(lapply(Stock,function(x){return(x@range["maxyear"])}))),
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
-      assess  <- try(FLSAM(Stock, Indices.temp,control))
+
+      if(is.null(starting.vals)){
+        assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T))
+        starting.vals <- assess$pl
+      } else {
+        assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T,starting.values=starting.vals))
+      }
       if(class(assess)=="try-error") {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
-        assess@desc    <-  paste(as.character(yr), "Retrospective")
-        res[[as.character(yr)]] <- assess
+        res[[as.character(yr)]] <- SAM2FLR(assess,control)
+        res[[as.character(yr)]]@desc    <-  paste(as.character(yr), "Retrospective")
       }
     }
     res@desc   <- paste("Retrospective analysis from object", stock@desc)
