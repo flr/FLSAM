@@ -35,8 +35,8 @@ monteCarloStock <- function(stck,tun,sam,realisations){
     if(length(which(is.na(object$data$logobs)))>0)
       simdat[[i]]$logobs[which(is.na(object$data$logobs))] <- NA
   }
-  clusterExport(cl,c("simdat","object"),envir=environment())
-  runs <- foreach(i = 1:realisations) %dopar% try(stockassessment::sam.fit(simdat[[i]],object$conf,defpar(simdat[[i]],object$conf)))
+  clusterExport(cl,varlist=c("simdat","object"),envir=environment())
+  runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdat[[i]],object$conf,defpar(simdat[[i]],object$conf)))
 
 #  setwd(tempdir())
 #  runIterSam <- function(i,data,conf,par){
@@ -59,4 +59,4 @@ monteCarloStock <- function(stck,tun,sam,realisations){
     }
   }
 
-  return(mcstck)}
+return(mcstck)}

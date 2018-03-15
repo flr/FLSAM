@@ -45,13 +45,15 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
   return(res)
 }
 
+#FLSAM2parameters <- function(sam
+
+
 FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.values=NULL,...){
 
-  require(stockassessment)
-  require(TMB)
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
+  if(class(stcks)=="FLStocks") stop("Not implemented for multi-fleet yet")
   if(class(stcks)=="FLStock") stcks <- FLStocks(residual=stcks)
   if(any(unlist(lapply(stcks,function(x)dims(x)$iter))<=1) & any(unlist(lapply(tun,function(x)dims(x)$iter))<=1))
     stop("Running in MSE mode means supplying FLStock and FLIndices with more iters than 1. Use FLSAM() instead")
@@ -65,54 +67,72 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.values=NULL,...){
     iTun <- tun
     for(j in 1:length(tun))
       iTun[[j]]<- iter(iTun[[j]],i)
-    data[[i]]  <- FLSAM2SAM(iter(stcks,i),iTun,ctrl@sumFleets,catch.vars)
+    data[[i]]  <- FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),iTun,ctrl@sumFleets,catch.vars)
     conf[[i]]  <- ctrl2conf(ctrl,data[[i]])
-    par[[i]]   <- defpar(data[[i]],conf[[i]])
+    par[[i]]   <- stockassessment::defpar(data[[i]],conf[[i]])
   }
 
   require(doParallel)
   cl <- makeCluster(detectCores()-1) #set up nodes
+  clusterEvalQ(cl,library(FLSAM))
+  clusterEvalQ(cl,library(stockassessment))
+  registerDoParallel(cl)
 
   if(is.null(starting.values)){
-    fit   <- sam.fit(data[[1]],conf[[1]],par[[1]],sim.condRE=ctrl@simulate,...)
+    fit   <- stockassessment::sam.fit(data[[1]],conf[[1]],par[[1]],sim.condRE=ctrl@simulate,...)  #38.76
     starting.values <- fit$pl[-grep("missing",names(fit$pl))]
   }
   # use fit as starting point for sam.fitfast
   for(i in 2:iters)
     par[[i]] <- starting.values
 
-
-  res <- foreach(i = 2:iters) %dopar% sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T)
-  for(i in 1:iters){
-    iter(stcks[["residual"]]@stock.n,i) <- exp(res[[i]]$logN)
-    iter(stcks[["residual"]]@harvest,i) <- exp(res[[i]]$totF)
-  }
+  res <- foreach(i = 2:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T)) #14.14
   stopCluster(cl)
-#  clean.void.catches<-function(dat, conf){
-#    cfidx <- which(dat$fleetTypes==0)
-#    aidx <- unique(dat$aux[dat$aux[,2]%in%cfidx,3]-conf$minAge+1)
-#    faidx <- as.matrix(expand.grid(cfidx, aidx))
-#    faidx <- faidx[which(conf$keyLogFsta[faidx]== -1),,drop=FALSE]
-#    rmidx <- paste0(dat$aux[,2],"x",dat$aux[,3]-conf$minAge+1) %in%  paste0(faidx[,1],"x",faidx[,2])
-#    dat$aux <- dat$aux[!rmidx,]
-#    dat$logobs <- dat$logobs[!rmidx]
-#    dat$weight <- dat$weight[!rmidx]
-#    dat$nobs<-sum(!rmidx)
-#    dat$minAgePerFleet<-as.integer(tapply(dat$aux[,"age"], INDEX=dat$aux[,"fleet"], FUN=min))
-#    dat$maxAgePerFleet<-as.integer(tapply(dat$aux[,"age"], INDEX=dat$aux[,"fleet"], FUN=max))
-#    newyear<-min(as.numeric(dat$aux[,"year"])):max(as.numeric(dat$aux[,"year"]))
-#    newfleet<-min(as.numeric(dat$aux[,"fleet"])):max(as.numeric(dat$aux[,"fleet"]))
-#    mmfun<-function(f,y, ff){idx<-which(dat$aux[,"year"]==y & dat$aux[,"fleet"]==f); ifelse(length(idx)==0, NA, ff(idx)-1)}
-#    dat$idx1<-outer(newfleet, newyear, Vectorize(mmfun,c("f","y")), ff=min)
-#    dat$idx2<-outer(newfleet, newyear, Vectorize(mmfun,c("f","y")), ff=max)
-#    dat
-#  }
-
+  detach("package:doParallel",unload=TRUE)
+  detach("package:foreach",unload=TRUE)
+  for(i in 1:iters){
+    if(i == 1){
+      stcks[["residual"]]@stock.n[,,,,,i] <- exp(fit$rep$logN[,1:dims(stcks[["residual"]]@stock.n)$year])
+      stcks[["residual"]]@harvest[,,,,,i] <- exp(fit$rep$totF[,1:dims(stcks[["residual"]]@harvest)$year])
+    } else {
+      stcks[["residual"]]@stock.n[,,,,,i] <- exp(res[[i-1]]$logN[,1:dims(stcks[["residual"]]@stock.n)$year])
+      stcks[["residual"]]@harvest[,,,,,i] <- exp(res[[i-1]]$totF[,1:dims(stcks[["residual"]]@harvest)$year])
+    }
+  }
   return(stcks)
+}
+
+getLowerBounds<-function(parameters){
+    list(sigmaObsParUS=rep(-10,length(parameters$sigmaObsParUS)))
+}
+
+getUpperBounds<-function(parameters){
+    list(sigmaObsParUS=rep(10,length(parameters$sigmaObsParUS)))
+}
+
+clean.void.catches<-function(dat, conf){
+  cfidx <- which(dat$fleetTypes==0)
+  aidx <- unique(dat$aux[dat$aux[,2]%in%cfidx,3]-conf$minAge+1)
+  faidx <- as.matrix(expand.grid(cfidx, aidx))
+  faidx <- faidx[which(conf$keyLogFsta[faidx]== -1),,drop=FALSE]
+  rmidx <- paste0(dat$aux[,2],"x",dat$aux[,3]-conf$minAge+1) %in%  paste0(faidx[,1],"x",faidx[,2])
+  dat$aux <- dat$aux[!rmidx,]
+  dat$logobs <- dat$logobs[!rmidx]
+  dat$weight <- dat$weight[!rmidx]
+  dat$nobs<-sum(!rmidx)
+  dat$minAgePerFleet<-as.integer(tapply(dat$aux[,"age"], INDEX=dat$aux[,"fleet"], FUN=min))
+  dat$maxAgePerFleet<-as.integer(tapply(dat$aux[,"age"], INDEX=dat$aux[,"fleet"], FUN=max))
+  newyear<-min(as.numeric(dat$aux[,"year"])):max(as.numeric(dat$aux[,"year"]))
+  newfleet<-min(as.numeric(dat$aux[,"fleet"])):max(as.numeric(dat$aux[,"fleet"]))
+  mmfun<-function(f,y, ff){idx<-which(dat$aux[,"year"]==y & dat$aux[,"fleet"]==f); ifelse(length(idx)==0, NA, ff(idx)-1)}
+  dat$idx1<-outer(newfleet, newyear, Vectorize(mmfun,c("f","y")), ff=min)
+  dat$idx2<-outer(newfleet, newyear, Vectorize(mmfun,c("f","y")), ff=max)
+  dat
 }
 
 
 sam.fitfast <- function(data, conf, parameters, lower=getLowerBounds(parameters), upper=getUpperBounds(parameters), sim.condRE=TRUE, ...){
+
   data <- clean.void.catches(data,conf)
   tmball <- c(data, conf, simFlag=as.numeric(sim.condRE))
   if(is.null(tmball$resFlag)){tmball$resFlag <- 0}
@@ -120,10 +140,10 @@ sam.fitfast <- function(data, conf, parameters, lower=getLowerBounds(parameters)
   parameters$missing <- numeric(nmissing)
   if(length(conf$keyVarLogP)>1){
     ran <- c("logN", "logF","logPS", "missing")
-    obj <- MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
+    obj <- TMB::MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
   } else {
     ran <- c("logN", "logF", "missing")
-    obj <- MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
+    obj <- TMB::MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
   }
 
   lower2<-rep(-Inf,length(obj$par))

@@ -200,6 +200,11 @@ function(stock, indices, control, retro, year.range="missing"){
         starting.vals <- assess$pl
       } else {
         assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T,starting.values=starting.vals))
+        if(class(assess)=="try-error"){
+          starting.vals <- NULL
+        } else {
+          starting.vals <- assess$pl
+        }
       }
       if(class(assess)=="try-error") {
         warning(sprintf("Retrospective for year %i failed\n",yr))
@@ -275,6 +280,11 @@ function(stock, indices, control, retro, year.range="missing"){
         starting.vals <- assess$pl
       } else {
         assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T,starting.values=starting.vals))
+        if(class(assess)=="try-error"){
+          starting.vals <- NULL
+        } else {
+          starting.vals <- assess$pl
+        }
       }
       if(class(assess)=="try-error") {
         warning(sprintf("Retrospective for year %i failed\n",yr))
