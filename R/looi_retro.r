@@ -179,7 +179,7 @@ function(stock, indices, control, retro, year.range="missing"){
       stop("Year range outside stock object range")
     # ---------- Run that retrospective -------------
     cat("Running retrospective...\n")
-    res <- new("FLSAMs")
+    res <- list()
     starting.vals <- NULL
     for (yr in rev(year.range)){  #yr is the year in which the assessment is being simulated
       Stock <- trim(stock, year=stck.min.yr:yr)
@@ -210,9 +210,12 @@ function(stock, indices, control, retro, year.range="missing"){
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
         res[[as.character(yr)]] <- SAM2FLR(assess,control)
-        res[[as.character(yr)]]@desc    <-  paste(as.character(yr), "Retrospective")
+        #res[[as.character(yr)]]@desc    <-  paste(as.character(yr), "Retrospective")
       }
     }
+    res        <- as(res,"FLSAMs")
+    for(yr in rev(year.range))
+      res[[ac(yr)]]@desc <- paste(as.character(yr), "Retrospective")
     res@desc   <- paste("Retrospective analysis from object", stock@desc)
     return(res) 
   })  #End setMethod
@@ -251,7 +254,7 @@ function(stock, indices, control, retro, year.range="missing"){
       stop("Year range outside stock object range")
     # ---------- Run that retrospective -------------
     cat("Running retrospective...\n")
-    res <- new("FLSAMs")
+    res <- list()
     starting.vals <- NULL
     for (yr in rev(year.range)){  #yr is the year in which the assessment is being simulated
       Stock <- new("FLStocks")
@@ -290,9 +293,12 @@ function(stock, indices, control, retro, year.range="missing"){
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
         res[[as.character(yr)]] <- SAM2FLR(assess,control)
-        res[[as.character(yr)]]@desc    <-  paste(as.character(yr), "Retrospective")
+        #res[[as.character(yr)]]@desc    <-  paste(as.character(yr), "Retrospective")
       }
     }
+    res        <- as(res,"FLSAMs")
+    for(yr in rev(year.range))
+      res[[ac(yr)]]@desc <- paste(as.character(yr), "Retrospective")
     res@desc   <- paste("Retrospective analysis from object", stock@desc)
     return(res)
   })  #End setMethod
