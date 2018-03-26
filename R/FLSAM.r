@@ -81,12 +81,13 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,force.star
     if(!is.null(starting.sam)){
       if(class(starting.sam[[i]])!="logical")
         par[[i]] <- updateStart(par[[i]],FLSAM2par(starting.sam[[i]]))
-        #par[[i]]$logN[] <- 0
     }
   }
 
   require(doParallel)
-  cl <- makeCluster(detectCores()-1) #set up nodes
+  ncores <- detectCores()-1
+  ncores <- ifelse(iters<ncores,iters,ncores)
+  cl <- makeCluster(ncores) #set up nodes
   clusterEvalQ(cl,library(FLSAM))
   clusterEvalQ(cl,library(stockassessment))
   registerDoParallel(cl)
@@ -95,7 +96,7 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,force.star
 #  if(!force.starting.sam){
 #    system.time(res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],defpar(data[[i]],conf[[i]]),silent=T))),...))
 #  } else {
-    res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T,...))
+  res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T,...))
 #  }
 
   #- Check for failed runs and do those with starting conditions
@@ -124,13 +125,15 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,force.star
     detach("package:foreach",unload=TRUE)
   if("iterators" %in% (.packages()))
     detach("package:iterators",unload=TRUE)
-  for(i in 1:iters){
-    if(!is.na(unlist(res[[i]]$sdrep)[1])){
-      stcks[["residual"]]@stock.n[,,,,,i] <- exp(res[[i]]$rep$logN[,1:dims(stcks[["residual"]]@stock.n)$year])
-      stcks[["residual"]]@harvest[,,,,,i] <- res[[i]]$rep$totF[,1:dims(stcks[["residual"]]@harvest)$year]
-    } else {
-      stcks[["residual"]]@stock.n[,,,,,i] <- NA
-      stcks[["residual"]]@harvest[,,,,,i] <- NA
+  if(!return.sam){
+    for(i in 1:iters){
+      if(!is.na(unlist(res[[i]]$sdrep)[1])){
+        stcks[["residual"]]@stock.n[,,,,,i] <- exp(res[[i]]$rep$logN[,1:dims(stcks[["residual"]]@stock.n)$year])
+        stcks[["residual"]]@harvest[,,,,,i] <- res[[i]]$rep$totF[,1:dims(stcks[["residual"]]@harvest)$year]
+      } else {
+        stcks[["residual"]]@stock.n[,,,,,i] <- NA
+        stcks[["residual"]]@harvest[,,,,,i] <- NA
+      }
     }
   }
   if(return.sam)
