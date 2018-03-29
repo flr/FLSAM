@@ -71,6 +71,7 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,...){
         #mcstck@catch[,,,,,i]   <- subset(params(samRuns[[i]]),name=="logCatch")$value
       }
     }
+  }
   if(return.sam)
     ret <- resSAM
   if(!return.sam)
