@@ -75,6 +75,4 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,...){
     ret <- resSAM
   if(!return.sam)
     ret <- stcks
-  return(ret)
-
 return(ret)}
