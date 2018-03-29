@@ -46,7 +46,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
 }
 
 
-FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,force.starting.sam=FALSE,return.sam=F,...){
+FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam=F,...){
 
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read

@@ -1,4 +1,4 @@
-monteCarloStock <- function(stck,tun,sam,realisations,...){
+monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,...){
   require(doParallel)
   ctrl              <- sam@control
   
@@ -41,6 +41,18 @@ monteCarloStock <- function(stck,tun,sam,realisations,...){
   runs <- foreach(i = 1:realisations) %dopar% try(sam.fitfast(simdat[[i]],object$conf,object$pl,silent=T,...))
   stopCluster(cl) #shut it down
   
+  if(return.sam){
+    resSAM <- list()
+    for(i in 1:iters){
+      if(!is.na(unlist(res[[i]]$sdrep)[1])){
+        resSAM[[i]] <- SAM2FLR(res[[i]],sam@control)
+      } else {
+        resSAM[[i]] <- NA
+      }
+    }
+    resSAM <- as(resSAM,"FLSAMs")
+  }
+
   if("doParallel" %in% (.packages()))
     detach("package:doParallel",unload=TRUE)
   if("foreach" %in% (.packages()))
@@ -49,14 +61,20 @@ monteCarloStock <- function(stck,tun,sam,realisations,...){
     detach("package:iterators",unload=TRUE)
 
   #- Fill the results of the simulations
-  samRuns <- list()
-  for(i in 1:realisations){
-    if(!is.na(unlist(runs[[i]]$sdrep)[1])){
-      samRuns[[i]]           <- SAM2FLR(runs[[i]],sam@control)
-      mcstck@stock.n[,,,,,i] <- samRuns[[i]]@stock.n
-      mcstck@harvest[,,,,,i] <- samRuns[[i]]@harvest
-      #mcstck@catch[,,,,,i]   <- subset(params(samRuns[[i]]),name=="logCatch")$value
+  if(!return.sam){
+    samRuns <- list()
+    for(i in 1:realisations){
+      if(!is.na(unlist(runs[[i]]$sdrep)[1])){
+        samRuns[[i]]           <- SAM2FLR(runs[[i]],sam@control)
+        mcstck@stock.n[,,,,,i] <- samRuns[[i]]@stock.n
+        mcstck@harvest[,,,,,i] <- samRuns[[i]]@harvest
+        #mcstck@catch[,,,,,i]   <- subset(params(samRuns[[i]]),name=="logCatch")$value
+      }
     }
-  }
+  if(return.sam)
+    ret <- resSAM
+  if(!return.sam)
+    ret <- stcks
+  return(ret)
 
-return(mcstck)}
+return(ret)}
