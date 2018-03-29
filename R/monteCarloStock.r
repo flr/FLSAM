@@ -41,6 +41,13 @@ monteCarloStock <- function(stck,tun,sam,realisations,...){
   runs <- foreach(i = 1:realisations) %dopar% try(sam.fitfast(simdat[[i]],object$conf,object$pl,silent=T,...))
   stopCluster(cl) #shut it down
   
+  if("doParallel" %in% (.packages()))
+    detach("package:doParallel",unload=TRUE)
+  if("foreach" %in% (.packages()))
+    detach("package:foreach",unload=TRUE)
+  if("iterators" %in% (.packages()))
+    detach("package:iterators",unload=TRUE)
+
   #- Fill the results of the simulations
   samRuns <- list()
   for(i in 1:realisations){
