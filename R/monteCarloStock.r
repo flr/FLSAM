@@ -1,4 +1,4 @@
-monteCarloStock <- function(stck,tun,sam,realisations){
+monteCarloStock <- function(stck,tun,sam,realisations,...){
   require(doParallel)
   ctrl              <- sam@control
   
@@ -25,7 +25,9 @@ monteCarloStock <- function(stck,tun,sam,realisations){
                                	object$obj$simulate(unlist(object$pl))["logobs"]),#simulated observations
                                	simplify=FALSE)
   #- Make cluster to speed up process
-  cl <- makeCluster(detectCores()-1)
+  ncores <- detectCores()-1
+  ncores <- ifelse(realisations<ncores,realisations,ncores)
+  cl <- makeCluster(ncores)
   clusterEvalQ(cl,library(FLSAM))
   clusterEvalQ(cl,library(stockassessment))
   registerDoParallel(cl)
@@ -35,27 +37,18 @@ monteCarloStock <- function(stck,tun,sam,realisations){
     if(length(which(is.na(object$data$logobs)))>0)
       simdat[[i]]$logobs[which(is.na(object$data$logobs))] <- NA
   }
-  clusterExport(cl,varlist=c("simdat","object"),envir=environment())
-  runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdat[[i]],object$conf,defpar(simdat[[i]],object$conf)))
-
-#  setwd(tempdir())
-#  runIterSam <- function(i,data,conf,par){
-#                  require(stockassessment)
-#                  res <- sam.fit(data,conf,par)
-#                  save(res,file=paste0("run_",i,".RData"))
-#                return(res)}
-#
-#  runs <- foreach(i=1:2) %dopar% runIterSam(i,data=simdat[[i]],conf=object$conf,par=defpar(simdat[[i]],object$conf))
-
+  #clusterExport(cl,varlist=c("simdat","object"),envir=environment())
+  runs <- foreach(i = 1:realisations) %dopar% try(sam.fitfast(simdat[[i]],object$conf,object$pl,silent=T,...))
   stopCluster(cl) #shut it down
   
   #- Fill the results of the simulations
+  samRuns <- list()
   for(i in 1:realisations){
-    if(class(runs[[i]])!="try-error"){
-      runs[[i]]              <- SAM2FLR(runs[[i]],sam@control)
-      mcstck@stock.n[,,,,,i] <- runs[[i]]@stock.n
-      mcstck@harvest[,,,,,i] <- runs[[i]]@harvest
-      mcstck@catch[,,,,,i]   <- catch(runs[[i]])$value
+    if(!is.na(unlist(runs[[i]]$sdrep)[1])){
+      samRuns[[i]]           <- SAM2FLR(runs[[i]],sam@control)
+      mcstck@stock.n[,,,,,i] <- samRuns[[i]]@stock.n
+      mcstck@harvest[,,,,,i] <- samRuns[[i]]@harvest
+      #mcstck@catch[,,,,,i]   <- subset(params(samRuns[[i]]),name=="logCatch")$value
     }
   }
 
