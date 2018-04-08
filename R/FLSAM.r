@@ -90,7 +90,8 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
                    ret <- updateStart(iPar,FLSAM2par(iSam)) } else {
                    ret <- iPar }
                  return(ret)}
-  par <- foreach(i = 1:iters) %dopar% checkUpdate(i,starting.sam[[i]],par[[i]])
+  if(!is.null(starting.sam))
+    par <- foreach(i = 1:iters) %dopar% checkUpdate(i,starting.sam[[i]],par[[i]])
 
 #  for(i in 1:iters){
 #    iTun <- tun
