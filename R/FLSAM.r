@@ -71,18 +71,7 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
     detach("package:foreach",unload=TRUE)
   if("iterators" %in% (.packages()))
     detach("package:iterators",unload=TRUE)
-  for(i in 1:iters){
-    iTun <- tun
-    for(j in 1:length(tun))
-      iTun[[j]]<- iter(iTun[[j]],i)
-    data[[i]]  <- FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),iTun,ctrl@sumFleets,catch.vars)
-    conf[[i]]  <- ctrl2conf(ctrl,data[[i]])
-    par[[i]]   <- stockassessment::defpar(data[[i]],conf[[i]])
-    if(!is.null(starting.sam)){
-      if(class(starting.sam[[i]])!="logical")
-        par[[i]] <- updateStart(par[[i]],FLSAM2par(starting.sam[[i]]))
-    }
-  }
+
 
   require(doParallel)
   ncores <- detectCores()-1
@@ -91,6 +80,31 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
   clusterEvalQ(cl,library(FLSAM))
   clusterEvalQ(cl,library(stockassessment))
   registerDoParallel(cl)
+
+
+  data <- foreach(i = 1:iters) %dopar% FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),FLIndices(lapply(tun, function(x) iter(x,i))),ctrl@sumFleets,catch.vars)
+  conf <- foreach(i = 1:iters) %dopar% ctrl2conf(ctrl,data[[i]])
+  par  <- foreach(i = 1:iters) %dopar% stockassessment::defpar(data[[i]],conf[[i]])
+  checkUpdate <- function(i,iSam,iPar){
+                 if(class(iSam)!="logical"){
+                   ret <- updateStart(iPar,FLSAM2par(iSam)) } else {
+                   ret <- iPar }
+                 return(ret)}
+  par <- foreach(i = 1:iters) %dopar% checkUpdate(i,starting.sam[[i]],par[[i]])
+
+#  for(i in 1:iters){
+#    iTun <- tun
+#    for(j in 1:length(tun))
+#      iTun[[j]]<- iter(iTun[[j]],i)
+#    data[[i]]  <- FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),iTun,ctrl@sumFleets,catch.vars)
+#    conf[[i]]  <- ctrl2conf(ctrl,data[[i]])
+#    par[[i]]   <- stockassessment::defpar(data[[i]],conf[[i]])
+#    if(!is.null(starting.sam)){
+#      if(class(starting.sam[[i]])!="logical")
+#        par[[i]] <- updateStart(par[[i]],FLSAM2par(starting.sam[[i]]))
+#    }
+#  }
+
 
   #- First run without staring values simply because it's quicker
 #  if(!force.starting.sam){
