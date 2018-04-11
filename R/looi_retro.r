@@ -214,7 +214,7 @@ function(stock, indices, control, retro, year.range="missing"){
       }
     }
     res        <- as(res,"FLSAMs")
-    for(yr in rev(year.range))
+    for(yr in names(res))
       res[[ac(yr)]]@desc <- paste(as.character(yr), "Retrospective")
     res@desc   <- paste("Retrospective analysis from object", stock@desc)
     return(res) 
@@ -297,7 +297,7 @@ function(stock, indices, control, retro, year.range="missing"){
       }
     }
     res        <- as(res,"FLSAMs")
-    for(yr in rev(year.range))
+    for(yr in names(res))
       res[[ac(yr)]]@desc <- paste(as.character(yr), "Retrospective")
     res@desc   <- paste("Retrospective analysis from object", stock@desc)
     return(res)
