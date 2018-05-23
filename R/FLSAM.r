@@ -30,7 +30,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
   conf  <- ctrl2conf(ctrl,data)
   par   <- defpar(data,conf)
   if(!is.null(starting.values))
-    par <- updateStart(par,starting.values)
+    par <- updateStart(par,FLSAM2par(starting.values))
 
   fit   <- sam.fit(data,conf,par,sim.condRE=ctrl@simulate,...)
 

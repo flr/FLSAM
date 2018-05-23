@@ -58,9 +58,18 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
                                            max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
       Control.temp@range["minyear"] <- min(stck@range["minyear"],
                                            min(sapply(Indices.temp,function(x) min(x@range[c("minyear")]))))
-      res           <- try(FLSAM(stck,Indices.temp,Control.temp))
-      result[[iRun]]<- res
+      res           <- try(FLSAM(stck,Indices.temp,Control.temp,starting.values=base.run))
+      if(class(res)=="try-error") {
+        warning(sprintf(paste("Leave-in-out for ",iRun,"failed")))
+      } else {
+        result[[iRun]]<- res
+      }
     }
+    result        <- as(result,"FLSAMs")
+    for(i in names(res))
+      result[[ac(i)]]@desc <- paste(i, "LOOI")
+    result@desc   <- paste("LOOI analysis from object", stck@desc)
+
   return(result)
 })
 
@@ -92,8 +101,9 @@ setMethod("looi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control",
     #Perform the initial base assessment i.e. "everybody-in"
     if(missing(base.run))
       base.run <- FLSAM(stck,tun,ctrl)  #Has to work
-    result <- FLSAMs("All fleets"=base.run)
-
+    #result <- FLSAMs("All fleets"=base.run)
+    result <- list()
+    result[["All fleets"]] <- base.run
     #- Now use the update functionality to do the LOO, LOI, LOO trickery really quickly
     #  We achieve this using the reduced.cfg file in ADMB together with the pin functionality -
     #  in this way we don't need to stress about adjusting the parameters of the pin file
@@ -110,9 +120,19 @@ setMethod("looi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control",
                                            max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
       Control.temp@range["minyear"] <- min(sapply(stck,function(x) min(x@range["minyear"])),
                                            min(sapply(Indices.temp,function(x) min(x@range[c("minyear")]))))
-      res           <- try(FLSAM(stck,Indices.temp,Control.temp))
-      result[[iRun]]<- res
+      res           <- try(FLSAM(stck,Indices.temp,Control.temp,starting.values=base.run))
+      
+      if(class(res)=="try-error") {
+        warning(sprintf(paste("Leave-in-out for ",iRun,"failed")))
+      } else {
+        result[[iRun]]<- res
+      }
     }
+    result        <- as(result,"FLSAMs")
+    for(i in names(res))
+      result[[ac(i)]]@desc <- paste(i, "LOOI")
+    result@desc   <- paste("LOOI analysis from object", stck@desc)
+
   return(result)
 })
 
@@ -196,20 +216,20 @@ function(stock, indices, control, retro, year.range="missing"){
       control@range["maxyear"] <- max(Stock@range["maxyear"],
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
       if(is.null(starting.vals)){
-        assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T))
-        starting.vals <- assess$pl
+        assess  <- try(FLSAM(Stock, Indices.temp,control))
+        starting.vals <- assess
       } else {
-        assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T,starting.values=starting.vals))
+        assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=starting.vals))
         if(class(assess)=="try-error"){
           starting.vals <- NULL
         } else {
-          starting.vals <- assess$pl
+          starting.vals <- assess
         }
       }
       if(class(assess)=="try-error") {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
-        res[[as.character(yr)]] <- SAM2FLR(assess,control)
+        res[[as.character(yr)]] <- assess
         #res[[as.character(yr)]]@desc    <-  paste(as.character(yr), "Retrospective")
       }
     }
@@ -279,20 +299,20 @@ function(stock, indices, control, retro, year.range="missing"){
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
 
       if(is.null(starting.vals)){
-        assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T))
-        starting.vals <- assess$pl
+        assess  <- try(FLSAM(Stock, Indices.temp,control))
+        starting.vals <- assess
       } else {
-        assess  <- try(FLSAM(Stock, Indices.temp,control,return.fit=T,starting.values=starting.vals))
+        assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=starting.vals))
         if(class(assess)=="try-error"){
           starting.vals <- NULL
         } else {
-          starting.vals <- assess$pl
+          starting.vals <- assess
         }
       }
       if(class(assess)=="try-error") {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
-        res[[as.character(yr)]] <- SAM2FLR(assess,control)
+        res[[as.character(yr)]] <- assess
         #res[[as.character(yr)]]@desc    <-  paste(as.character(yr), "Retrospective")
       }
     }

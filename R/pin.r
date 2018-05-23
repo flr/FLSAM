@@ -74,7 +74,7 @@ updateStart <- function(parameters,startVals){
   if("missing" %in% names(startVals))
     startVals <- startVals[-grep("missing",names(startVals))]
   for(iName in names(startVals)){
-    if(identical(dim(parametersUp[[iName]]),dim(startVals[[iName]]))){
+    if(identical(length(parametersUp[[iName]]),length(startVals[[iName]]))){
       parametersUp[[iName]] <- startVals[[iName]]
     } else {
       if(iName %in% c("logF","logN","logPS")){
