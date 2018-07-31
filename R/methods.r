@@ -278,7 +278,7 @@ if (!isGeneric("f")) {
 setMethod("f", signature(object="FLSAM"),
         function(object) {
           f.states <- subset(.extract.states(object),age<0)
-          f.states$param <- -f.states$age-range(object)["min"]-1
+          f.states$param <- -f.states$age-1
           if(length(grep("catch",rownames(object@control@states)))>1){
             f.bindings <- object@control@states[grep("catch",rownames(object@control@states)),]
             f.bindings <- as.data.frame(as.table(f.bindings),responseName="param")
