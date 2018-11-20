@@ -1,4 +1,4 @@
-monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,...){
+monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,...){
   require(doParallel)
   ctrl              <- sam@control
   
@@ -72,6 +72,13 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,...){
       }
     }
   }
+  
+  #- Save randomly drawn parameters
+  pars          <- lapply( samRuns , function(x) params(x)$value)
+  random.param  <- matrix(unlist(pars)    , byrow= T, nrow = realisations ,dimnames =list(NULL, params(samRuns[[1]])$name ))
+  if(!is.null(saveParsDir))
+    save(random.param,file=saveParsDir)
+
   if(return.sam)
     ret <- resSAM
   if(!return.sam)
