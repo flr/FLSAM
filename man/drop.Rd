@@ -32,7 +32,7 @@ Mark R. Payne.
 \examples{
 #Load assessment
 library(FLSAM)
-data(NSH.sam)
+data(NSH)
 #NSH.ctrl before dropping
 NSH.ctrl
 #Drop MLAI index

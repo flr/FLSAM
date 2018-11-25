@@ -4,15 +4,15 @@
 
 #- Create generic function for 'looi'
 if (!isGeneric("looi")) {
-  setGeneric('looi', function(stck,tun,ctrl,type,base.run) standardGeneric('looi'))
+  setGeneric('looi', function(stck,tun,ctrl,type,...) standardGeneric('looi'))
 }
 
-setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="missing",base.run="FLSAM"),
+setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="missing"),
   function(stck,tun,ctrl,type,base.run){
      looi(stck,tun,ctrl,type="full",base.run="missing")
 }) 
 
-setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="character",base.run="FLSAM"),
+setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="character"),
   function(stck,tun,ctrl,type="full",base.run="missing"){
     #Check type argument
     if(is.na(pmatch(toupper(type),c("LOI","LOO","FULL")))) {
@@ -62,18 +62,18 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
       if(class(res)=="try-error") {
         warning(sprintf(paste("Leave-in-out for ",iRun,"failed")))
       } else {
-        result[[iRun]]<- res
+        result <- c(result, setNames(list(res), iRun))
       }
     }
     result        <- as(result,"FLSAMs")
-    for(i in names(res))
+    for(i in names(result))
       result[[ac(i)]]@desc <- paste(i, "LOOI")
     result@desc   <- paste("LOOI analysis from object", stck@desc)
 
   return(result)
 })
 
-setMethod("looi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control",type="character",base.run="FLSAM"),
+setMethod("looi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control",type="character"),
   function(stck,tun,ctrl,type="full",base.run="missing"){
     #Check type argument
     if(is.na(pmatch(toupper(type),c("LOI","LOO","FULL")))) {

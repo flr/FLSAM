@@ -101,15 +101,6 @@ ssb(HERAS.sams)
 rec(HERAS.sams)
 fbar(HERAS.sams)
 
-#Handling "nohess" situation
-data(NSH)
-ctrl.nohess <- NSH.ctrl
-ctrl.nohess@nohess <- TRUE
-sam.nohess <- FLSAM(NSH,NSH.tun,ctrl.nohess)
-stck.nohess <- NSH + sam.nohess
-plot(stck.nohess)
-ssb(stck.nohess)
-
 }
 
 \keyword{ ~kwd1 }

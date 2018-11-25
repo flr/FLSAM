@@ -54,10 +54,14 @@ ctrl.list <- list(all.free=3:10,
                   four.lvls=c(3,3,4,4,5,5,6,6),
                   three.lvls=c(3,3,4,4,5,5,5,5),
                   two.lvls=c(3,3,3,4,4,4,4,4))
-ctrls  <- lapply(ctrl.list,function(x) {
-            tmp.ctrl <- NSH.ctrl
-            tmp.ctrl@catchabilities["HERAS",ac(1:8)] <- x
-            return(tmp.ctrl)})
+
+ctrls <- lapply(ctrl.list,
+  function(x) {
+    tmp.ctrl <- NSH.ctrl
+    tmp.ctrl@catchabilities["HERAS",ac(1:8)] <- x
+    return(update(tmp.ctrl))
+})
+
 sam.list <- lapply(ctrls,FLSAM,stck=NSH,tun=NSH.tun)                  
 HERAS.sams <- FLSAMs(sam.list)
 
