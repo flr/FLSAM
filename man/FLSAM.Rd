@@ -118,7 +118,7 @@ plot(sam)
 
 #Repeat the assessment using the previous result as an initial guess
 uninit.time <- system.time(sam.uninit <- FLSAM(NSH,NSH.tun,NSH.ctrl))
-init.time   <- system.time(sam.init   <- update(sam.uninit,NSH,NSH.tun))
+init.time   <- system.time(sam.init   <- update(sam.uninit,NSH,NSH.tun,NSH.ctrl))
 #Big speed increase! (your results may vary: ours are about 2x)
 uninit.time[3]/init.time[3]
 #But assessments are the sam (phew!)

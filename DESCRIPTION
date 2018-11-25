@@ -5,11 +5,11 @@ Version: 2.1.0
 Date: 2018-01-24
 Author: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpa@aqua.dtu.dk>
 Maintainer: N.T. Hintzen <niels.hintzen@wur.nl>, M.R. Payne <mpay@aqua.dtu.dk>
-Description: FLR wrapper to the SAM state-space assessment model
-Depends: FLCore
+Description: A package providing an FLR wrapper to the SAM state-space assessment model.
+Depends: R (>= 2.10), FLCore
 Remotes: fishfollower/SAM/stockassessment@components
-Imports: utils, TMB, ellipse, MASS, stockassessment
-LinkingTo: TMB, RcppEigen, stockassessment
-Suggests: methods, reshape, plyr, RColorBrewer
+Imports: methods, utils, TMB, ellipse, MASS, stockassessment
+Suggests: reshape, plyr, RColorBrewer
 License: GPL 
 LazyLoad: yes
+RoxygenNote: 6.1.0

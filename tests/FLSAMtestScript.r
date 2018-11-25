@@ -22,8 +22,6 @@ data(NSH.sam)
 # object is created already. To show you how it's done though, an example is given below,
 # using the FLSAM.control function.
 
-if(!exists("NSH.ctrl")) NSH.ctrl <- FLSAM.control(NSH,NSH.tun)
-
 ### ============================================================================
 ### Run the assessment
 ### ============================================================================
@@ -38,10 +36,10 @@ name(NSH.sam) <- "North Sea Herring"
 NSH     <- NSH + NSH.sam
 
 #And test the ability to read the results back from the SAM outputs
-sam.res <- SAM2FLR(run.dir=tempdir())
-plot(sam.res)
-cor.plot(sam.res)
-residual.diagnostics(sam.res)
+#sam.res <- SAM2FLR(run.dir=tempdir())
+#plot(sam.res)
+#cor.plot(sam.res)
+#residual.diagnostics(sam.res)
 
 ### ============================================================================
 ### Investigate the results
@@ -91,7 +89,7 @@ cor.plot(NSH.sam)
 ### Perform retro analyses and drop some surveys from the model to test performance
 ### ============================================================================
 
-retro.NSH <- retro(NSH,NSH.tun,NSH.ctrl,2,base.assess=NSH.sam)
+retro.NSH <- retro(NSH,NSH.tun,NSH.ctrl,2)
 plot(retro.NSH)
 
 # looi.NSH  <- looi(NSH,NSH.tun,NSH.ctrl,type="LOO")
@@ -104,4 +102,4 @@ dev.off()
 ### Sample from the model uncertainty and construct new stock realisations
 ### ============================================================================
 
-mc.NSH    <- monteCarloStock(NSH,NSH.sam,100)
+mc.NSH    <- monteCarloStock(NSH,NSH.tun,NSH.sam,100)

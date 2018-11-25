@@ -510,7 +510,7 @@ retroParams <- function(x){
   }
 
 #kobeplot
-plot.kobe <- function(object,fmsy=1,bmsy=1,nits=1000,prob=c(0.95),ref.year=NULL){
+plotkobe <- function(object,fmsy=1,bmsy=1,nits=1000,prob=c(0.95),ref.year=NULL){
   if(is.null(ref.year)) ref.year <- dims(NSH.sam)$maxyear
   require(kobe)
 

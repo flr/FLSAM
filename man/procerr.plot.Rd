@@ -25,7 +25,7 @@ Logical. Express error relative or absolute
 \value{
 A picture is returned}
 \author{
-Niels T. HIntzen (based on code from Einar Hjorleifsson}
+Niels T. HIntzen (based on code from Einar Hjorleifsson)
 }
 \examples{
 library(FLSAM)
