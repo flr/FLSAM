@@ -17,3 +17,4 @@ packageStartupMessage(sprintf("\nFLSAM %s (%s)",packageDescription("FLSAM")$Vers
     help(package='FLSAM') to get started there.
 ------------------------------------------------------------------------------")
 }
+

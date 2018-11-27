@@ -41,7 +41,7 @@ data(NSH.sam)
 summary(NSH)#iter = 1
 plot(NSH)
 #Generate new stock with 100 iters
-newStock <- monteCarloStock(NSH,NSH.tun, NSH.sam,100)
+newStock <- monteCarloStock(NSH,NSH.tun, NSH.sam,100, ncores=2L)
 #Now does it look?
 summary(newStock)#iter = 100
 plot(newStock)  #Voila!

@@ -1,4 +1,5 @@
-monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,...){
+monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL, ncores=detectCores()-1, ...){
+  
   require(doParallel)
   ctrl              <- sam@control
   
@@ -25,7 +26,6 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
                                	object$obj$simulate(unlist(object$pl))["logobs"]),#simulated observations
                                	simplify=FALSE)
   #- Make cluster to speed up process
-  ncores <- detectCores()-1
   ncores <- ifelse(realisations<ncores,realisations,ncores)
   cl <- makeCluster(ncores)
   clusterEvalQ(cl,library(FLSAM))
