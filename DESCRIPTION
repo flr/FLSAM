@@ -12,3 +12,5 @@ Imports: methods, utils, TMB, ellipse, MASS, stockassessment
 Suggests: reshape, plyr, RColorBrewer
 License: GPL 
 LazyLoad: no
+RoxygenNote: 6.1.0
+
