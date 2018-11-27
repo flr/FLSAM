@@ -1,0 +1,5 @@
+\documentclass{article}
+%\VignetteIndexEntry{FLSAM User manual}
+\begin{document}
+\end{document}
+

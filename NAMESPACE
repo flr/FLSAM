@@ -28,4 +28,3 @@ importFrom("stats", "acf", "aggregate", "approxfun", "as.ts",
   "nlminb", "pchisq", "qqline", "qqnorm")
 importFrom("methods", "as", "is", "new", "slot", "slot<-", "slotNames",
   "validObject")
-
