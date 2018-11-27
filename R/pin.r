@@ -1,6 +1,6 @@
 
 setMethod("update", signature(object="FLSAM"),
-  function(object,stck,tun,run.dir=tempdir(),batch.mode=FALSE)
+  function(object,stck,tun,ctrl.new)
   {
 
   #- Check validity of objects
@@ -29,106 +29,141 @@ setMethod("update", signature(object="FLSAM"),
   strt  <- range(stck)["minyear"]
   nd    <- range(stck)["maxyear"]
 
-  #-Check for ranges of FLIndices stck
-  if(all(unlist(lapply(tun,function(x){return(range(x)["maxyear"])})) > nd))
-    warning("All indices longer than maxyear in FLStock,
-    is the FLIndices stck trimmed to the right years?")
-  if(any(unlist(lapply(tun,function(x){return(range(x)["maxyear"])})) > nd)){
-    params2pin(object,strt,nd+1,save.dir=run.dir)
-  } else {
-    params2pin(object,strt,nd,  save.dir=run.dir)
+  if(object@control@scaleNoYears!=0){
+    object@control@scaleNoYears <- length(object@control@scaleYears[which(object@control@scaleYears %in% strt:nd)])
+    object@control@scaleYears   <- object@control@scaleYears[which(object@control@scaleYears %in% strt:nd)]
+    object@control@scalePars    <- object@control@scalePars[ac(object@control@scaleYears),]
+    object@control              <- update(object@control)
   }
-  
+
   #-Update FLSAM.control stck by copying directly from the oject. Modifications
   # may be necessary for revised year ranges 
-  ctrl       <- object@control
   ctrl@range["maxyear"] <- max(sapply(tun,range)["maxyear",],stck@range["maxyear"])
   ctrl@range["minyear"] <- min(sapply(tun,range)["minyear",],stck@range["minyear"])
-  
+
   #-Run the assessment, "by hand" taking advantage of the usepin argument
-  FLR2SAM(stck,tun,ctrl,run.dir)
-  rtn <- runSAM(ctrl, run.dir, use.pin=TRUE)
-  if(rtn!=0) {
-    if(batch.mode) {
-      return(NULL)
-    } else {
-      stop(sprintf("An error occurred while running ADMB. Return code %s.",rtn))
-    }
-  }
-  res <- SAM2FLR(ctrl,run.dir=run.dir)
+  res <- FLSAM(stck,tun,ctrl.new,pin.sam=object)
 
   return(res)
   }
 )
 
 
-params2pin <- function(object,start=NULL,end=NULL,save.dir=tempdir()){
 
-  #---------------------------------------------------
-  # Book keeping
-  #---------------------------------------------------
-  if(!is(object,"FLSAM")) stop("Supplied object must be an FLSAM")
-  run.time  <- Sys.time()
-  strt      <- ifelse(is.null(start)==T,range(object)["minyear"],start)
-  nd        <- ifelse(is.null(end)==T  ,range(object)["maxyear"],end)
+.update.params <- function(ctrl.old,ctrl.new,iSlot,parameters,sam,convDF){
 
-  #---------------------------------------------------
-  # Truncate data if necessary
-  #---------------------------------------------------
+  #- Select parameter conversion
+  conv      <- convDF[which(convDF$FLRname == iSlot),]
 
-  #-Extract stock.n and harvest values from SAM object
-  n         <- log(window(object@stock.n,strt,nd))
-  f         <- log(window(object@harvest[!duplicated(object@control@states[names(which(object@control@fleets==0)),]),],strt,nd))
-
-  #-Define how many parameters are estimated
-  n.states  <- length(unique(object@control@states[names(which(object@control@fleets==0)),]))
-  ages      <- dims(object)$age
-
-  idxNs     <- c(mapply(seq,from=seq(1,length(n)+length(f),ages+n.states),
-                            to  =seq(1,length(n)+length(f),ages+n.states)+ages-1,
-                            by  =1))
-  idxFs     <- c(mapply(seq,from=seq(1,length(n)+length(f),ages+n.states)+ages,
-                            to  =seq(1,length(n)+length(f),ages+n.states)+n.states+ages-1,
-                            by  =1))
-                            
-  #-Create vector with combined n and f values
-  u         <- numeric(length(n)+length(f))
-  u[idxNs]  <- n
-  u[idxFs]  <- f
-  U         <- data.frame(name="U",value=u,std.dev=NA)
-
-  #-Merge U's with other parameters (even if truncated)
-  if(any(is.na(object@control@power.law.exps)==F)){
-    par.list<- c("logFpar","logQpow","logSdLogFsta","logSdLogN","logSdLogObs","rec_loga",
-                  "rec_logb","rho","logScaleSSB","logPowSSB","logSdSSB","U")
-  } else {
-   par.list <- c("logFpar","logSdLogFsta","logSdLogN","logSdLogObs","rec_loga",
-                 "rec_logb","rho","logScaleSSB","logPowSSB","logSdSSB","U")}
-  pars      <- object@params
-  uidx      <- which(pars$name == "U")
-  parsTop   <- pars[1:(uidx[1]-1),]
-  pars      <- rbind(parsTop,U,if(nrow(pars)>max(uidx)){pars[(rev(uidx)[1]+1):nrow(pars),]})
-
-  #---------------------------------------------------
-  # Create pin file
-  #---------------------------------------------------
-  if(identical(object@control@sam.binary,character(0))){
-    pin.file  <- file.path(save.dir,"sam.pin")
-  } else {
-    pin.file  <- file.path(save.dir,paste(tolower(strsplit(rev(strsplit(object@control@sam.binary,"/")[[1]])[1],".exe")[[1]]),".pin",sep=""))
+  #- Check if no gaps exist in parameter values
+  parVals   <- sort(na.omit(unique(c(slot(ctrl.new,iSlot)))))
+  if(any(diff(parVals)>1)) stop("Run 'update' on control object first")
+  if(iSlot != "srr"){
+    #- Check if parameter binding has changed
+    for(i in 0:(length(sort(na.omit(unique(c(slot(ctrl.new,iSlot))))))-1))
+      parameters[[ac(conv$SAMname)]][i+1] <- ifelse(identical(which(slot(ctrl.old,iSlot) == i,arr.ind=T),which(slot(ctrl.new,iSlot) == i,arr.ind=T)),
+                                                subset(params(sam),name==conv$SAMname)$value[i+1],
+                                                  conv$default)
   }
-  unlink(pin.file)    #Get rid of anything that is already there
-  for(iPar in par.list){
-    #Get pars to write
-    par.vals <- pars[pars$name==iPar,"value"] 
-    if(length(par.vals)==0) par.vals <- 0 
-    #Write to file
-    cat("#",iPar,": \n ",file=pin.file,append=TRUE,sep="")
-    cat(par.vals," \n ",file=pin.file,append=TRUE)
+  return(parameters)}
+
+
+#- take default parameter values and overwrite with previous run converged parameter estimates
+updateStart <- function(parameters,startVals){
+  parametersUp <- parameters
+  if("missing" %in% names(startVals))
+    startVals <- startVals[-grep("missing",names(startVals))]
+  for(iName in names(startVals)){
+    if(identical(length(parametersUp[[iName]]),length(startVals[[iName]]))){
+      parametersUp[[iName]] <- startVals[[iName]]
+    } else {
+      if(iName %in% c("logF","logN","logPS")){
+        if((dim(parametersUp[[iName]])[2]-dim(startVals[[iName]])[2])==-1)
+          parametersUp[[iName]] <- startVals[[iName]][,-ncol(startVals[[iName]])]
+        if((dim(parametersUp[[iName]])[2]-dim(startVals[[iName]])[2])==1)
+          parametersUp[[iName]] <- cbind(startVals[[iName]],startVals[[iName]][,ncol(startVals[[iName]])])
+      }
+      warnings(paste("Could not update according to starting value",iName,"as number of parameters specified does not match"))
+    }
   }
-invisible(NULL)}
+  
+  for(iName in names(startVals)){
+    if(length(parametersUp[[iName]][which(parametersUp[[iName]] < -5)])>0)
+      parametersUp[[iName]][which(parametersUp[[iName]] < -5)] <- parameters[[iName]][which(parametersUp[[iName]] < -5)]
+  }
 
+  return(parametersUp)}
+  
+#- Create defpar object from sam
+FLSAM2defpar <- function(sam){
+  ret<-list()
+  ret$logFpar=numeric(max(sam@control@catchabilities,na.rm=T)+1)-5
+  ret$logQpow=numeric(max(sam@control@power.law.exps,na.rm=T)+1)
+  ret$logSdLogFsta=numeric(max(sam@control@f.vars)+1)-.7
+  ret$logSdLogN=numeric(max(sam@control@logN.vars,na.rm=T)+1)-.35
+  ret$logSdLogP=if(length(sam@control@logP.vars)>0){numeric(max(sam@control@logP.vars,na.rm=T)+1)-.7} else { numeric(0)}
+  ret$logSdLogObs=numeric(max(sam@control@obs.vars,na.rm=T)+1)-.35
+  ret$logSdLogTotalObs=numeric(sum(sam@control@cor.obs.Flag %in% c("ALN")))
+  ret$transfIRARdist=if(all(is.na(sam@control@cor.obs)))numeric(0) else numeric(max(sam@control@cor.obs,na.rm=TRUE)+1)+0.05
+  nbyfleet = (sam@control@cor.obs.Flag=="US")*(sam@control@range["max"]-sam@control@range["min"]+1-(sam@control@cor.obs.Flag=="ALN"))
+  ret$sigmaObsParUS=numeric(sum(nbyfleet*(nbyfleet-1)/2,na.rm=TRUE))
+  ret$rec_loga=if(sam@control@srr==0){numeric(0)}else{numeric(1)}
+  ret$rec_logb=if(sam@control@srr==0){numeric(0)}else{numeric(1)}
+  ret$itrans_rho=unlist(lapply(as.list(sam@control@cor.F),function(x){if(x==0){ ret <- numeric()} else { ret <- numeric(1)+.5}; return(ret)}))
+  ret$rhop = if(length(sam@control@logP.vars)>0){0.5}else{numeric(0)}
+  ret$logScale=if(sam@control@scaleNoYears==0){numeric(0)}else{numeric(max(sam@control@scalePars,na.rm=T)+1)}
+  ret$logitReleaseSurvival=if(any(sam@control@fleets==5)){stop("Fleet type 5 FLSAM2parameters not implemented")
+                           }else{numeric(0)}
+  ret$logitRecapturePhi=if(any(sam@control@fleets==5)){stop("Fleet type 5 FLSAM2parameters not implemented")
+                        }else{numeric(0)}
+  ret$logAlphaSCB = if(length(sam@control@logP.vars)>0){sam@params[grep("logAlphaSCB",sam@params$name),"value"]}else{numeric(0)}
+  ret$logF=matrix(0, nrow=max(sam@control@states,na.rm=T)+1,ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1)
+  ret$logN=matrix(0, nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1)
+  if(any(sam@control@fleets==6)){
+    idxPart <- which(sam@control@fleets==6)
+    ret$logPS=matrix(0, nrow=length(sam@control@logP.vars), ncol=ncol(sam@components))
+  } else {
+    ret$logPS=numeric()
+  }
+}
 
+#- Move all estimated parameters from sam to a par object
+FLSAM2par <- function(sam){
+  ret               <- list()
+  parNames          <- unique(sam@params$name)
+  if("logFpar" %in% parNames)
+    ret$logFpar       <- subset(sam@params,name=="logFpar")$value
+  if("logQpow" %in% parNames)
+    ret$logQpow       <- subset(sam@params,name=="logQpow")$value
+  if("logSdLogFsta" %in% parNames)
+    ret$logSdLogFsta  <- subset(sam@params,name=="logSdLogFsta")$value
+  if("logSdLogN" %in% parNames)
+    ret$logSdLogN     <- subset(sam@params,name=="logSdLogN")$value
+  if("logSdLogP" %in% parNames)
+    ret$logSdLogP     <- subset(sam@params,name=="logSdLogP")$value
+  if("logSdLogObs" %in% parNames)
+    ret$logSdLogObs   <- subset(sam@params,name=="logSdLogObs")$value
+  if("logSdLogTotalObs" %in% parNames)
+    ret$logSdLogTotalObs  <- subset(sam@params,name=="logSdLogTotalObs")$value
+  if("transfIRARdist" %in% parNames)
+    ret$transfIRARdist    <- subset(sam@params,name=="transfIRARdist")$value
+  if("rec_loga" %in% parNames)
+    ret$rec_loga      <- subset(sam@params,name=="rec_loga")$value
+  if("rec_logb" %in% parNames)
+    ret$rec_logb      <- subset(sam@params,name=="rec_logb")$value
+  if("itrans_rho" %in% parNames)
+    ret$itrans_rho    <- subset(sam@params,name=="itrans_rho")$value
+  if("rhop" %in% parNames)
+    ret$rhop          <- subset(sam@params,name=="rhop")$value
+  if("logScale" %in% parNames)
+    ret$logScale      <- subset(sam@params,name=="logScale")$value
+  if("logAlphaSCB" %in% parNames)
+    ret$logAlphaSCB   <- sam@params[grep("logAlphaSCB",sam@params$name),"value"]
+  if("logF" %in% parNames)
+    ret$logF          <- matrix(subset(sam@params,name=="logF")$value, nrow=max(sam@control@states,na.rm=T)+1,ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1)
+  if("logN" %in% parNames)
+    ret$logN          <- matrix(subset(sam@params,name=="logN")$value, nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1)
+  if("logPS" %in% parNames)
+    ret$logPS         <- matrix(subset(sam@params,name=="logPS")$value, nrow=length(sam@control@logP.vars), ncol=ncol(sam@components))
 
-
-
+return(ret)}

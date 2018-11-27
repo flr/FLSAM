@@ -1,11 +1,6 @@
 setMethod("plot",signature(x="FLSAM",y="missing"),
- function(x,y,futureYrs=T,...) {
-    #Extract data - ssb and fbar are easy but recs harder
-    if(x@nohess) {
-     stop(paste("SAM has been run with the nohess=TRUE option - in this case it",
-          "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
-          "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAM>)"))
-    }
+ function(x,y,futureYrs=T,what=c("ssb","fbar","rec"),...) {
+    #Extract data
     ssb.dat <- ssb(x)
     ssb.dat$name <- "Spawning stock biomass"
     rec.dat <- rec(x)
@@ -13,25 +8,25 @@ setMethod("plot",signature(x="FLSAM",y="missing"),
     rec.dat$age <- NULL
     fbar.dat <- fbar(x)
     fbar.dat$name <- "Fishing mortality"
-    plot.dat    <- rbind(ssb.dat, fbar.dat,rec.dat) 
+    plot.dat    <- rbind(ssb.dat, fbar.dat,rec.dat)
     plot.dat$name <- factor(plot.dat$name,
                        levels=c("Spawning stock biomass","Fishing mortality","Recruitment"))
     if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% range(x)["minyear"]:(range(x)["maxyear"]-1))
     #Plot it
-    xyplot(value+ubnd+lbnd~year|name,data=plot.dat,...,
-              prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
-              main=list(x@name,cex=0.9),
-              ylab=rev(c("SSB","Fbar","Rec")),xlab="Year",
-              layout=c(1,3),as.table=TRUE,
-              panel=function(...) {
-                   panel.grid(h=-1,v=-1)
-                   arg <- list(...)
-                   d<- split(data.frame(x=arg$x,y=arg$y),arg$groups[arg$subscripts])
-                   panel.polygon(c(d$ubnd$x,rev(d$lbnd$x)),c(d$ubnd$y,rev(d$lbnd$y)),
-                      col="grey",border=NA)
-                   panel.xyplot(d$value$x,d$value$y,col="black",lwd=2,type="l")
-                     },
-              scales=list(alternating=1,y=list(relation="free",rot=0)))
+    xyplot(value+ubnd+lbnd~year|name,data=plot.dat,#...,
+                  prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
+                  main=list(x@name,cex=0.9),
+                  ylab=rev(c("SSB","Fbar","Rec")),xlab="Year",
+                  layout=c(1,3),as.table=TRUE,
+                  panel=function(...) {
+                       panel.grid(h=-1,v=-1)
+                       arg <- list(...)
+                       d<- split(data.frame(x=arg$x,y=arg$y),arg$groups[arg$subscripts])
+                       panel.polygon(c(d$ubnd$x,rev(d$lbnd$x)),c(d$ubnd$y,rev(d$lbnd$y)),
+                          col="grey",border=NA)
+                       panel.xyplot(d$value$x,d$value$y,col="black",lwd=2,type="l")
+                         },
+                  scales=list(alternating=1,y=list(relation="free",rot=0)))
 })
 
 setMethod("plot",signature(x="FLSAM",y="FLSAM"),
@@ -41,11 +36,6 @@ setMethod("plot",signature(x="FLSAM",y="FLSAM"),
 
 setMethod("plot",signature(x="FLSAMs",y="missing"),
  function(x,y,main="",futureYrs=T,...) {
-    if(any(sapply(x,function(a) a@nohess))) {
-     stop(paste("At least one element of the FLSAMs object has been run with the nohess=TRUE option - in this case it",
-          "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
-          "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAMs>)"))
-    }
     #Extract data - ssb and fbar are easy but recs harder
     ssb.dat <- ssb(x)
     if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
@@ -75,11 +65,6 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
 
 setMethod("plot",signature(x="FLSAMs",y="FLStock"),
  function(x,y,main="",futureYrs,...) {
-    if(any(sapply(x,function(a) a@nohess))) {
-     stop(paste("At least one element of the FLSAMs object has been run with the nohess=TRUE option - in this case it",
-          "is not possbile to calculate SSB or Fbar. To view a plot of these values,",
-          "please update the corresponding stock object and plot it e.g. plot(<FLStock> + <FLSAMs>)"))
-    }
     #extract data from FLSAMs first
     ssb.dat <- ssb(x)
     if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
@@ -135,13 +120,40 @@ setMethod("plot",signature(x="FLStock",y="FLSAMs"),
     plot(y,x,...)
 })
 
+#Components plot
+comp.plot <- function(sam){
+  require(RColorBrewer)
+  if(length(sam@components)==0) stop("No component information in assessment output")
+  yrs <- as.numeric(range(dimnames(sam@components)$years)[1]):as.numeric(range(dimnames(sam@components)$years)[2])
+  plot(0,0,type="n",xlim=range(yrs),ylim=c(0,1),yaxs="i",xaxs="i",xlab="Year",ylab="Fraction")
+  area.plot.dat <- apply(sam@components,2,function(x) 1-cumsum(c(0,x))/sum(x))
+  cols<- rev(brewer.pal(nrow(sam@components),"PuOr"))
+  for(i in 1:nrow(sam@components)) {
+    x.to.plot <- c(yrs,rev(yrs))
+    y.to.plot <- c(area.plot.dat[i,],rev(area.plot.dat[i+1,]))
+    polygon(x.to.plot,y.to.plot,col=cols[i])
+  }
+  legend("topleft",bg="white",legend=rownames(sam@components),pch=22,pt.bg=cols,pt.cex=2)
+}
+
+fpart.plot <- function(sam){
+  f.dat <- f(sam)
+  fbars <- sam@control@range["minfbar"]:sam@control@range["maxfbar"]
+  f.dat <- subset(f.dat,age %in% fbars)
+  f.dat <- aggregate(f.dat[,"value"],by=as.list(f.dat[,c("fleet","year")]),FUN=mean,na.rm=T)
+  xyplot(x ~ year,data=f.dat,groups=fleet,type="b",pch=19,
+         main=list(sam@name,cex=0.9),
+         ylab="Fbar-partial",xlab="Year",
+         panel=function(...) {
+          panel.grid(h=-1,v=-1)
+          panel.xyplot(...)
+         },
+         scales=list(alternating=1,y=list(relation="free",rot=0)))
+}
+
 #Correlation plot
 cor.plot <- function(sam,cols=c("red","white","blue"),full=FALSE) {
-   if(sam@nohess) {
-    stop(paste("Cannot generate a correlation plot for an FLSAM object that has been run",
-               "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
-               "try again."))}
-   n.coefs <- nrow(coef(sam))   
+   n.coefs <- nrow(coef(sam))
    cor.mat <- cov2cor(sam@vcov)
    if(!full) {cor.mat <- cor.mat[1:n.coefs,1:n.coefs]} #Don't show the full matrix 
    var.names <- colnames(cor.mat)
@@ -166,10 +178,6 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
                       margin.plots=TRUE, show.estimate=TRUE,
                       n=100, pch=".", alpha=0.05, show.grid=TRUE,
                       n.grid=50, contour.args=list(),...){
-   if(object@nohess) {
-    stop(paste("Cannot generate an otolith plot for an FLSAM object that has been run",
-               "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
-               "try again."))}
 
   require(MASS)
   debug <- FALSE
@@ -187,17 +195,21 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
   if(n > 200){
     Fbar.all  <- numeric()
     SSB.all   <- numeric()
-    paramvalue<- object@params$value
-    objectvcov   <- object@vcov
+    paramvalue<- subset(object@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
+                                                 "logCatchByFleet","logfbar","logR","logssb","logtsb","comps"))
     for(i in 1:ceiling(n/200)){
-      d <- mvrnorm(n=200,paramvalue, objectvcov)
+      d <- mvrnorm(n=200,paramvalue$value, object@rescov)
+      colnames(d) <- paramvalue$name
       Fbar.all  <- rbind(Fbar.all,d[,colnames(d)=="logfbar"])
       SSB.all   <- rbind(SSB.all,d[,colnames(d)=="logssb"])
     }
     Fbar.all  <- Fbar.all[1:n,]
     SSB.all   <- SSB.all[ 1:n,]
   } else {
-      d <- mvrnorm(n=n,object@params$value, object@vcov)
+      pars <- subset(object@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
+                                                 "logCatchByFleet","logfbar","logR","logssb","logtsb","comps"))
+      d <- mvrnorm(n=n,pars$value, object@rescov)
+      colnames(d) <- pars$name
       Fbar.all <- d[,colnames(d)=="logfbar"]
       SSB.all <-  d[,colnames(d)=="logssb"]
     }
@@ -318,16 +330,29 @@ obsvar.plot <- function(sam){
 
 #-CV versus observation variance plot
 obscv.plot  <- function(sam){
-   if(sam@nohess) {
-    stop(paste("Cannot generate a cv plot for an FLSAM object that has been run",
-               "with the nohess=TRUE option. Please rerun the model with nohess=FALSE and",
-               "try again."))}
+
   obv <- obs.var(sam)
   obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
   obv <- obv[order(obv$value),]
   plot(obv$value,obv$CV,xlab="Observation variance",ylab="CV of estimate",log="x",
     pch=16,col=obv$fleet,main="Observation variance vs uncertainty")
   text(obv$value,obv$CV,obv$str,pos=4,cex=0.75,xpd=NA)
+}
+
+#-Observation correlation plot
+obscor.plot <- function(sam){
+  require(ellipse)
+  oc <- sam@obscov
+  idx <- apply(sam@control@cor.obs,1,function(x){any(x>=0,na.rm=T)})
+  for(i in 1:length(oc)){
+    ridx <- which(!is.na(sam@control@cor.obs[idx,]))
+    dimnames(oc[[i]])[[1]] <- ridx[1]:(nrow(oc[[i]])+ridx[1]-1)
+    dimnames(oc[[i]])[[2]] <- dimnames(oc[[i]])[[1]]
+  }
+  cols <- ifelse(length(oc)==1,1,2)
+  par(mfrow=c(ceiling(length(oc)/2),cols))
+  for(i in 1:length(oc))
+    plotcorr(cov2cor(oc[[i]]),main=names(oc)[i])
 }
 
 #-Processes error plot: expressed as deviation in type = "mort","n","tsb"
@@ -428,5 +453,74 @@ procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
       }
 }
       
+#- Plot the retrospective residual pattern in any fleet
+retroResiduals <- function(x,fleet,yrs){
+
+res <- lapply(x,residuals)
+res <- lapply(res,function(y){y[which(y$fleet == fleet & y$year %in% yrs),]})
+res <- lapply(res,function(y){cbind(y,retro=max(y$year))})
+res <- do.call(rbind,res)
+
+print(xyplot(std.res ~ age | as.factor(year),data=res,type="l",groups=retro,
+auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Residual pattern in",fleet,"at age"),
+ylab="Standardized residuals",xlab="Ages",
+panel = panel.superpose,
+ panel.groups = function(...) {
+    panel.grid(v=-1,h=-1,lty=3)
+    panel.xyplot(...)
+},
+scales=list(alternating=1,y=list(relation="free",rot=0))))
+}
+#- Plot the retrospective selectivity pattern
+retroSelectivity <- function(x,yrs){
+
+      res <- lapply(x,f)
+      res <- lapply(res,function(y){y[which(y$year %in% (max(y$year)-20):(max(y$year)-1)),]})
+      res <- lapply(res,function(y){cbind(y,retro=max(y$year))})
+      res <- do.call(rbind,res)
+
+      res <- subset(res,year %in% yrs)
+
+      print(xyplot(value ~ an(age) | as.factor(year),data=res,type="l",groups=retro,
+      auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Retrospective pattern in F at age"),
+      ylab="F",xlab="Ages",
+      panel = panel.superpose,
+       panel.groups = function(...) {
+          panel.grid(v=-1,h=-1,lty=3)
+          panel.xyplot(...)
+      },
+      scales=list(alternating=1,y=list(relation="free",rot=0))))
+}
+
+retroParams <- function(x){
+  retroPars     <- lapply(x,params)
+  subretroPars  <- lapply(retroPars,function(y){return(subset(y,name %in% c("logFpar","lowQpow","logSdLogFsta","logSdLogN","logSdLogObs","rec_loga",
+                                                                            "rec_logb","rho","logScale","logScaleSSB","logPowSSB","logSdSSB")))})
+  subretroPars  <- lapply(as.list(1:length(subretroPars)),function(y){return(cbind(year=names(subretroPars)[y],subretroPars[[y]]))})
+  subretroPars  <- lapply(subretroPars,function(y){
+                          lapply(as.list(names(table(ac(y$name)))),
+                                 function(z){tmpy <- subset(y,name==z)
+                                             tmpy$nameOrig <- tmpy$name
+                                             if(nrow(tmpy)>1)
+                                              tmpy$name <- paste(tmpy$name,1:nrow(tmpy))
+                                             return(tmpy)})})
+  subretroPars  <- do.call(rbind,lapply(subretroPars,function(y){do.call(rbind,y)}))
+
+  print(xyplot(exp(value) ~ an(year) | as.factor(nameOrig),data=subretroPars,groups=name,scale=list(y="free"),type="b",pch=19,xlab="Assessment year",ylab="Parameter value"))
+  }
+
+#kobeplot
+plotkobe <- function(object,fmsy=1,bmsy=1,nits=1000,prob=c(0.95),ref.year=NULL){
+  if(is.null(ref.year)) ref.year <- dims(NSH.sam)$maxyear
+  require(kobe)
+
+  yft <- kobeFLSAM(object,bmsy=bmsy,fmsy=fmsy,what="trks",prob=prob,nits=nits)
+  pts <- kobeFLSAM(object,bmsy=bmsy,fmsy=fmsy,what="pts",prob=prob,nits=nits)
+  kobePhase(subset(yft,quantity=="value"))+
+    #geom_point(aes(stock,harvest),data=pts,lty=2,pch=19,col="blue",cex=0.5) +
+    geom_path(aes(stock,harvest)) +
+    geom_point(aes(stock,harvest),data=subset(yft,year==ref.year & quantity=="value"),pch=19,cex=2)
+}
+
       
         

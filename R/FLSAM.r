@@ -1,154 +1,242 @@
 setClass("FLSAM",
          representation(
            "FLComp",
-           control  = "FLSAM.control",
-           nohess   = "logical",
-           nopar    = "integer",
-           n.states  = "integer",
-           states = "matrix",
-           nlogl    = "numeric",
-           maxgrad  = "numeric",
-           vcov     = "matrix",
-           params   = "data.frame",
-           stock.n  = "FLQuant",
-           harvest  = "FLQuant",
-           residuals = "data.frame",
-           info     = "matrix"),
+           control    = "FLSAM.control",
+           nopar      = "integer",
+           n.states   = "integer",
+           states     = "matrix",
+           components = "matrix",
+           nlogl      = "numeric",
+           vcov       = "matrix",
+           rescov     = "matrix",
+           obscov     = "list",
+           params     = "data.frame",
+           stock.n    = "FLQuant",
+           harvest    = "FLQuant",
+           residuals  = "data.frame",
+           info       = "matrix"),
          prototype=prototype(),
          validity=function(object){
            # Everything is fine
            return(TRUE)}
 )
 
-
-
-FLSAM <-function(stck,tun,ctrl,run.dir=tempdir(),batch.mode=FALSE,pin.sam=NULL) {
+FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NULL,...){
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
-  #General Setup
-  inputSAM      <- new("FLSAMinput")
-  inputSAM@stck <- stck
-  inputSAM@tun  <- tun
-  inputSAM@ctrl <- ctrl
+  if(class(stcks)=="FLStock") stcks <- FLStocks(residual=stcks)
+  data  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
+  conf  <- ctrl2conf(ctrl,data)
+  par   <- defpar(data,conf)
+  if(!is.null(starting.values))
+    par <- updateStart(par,FLSAM2par(starting.values))
 
-  #- Check validity of objects
-  if(any(c(validObject(stck),validObject(tun),validObject(ctrl),validObject(inputSAM))==F)) stop("Validity check failed")
-  
-  #Write output files
-  FLR2SAM(stck,tun,ctrl,run.dir,pin.sam)
+  fit   <- sam.fit(data,conf,par,sim.condRE=ctrl@simulate,...)
 
-  #Run SAM
-  if(is.null(pin.sam)==TRUE){
-    rtn <- runSAM(ctrl, run.dir)
+  #- Check if you want variance and covariance info
+  #- Get FLSAM object back
+  if(return.fit){
+    res <- fit
   } else {
-    rtn <- runSAM(ctrl,run.dir,use.pin=TRUE)
-  }
-  if(rtn!=0) {
-    if(batch.mode) {
-      return(NULL)
-    } else {
-      stop(sprintf("An error occurred while running ADMB. Return code %s.",rtn))
-    }
+    res <- try(SAM2FLR(fit,ctrl))
   }
 
-  #Read the results back in
-  res <- SAM2FLR(ctrl=ctrl,run.dir=run.dir)
-
-  #SAM2FLR is intended to just read in the results of a SAM run  
-  #We then need to upgrade that by adding the appropriate FLR objects etc
-
-  #Set the levels in the residuals
-  levels(res@residuals$fleet) <- names(ctrl@fleets)
-  
   return(res)
 }
 
-#---------------------------------------------------
-# We're ready! Run the executable
-#---------------------------------------------------
-runSAM <- function(ctrl,run.dir=tempdir(),use.pin=FALSE){
-  admb.stem <- .get.admb.stem(ctrl) 
-  admb.args <-  "-nr 2 -noinit -iprint 5"
-  if(ctrl@nohess) {admb.args <- paste(admb.args,"-nohess")}
-  if(use.pin) {
-     admb.args <- paste(admb.args,"-usepin")
-  } else {
-     #Pin files are a contaigon if you don't want them!
-     unlink(file.path(run.dir,sprintf("%s.pin",admb.stem)))
-  }
 
-  #If binary is specified, use it. Otherwise copy it from
-  #the package distribution
-  if(length(ctrl@sam.binary)!=0) {  
-    admb.exec <- ctrl@sam.binary
-    if(!file.exists(admb.exec)) {stop(sprintf("Cannot find specified sam executable (binary) file: %s",admb.exec))}
-  } else if (.Platform$OS.type=="unix") {
-    admb.exec <- file.path(system.file("bin", "linux", package="FLSAM",
-                   mustWork=TRUE), admb.stem)
-  } else if (.Platform$OS.type == "windows") {
-    admb.exec <- file.path(system.file("bin", "windows", package="FLSAM", mustWork=TRUE),
-      sprintf("%s.exe",admb.stem))
-  } else {
-    stop(sprintf("Platform type, %s, is not currently supported.",R.version$os))
-  }
-  file.copy(admb.exec, run.dir)
+FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam=F,...){
 
-  #Run!
-  cmd <- sprintf("./%s %s" ,basename(admb.exec),admb.args)
-  olddir <- setwd(run.dir)
-  rtn <- system(cmd)
-  setwd(olddir)
-  return(rtn)
+  #---------------------------------------------------
+  # Output FLR objects into a format for SAM to read
+  #---------------------------------------------------
+  if(class(stcks)=="FLStocks") stop("Not implemented for multi-fleet yet")
+  if(class(stcks)=="FLStock") stcks <- FLStocks(residual=stcks)
+  if(any(unlist(lapply(stcks,function(x)dims(x)$iter))<=1) & any(unlist(lapply(tun,function(x)dims(x)$iter))<=1))
+    stop("Running in MSE mode means supplying FLStock and FLIndices with more iters than 1. Use FLSAM() instead")
+
+  #Count iters
+  iters <- unlist(lapply(stcks,function(x)dims(x)$iter))
+
+  #Turn residuals off
+  ctrl@residuals <- FALSE
+
+  #get datasets ready
+  data  <- conf <- par <- list()
+
+  if("doParallel" %in% (.packages()))
+    detach("package:doParallel",unload=TRUE)
+  if("foreach" %in% (.packages()))
+    detach("package:foreach",unload=TRUE)
+  if("iterators" %in% (.packages()))
+    detach("package:iterators",unload=TRUE)
+
+
+  require(doParallel)
+  ncores <- detectCores()-1
+  ncores <- ifelse(iters<ncores,iters,ncores)
+  cl <- makeCluster(ncores) #set up nodes
+  clusterEvalQ(cl,library(FLSAM))
+  clusterEvalQ(cl,library(stockassessment))
+  registerDoParallel(cl)
+
+
+  data <- foreach(i = 1:iters) %dopar% FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),FLIndices(lapply(tun, function(x) iter(x,i))),ctrl@sumFleets,catch.vars)
+  conf <- foreach(i = 1:iters) %dopar% ctrl2conf(ctrl,data[[i]])
+  par  <- foreach(i = 1:iters) %dopar% stockassessment::defpar(data[[i]],conf[[i]])
+  checkUpdate <- function(i,iSam,iPar){
+                 if(class(iSam)!="logical"){
+                   ret <- updateStart(iPar,FLSAM2par(iSam)) } else {
+                   ret <- iPar }
+                 return(ret)}
+  if(!is.null(starting.sam))
+    par <- foreach(i = 1:iters) %dopar% checkUpdate(i,starting.sam[[i]],par[[i]])
+
+#  for(i in 1:iters){
+#    iTun <- tun
+#    for(j in 1:length(tun))
+#      iTun[[j]]<- iter(iTun[[j]],i)
+#    data[[i]]  <- FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),iTun,ctrl@sumFleets,catch.vars)
+#    conf[[i]]  <- ctrl2conf(ctrl,data[[i]])
+#    par[[i]]   <- stockassessment::defpar(data[[i]],conf[[i]])
+#    if(!is.null(starting.sam)){
+#      if(class(starting.sam[[i]])!="logical")
+#        par[[i]] <- updateStart(par[[i]],FLSAM2par(starting.sam[[i]]))
+#    }
+#  }
+
+
+  #- First run without staring values simply because it's quicker
+#  if(!force.starting.sam){
+#    system.time(res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],defpar(data[[i]],conf[[i]]),silent=T))),...))
+#  } else {
+  res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T,...))
+#  }
+
+  #- Check for failed runs and do those with starting conditions
+#  failed <- which(is.na(unlist(lapply(res,function(x){return(unlist(x$sdrep)[1])}))))
+#  if(length(failed)>0 & !is.null(starting.sam)){
+#    resFailed <- foreach(i = failed) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T,...))
+#    res[failed] <- resFailed
+#  }
+
+  #- Return sam objects
+  if(return.sam){
+    resSAM <- list()
+    for(i in 1:iters){
+      if(!is.na(unlist(res[[i]]$sdrep)[1])){
+        resSAM[[i]] <- SAM2FLR(res[[i]],ctrl)
+      } else {
+        resSAM[[i]] <- NA
+      }
+    }
+    resSAM <- as(resSAM,"FLSAMs")
+  }
+  stopCluster(cl)
+  if("doParallel" %in% (.packages()))
+    detach("package:doParallel",unload=TRUE)
+  if("foreach" %in% (.packages()))
+    detach("package:foreach",unload=TRUE)
+  if("iterators" %in% (.packages()))
+    detach("package:iterators",unload=TRUE)
+  if(!return.sam){
+    for(i in 1:iters){
+      if(!is.na(unlist(res[[i]]$sdrep)[1])){
+        stcks[["residual"]]@stock.n[,,,,,i] <- exp(res[[i]]$rep$logN[,1:dims(stcks[["residual"]]@stock.n)$year])
+        stcks[["residual"]]@harvest[,,,,,i] <- res[[i]]$rep$totF[,1:dims(stcks[["residual"]]@harvest)$year]
+      } else {
+        stcks[["residual"]]@stock.n[,,,,,i] <- NA
+        stcks[["residual"]]@harvest[,,,,,i] <- NA
+      }
+    }
+  }
+  if(return.sam)
+    ret <- resSAM
+  if(!return.sam)
+    ret <- stcks
+  return(ret)
 }
 
- 
-#---------------------------------------------------
-# Validity checks
-#---------------------------------------------------
-setClass("FLSAMinput",
-    representation(
-      "list",
-      stck     = "FLStock",
-      ctrl     = "FLSAM.control",
-      tun      = "FLIndices"),
-  	prototype=prototype(),
-  	validity=function(object){
-                	# Everything is fine
-                	return(TRUE)}
-)
+getLowerBounds<-function(parameters){
+    list(sigmaObsParUS=rep(-10,length(parameters$sigmaObsParUS)))
+}
 
-setValidity("FLSAMinput",
-  function(object){
+getUpperBounds<-function(parameters){
+    list(sigmaObsParUS=rep(10,length(parameters$sigmaObsParUS)))
+}
 
-  #- Pull structure apart
-  stck <- object@stck
-  ctrl <- object@ctrl
-  tun  <- object@tun
-  
-  #- Check ranges between stck and ctrl
-  idxstock <- grep("maxyear",names(range(stck))); idxctrl <- grep("maxyear",names(ctrl@range))
-  if(any(apply(cbind(range(stck)[-idxstock],ctrl@range[-idxctrl]),1,duplicated)[2,]==F)) stop("Range in stock object different from range in control object")
-  if(ctrl@range[idxctrl] > (range(stck)[idxstock]+1)) stop("Year range in control larger than in stock+1. Only 1 year ahead tuning series are implemented")
+clean.void.catches<-function(dat, conf){
+  cfidx <- which(dat$fleetTypes==0)
+  aidx <- unique(dat$aux[dat$aux[,2]%in%cfidx,3]-conf$minAge+1)
+  faidx <- as.matrix(expand.grid(cfidx, aidx))
+  faidx <- faidx[which(conf$keyLogFsta[faidx]== -1),,drop=FALSE]
+  rmidx <- paste0(dat$aux[,2],"x",dat$aux[,3]-conf$minAge+1) %in%  paste0(faidx[,1],"x",faidx[,2])
+  dat$aux <- dat$aux[!rmidx,]
+  dat$logobs <- dat$logobs[!rmidx]
+  dat$weight <- dat$weight[!rmidx]
+  dat$nobs<-sum(!rmidx)
+  dat$minAgePerFleet<-as.integer(tapply(dat$aux[,"age"], INDEX=dat$aux[,"fleet"], FUN=min))
+  dat$maxAgePerFleet<-as.integer(tapply(dat$aux[,"age"], INDEX=dat$aux[,"fleet"], FUN=max))
+  newyear<-min(as.numeric(dat$aux[,"year"])):max(as.numeric(dat$aux[,"year"]))
+  newfleet<-min(as.numeric(dat$aux[,"fleet"])):max(as.numeric(dat$aux[,"fleet"]))
+  mmfun<-function(f,y, ff){idx<-which(dat$aux[,"year"]==y & dat$aux[,"fleet"]==f); ifelse(length(idx)==0, NA, ff(idx)-1)}
+  dat$idx1<-outer(newfleet, newyear, Vectorize(mmfun,c("f","y")), ff=min)
+  dat$idx2<-outer(newfleet, newyear, Vectorize(mmfun,c("f","y")), ff=max)
+  dat
+}
 
-  #- Check if number of fleets specified matches stck and tun
-  if(length(ctrl@fleets) != (length(dimnames(stck@catch)$area)+length(tun))) stop("Number of fleets specified does not match stock and tun object")
-  if(all(ctrl@fleets %in% c(0,3))) stop("Assessment cannot (currently) be run with only catch and SSB index, other survey fleet needs to be specified too.
-                                         Contact the developers of SAM and FLSAM if you require this addition")
-  
-  #- Check if age dimensions match in stck ctrl and tun
-  rng <- range(do.call(rbind,lapply(tun,function(x){cbind(range(x)["min"],range(x)["max"])})),na.rm=T)
-  if(rng[1] < range(stck)["min"] | rng[2] > range(stck)["max"]) stop("Age range in tuning series outside age range stock")
-  
-  #- Check if year dimensions match in stck ctrl and tun
-  rng <- range(do.call(rbind,lapply(tun,function(x){cbind(range(x)["minyear"],range(x)["maxyear"])})),na.rm=T)
-  if(rng[2] > (range(stck)["maxyear"]+1)) stop("Year range in tuning series larger than in stock+1. Only 1 year ahead tuning series are implemented")
-  if(rng[1] < range(stck)["minyear"]) stop("Year range in tuning series smaller than in stock")
 
-  #- Check if iter dimension is not larger than 1
-  if(dims(stck)$iter > 1 | any(unlist(lapply(tun,function(x)return(dims(x)$iter)))>1)) stop("Only 1 iteration is allowed")
+sam.fitfast <- function(data, conf, parameters, lower=getLowerBounds(parameters), upper=getUpperBounds(parameters), sim.condRE=TRUE, ...){
+
+  data <- clean.void.catches(data,conf)
+  tmball <- c(data, conf, simFlag=as.numeric(sim.condRE))
+  if(is.null(tmball$resFlag)){tmball$resFlag <- 0}
+  nmissing <- sum(is.na(data$logobs))
+  parameters$missing <- numeric(nmissing)
+  if(length(conf$keyVarLogP)>1){
+    ran <- c("logN", "logF","logPS", "missing")
+    obj <- TMB::MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
+  } else {
+    ran <- c("logN", "logF", "missing")
+    obj <- TMB::MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
   }
-)
+
+  lower2<-rep(-Inf,length(obj$par))
+  upper2<-rep(Inf,length(obj$par))
+  for(nn in names(lower)) lower2[names(obj$par)==nn]=lower[[nn]]
+  for(nn in names(upper)) upper2[names(obj$par)==nn]=upper[[nn]]
+
+  opt <- try(nlminb(obj$par, obj$fn,obj$gr ,control=list(trace=0, eval.max=1000, iter.max=500),lower=lower2,upper=upper2))
+  rep <- obj$report()
+#  sdrep <- TMB::sdreport(obj,opt$par)
+#
+#  # Last two states
+#  idx <- c(which(names(sdrep$value)=="lastLogN"),which(names(sdrep$value)=="lastLogF"))
+#  sdrep$estY <- sdrep$value[idx]
+#  sdrep$covY <- sdrep$cov[idx,idx]
+#
+#  idx <- c(which(names(sdrep$value)=="beforeLastLogN"),which(names(sdrep$value)=="beforeLastLogF"))
+#  sdrep$estYm1 <- sdrep$value[idx]
+#  sdrep$covYm1 <- sdrep$cov[idx,idx]
+#
+#  pl <- as.list(sdrep,"Est")
+#  plsd <- as.list(sdrep,"Std")
+#
+#  #sdrep$cov<-NULL # save memory
+#
+#  fit <- list(sdrep=sdrep, pl=pl, plsd=plsd, data=data, conf=conf, opt=opt, obj=obj, rep=rep, low=lower2, hig=upper2)
+
+  if(class(opt)!="try-error"){
+    sdrep <- list(par.fixed=length(opt$par),cov.fixed=matrix(NA),cov=matrix(NA))
+    pl    <- c(lapply(split(opt$par,names(opt$par)),unname),list(logPS=rep$logP),list(logN=rep$logN),list(logF=log(rep$totF[-which(duplicated(conf$keyLogFsta[1,])),])))
+  } else {
+    sdrep <- NA
+    pl    <- NA
+  }
+  fit <- list(sdrep=sdrep, pl=pl, plsd=NA, data=data, conf=conf, opt=opt, obj=obj, rep=rep, low=lower2, hig=upper2)
+return(fit)}
+
 
 # class
 setClass("FLSAMs", contains="FLlst")

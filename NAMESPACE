@@ -1,5 +1,13 @@
 import("FLCore")
 import("utils")
+importFrom(stockassessment,defcon)
+importFrom(stockassessment,defpar)
+importFrom(stockassessment,setup.sam.data)
+importFrom(stockassessment,sam.fit)
+importFrom(TMB,MakeADFun)
+importFrom(TMB,oneStepPredict)
+importFrom(TMB,sdreport)
+importFrom(ellipse,plotcorr)
 exportClasses(
     "FLSAM",
     "FLSAMs",
@@ -7,5 +15,16 @@ exportClasses(
 export(
     "FLSAM",
     "FLSAM.control",
+    "retro",
+    "looi",	
     "kobeFLSAM")
 exportPattern("^[^\\.]")
+importFrom("graphics", "abline", "axis", "barplot", "contour", "grid",
+  "layout", "lcm", "legend", "lines", "par", "points",
+  "polygon", "text", "title")
+importFrom("grDevices", "colorRampPalette")
+importFrom("stats", "acf", "aggregate", "approxfun", "as.ts",
+  "cov2cor", "density", "loess.smooth", "na.omit", "na.pass",
+  "nlminb", "pchisq", "qqline", "qqnorm")
+importFrom("methods", "as", "is", "new", "slot", "slot<-", "slotNames",
+  "validObject")

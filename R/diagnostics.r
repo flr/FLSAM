@@ -19,7 +19,12 @@ residual.diagnostics <- function(x,title=x@name) {
 
 # split dataframe by age and survey (fleet)
   index.res.l   <- split(index.res,list(index.res$age,index.res$fleet),drop=TRUE)
-
+  
+# remove non-finite numbers
+  index.res.l   <- lapply(index.res.l,function(y){
+                                                  y[!is.finite(y$log.mdl),"log.mdl"] <- NA
+                                                  y[!is.finite(y$std.res),"std.res"] <- NA
+                                                  return(y)})
 
 #Setup plots
   oldpar <-  par(mfrow=c(3,2),las=0,oma=c(0,0,3,0),mgp=c(1.75,0.5,0),
@@ -37,8 +42,8 @@ residual.diagnostics <- function(x,title=x@name) {
 
 #Scale index axes
   idx.rng       <-  range(c(index.res.l[[i]]$obs,index.res.l[[i]]$mdl),na.rm=TRUE)
-  idx.lim       <-  range(c(0,idx.rng))
-  idx.exp       <-  floor(log10(max(pretty(idx.lim)))/3)*3
+  idx.lim       <-  range(c(0,idx.rng),na.rm=T)
+  idx.exp       <-  floor(log10(max(pretty(idx.lim),na.rm=T))/3)*3
   idx.div       <-  10^idx.exp
   idx.label     <-  ifelse(idx.exp>1,paste("values ","[","10^",idx.exp,"]",
                     sep=""),paste("values "))
@@ -47,13 +52,13 @@ residual.diagnostics <- function(x,title=x@name) {
   index.res.l[[i]]$mdl <-  index.res.l[[i]]$mdl/idx.div
   idx.rng       <-  idx.rng/idx.div
   idx.lim       <-  idx.lim/idx.div
-  idx.min       <- min(c(index.res.l[[i]]$obs,index.res.l[[i]]$mdl))
-  idx.max       <- max(c(index.res.l[[i]]$obs,index.res.l[[i]]$mdl))
+  idx.min       <- min(c(index.res.l[[i]]$obs,index.res.l[[i]]$mdl),na.rm=T)
+  idx.max       <- max(c(index.res.l[[i]]$obs,index.res.l[[i]]$mdl),na.rm=T)
   idx.lim       <- c(idx.min/1.15,ceiling(idx.max/0.12)) #scaling keeps data points clear of legend and x-axis
 
 
 # scale for residuals axes
-  res.range     <- abs(range(index.res.l[[i]]$std.res))
+  res.range     <- abs(range(index.res.l[[i]]$std.res,na.rm=T))
   res.lim       <- c(-max(res.range),max(res.range))
 
 
@@ -93,8 +98,9 @@ residual.diagnostics <- function(x,title=x@name) {
         xlab=paste("Fitted ",idx.label,sep=""),log="x")
   plt.dat <- index.res.l[[i]]
   abline(h=0)  
-  smoother <- loess.smooth(plt.dat$mdl,plt.dat$std.res)
-  lines(smoother,col="red")
+  smoother <- try(loess.smooth(plt.dat$mdl,plt.dat$std.res))
+  if(class(smoother)!="try-error")
+    lines(smoother,col="red")
   title("d) Tukey-Anscombe plot")
 
 #plot 5 Normal Q-Q plot
@@ -109,7 +115,7 @@ residual.diagnostics <- function(x,title=x@name) {
 #Plot 6 Autocorrelation function plot
   
   acf(as.ts(index.res.l[[i]]$std.res),ylab="ACF",xlab="Lag (yrs)",type=c("partial"),
-        ci.col="black",main="")
+        ci.col="black",main="",na.action=na.pass)
   legend("topright",legend=c("95% Conf. Int."),lty=c(2),pch=c(NA),horiz=TRUE,box.lty=0)
   
   title("f) Autocorrelation of Residuals")  
