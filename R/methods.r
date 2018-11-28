@@ -122,6 +122,9 @@ setMethod("+", signature(e1="FLStocks", e2="FLSAM"),
 )   # }}}
 
 
+
+
+
 #General helper function to extract a given parameter from an FLSAM object
 #and return it as a data.frame
 .extract.params <- function(object,params) {
@@ -368,42 +371,23 @@ setMethod("coefficients",signature(object="FLSAMs"),
         }
 )
 
-#if (!isGeneric("simulate")) {
-#    setGeneric("simulate", function(x,y,z,n) standardGeneric("simulate"))
-#}
-#
-#setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",n='numeric'),
-#          function(x,y,z,n=100){
-#            res   <- FLSAM(x,y,z,return.fit=T)
-#            sdrep <- sdreport(res$obj,getJointPrecision=T)
-#            sigma <- as.matrix(sdrep$jointPrecision)
-#            mu    <- c(sdrep$par.fixed,sdrep$par.random)
-#            sim   <- rmvnorm(n,mu=mu,Sigma=sigma)
-#            colnames(sim) <- rownames(sigma)
-#            rownames(sim) <- 1:n
-#          return(sim)})
-#
-#if (!isGeneric("simulate2FLSAM")) {
-#    setGeneric("simulate2FLSAM", function(sim,sam,stck) standardGeneric("simulate2FLSAM"))
-#}
-#
-#setMethod("simulateNF",signature(x=sim,y=sam,z=stck),
-#          Ns <- sim[,colnames(sim)=="logN"]
-#          Fs <- sim[,colnames(sim)=="logF"]
-#
-#          mcstck            <- propagate(stck,iter=nrow(sim))
-#          mcstck            <- window(mcstck,start=range(sam)["minyear"],end=range(sam)["maxyear"])
-#          mcstck@stock.n[]  <- NA
-#          mcstck@harvest[]  <- NA
-#
-#          matNs             <- array(NA,dim=c(dims(mcstck)$year,dims(stck)$age,nrow(sim)))
-#          for(i in 1:nrow(sim))
-#            matNs[,,i]      <- exp(Ns[i,])
-#          mcstck@stock.n[]  <- aperm(matNs,c(2,1,3))
-#          mcstck@harvest[]  <- aperm(exp(Fs[sam@control@states[grep("catch",rownames(sam@control@states)),]+1,c(2,1))
-#
-#          return(res)})
-#
+if (!isGeneric("simulate")) {
+    setGeneric("simulate", function(x,y,z,n) standardGeneric("simulate"))
+}
+
+setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",n='numeric'),
+          function(x,y,z,n=100){
+            fit   <- FLSAM(x,y,z,return.fit=T)
+            sdrep <- TMB::sdreport(fit$obj,getJointPrecision=T)
+            sigma <- as.matrix(solve(sdrep$jointPrecision))
+            mu    <- c(sdrep$par.fixed,sdrep$par.random)
+            sim   <- mvrnorm(n,mu=mu,Sigma=sigma)
+            colnames(sim) <- rownames(sigma)
+            rownames(sim) <- 1:n
+            
+            sim   <- SIM2FLR(sim,fit,z)
+          return(sim)})
+
 
 #-------------------------------------------------------------------------------
 # Extract fleet parameters
