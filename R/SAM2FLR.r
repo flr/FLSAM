@@ -99,6 +99,90 @@ SAM2FLR <- function(fit,ctrl){
   res@range   <- ctrl@range
 return(res)}
 
+SIM2FLR <- function(sim,fit,ctrl){
+  resList       <-list()
+  for(i in 1:nrow(sim)){
+    #- Create new FLSAM object and fill with ctrl elements
+    res         <- new("FLSAM")
+    res@control <- ctrl
+    res@nopar   <- length(fit$sdrep$par.fixed)
+    res@n.states<- as.integer(length(which(unique(c(ctrl@states))>=0))+ c(ctrl@range["max"] - ctrl@range["min"] + 1))
+    res@states  <- ctrl@states
+    res@nlogl   <- fit$opt$objective
+    #- Get overall vcov and the cov of the observations
+    res@vcov    <- matrix(0)
+
+    #- get parameters + sd value
+    parssummary <- data.frame(name=ac(rownames(as.data.frame(unlist(fit$pl)))),
+                                    value=           sim[i,],
+                                    std.dev=         NA)
+    parssummary$name <- ac(parssummary$name)
+    colnames(parssummary) <- c("name","value","std.dev")
+    parssummary[,1]       <- gsub('[0-9]+', '',parssummary[,1])
+    res@params  <- parssummary
+
+    res@rescov<- matrix(0)
+
+    #- Fill stock and harvest
+    res@stock.n <- FLQuant(exp(subset(res@params,name=="logN")$value),
+                                                          dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+                                                          year=ctrl@range["minyear"]:ctrl@range["maxyear"],
+                                                          unit="unique",
+                                                          season="all",
+                                                          area="unique",
+                                                          iter=1))
+
+    if(length(grep("catch",rownames(ctrl@states)))==1)
+      res@harvest <- FLQuant(exp(matrix(subset(res@params,name=="logF")$value,ncol=length(ctrl@range["minyear"]:ctrl@range["maxyear"])))[ctrl@states[grep("catch",rownames(ctrl@states)),]+1,],
+                                                          dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+                                                          year=ctrl@range["minyear"]:ctrl@range["maxyear"],
+                                                          unit="unique",
+                                                          season="all",
+                                                          area="unique",
+                                                          iter=1))
+    if(length(grep("catch",rownames(ctrl@states)))>1){
+      stop("Multifleet simulate not implemented yet")
+      defaultArray<- array(0,dim=c(length(ctrl@range["min"]:ctrl@range["max"]),
+                                    length(ctrl@range["minyear"]:ctrl@range["maxyear"]),
+                                    1,
+                                    1,
+                                    length(grep("catch",rownames(ctrl@states))),
+                                    1),
+                              dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+                                            year=ctrl@range["minyear"]:ctrl@range["maxyear"],
+                                            unit="unique",
+                                            season="all",
+                                            area=gsub("catch ","",rownames(ctrl@states[grep("catch",rownames(ctrl@states)),])),
+                                            iter=1))
+      for(iArea in 1:dim(defaultArray)[5]){
+        ages  <- ctrl@states[grep("catch",rownames(ctrl@states))[iArea],]
+        ages  <- ages[which(ages>=0)]
+        defaultArray[names(ages),,,,iArea,] <- exp(fit$pl$logF[ages+1,])
+      }
+      res@harvest <- FLQuant(defaultArray)
+      if(!all(round(c(areaSums(res@harvest)[,drop=T]/fit$rep$totF),4)==1)) warning("Partial Fs not equal to total F")
+    }
+
+
+    units(res@harvest) <- "f"
+    #- Finally some info and save
+    info        <- data.frame(FLSAM.version=packageDescription("FLSAM")$Version,
+                              FLCore.version=packageDescription("FLCore")$Version,
+                              R.version=R.version$version.string,
+                              platform=R.version$platform,
+                              run.date=Sys.time())
+    res@info    <- t(info)
+    res@name    <- ctrl@name
+    res@desc    <- ctrl@desc
+    res@range   <- ctrl@range
+    resList[[i]]<- res
+  }
+  res <- as(resList,"FLSAMs")
+return(res)}
+
+
+
+
 
 
 
