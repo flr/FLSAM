@@ -2,6 +2,11 @@
 packageStartupMessage(sprintf("\nFLSAM %s (%s)",packageDescription("FLSAM")$Version,
            packageDescription("FLSAM")$Date), "\n",
 "------------------------------------------------------------------------------
+
+* NOTE: This version of FLSAM requires a particular version of the
+    'stockassessment' package. Please install using
+    devtools::install_github('fishwollower/SAM/stockassessment', ref='component')
+
 * This package is an FLR wrapper to SAM, the State-space Assessment Model
     developed by Anders Nielsen, DTU-Aqua. For details regarding SAM, 
     please consult <http://www.stockassessment.org>.
