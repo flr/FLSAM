@@ -29,6 +29,36 @@ ctrl2conf <- function(ctrl,data){
   conf$fixVarToWeight[] <- 0
 return(conf)}
 
+conf2ctrl <- function(conf,data){
+  ctrl    <- new("FLSAM.control")
+  ctrl@range <- c(min=conf$minAge,max=conf$maxAge,plusgroup=ifelse(conf$maxAgePlusGroup==1,conf$maxAge,NA),minyear=min(data$years),maxyear=max(data$years),minfbar=conf$fbarRange[1],maxfbar=conf$fbarRange[2])
+  ctrl@fleets <- data$fleetTypes
+  names(ctrl@fleets)  <- attr(data,"fleetNames")
+    matdef            <- matrix(NA,nrow=length(ctrl@fleets),ncol=length(ctrl@range["min"]:ctrl@range["max"]),dimnames=list(names(ctrl@fleets),ctrl@range["min"]:ctrl@range["max"]))
+    matdef[]          <- conf$keyLogFsta
+  ctrl@states         <- matdef
+  ctrl@cor.F          <- conf$corFlag
+    matdef[]          <- conf$keyLogFpar
+  ctrl@catchabilities <- matdef
+    matdef[]          <- conf$keyQpow
+  ctrl@power.law.exps <- matdef
+    matdef[]          <- conf$keyVarF
+  ctrl@f.vars         <- matdef
+    matdef[]          <- conf$keyVarLogN
+  ctrl@logN.vars      <- matdef
+    matdef[]          <- conf$keyVarObs
+  ctrl@obs.vars       <- matdef
+  ctrl@cor.obs.Flag   <- conf$obsCorStruct
+    ages              <- ctrl@range["min"]:ctrl@range["max"]
+    matdef            <- matrix(NA,nrow=length(ctrl@fleets),ncol=length(ctrl@range["min"]:ctrl@range["max"])-1,dimnames=list(names(ctrl@fleets),apply(cbind(ages[-length(ages)],a[-1]),1,paste,collapse="-")))
+    matdef[]          <- conf$keyCorObs
+  ctrl@cor.obs        <- matdef
+  ctrl@srr            <- as.integer(conf$stockRecruitmentModelCode)
+  ctrl@biomassTreat   <- conf$keyBiomassTreat
+  ctrl@likFlag        <- conf$obsLikelihoodFlag
+  ctrl@fixVarToWeight <- as.logical(conf$fixVarToWeight)
+return(ctrl)}
+
 
 FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
 

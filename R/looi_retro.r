@@ -34,7 +34,8 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
     LOI.runs <- which(rowSums(overview)==1)
     rownames(overview)[LOI.runs] <-  paste(colnames(overview)[apply(overview[LOI.runs,]==1,1,which)],"Only")
 
-    if(type=="LOO"){ overview <- overview[c(1,which(rowSums(overview) == (length(tun)-1))),];  cat("Running LOO analyses\n")}
+    tunlength <- length(grep("Only",rownames(overview)))
+    if(type=="LOO"){ overview <- overview[c(1,which(rowSums(overview) == (tunlength-1))),];  cat("Running LOO analyses\n")}
     if(type=="LOI"){ overview <- overview[c(1,which(rowSums(overview) == 1)),];               cat("Running LOI analyses\n")}
 
     #Perform the initial base assessment i.e. "everybody-in"
@@ -94,8 +95,9 @@ setMethod("looi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control",
     rownames(overview)[LOO.runs] <-  paste("Drop",colnames(overview)[apply(overview[LOO.runs,]==0,1,which)])
     LOI.runs <- which(rowSums(overview)==1)
     rownames(overview)[LOI.runs] <-  paste(colnames(overview)[apply(overview[LOI.runs,]==1,1,which)],"Only")
+    tunlength <- length(grep("Only",rownames(overview)))
 
-    if(type=="LOO"){ overview <- overview[c(1,which(rowSums(overview) == (length(tun)-1))),];  cat("Running LOO analyses\n")}
+    if(type=="LOO"){ overview <- overview[c(1,which(rowSums(overview) == (tunlength-1))),];  cat("Running LOO analyses\n")}
     if(type=="LOI"){ overview <- overview[c(1,which(rowSums(overview) == 1)),];               cat("Running LOI analyses\n")}
 
     #Perform the initial base assessment i.e. "everybody-in"
