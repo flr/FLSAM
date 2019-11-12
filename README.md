@@ -18,7 +18,7 @@ or download from the [FLSAM releases page](https://github.com/flr/FLSAM/releases
 
 **PLEASE NOTE** that this version of FLSAM requires a particular version of the 'stockassessment' package. Please install using
 
-  devtools::install_github('fishwollower/SAM/stockassessment', ref='component')
+  devtools::install_github('fishfollower/SAM/stockassessment', ref='components')
 
 ## Documentation
 - [Help pages](http://flr-project.org/FLSAM)
