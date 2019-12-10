@@ -3,10 +3,11 @@ Title: FLSAM, an Implementation of the State-Space Assessment Model for FLR
 Version: 2.1.0
 Date: 2018-11-27
 Authors@R: c(
-  person("N.T.", "Hintzen", email = "niels.hintzen@wur.nl", role = "aut"),
+  person("N.T.", "Hintzen", email = "niels.hintzen@wur.nl", role = "cre"),
   person("M.R.", "Payne", email = "mpa@aqua.dtu.dk", role = "aut"))
 Description: FLR wrapper to the SAM state-space assessment model
 Depends: R (>= 2.10), FLCore
+Additional_repositories: http://flr-project.org/R
 Remotes: fishfollower/SAM/stockassessment@components
 Imports: methods, utils, TMB, ellipse, MASS, stockassessment
 Suggests: reshape, plyr, RColorBrewer
