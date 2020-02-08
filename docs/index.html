@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FLSAM, an Implementation of the State-Space Assessment Model for FLR • FLSAM</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="FLSAM, an Implementation of the State-Space Assessment Model for FLR">
 <meta property="og:description" content="FLR wrapper to the SAM state-space assessment model">
 <meta name="twitter:card" content="summary">
@@ -66,6 +67,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="contents col-md-9">
 <div id="flsam" class="section level1">
@@ -74,10 +76,8 @@
 <ul>
 <li>Version: 2.1.0</li>
 <li>Date: 2018-11-27</li>
-<li>Author: M.R. Payne <mpa aqua.dtu.dk>, N.T. Hintzen &lt;niels.hintzen ΑΤ wur.nl&gt;</mpa>
-</li>
-<li>Maintainer: M.R. Payne <mpa aqua.dtu.dk>, N.T. Hintzen &lt;niels.hintzen ΑΤ wur.nl&gt;</mpa>
-</li>
+<li>Author: M.R. Payne &lt;mpa ΑΤ aqua.dtu.dk&gt;, N.T. Hintzen &lt;niels.hintzen ΑΤ wur.nl&gt;</li>
+<li>Maintainer: M.R. Payne &lt;mpa ΑΤ aqua.dtu.dk&gt;, N.T. Hintzen &lt;niels.hintzen ΑΤ wur.nl&gt;</li>
 <li>Repository: <a href="https://github.com/flr/FLCore/" class="uri">https://github.com/flr/FLCore/</a>
 </li>
 <li>Bug reports: <a href="https://github.com/flr/FLCore/issues" class="uri">https://github.com/flr/FLCore/issues</a>
@@ -88,10 +88,10 @@
 <a href="#overview" class="anchor"></a>Overview</h2>
 <p>The FLSAM package provides an FLR version of SAM, the State-space Assessment Model developed by Anders Nielsen, DTU-Aqua. For details regarding SAM, please consult <a href="http://www.stockassessment.org" class="uri">http://www.stockassessment.org</a>.</p>
 <p>To install this package, start R and enter:</p>
-<div class="sourceCode"><pre class="sourceCode R"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"FLSAM"</span>, <span class="dt">repos=</span><span class="st">"http://flr-project.org/R"</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"FLSAM"</span>, <span class="dt">repos=</span><span class="st">"http://flr-project.org/R"</span>)</span></code></pre></div>
 <p>or download from the <a href="https://github.com/flr/FLSAM/releases/latest">FLSAM releases page</a></p>
 <p><strong>PLEASE NOTE</strong> that this version of FLSAM requires a particular version of the ‘stockassessment’ package. Please install using</p>
-<p>devtools::install_github(‘fishwollower/SAM/stockassessment’, ref=‘component’)</p>
+<p>devtools::install_github(‘fishfollower/SAM/stockassessment’, ref=‘components’)</p>
 </div>
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
@@ -126,14 +126,13 @@
 </li>
 <li>Send a pull request on: <a href="https://github.com/flr/FLSAM/" class="uri">https://github.com/flr/FLSAM/</a>
 </li>
-<li>Compose a friendly e-mail to: <flrteam at flr-project.org></flrteam>
-</li>
+<li>Compose a friendly e-mail to: &lt;flrteam AT flr-project.org&gt;</li>
 </ul>
 </div>
 </div>
   </div>
 
-  <div class="col-md-3" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
@@ -143,8 +142,8 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>M.R. Payne <br><small class="roles"> Author </small>  </li>
 <li>N.T. Hintzen <br><small class="roles"> Maintainer </small>  </li>
+<li>M.R. Payne <br><small class="roles"> Author </small>  </li>
 </ul>
 </div>
 
@@ -153,16 +152,18 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by M.R. Payne, N.T. Hintzen.</p>
+  <p>Developed by N.T. Hintzen, M.R. Payne.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>
