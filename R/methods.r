@@ -275,6 +275,24 @@ setMethod("n", signature(object="FLSAMs"),
         }
 )       # }}}
 
+setMethod("catch.n", signature(object="FLSAM"),
+        function(object, ...) {
+	  return(subset(residuals(object),age>=0 & fleet %in% names(which(object@control@fleets == 0))))
+        }
+)       # }}}
+
+setMethod("catch.n", signature(object="FLSAMs"),
+        function(object, ...) {
+          res <- list()
+          length(res) <- length(object)
+          for(i in seq(object)) {
+            res[[i]] <- cbind(name=names(object)[i],catch.n(object[[i]]))
+          }
+          return(do.call(rbind,res))
+        }
+)       # }}}
+
+
 if (!isGeneric("f")) {
     setGeneric("f", function(object) standardGeneric("f"))
 }

@@ -85,7 +85,17 @@ SAM2FLR <- function(fit,ctrl){
     res@residuals$log.obs[which(is.na(res@residuals$log.obs))] <- fit$pl$missing
     res@residuals$log.mdl[which(!is.finite(res@residuals$log.mdl))] <- NA
     res@residuals$std.res[which(!is.finite(res@residuals$std.res))] <- NA
+  } else {
+    res@residuals <- data.frame(year=fit$data$aux[,"year"],
+                                fleet=names(ctrl@fleets)[fit$data$aux[,"fleet"]],
+                                age=fit$data$aux[,"age"],
+                                log.obs=fit$data$logobs,
+                                log.mdl=fit$rep$predObs,
+                                std.res=NA)
+    res@residuals$log.obs[which(is.na(res@residuals$log.obs))] <- fit$pl$missing
+    res@residuals$log.mdl[which(!is.finite(res@residuals$log.mdl))] <- NA
   }
+
   #- Finally some info and save
   info        <- data.frame(FLSAM.version=packageDescription("FLSAM")$Version,
                             FLCore.version=packageDescription("FLCore")$Version,
