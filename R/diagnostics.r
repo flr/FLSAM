@@ -114,8 +114,8 @@ residual.diagnostics <- function(x,title=x@name) {
 
 #Plot 6 Autocorrelation function plot
   
-  acf(as.ts(index.res.l[[i]]$std.res),ylab="ACF",xlab="Lag (yrs)",type=c("partial"),
-        ci.col="black",main="",na.action=na.pass)
+  try(acf(as.ts(index.res.l[[i]]$std.res),ylab="ACF",xlab="Lag (yrs)",type=c("partial"),
+        ci.col="black",main="",na.action=na.pass))
   legend("topright",legend=c("95% Conf. Int."),lty=c(2),pch=c(NA),horiz=TRUE,box.lty=0)
   
   title("f) Autocorrelation of Residuals")  
