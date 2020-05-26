@@ -92,7 +92,8 @@ SAM2FLR <- function(fit,ctrl){
                                 log.obs=fit$data$logobs,
                                 log.mdl=fit$rep$predObs,
                                 std.res=NA)
-    res@residuals$log.obs[which(is.na(res@residuals$log.obs))] <- fit$pl$missing
+    if(!is.null(fit$pl$missing))
+      res@residuals$log.obs[which(is.na(res@residuals$log.obs))] <- fit$pl$missing
     res@residuals$log.mdl[which(!is.finite(res@residuals$log.mdl))] <- NA
   }
 

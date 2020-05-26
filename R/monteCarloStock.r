@@ -39,6 +39,8 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   }
   #clusterExport(cl,varlist=c("simdat","object"),envir=environment())
   runs <- foreach(i = 1:realisations) %dopar% try(sam.fitfast(simdat[[i]],object$conf,object$pl,silent=T,...))
+  run <- sam.fitfast(simdat[[1]],object$conf,object$pl,silent=T,...)
+
   stopCluster(cl) #shut it down
   
   if(return.sam){
@@ -57,8 +59,8 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
     detach("package:doParallel",unload=TRUE)
   if("foreach" %in% (.packages()))
     detach("package:foreach",unload=TRUE)
-  if("iterators" %in% (.packages()))
-    detach("package:iterators",unload=TRUE)
+  #if("iterators" %in% (.packages()))
+  #  detach("package:iterators",unload=TRUE)
 
   #- Fill the results of the simulations
   if(!return.sam){
