@@ -21,5 +21,8 @@ packageStartupMessage(sprintf("\nFLSAM %s (%s)",packageDescription("FLSAM")$Vers
     documentation is also availabe through the standard R help system - use
     help(package='FLSAM') to get started there.
 ------------------------------------------------------------------------------")
+
+if(packageVersion("stockassessment") != "0.5.4")
+  stop("Version of stockassessment is not compatible with FLSAM, see above.")
 }
 
