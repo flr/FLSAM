@@ -50,7 +50,7 @@ conf2ctrl <- function(conf,data){
   ctrl@obs.vars       <- matdef
   ctrl@cor.obs.Flag   <- conf$obsCorStruct
     ages              <- ctrl@range["min"]:ctrl@range["max"]
-    matdef            <- matrix(NA,nrow=length(ctrl@fleets),ncol=length(ctrl@range["min"]:ctrl@range["max"])-1,dimnames=list(names(ctrl@fleets),apply(cbind(ages[-length(ages)],a[-1]),1,paste,collapse="-")))
+    matdef            <- matrix(NA,nrow=length(ctrl@fleets),ncol=length(ctrl@range["min"]:ctrl@range["max"])-1,dimnames=list(names(ctrl@fleets),apply(cbind(ages[-length(ages)],ages[-1]),1,paste,collapse="-")))
     matdef[]          <- conf$keyCorObs
   ctrl@cor.obs        <- matdef
   ctrl@srr            <- as.integer(conf$stockRecruitmentModelCode)
