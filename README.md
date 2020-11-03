@@ -32,7 +32,7 @@ or download from the [FLSAM releases page](https://github.com/flr/FLSAM/releases
 - [All release](https://github.com/flr/FLSAM/releases/)
 
 ## License
-Copyright (c) 2004-2015 The FLR Team. Released under the [GPL](http://www.gnu.org/licenses/gpl-2.0.html).
+Copyright (c) 2004-2020 The FLR Team. Released under the [GPL](http://www.gnu.org/licenses/gpl-2.0.html).
 
 ## Contact
 You are welcome to:

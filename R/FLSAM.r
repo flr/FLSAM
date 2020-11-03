@@ -188,7 +188,6 @@ clean.void.catches<-function(dat, conf){
 
 
 sam.fitfast <- function(data, conf, parameters, lower=getLowerBounds(parameters), upper=getUpperBounds(parameters), sim.condRE=TRUE, ...){
-
   data <- clean.void.catches(data,conf)
   tmball <- c(data, conf, simFlag=as.numeric(sim.condRE))
   if(is.null(tmball$resFlag)){tmball$resFlag <- 0}
@@ -227,7 +226,7 @@ sam.fitfast <- function(data, conf, parameters, lower=getLowerBounds(parameters)
 #
 #  fit <- list(sdrep=sdrep, pl=pl, plsd=plsd, data=data, conf=conf, opt=opt, obj=obj, rep=rep, low=lower2, hig=upper2)
 
-  if(class(opt)!="try-error"){
+  if(!is(opt, "try-error")){
     sdrep <- list(par.fixed=length(opt$par),cov.fixed=matrix(NA),cov=matrix(NA))
     pl    <- c(lapply(split(opt$par,names(opt$par)),unname),list(logPS=rep$logP),list(logN=rep$logN),list(logF=log(rep$totF[-which(duplicated(conf$keyLogFsta[1,])),])))
   } else {

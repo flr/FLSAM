@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,7 +42,6 @@
 <meta property="og:title" content="Retrospective stock assessment for FLSAM — retro" />
 <meta property="og:description" content="Performs a retrospective stock assessment for the desired years using
 the FLSAM stock assessment method" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -56,7 +59,7 @@ the FLSAM stock assessment method" />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -70,7 +73,7 @@ the FLSAM stock assessment method" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">FLSAM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
       </span>
     </div>
 
@@ -169,27 +172,6788 @@ penultimate and final year and so on.</p>
 
 <span class='co'>#Run a retrospective analyses for 3 years</span>
 <span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='retro.rd.html'>retro</a></span>(<span class='no'>NSH</span>,<span class='no'>NSH.tun</span>,<span class='no'>NSH.ctrl</span>,<span class='kw'>retro</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; Running retrospective...
-#&gt; Error in setup.sam.data(surveys = surveysFLR, residual.fleets = residual.fleets,  : 
-#&gt;   unused arguments (residual.fleets = residual.fleets, sum.residual.fleets = sum.fleets)</div><div class='output co'>#&gt; <span class='warning'>Warning: Retrospective for year 2011 failed</span></div><div class='output co'>#&gt; Error in setup.sam.data(surveys = surveysFLR, residual.fleets = residual.fleets,  : 
-#&gt;   unused arguments (residual.fleets = residual.fleets, sum.residual.fleets = sum.fleets)</div><div class='output co'>#&gt; <span class='warning'>Warning: Retrospective for year 2010 failed</span></div><div class='output co'>#&gt; Error in setup.sam.data(surveys = surveysFLR, residual.fleets = residual.fleets,  : 
-#&gt;   unused arguments (residual.fleets = residual.fleets, sum.residual.fleets = sum.fleets)</div><div class='output co'>#&gt; <span class='warning'>Warning: Retrospective for year 2009 failed</span></div><div class='output co'>#&gt; Error in setup.sam.data(surveys = surveysFLR, residual.fleets = residual.fleets,  : 
-#&gt;   unused arguments (residual.fleets = residual.fleets, sum.residual.fleets = sum.fleets)</div><div class='output co'>#&gt; <span class='warning'>Warning: Retrospective for year 2008 failed</span></div><div class='input'>
+#&gt; Order of parameters:
+#&gt;  [1] "logFpar"              "logQpow"              "logSdLogFsta"        
+#&gt;  [4] "logSdLogN"            "logSdLogP"            "logSdLogObs"         
+#&gt;  [7] "logSdLogTotalObs"     "transfIRARdist"       "sigmaObsParUS"       
+#&gt; [10] "rec_loga"             "rec_logb"             "itrans_rho"          
+#&gt; [13] "rhop"                 "logScale"             "logitReleaseSurvival"
+#&gt; [16] "logitRecapturePhi"    "logAlphaSCB"          "logF"                
+#&gt; [19] "logN"                 "logPS"                "missing"             
+#&gt; Not matching template order:
+#&gt;  [1] "logFpar"              "logQpow"              "logSdLogFsta"        
+#&gt;  [4] "logSdLogN"            "logSdLogP"            "logSdLogObs"         
+#&gt;  [7] "logSdLogTotalObs"     "transfIRARdist"       "sigmaObsParUS"       
+#&gt; [10] "rec_loga"             "rec_logb"             "itrans_rho"          
+#&gt; [13] "rhop"                 "logScale"             "logitReleaseSurvival"
+#&gt; [16] "logitRecapturePhi"    "logAlphaSCB"          "logF"                
+#&gt; [19] "logN"                 "missing"             
+#&gt; Your parameter list has been re-ordered.
+#&gt; (Disable this warning with checkParameterOrder=FALSE)
+#&gt; iter: 1  value: 29858.94 mgc: 102.6853 ustep: 0.1843228 
+#&gt; iter: 2  value: 6427.944 mgc: 41.19916 ustep: 0.4293854 
+#&gt; iter: 3  value: 3643.672 mgc: 11.96224 ustep: 0.6553096 
+#&gt; iter: 4  value: 2383.509 mgc: 9.832191 ustep: 0.809531 
+#&gt; iter: 5  value: 2252.316 mgc: 1.584616 ustep: 0.8997494 
+#&gt; iter: 6  value: 2250.408 mgc: 0.2357221 ustep: 0.9485564 
+#&gt; iter: 7  value: 2250.401 mgc: 0.01217538 ustep: 0.9739412 
+#&gt; iter: 8  value: 2250.401 mgc: 0.0007627327 ustep: 0.9868859 
+#&gt; iter: 9  value: 2250.401 mgc: 2.411668e-05 ustep: 0.993422 
+#&gt; iter: 10  value: 2250.401 mgc: 3.787673e-07 ustep: 0.9967059 
+#&gt; iter: 11  mgc: 2.962014e-09 
+#&gt; iter: 1  mgc: 2.962014e-09 
+#&gt; Matching hessian patterns... Done
+#&gt; outer mgc:  937.0649 
+#&gt;   0:     2288.8818: -5.00000 -5.00000 -5.00000 -5.00000 -5.00000 -5.00000 -5.00000 -5.00000 -5.00000 -5.00000 -0.700000 -0.350000 -0.350000 -0.350000 -0.350000 -0.350000 -0.350000 -0.350000 0.500000
+#&gt; iter: 1  value: 1295.734 mgc: 3.191557 ustep: 1 
+#&gt; iter: 2  value: 1295.689 mgc: 0.1784069 ustep: 1 
+#&gt; iter: 3  value: 1295.689 mgc: 0.003145601 ustep: 1 
+#&gt; iter: 4  value: 1295.689 mgc: 1.676632e-06 ustep: 1 
+#&gt; iter: 5  mgc: 3.796408e-13 
+#&gt; iter: 1  mgc: 3.796408e-13 
+#&gt; outer mgc:  344.246 
+#&gt;   1:     1270.1871: -5.08863 -4.91055 -4.94563 -4.96799 -4.97773 -4.98310 -4.98710 -4.98254 -5.08762 -5.11268 -0.718198 -0.351086 0.0769365 -0.342072 -0.0408757 0.230886 -0.0324865 0.141923 0.508719
+#&gt; iter: 1  value: 916.0222 mgc: 6.34312 ustep: 1 
+#&gt; iter: 2  value: 910.0898 mgc: 1.137912 ustep: 1 
+#&gt; iter: 3  value: 909.8531 mgc: 0.2259272 ustep: 1 
+#&gt; iter: 4  value: 909.8526 mgc: 0.01513482 ustep: 1 
+#&gt; iter: 5  value: 909.8526 mgc: 6.401704e-05 ustep: 1 
+#&gt; iter: 6  mgc: 1.148574e-09 
+#&gt; iter: 1  mgc: 1.148574e-09 
+#&gt; outer mgc:  163.7715 
+#&gt;   2:     942.62357: -5.26901 -4.85738 -4.88709 -4.91877 -4.93595 -4.94694 -4.95573 -4.92846 -5.23754 -5.24126 -0.845336 -0.380952 -0.224249 -0.649964 0.305213 0.687157 0.150118 0.730410 0.559968
+#&gt; iter: 1  value: 711.6633 mgc: 2.375197 ustep: 1 
+#&gt; iter: 2  value: 710.0988 mgc: 0.8324954 ustep: 1 
+#&gt; iter: 3  value: 710.0852 mgc: 0.09314666 ustep: 1 
+#&gt; iter: 4  value: 710.0852 mgc: 0.001066194 ustep: 1 
+#&gt; iter: 5  value: 710.0852 mgc: 1.415094e-07 ustep: 1 
+#&gt; iter: 6  mgc: 3.219647e-14 
+#&gt; iter: 1  mgc: 3.219647e-14 
+#&gt; outer mgc:  57.50863 
+#&gt;   3:     786.26128: -5.33686 -4.80028 -4.81374 -4.85811 -4.88974 -4.91120 -4.92796 -4.88979 -5.45167 -5.33225 -0.965713 -0.411656 -0.177317 -0.901893 0.299597  1.02425 0.733917  1.35011 0.620378
+#&gt; iter: 1  value: 492.9034 mgc: 2.889296 ustep: 1 
+#&gt; iter: 2  value: 491.1143 mgc: 0.9347992 ustep: 1 
+#&gt; iter: 3  value: 491.1137 mgc: 0.03301362 ustep: 1 
+#&gt; iter: 4  value: 491.1137 mgc: 1.489686e-05 ustep: 1 
+#&gt; iter: 5  mgc: 2.413014e-12 
+#&gt; iter: 1  value: 43.9683 mgc: 29.49475 ustep: 1 
+#&gt; iter: 2  value: 43.83872 mgc: 0.4673514 ustep: 1 
+#&gt; iter: 3  value: 43.83871 mgc: 0.0003426394 ustep: 1 
+#&gt; iter: 4  mgc: 6.383051e-10 
+#&gt; iter: 1  mgc: 6.383051e-10 
+#&gt; outer mgc:  126.6576 
+#&gt;   4:     576.80251: -6.06882 -4.51133 -4.50742 -4.59489 -4.66793 -4.72204 -4.76780 -4.63555 -6.11355 -5.70707 -1.67300 -0.604378 -2.03271 -2.03541  1.15094 0.338267  2.63337  3.40849  1.01895
+#&gt; iter: 1  value: 10.90599 mgc: 287.6597 ustep: 1 
+#&gt; iter: 2  value: 10.57287 mgc: 2.012651 ustep: 1 
+#&gt; iter: 3  value: 10.57287 mgc: 0.001464435 ustep: 1 
+#&gt; iter: 4  mgc: 3.179146e-11 
+#&gt; iter: 1  mgc: 3.179146e-11 
+#&gt; outer mgc:  93.30105 
+#&gt;   5:     498.37476: -6.65570 -4.31143 -4.25414 -4.34687 -4.46008 -4.55356 -4.64757 -4.63072 -6.56274 -5.99569 0.137165 -0.711751 -1.27442 -1.74676  1.71751 -2.56440  3.31441  4.42017  1.98770
+#&gt; iter: 1  value: 484.7178 mgc: 113.5134 ustep: 1 
+#&gt; iter: 2  value: 484.5256 mgc: 0.5652743 ustep: 1 
+#&gt; iter: 3  value: 484.5256 mgc: 0.0001485126 ustep: 1 
+#&gt; iter: 4  mgc: 1.692313e-12 
+#&gt; iter: 1  value: 106.9895 mgc: 55.12887 ustep: 1 
+#&gt; iter: 2  value: 106.9844 mgc: 0.2052389 ustep: 1 
+#&gt; iter: 3  value: 106.9844 mgc: 7.489573e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.723444e-13 
+#&gt; iter: 1  mgc: 4.723444e-13 
+#&gt; outer mgc:  76.85225 
+#&gt;   6:     491.00656: -6.66999 -4.26083 -4.34105 -4.09262 -4.42427 -4.45011 -4.37306 -5.23851 -6.56441 -5.99600 -0.128228 -0.670972 -0.390569 -1.18392  1.56334 -2.22251  3.12617  4.22461  2.07530
+#&gt; iter: 1  value: -0.5745773 mgc: 29.00865 ustep: 1 
+#&gt; iter: 2  value: -0.5746843 mgc: 0.02304346 ustep: 1 
+#&gt; iter: 3  value: -0.5746843 mgc: 2.547398e-07 ustep: 1 
+#&gt; mgc: 3.259615e-13 
+#&gt; iter: 1  value: 49.36313 mgc: 32.37045 ustep: 1 
+#&gt; iter: 2  value: 49.36204 mgc: 0.0462509 ustep: 1 
+#&gt; iter: 3  value: 49.36204 mgc: 1.097814e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.488943e-13 
+#&gt; iter: 1  mgc: 3.259615e-13 
+#&gt; outer mgc:  27.28687 
+#&gt;   7:     434.75037: -6.68411 -4.26905 -4.24485 -4.20237 -4.34531 -4.41311 -4.61056 -5.07841 -6.56616 -5.99633 -0.315710 -0.675389 -0.912721 -1.27809  1.46269 -2.22922  2.99468  4.08550  2.15432
+#&gt; iter: 1  value: -31.74598 mgc: 29.47695 ustep: 1 
+#&gt; iter: 2  value: -31.74606 mgc: 0.01982511 ustep: 1 
+#&gt; iter: 3  value: -31.74606 mgc: 1.125765e-07 ustep: 1 
+#&gt; mgc: 3.501643e-13 
+#&gt; iter: 1  mgc: 3.501643e-13 
+#&gt; outer mgc:  74.91487 
+#&gt;   8:     428.91412: -6.71488 -4.22055 -4.13926 -4.23411 -4.27124 -4.53460 -4.89226 -4.83272 -6.57027 -5.99712 -0.505705 -0.670007 -1.24980 -1.27787  1.29098 -2.13682  2.76149  3.83463  2.17510
+#&gt; iter: 1  value: -44.24781 mgc: 20.36353 ustep: 1 
+#&gt; iter: 2  value: -44.24787 mgc: 0.03235738 ustep: 1 
+#&gt; iter: 3  value: -44.24787 mgc: 9.909799e-07 ustep: 1 
+#&gt; iter: 4  mgc: 2.864375e-13 
+#&gt; iter: 1  mgc: 2.864375e-13 
+#&gt; outer mgc:  45.7465 
+#&gt;   9:     408.29444: -6.76537 -4.08991 -4.07067 -4.12277 -4.54335 -4.64501 -4.59675 -4.93873 -6.61104 -6.02762 -0.472540 -0.671571 -1.21432 -1.47061  1.08332 -1.90196  2.52168  3.59189  2.22633
+#&gt; iter: 1  value: -6.717147 mgc: 8.573656 ustep: 1 
+#&gt; iter: 2  value: -6.717177 mgc: 0.0284937 ustep: 1 
+#&gt; iter: 3  value: -6.717177 mgc: 1.096477e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.084999e-13 
+#&gt; iter: 1  mgc: 2.084999e-13 
+#&gt; outer mgc:  32.87295 
+#&gt;  10:     394.31589: -6.81731 -4.02510 -4.10146 -4.30707 -4.27650 -4.40279 -4.80134 -5.00047 -6.63440 -6.04003 -0.430123 -0.659987 -1.01709 -1.47696 0.951682 -1.55221  2.34211  3.37177  2.18546
+#&gt; iter: 1  value: -50.1307 mgc: 11.00374 ustep: 1 
+#&gt; iter: 2  value: -50.13088 mgc: 0.06387695 ustep: 1 
+#&gt; iter: 3  value: -50.13088 mgc: 4.803896e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.655653e-13 
+#&gt; iter: 1  mgc: 2.655653e-13 
+#&gt; outer mgc:  24.99611 
+#&gt;  11:     375.69112: -6.95112 -4.09117 -4.16527 -3.97784 -4.23833 -4.50069 -4.71779 -4.99852 -6.69564 -6.06941 -0.375082 -0.640590 -1.33727 -1.66785 0.839080 -1.35530  2.13643  3.07604  2.18809
+#&gt; iter: 1  value: -89.61545 mgc: 7.139076 ustep: 1 
+#&gt; iter: 2  value: -89.61546 mgc: 0.005349777 ustep: 1 
+#&gt; iter: 3  value: -89.61546 mgc: 3.020959e-08 ustep: 1 
+#&gt; mgc: 4.209966e-13 
+#&gt; iter: 1  value: -75.98503 mgc: 3.155036 ustep: 1 
+#&gt; iter: 2  value: -75.98503 mgc: 0.001101492 ustep: 1 
+#&gt; iter: 3  mgc: 1.265791e-09 
+#&gt; iter: 1  mgc: 1.265791e-09 
+#&gt; outer mgc:  14.81626 
+#&gt;  12:     368.86281: -7.00322 -4.09849 -3.98769 -4.13110 -4.26981 -4.44866 -4.70371 -4.97953 -6.70813 -6.07275 -0.483879 -0.632218 -1.35571 -1.70698 0.807091 -1.35541  2.06263  2.96205  2.19733
+#&gt; iter: 1  value: -89.45378 mgc: 2.242948 ustep: 1 
+#&gt; iter: 2  value: -89.45378 mgc: 0.0004036388 ustep: 1 
+#&gt; iter: 3  mgc: 2.206297e-10 
+#&gt; iter: 1  mgc: 2.206297e-10 
+#&gt; outer mgc:  17.48676 
+#&gt;  13:     364.45262: -7.08605 -4.02318 -4.10072 -3.99898 -4.27613 -4.48015 -4.67286 -4.95153 -6.73024 -6.07918 -0.576026 -0.616547 -1.37192 -1.72953 0.758923 -1.34833  1.96556  2.80012  2.15309
+#&gt; iter: 1  value: -93.32494 mgc: 2.971631 ustep: 1 
+#&gt; iter: 2  value: -93.32494 mgc: 0.001642562 ustep: 1 
+#&gt; iter: 3  mgc: 4.984602e-09 
+#&gt; iter: 1  mgc: 4.984602e-09 
+#&gt; outer mgc:  14.02576 
+#&gt;  14:     359.47725: -7.20614 -4.03265 -3.95273 -4.10361 -4.22457 -4.42130 -4.65876 -4.92430 -6.77471 -6.09713 -0.617694 -0.598782 -1.35516 -1.76957 0.708356 -1.32967  1.90315  2.65320  2.07248
+#&gt; iter: 1  value: -91.91236 mgc: 5.9552 ustep: 1 
+#&gt; iter: 2  value: -91.91236 mgc: 0.004405361 ustep: 1 
+#&gt; iter: 3  mgc: 7.013005e-09 
+#&gt; iter: 1  mgc: 7.013005e-09 
+#&gt; outer mgc:  19.38089 
+#&gt;  15:     352.76546: -7.56094 -3.97994 -3.93135 -3.86215 -4.22535 -4.30388 -4.58847 -4.85509 -6.91783 -6.16650 -0.654940 -0.562017 -1.37058 -1.83444 0.552728 -1.34904  1.83075  2.41184  1.84740
+#&gt; iter: 1  value: -104.1327 mgc: 4.331121 ustep: 1 
+#&gt; iter: 2  value: -104.1327 mgc: 0.002005606 ustep: 1 
+#&gt; iter: 3  mgc: 1.427923e-09 
+#&gt; iter: 1  mgc: 1.427923e-09 
+#&gt; outer mgc:  31.57602 
+#&gt;  16:     347.80653: -7.91191 -3.82429 -3.90400 -3.89727 -3.95320 -4.39887 -4.42622 -4.76992 -7.05715 -6.24440 -0.775335 -0.542026 -1.37067 -1.86604 0.347147 -1.35639  1.75840  2.28037  1.74785
+#&gt; iter: 1  value: -119.9602 mgc: 7.89804 ustep: 1 
+#&gt; iter: 2  value: -119.9602 mgc: 0.002476018 ustep: 1 
+#&gt; iter: 3  mgc: 7.039449e-09 
+#&gt; iter: 1  mgc: 7.039449e-09 
+#&gt; outer mgc:  15.24421 
+#&gt;  17:     337.06396: -8.23055 -3.69979 -3.76931 -3.89042 -4.04133 -4.15305 -4.47697 -4.61065 -7.17794 -6.33048 -0.917952 -0.546071 -1.31631 -1.81735 0.0563173 -1.26940  1.67922  2.32910  1.79631
+#&gt; iter: 1  value: -128.0141 mgc: 3.705085 ustep: 1 
+#&gt; iter: 2  value: -128.0141 mgc: 0.005910159 ustep: 1 
+#&gt; iter: 3  value: -128.0141 mgc: 5.766534e-08 ustep: 1 
+#&gt; mgc: 2.455813e-13 
+#&gt; iter: 1  mgc: 2.455813e-13 
+#&gt; outer mgc:  21.27486 
+#&gt;  18:     330.75662: -8.52589 -3.73179 -3.66388 -3.63825 -3.94609 -4.17030 -4.26442 -4.70957 -7.30689 -6.41707 -0.922718 -0.546740 -1.36373 -1.82273 -0.287121 -1.31255  1.60092  2.34005  1.74733
+#&gt; iter: 1  value: -113.7405 mgc: 4.681769 ustep: 1 
+#&gt; iter: 2  value: -113.7405 mgc: 0.007929936 ustep: 1 
+#&gt; iter: 3  value: -113.7405 mgc: 3.706144e-08 ustep: 1 
+#&gt; mgc: 2.424727e-13 
+#&gt; iter: 1  mgc: 2.424727e-13 
+#&gt; outer mgc:  20.35934 
+#&gt;  19:     328.72342: -8.75901 -3.55010 -3.63257 -3.68571 -3.82468 -4.02991 -4.36348 -4.52223 -7.47698 -6.52248 -0.926637 -0.551111 -1.40081 -1.76677 -0.674361 -1.31909  1.55323  2.32432  1.62436
+#&gt; iter: 1  value: -105.1224 mgc: 2.615154 ustep: 1 
+#&gt; iter: 2  value: -105.1224 mgc: 0.001958143 ustep: 1 
+#&gt; iter: 3  mgc: 2.446897e-09 
+#&gt; iter: 1  mgc: 2.446897e-09 
+#&gt; outer mgc:  20.73529 
+#&gt;  20:     326.49498: -8.26251 -3.59899 -3.53822 -3.70491 -3.86662 -4.07014 -4.32019 -4.57849 -7.74471 -6.66499 -0.913209 -0.576408 -1.34422 -1.78385 -0.771078 -1.29652  1.54353  2.25617  1.55594
+#&gt; iter: 1  value: -146.2882 mgc: 6.933896 ustep: 1 
+#&gt; iter: 2  value: -146.2882 mgc: 0.004359399 ustep: 1 
+#&gt; iter: 3  value: -146.2882 mgc: 1.198184e-08 ustep: 1 
+#&gt; mgc: 4.18332e-13 
+#&gt; iter: 1  mgc: 4.18332e-13 
+#&gt; outer mgc:  28.24945 
+#&gt;  21:     325.76336: -8.47716 -3.55525 -3.59217 -3.45450 -3.80316 -3.99310 -4.15402 -4.45759 -8.03177 -6.79974 -1.06966 -0.593885 -1.33108 -1.83845 -0.543479 -1.44367  1.51393  2.19427  1.65453
+#&gt; iter: 1  value: -121.088 mgc: 3.901788 ustep: 1 
+#&gt; iter: 2  value: -121.088 mgc: 0.002751137 ustep: 1 
+#&gt; iter: 3  mgc: 9.98699e-09 
+#&gt; iter: 1  mgc: 9.98699e-09 
+#&gt; outer mgc:  14.28193 
+#&gt;  22:     321.61859: -8.44559 -3.53345 -3.47948 -3.64057 -3.73643 -3.94716 -4.21083 -4.44575 -8.05942 -6.81560 -0.988772 -0.582858 -1.32856 -1.77818 -0.562312 -1.29295  1.49091  2.20282  1.61179
+#&gt; iter: 1  value: -120.9591 mgc: 3.337906 ustep: 1 
+#&gt; iter: 2  value: -120.9591 mgc: 0.006136845 ustep: 1 
+#&gt; iter: 3  value: -120.9591 mgc: 6.944051e-08 ustep: 1 
+#&gt; mgc: 2.500222e-13 
+#&gt; iter: 1  mgc: 2.500222e-13 
+#&gt; outer mgc:  8.657306 
+#&gt;  23:     320.37471: -8.41722 -3.41488 -3.51204 -3.53411 -3.78226 -3.93260 -4.12064 -4.46144 -8.21725 -6.89580 -0.929805 -0.560096 -1.43551 -1.77095 -0.592733 -1.28817  1.39448  2.20387  1.58906
+#&gt; iter: 1  value: -132.4649 mgc: 2.857943 ustep: 1 
+#&gt; iter: 2  value: -132.465 mgc: 0.004922483 ustep: 1 
+#&gt; iter: 3  value: -132.465 mgc: 2.53316e-08 ustep: 1 
+#&gt; mgc: 2.104983e-13 
+#&gt; iter: 1  mgc: 2.104983e-13 
+#&gt; outer mgc:  8.729763 
+#&gt;  24:     317.89702: -8.34163 -3.46818 -3.41859 -3.46740 -3.69224 -3.92286 -4.18331 -4.40322 -8.38674 -6.98170 -0.976545 -0.556986 -1.36650 -1.79024 -0.627434 -1.35619  1.30963  2.22639  1.62533
+#&gt; iter: 1  value: -128.5957 mgc: 2.105914 ustep: 1 
+#&gt; iter: 2  value: -128.5957 mgc: 0.001561296 ustep: 1 
+#&gt; iter: 3  mgc: 1.704586e-09 
+#&gt; iter: 1  mgc: 1.704586e-09 
+#&gt; outer mgc:  10.15385 
+#&gt;  25:     316.18660: -8.29247 -3.39915 -3.41452 -3.48458 -3.66107 -3.84682 -4.05005 -4.40763 -8.61061 -7.07517 -0.973352 -0.571162 -1.33072 -1.76766 -0.645933 -1.34054  1.27949  2.19424  1.63696
+#&gt; iter: 1  value: -127.2518 mgc: 2.48407 ustep: 1 
+#&gt; iter: 2  value: -127.2518 mgc: 0.003728131 ustep: 1 
+#&gt; iter: 3  mgc: 7.041222e-09 
+#&gt; iter: 1  mgc: 7.041222e-09 
+#&gt; outer mgc:  5.502011 
+#&gt;  26:     313.87951: -8.26513 -3.36100 -3.36476 -3.40136 -3.64077 -3.83444 -4.04281 -4.29303 -8.84358 -7.16603 -0.956284 -0.578390 -1.37253 -1.74037 -0.621510 -1.30635  1.23812  2.15774  1.64033
+#&gt; iter: 1  value: -142.1829 mgc: 1.918994 ustep: 1 
+#&gt; iter: 2  value: -142.1829 mgc: 0.001291332 ustep: 1 
+#&gt; iter: 3  mgc: 2.208691e-09 
+#&gt; iter: 1  mgc: 2.208691e-09 
+#&gt; outer mgc:  9.203617 
+#&gt;  27:     312.18646: -8.21269 -3.30876 -3.30120 -3.39999 -3.55819 -3.75326 -4.02829 -4.31859 -9.05277 -7.25355 -0.958675 -0.581249 -1.40120 -1.78751 -0.619837 -1.39367  1.14042  2.16750  1.64104
+#&gt; iter: 1  value: -134.5646 mgc: 1.845753 ustep: 1 
+#&gt; iter: 2  value: -134.5646 mgc: 0.0009035202 ustep: 1 
+#&gt; iter: 3  mgc: 1.396842e-09 
+#&gt; iter: 1  mgc: 1.396842e-09 
+#&gt; outer mgc:  6.880071 
+#&gt;  28:     309.26288: -8.17991 -3.27052 -3.27249 -3.29969 -3.53794 -3.74857 -3.96316 -4.26603 -9.27656 -7.34173 -0.948206 -0.577773 -1.35801 -1.77187 -0.620578 -1.33921  1.03339  2.17279  1.62875
+#&gt; iter: 1  value: -139.6183 mgc: 1.661759 ustep: 1 
+#&gt; iter: 2  value: -139.6183 mgc: 0.002179619 ustep: 1 
+#&gt; iter: 3  mgc: 4.229697e-09 
+#&gt; iter: 1  mgc: 4.229697e-09 
+#&gt; outer mgc:  11.59808 
+#&gt;  29:     307.24905: -8.14062 -3.21573 -3.19751 -3.33850 -3.48886 -3.68563 -3.96909 -4.17091 -9.50627 -7.42008 -0.952029 -0.573050 -1.38139 -1.77313 -0.630285 -1.34481 0.943999  2.14461  1.63274
+#&gt; iter: 1  value: -143.4753 mgc: 1.44656 ustep: 1 
+#&gt; iter: 2  value: -143.4753 mgc: 0.0007161764 ustep: 1 
+#&gt; iter: 3  mgc: 7.583409e-10 
+#&gt; iter: 1  value: -156.1174 mgc: 1.711774 ustep: 1 
+#&gt; iter: 2  value: -156.1174 mgc: 0.004236756 ustep: 1 
+#&gt; iter: 3  value: -156.1174 mgc: 4.181911e-08 ustep: 1 
+#&gt; mgc: 2.966516e-13 
+#&gt; iter: 1  value: -183.0237 mgc: 7.851342 ustep: 1 
+#&gt; iter: 2  value: -183.0254 mgc: 0.09407709 ustep: 1 
+#&gt; iter: 3  value: -183.0254 mgc: 9.809408e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.753353e-13 
+#&gt; iter: 1  mgc: 2.966516e-13 
+#&gt; outer mgc:  8.834843 
+#&gt;  30:     297.04518: -8.00270 -3.08167 -3.07672 -3.17299 -3.36456 -3.55267 -3.79083 -4.06906 -10.2615 -7.67695 -0.959654 -0.567855 -1.39435 -1.77839 -0.618232 -1.34191 0.660549  2.11339  1.67168
+#&gt; iter: 1  value: -93.99458 mgc: 7.944217 ustep: 1 
+#&gt; iter: 2  value: -93.99476 mgc: 0.02458971 ustep: 1 
+#&gt; iter: 3  value: -93.99476 mgc: 3.664466e-07 ustep: 1 
+#&gt; iter: 4  mgc: 1.622036e-13 
+#&gt; iter: 1  mgc: 1.622036e-13 
+#&gt; outer mgc:  45.88069 
+#&gt;  31:     292.48806: -7.79262 -2.86688 -3.06734 -2.60530 -3.11122 -3.47281 -3.54477 -3.81831 -11.5469 -8.08964 -0.791124 -0.566227 -1.11294 -1.70546 -0.675987 -1.22095 -0.282994  1.94694  1.53924
+#&gt; iter: 1  value: -66.84359 mgc: 8.067476 ustep: 1 
+#&gt; iter: 2  value: -66.84394 mgc: 0.03355627 ustep: 1 
+#&gt; iter: 3  value: -66.84394 mgc: 2.198293e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.620126e-13 
+#&gt; iter: 1  value: -134.938 mgc: 3.032645 ustep: 1 
+#&gt; iter: 2  value: -134.938 mgc: 0.002094367 ustep: 1 
+#&gt; iter: 3  value: -134.938 mgc: 1.468716e-08 ustep: 1 
+#&gt; mgc: 2.329248e-13 
+#&gt; iter: 1  mgc: 2.329248e-13 
+#&gt; outer mgc:  21.33665 
+#&gt;  32:     276.49998: -7.78031 -2.88558 -2.93767 -2.78351 -3.10280 -3.39107 -3.56612 -3.82270 -11.5415 -8.10172 -0.855847 -0.568832 -1.21542 -1.74531 -0.671257 -1.25207 -0.342219  1.95379  1.57979
+#&gt; iter: 1  value: -174.5127 mgc: 3.076463 ustep: 1 
+#&gt; iter: 2  value: -174.5127 mgc: 0.002701163 ustep: 1 
+#&gt; iter: 3  value: -174.5127 mgc: 1.18333e-08 ustep: 1 
+#&gt; mgc: 2.207123e-13 
+#&gt; iter: 1  mgc: 2.207123e-13 
+#&gt; outer mgc:  13.7304 
+#&gt;  33:     269.39586: -7.76584 -2.89292 -2.85086 -2.92392 -3.11023 -3.31931 -3.56610 -3.82656 -11.5299 -8.12187 -0.923375 -0.571123 -1.35268 -1.79142 -0.664593 -1.34607 -0.439068  1.96270  1.62234
+#&gt; iter: 1  value: -186.7597 mgc: 1.962868 ustep: 1 
+#&gt; iter: 2  value: -186.7597 mgc: 0.001294899 ustep: 1 
+#&gt; iter: 3  mgc: 2.603386e-09 
+#&gt; iter: 1  mgc: 2.603386e-09 
+#&gt; outer mgc:  10.2687 
+#&gt;  34:     266.55096: -7.74789 -2.87672 -2.92308 -2.89635 -3.14220 -3.31681 -3.50760 -3.80687 -11.4968 -8.17464 -0.956717 -0.571551 -1.41078 -1.78895 -0.649106 -1.33926 -0.680699  1.97723  1.63956
+#&gt; iter: 1  value: -182.7085 mgc: 1.74895 ustep: 1 
+#&gt; iter: 2  value: -182.7085 mgc: 0.0007275734 ustep: 1 
+#&gt; iter: 3  mgc: 3.263877e-09 
+#&gt; iter: 1  value: -182.4933 mgc: 1.143937 ustep: 1 
+#&gt; iter: 2  value: -182.4933 mgc: 0.0003562506 ustep: 1 
+#&gt; iter: 3  mgc: 2.586438e-10 
+#&gt; iter: 1  mgc: 2.586438e-10 
+#&gt; outer mgc:  8.770688 
+#&gt;  35:     265.42975: -7.74772 -2.90215 -2.85540 -2.95156 -3.10323 -3.30080 -3.54058 -3.78459 -11.4971 -8.19639 -0.950847 -0.573025 -1.37928 -1.77952 -0.646706 -1.32155 -0.757919  1.97652  1.63545
+#&gt; iter: 1  value: -185.887 mgc: 1.089121 ustep: 1 
+#&gt; iter: 2  value: -185.887 mgc: 0.0002185108 ustep: 1 
+#&gt; iter: 3  mgc: 1.099512e-10 
+#&gt; iter: 1  mgc: 1.099512e-10 
+#&gt; outer mgc:  6.784882 
+#&gt;  36:     264.66675: -7.73746 -2.87941 -2.89431 -2.88388 -3.12054 -3.29784 -3.49821 -3.79696 -11.5228 -8.23329 -0.951006 -0.575159 -1.38738 -1.78515 -0.644191 -1.33798 -0.848158  1.97429  1.63733
+#&gt; iter: 1  value: -184.3164 mgc: 0.8553228 ustep: 1 
+#&gt; iter: 2  value: -184.3164 mgc: 0.0004203745 ustep: 1 
+#&gt; iter: 3  mgc: 1.159984e-10 
+#&gt; iter: 1  mgc: 1.159984e-10 
+#&gt; outer mgc:  7.92419 
+#&gt;  37:     264.41075: -7.74976 -2.90672 -2.88048 -2.93322 -3.10848 -3.30232 -3.53206 -3.78594 -11.4147 -8.24317 -0.947332 -0.578652 -1.38388 -1.78099 -0.645801 -1.33242 -0.899837  1.97161  1.63215
+#&gt; iter: 1  value: -185.1135 mgc: 0.9089372 ustep: 1 
+#&gt; iter: 2  value: -185.1135 mgc: 0.0002229392 ustep: 1 
+#&gt; iter: 3  mgc: 1.602363e-11 
+#&gt; iter: 1  mgc: 1.602363e-11 
+#&gt; outer mgc:  4.863725 
+#&gt;  38:     263.79077: -7.74078 -2.84363 -2.85794 -2.89984 -3.11812 -3.29836 -3.50603 -3.79742 -11.5050 -8.27609 -0.946351 -0.580842 -1.38704 -1.77967 -0.643925 -1.33388 -0.960188  1.96717  1.63149
+#&gt; iter: 1  value: -184.7091 mgc: 1.295468 ustep: 1 
+#&gt; iter: 2  value: -184.7091 mgc: 0.000565141 ustep: 1 
+#&gt; iter: 3  mgc: 1.895337e-10 
+#&gt; iter: 1  value: -185.5498 mgc: 0.5064377 ustep: 1 
+#&gt; iter: 2  value: -185.5498 mgc: 7.617522e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.992273e-12 
+#&gt; iter: 1  mgc: 2.992273e-12 
+#&gt; outer mgc:  3.613651 
+#&gt;  39:     263.41970: -7.73622 -2.87452 -2.85726 -2.90983 -3.09581 -3.29174 -3.52225 -3.77941 -11.4727 -8.29533 -0.949094 -0.581810 -1.38448 -1.77688 -0.642654 -1.33502 -0.987490  1.96426  1.63333
+#&gt; iter: 1  value: -185.698 mgc: 0.5333973 ustep: 1 
+#&gt; iter: 2  value: -185.698 mgc: 6.395254e-05 ustep: 1 
+#&gt; iter: 3  mgc: 1.021849e-11 
+#&gt; iter: 1  mgc: 1.021849e-11 
+#&gt; outer mgc:  2.920778 
+#&gt;  40:     263.18124: -7.72778 -2.86676 -2.86101 -2.89510 -3.10191 -3.28461 -3.49483 -3.78523 -11.4725 -8.33035 -0.948210 -0.583783 -1.38653 -1.77426 -0.641367 -1.33601 -1.03101  1.95919  1.63303
+#&gt; iter: 1  value: -185.4519 mgc: 0.4610834 ustep: 1 
+#&gt; iter: 2  value: -185.4519 mgc: 0.0001580008 ustep: 1 
+#&gt; iter: 3  mgc: 1.47955e-11 
+#&gt; iter: 1  mgc: 1.47955e-11 
+#&gt; outer mgc:  3.543853 
+#&gt;  41:     263.01404: -7.72137 -2.86752 -2.84274 -2.90779 -3.07969 -3.27493 -3.51126 -3.75769 -11.4762 -8.36585 -0.948203 -0.585562 -1.38778 -1.76939 -0.640359 -1.33389 -1.06130  1.95446  1.63416
+#&gt; iter: 1  value: -185.5589 mgc: 0.5889439 ustep: 1 
+#&gt; iter: 2  value: -185.5589 mgc: 0.0001078573 ustep: 1 
+#&gt; iter: 3  mgc: 2.951195e-11 
+#&gt; iter: 1  mgc: 2.951195e-11 
+#&gt; outer mgc:  4.185684 
+#&gt;  42:     262.89354: -7.71099 -2.86175 -2.84294 -2.89001 -3.08478 -3.26583 -3.47137 -3.76930 -11.4918 -8.40128 -0.947171 -0.587053 -1.38649 -1.76938 -0.639329 -1.33207 -1.08543  1.95070  1.63595
+#&gt; iter: 1  value: -186.2026 mgc: 0.4665431 ustep: 1 
+#&gt; iter: 2  value: -186.2026 mgc: 0.0001728082 ustep: 1 
+#&gt; iter: 3  mgc: 2.377298e-11 
+#&gt; iter: 1  mgc: 2.377298e-11 
+#&gt; outer mgc:  3.213317 
+#&gt;  43:     262.76925: -7.71020 -2.87136 -2.85822 -2.88326 -3.07655 -3.26521 -3.49788 -3.74462 -11.4471 -8.42469 -0.948928 -0.588488 -1.39062 -1.76717 -0.639548 -1.33713 -1.09043  1.94602  1.63627
+#&gt; iter: 1  value: -185.5791 mgc: 0.5099855 ustep: 1 
+#&gt; iter: 2  value: -185.5791 mgc: 8.986419e-05 ustep: 1 
+#&gt; iter: 3  mgc: 1.504308e-11 
+#&gt; iter: 1  mgc: 1.504308e-11 
+#&gt; outer mgc:  4.187853 
+#&gt;  44:     262.65670: -7.70264 -2.85569 -2.82521 -2.89967 -3.06385 -3.25601 -3.48366 -3.74217 -11.4761 -8.45918 -0.946908 -0.589705 -1.38927 -1.76498 -0.638986 -1.33243 -1.10462  1.94163  1.63662
+#&gt; iter: 1  value: -185.9749 mgc: 0.5602958 ustep: 1 
+#&gt; iter: 2  value: -185.9749 mgc: 6.939509e-05 ustep: 1 
+#&gt; iter: 3  mgc: 7.825296e-12 
+#&gt; iter: 1  mgc: 7.825296e-12 
+#&gt; outer mgc:  3.478932 
+#&gt;  45:     262.54946: -7.69962 -2.85372 -2.84978 -2.86328 -3.07874 -3.25753 -3.46203 -3.75506 -11.4466 -8.48538 -0.947823 -0.591136 -1.38818 -1.76591 -0.639264 -1.33587 -1.10653  1.93635  1.63631
+#&gt; iter: 1  value: -186.3045 mgc: 0.5819925 ustep: 1 
+#&gt; iter: 2  value: -186.3045 mgc: 0.0002454965 ustep: 1 
+#&gt; iter: 3  mgc: 3.60405e-11 
+#&gt; iter: 1  mgc: 3.60405e-11 
+#&gt; outer mgc:  5.752161 
+#&gt;  46:     262.43988: -7.69354 -2.85696 -2.83766 -2.87375 -3.05613 -3.24528 -3.49151 -3.71981 -11.4425 -8.51979 -0.948475 -0.591910 -1.39217 -1.76297 -0.638643 -1.33614 -1.11494  1.93168  1.63810
+#&gt; iter: 1  value: -185.6816 mgc: 0.6182255 ustep: 1 
+#&gt; iter: 2  value: -185.6816 mgc: 0.0002255229 ustep: 1 
+#&gt; iter: 3  mgc: 6.539747e-11 
+#&gt; iter: 1  mgc: 6.539747e-11 
+#&gt; outer mgc:  3.245662 
+#&gt;  47:     262.28620: -7.68961 -2.83524 -2.81555 -2.87683 -3.05902 -3.24938 -3.45097 -3.74815 -11.4503 -8.54830 -0.947125 -0.593162 -1.38748 -1.76333 -0.639018 -1.33385 -1.11491  1.92590  1.63594
+#&gt; iter: 1  value: -186.3732 mgc: 0.4556932 ustep: 1 
+#&gt; iter: 2  value: -186.3732 mgc: 8.493742e-05 ustep: 1 
+#&gt; iter: 3  mgc: 5.275363e-12 
+#&gt; iter: 1  mgc: 5.275363e-12 
+#&gt; outer mgc:  3.129478 
+#&gt;  48:     262.08187: -7.68151 -2.83627 -2.83057 -2.84861 -3.05767 -3.23673 -3.46245 -3.72688 -11.4293 -8.59337 -0.948625 -0.594040 -1.39042 -1.76181 -0.638335 -1.33703 -1.11909  1.91885  1.63718
+#&gt; iter: 1  value: -185.9522 mgc: 0.5217167 ustep: 1 
+#&gt; iter: 2  value: -185.9522 mgc: 0.0001093261 ustep: 1 
+#&gt; iter: 3  mgc: 3.597878e-11 
+#&gt; iter: 1  mgc: 3.597878e-11 
+#&gt; outer mgc:  4.34768 
+#&gt;  49:     261.94336: -7.67691 -2.82156 -2.79563 -2.87122 -3.03617 -3.23492 -3.45904 -3.72142 -11.4305 -8.63634 -0.948210 -0.595094 -1.38979 -1.75975 -0.638707 -1.33615 -1.11900  1.91063  1.63558
+#&gt; iter: 1  value: -186.2604 mgc: 0.4669873 ustep: 1 
+#&gt; iter: 2  value: -186.2604 mgc: 7.266764e-05 ustep: 1 
+#&gt; iter: 3  mgc: 6.626089e-12 
+#&gt; iter: 1  mgc: 6.626089e-12 
+#&gt; outer mgc:  3.081353 
+#&gt;  50:     261.69175: -7.66757 -2.81543 -2.80666 -2.84007 -3.04174 -3.22529 -3.44108 -3.72037 -11.4171 -8.68615 -0.948873 -0.595631 -1.38931 -1.75953 -0.638625 -1.33709 -1.12068  1.90215  1.63551
+#&gt; iter: 1  value: -186.3536 mgc: 0.3614256 ustep: 1 
+#&gt; iter: 2  value: -186.3536 mgc: 9.26844e-05 ustep: 1 
+#&gt; iter: 3  mgc: 1.51168e-11 
+#&gt; iter: 1  mgc: 1.51168e-11 
+#&gt; outer mgc:  3.663214 
+#&gt;  51:     261.55294: -7.66257 -2.81019 -2.78512 -2.85047 -3.02005 -3.21647 -3.45178 -3.69778 -11.4093 -8.73567 -0.948727 -0.596239 -1.39121 -1.75803 -0.639002 -1.33772 -1.12131  1.89301  1.63536
+#&gt; iter: 1  value: -186.5698 mgc: 0.4138182 ustep: 1 
+#&gt; iter: 2  value: -186.5698 mgc: 5.14084e-05 ustep: 1 
+#&gt; iter: 3  mgc: 7.116974e-12 
+#&gt; iter: 1  mgc: 7.116974e-12 
+#&gt; outer mgc:  3.137757 
+#&gt;  52:     261.28681: -7.65178 -2.79918 -2.78799 -2.82739 -3.02316 -3.20920 -3.42460 -3.70338 -11.4025 -8.78724 -0.949023 -0.596381 -1.38963 -1.75863 -0.638977 -1.33743 -1.12203  1.88411  1.63506
+#&gt; iter: 1  value: -187.0582 mgc: 0.5957186 ustep: 1 
+#&gt; iter: 2  value: -187.0582 mgc: 0.0002517181 ustep: 1 
+#&gt; iter: 3  mgc: 1.073448e-10 
+#&gt; iter: 1  mgc: 1.073448e-10 
+#&gt; outer mgc:  5.461532 
+#&gt;  53:     260.92060: -7.63478 -2.78410 -2.76309 -2.81937 -2.99699 -3.18697 -3.43287 -3.66619 -11.3809 -8.90076 -0.949893 -0.596801 -1.39270 -1.75662 -0.638998 -1.33891 -1.12239  1.86413  1.63485
+#&gt; iter: 1  value: -187.9182 mgc: 1.253023 ustep: 1 
+#&gt; iter: 2  value: -187.9182 mgc: 0.0008833191 ustep: 1 
+#&gt; iter: 3  mgc: 1.050311e-09 
+#&gt; iter: 1  mgc: 1.050311e-09 
+#&gt; outer mgc:  8.35194 
+#&gt;  54:     260.23746: -7.59212 -2.76255 -2.71291 -2.81232 -2.93961 -3.16003 -3.34980 -3.64121 -11.3657 -9.12922 -0.949310 -0.595275 -1.39073 -1.75878 -0.639922 -1.33596 -1.13180  1.82568  1.63702
+#&gt; iter: 1  value: -189.386 mgc: 1.361969 ustep: 1 
+#&gt; iter: 2  value: -189.386 mgc: 0.0009211608 ustep: 1 
+#&gt; iter: 3  mgc: 1.624339e-09 
+#&gt; iter: 1  mgc: 1.624339e-09 
+#&gt; outer mgc:  4.128509 
+#&gt;  55:     259.04994: -7.55141 -2.70617 -2.71296 -2.72312 -2.94548 -3.10986 -3.32617 -3.61292 -11.3231 -9.35347 -0.950933 -0.595942 -1.39255 -1.75946 -0.638044 -1.33331 -1.13264  1.78576  1.63701
+#&gt; iter: 1  value: -190.9283 mgc: 1.067596 ustep: 1 
+#&gt; iter: 2  value: -190.9283 mgc: 0.001143683 ustep: 1 
+#&gt; iter: 3  mgc: 2.542228e-09 
+#&gt; iter: 1  value: -195.4124 mgc: 3.680597 ustep: 1 
+#&gt; iter: 2  value: -195.4124 mgc: 0.008395325 ustep: 1 
+#&gt; iter: 3  value: -195.4124 mgc: 1.948354e-07 ustep: 1 
+#&gt; iter: 4  mgc: 2.557954e-13 
+#&gt; iter: 1  value: -208.1192 mgc: 15.42634 ustep: 1 
+#&gt; iter: 2  value: -208.1273 mgc: 0.1776816 ustep: 1 
+#&gt; iter: 3  value: -208.1273 mgc: 9.688305e-05 ustep: 1 
+#&gt; iter: 4  mgc: 3.678663e-11 
+#&gt; iter: 1  mgc: 3.678663e-11 
+#&gt; outer mgc:  42.38944 
+#&gt;  56:     248.99510: -6.90357 -1.88032 -2.07584 -2.08418 -2.41015 -2.64114 -2.62991 -3.25452 -10.6804 -13.1098 -0.988683 -0.621804 -1.39628 -1.78499 -0.616259 -1.33503 -1.22981  1.11153  1.63978
+#&gt; iter: 1  value: -186.8762 mgc: 15.67179 ustep: 1 
+#&gt; iter: 2  value: -186.9324 mgc: 0.5685008 ustep: 1 
+#&gt; iter: 3  value: -186.9324 mgc: 0.0009063712 ustep: 1 
+#&gt; iter: 4  mgc: 5.113286e-09 
+#&gt; iter: 1  value: -220.211 mgc: 3.803081 ustep: 1 
+#&gt; iter: 2  value: -220.2112 mgc: 0.03003581 ustep: 1 
+#&gt; iter: 3  value: -220.2112 mgc: 2.46931e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.23821e-13 
+#&gt; iter: 1  mgc: 2.23821e-13 
+#&gt; outer mgc:  24.27286 
+#&gt;  57:     234.41811: -6.77584 -1.80260 -1.93020 -1.96311 -2.24747 -2.46113 -2.55938 -3.02892 -10.5187 -13.9901 -0.975339 -0.625746 -1.38220 -1.79204 -0.617257 -1.28382 -1.23007 0.878594  1.65396
+#&gt; iter: 1  value: -226.2729 mgc: 5.436528 ustep: 1 
+#&gt; iter: 2  value: -226.2732 mgc: 0.02661691 ustep: 1 
+#&gt; iter: 3  value: -226.2732 mgc: 2.189867e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.149669e-13 
+#&gt; iter: 1  mgc: 2.149669e-13 
+#&gt; outer mgc:  26.01495 
+#&gt;  58:     224.46534: -6.68330 -1.84058 -1.79356 -1.88635 -2.04668 -2.23740 -2.59143 -2.67674 -10.3821 -14.7754 -0.950251 -0.619929 -1.38607 -1.76996 -0.622582 -1.30650 -1.19639 0.499982  1.65860
+#&gt; iter: 1  value: -225.0864 mgc: 5.852736 ustep: 1 
+#&gt; iter: 2  value: -225.0867 mgc: 0.02807385 ustep: 1 
+#&gt; iter: 3  value: -225.0867 mgc: 2.151257e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.43805e-13 
+#&gt; iter: 1  value: -231.4924 mgc: 3.476877 ustep: 1 
+#&gt; iter: 2  value: -231.4924 mgc: 0.004774861 ustep: 1 
+#&gt; iter: 3  value: -231.4924 mgc: 4.960281e-08 ustep: 1 
+#&gt; mgc: 2.220446e-13 
+#&gt; iter: 1  mgc: 2.220446e-13 
+#&gt; outer mgc:  18.59683 
+#&gt;  59:     220.94253: -6.65476 -1.79641 -1.81703 -1.82277 -2.04551 -2.24553 -2.34611 -2.76157 -10.4600 -14.8777 -0.939591 -0.617503 -1.40110 -1.78147 -0.629024 -1.31836 -1.17624 0.324951  1.65491
+#&gt; iter: 1  value: -234.5052 mgc: 2.300451 ustep: 1 
+#&gt; iter: 2  value: -234.5052 mgc: 0.002512284 ustep: 1 
+#&gt; iter: 3  value: -234.5052 mgc: 2.006465e-08 ustep: 1 
+#&gt; mgc: 2.504663e-13 
+#&gt; iter: 1  mgc: 2.504663e-13 
+#&gt; outer mgc:  17.1191 
+#&gt;  60:     216.65087: -6.69249 -1.89226 -1.85352 -1.89150 -2.05780 -2.22835 -2.48986 -2.68386 -10.4927 -14.6104 -0.939162 -0.613562 -1.41568 -1.76536 -0.632505 -1.32408 -1.15896 0.248280  1.65026
+#&gt; iter: 1  value: -236.2125 mgc: 2.900023 ustep: 1 
+#&gt; iter: 2  value: -236.2125 mgc: 0.01408111 ustep: 1 
+#&gt; iter: 3  value: -236.2125 mgc: 7.412504e-07 ustep: 1 
+#&gt; iter: 4  mgc: 2.533529e-13 
+#&gt; iter: 1  value: -238.93 mgc: 2.171608 ustep: 1 
+#&gt; iter: 2  value: -238.93 mgc: 0.001644609 ustep: 1 
+#&gt; iter: 3  value: -238.93 mgc: 1.550857e-08 ustep: 1 
+#&gt; mgc: 2.513545e-13 
+#&gt; iter: 1  mgc: 2.513545e-13 
+#&gt; outer mgc:  21.38179 
+#&gt;  61:     213.69580: -6.69553 -1.91440 -1.89954 -1.89274 -2.08345 -2.27300 -2.35419 -2.76422 -10.5349 -14.4594 -0.937384 -0.613653 -1.41846 -1.76890 -0.637775 -1.34492 -1.14503 0.0122615  1.64873
+#&gt; iter: 1  value: -240.6288 mgc: 2.846181 ustep: 1 
+#&gt; iter: 2  value: -240.6289 mgc: 0.0138144 ustep: 1 
+#&gt; iter: 3  value: -240.6289 mgc: 6.799435e-07 ustep: 1 
+#&gt; iter: 4  mgc: 2.815526e-13 
+#&gt; iter: 1  value: -241.4081 mgc: 1.974102 ustep: 1 
+#&gt; iter: 2  value: -241.4081 mgc: 0.002982863 ustep: 1 
+#&gt; iter: 3  value: -241.4081 mgc: 3.601612e-08 ustep: 1 
+#&gt; mgc: 2.562395e-13 
+#&gt; iter: 1  mgc: 2.562395e-13 
+#&gt; outer mgc:  12.31044 
+#&gt;  62:     210.30148: -6.65756 -1.88965 -1.85381 -1.88032 -2.04189 -2.19581 -2.43381 -2.64624 -10.4892 -14.6492 -0.933875 -0.617809 -1.41896 -1.76482 -0.638512 -1.31893 -1.14605 -0.169081  1.65855
+#&gt; iter: 1  value: -244.5177 mgc: 2.765156 ustep: 1 
+#&gt; iter: 2  value: -244.5177 mgc: 0.007969463 ustep: 1 
+#&gt; iter: 3  value: -244.5177 mgc: 2.355038e-07 ustep: 1 
+#&gt; iter: 4  mgc: 2.254308e-13 
+#&gt; iter: 1  mgc: 2.254308e-13 
+#&gt; outer mgc:  12.87486 
+#&gt;  63:     209.68898: -6.72882 -1.96844 -1.92097 -1.92959 -2.08904 -2.28139 -2.45479 -2.73823 -10.6074 -14.0725 -0.926288 -0.626170 -1.42560 -1.76929 -0.636753 -1.35033 -1.13773 -0.347285  1.66279
+#&gt; iter: 1  value: -243.1138 mgc: 4.110487 ustep: 1 
+#&gt; iter: 2  value: -243.1138 mgc: 0.006563811 ustep: 1 
+#&gt; iter: 3  value: -243.1138 mgc: 4.820295e-07 ustep: 1 
+#&gt; iter: 4  mgc: 2.451372e-13 
+#&gt; iter: 1  mgc: 2.451372e-13 
+#&gt; outer mgc:  17.42471 
+#&gt;  64:     205.48480: -6.66686 -1.85024 -1.87260 -1.88507 -2.09422 -2.20744 -2.37456 -2.70831 -10.3738 -14.4631 -0.914862 -0.632004 -1.39591 -1.75553 -0.637807 -1.32398 -1.13279 -0.762326  1.66161
+#&gt; iter: 1  value: -242.6526 mgc: 4.414207 ustep: 1 
+#&gt; iter: 2  value: -242.6533 mgc: 0.06714703 ustep: 1 
+#&gt; iter: 3  value: -242.6533 mgc: 1.661153e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.315836e-12 
+#&gt; iter: 1  value: -247.1272 mgc: 1.227091 ustep: 1 
+#&gt; iter: 2  value: -247.1272 mgc: 0.0007084526 ustep: 1 
+#&gt; iter: 3  mgc: 3.667122e-09 
+#&gt; iter: 1  mgc: 3.667122e-09 
+#&gt; outer mgc:  4.819222 
+#&gt;  65:     203.36656: -6.66953 -1.84948 -1.84185 -1.88435 -2.04402 -2.21797 -2.43017 -2.65893 -10.4748 -14.4027 -0.919640 -0.633357 -1.41125 -1.75368 -0.637653 -1.33888 -1.12650 -0.782312  1.65851
+#&gt; iter: 1  value: -247.4729 mgc: 1.285416 ustep: 1 
+#&gt; iter: 2  value: -247.4729 mgc: 0.0007616049 ustep: 1 
+#&gt; iter: 3  mgc: 1.264577e-09 
+#&gt; iter: 1  value: -247.6612 mgc: 0.602197 ustep: 1 
+#&gt; iter: 2  value: -247.6612 mgc: 0.00016919 ustep: 1 
+#&gt; iter: 3  mgc: 6.262413e-11 
+#&gt; iter: 1  mgc: 6.262413e-11 
+#&gt; outer mgc:  3.451336 
+#&gt;  66:     203.02678: -6.66501 -1.87746 -1.85461 -1.86453 -2.04600 -2.20890 -2.40027 -2.67702 -10.4815 -14.3636 -0.922722 -0.634835 -1.41290 -1.75257 -0.637194 -1.34639 -1.13110 -0.814205  1.65223
+#&gt; iter: 1  value: -247.0176 mgc: 0.6215023 ustep: 1 
+#&gt; iter: 2  value: -247.0176 mgc: 0.0002910206 ustep: 1 
+#&gt; iter: 3  mgc: 1.194883e-10 
+#&gt; iter: 1  mgc: 1.194883e-10 
+#&gt; outer mgc:  2.979583 
+#&gt;  67:     202.85608: -6.65351 -1.86097 -1.83774 -1.87375 -2.02041 -2.20145 -2.40920 -2.64442 -10.4911 -14.3496 -0.923336 -0.640982 -1.41761 -1.74591 -0.635357 -1.34883 -1.13532 -0.862078  1.64489
+#&gt; iter: 1  value: -245.7693 mgc: 0.6136481 ustep: 1 
+#&gt; iter: 2  value: -245.7693 mgc: 0.0004699442 ustep: 1 
+#&gt; iter: 3  mgc: 6.852687e-10 
+#&gt; iter: 1  mgc: 6.852687e-10 
+#&gt; outer mgc:  2.029582 
+#&gt;  68:     202.65536: -6.63524 -1.85073 -1.83013 -1.84594 -2.02257 -2.17804 -2.38250 -2.63839 -10.4559 -14.3199 -0.926761 -0.650602 -1.41205 -1.74080 -0.632496 -1.34796 -1.13772 -0.883352  1.63663
+#&gt; iter: 1  value: -247.1845 mgc: 0.6252401 ustep: 1 
+#&gt; iter: 2  value: -247.1845 mgc: 0.0003957867 ustep: 1 
+#&gt; iter: 3  mgc: 6.13394e-10 
+#&gt; iter: 1  mgc: 6.13394e-10 
+#&gt; outer mgc:  4.032057 
+#&gt;  69:     202.61987: -6.62334 -1.82844 -1.80857 -1.83644 -1.98722 -2.17947 -2.35381 -2.62646 -10.4626 -14.3210 -0.930703 -0.651603 -1.41745 -1.74202 -0.634020 -1.35583 -1.14144 -0.925838  1.63471
+#&gt; iter: 1  value: -244.8033 mgc: 0.6371176 ustep: 1 
+#&gt; iter: 2  value: -244.8033 mgc: 0.0005469469 ustep: 1 
+#&gt; iter: 3  mgc: 1.033071e-09 
+#&gt; iter: 1  mgc: 1.033071e-09 
+#&gt; outer mgc:  4.064333 
+#&gt;  70:     202.46877: -6.61132 -1.82078 -1.79402 -1.82183 -1.97390 -2.14119 -2.36210 -2.59391 -10.4344 -14.2942 -0.933864 -0.644140 -1.41644 -1.73106 -0.635993 -1.35054 -1.14511 -0.935862  1.62294
+#&gt; iter: 1  value: -245.4264 mgc: 0.8387509 ustep: 1 
+#&gt; iter: 2  value: -245.4264 mgc: 0.0003983803 ustep: 1 
+#&gt; iter: 3  mgc: 8.305966e-10 
+#&gt; iter: 1  mgc: 8.305966e-10 
+#&gt; outer mgc:  3.939831 
+#&gt;  71:     202.45379: -6.58717 -1.80923 -1.78991 -1.78694 -1.98193 -2.12818 -2.31131 -2.59551 -10.4149 -14.2853 -0.934896 -0.646533 -1.41082 -1.73742 -0.635926 -1.35216 -1.14391 -0.945157  1.62284
+#&gt; iter: 1  value: -245.4419 mgc: 0.3303156 ustep: 1 
+#&gt; iter: 2  value: -245.4419 mgc: 9.126127e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.469602e-11 
+#&gt; iter: 1  mgc: 3.469602e-11 
+#&gt; outer mgc:  0.7741654 
+#&gt;  72:     202.31246: -6.58415 -1.80263 -1.77892 -1.79884 -1.96189 -2.12546 -2.32557 -2.57661 -10.4153 -14.2791 -0.935234 -0.647438 -1.41361 -1.73590 -0.635964 -1.35159 -1.14479 -0.948367  1.62109
+#&gt; iter: 1  value: -245.3795 mgc: 0.3478875 ustep: 1 
+#&gt; iter: 2  value: -245.3795 mgc: 0.0001274198 ustep: 1 
+#&gt; iter: 3  mgc: 6.154346e-11 
+#&gt; iter: 1  mgc: 6.154346e-11 
+#&gt; outer mgc:  1.473729 
+#&gt;  73:     202.26611: -6.57602 -1.79191 -1.77369 -1.78416 -1.95525 -2.11413 -2.30933 -2.57207 -10.4063 -14.2651 -0.936403 -0.649765 -1.41610 -1.73431 -0.635485 -1.35401 -1.14782 -0.960267  1.61688
+#&gt; iter: 1  value: -245.3241 mgc: 0.5158828 ustep: 1 
+#&gt; iter: 2  value: -245.3241 mgc: 0.0008983737 ustep: 1 
+#&gt; iter: 3  mgc: 3.498544e-09 
+#&gt; iter: 1  value: -246.2359 mgc: 1.501823 ustep: 1 
+#&gt; iter: 2  value: -246.2359 mgc: 0.007590936 ustep: 1 
+#&gt; iter: 3  value: -246.2359 mgc: 2.477184e-07 ustep: 1 
+#&gt; iter: 4  mgc: 2.359224e-13 
+#&gt; iter: 1  value: -249.0422 mgc: 6.051342 ustep: 1 
+#&gt; iter: 2  value: -249.0501 mgc: 0.1439673 ustep: 1 
+#&gt; iter: 3  value: -249.0501 mgc: 0.0001052933 ustep: 1 
+#&gt; iter: 4  mgc: 6.157785e-11 
+#&gt; iter: 1  mgc: 6.157785e-11 
+#&gt; outer mgc:  11.3132 
+#&gt;  74:     200.80413: -6.20276 -1.49308 -1.40953 -1.38330 -1.61774 -1.70385 -1.89753 -2.12465 -10.0806 -13.9582 -0.967359 -0.663583 -1.40844 -1.74558 -0.658881 -1.36626 -1.15450 -1.01481  1.58777
+#&gt; iter: 1  value: -254.5443 mgc: 23.58925 ustep: 1 
+#&gt; iter: 2  value: -259.4737 mgc: 3.854585 ustep: 1 
+#&gt; iter: 3  value: -259.4778 mgc: 0.1212336 ustep: 1 
+#&gt; iter: 4  value: -259.4778 mgc: 0.0003779898 ustep: 1 
+#&gt; iter: 5  mgc: 1.35906e-09 
+#&gt; iter: 1  value: 4860.077 mgc: 78.47878 ustep: 0.1336527 
+#&gt; iter: 2  value: 1823.482 mgc: 1383.272 ustep: 0.3656489 
+#&gt; iter: 3  value: 1288.763 mgc: 394.7755 ustep: 0.6047286 
+#&gt; iter: 4  value: 1194.378 mgc: 151.6977 ustep: 0.7776652 
+#&gt; iter: 5  value: 1184.497 mgc: 46.38336 ustep: 0.8818651 
+#&gt; iter: 6  value: 1184.252 mgc: 7.692657 ustep: 0.9390828 
+#&gt; iter: 7  value: 1184.252 mgc: 0.2847811 ustep: 0.969066 
+#&gt; iter: 8  value: 1184.252 mgc: 0.0004576434 ustep: 0.984413 
+#&gt; iter: 9  value: 1184.252 mgc: 3.303269e-07 ustep: 0.9921767 
+#&gt; iter: 10  mgc: 1.990104e-09 
+#&gt; iter: 1  mgc: 1.35906e-09 
+#&gt; outer mgc:  23.62197 
+#&gt;  75:     192.70360: -5.15229 -0.615214 -0.422006 -0.312372 -0.593983 -0.587915 -0.740314 -0.916915 -9.16655 -13.0768 -1.02817 -0.664196 -1.42008 -1.75127 -0.678916 -1.38053 -1.17022 -1.14630  1.51120
+#&gt; iter: 1  value: 3146.305 mgc: 49.56749 ustep: 0.4367355 
+#&gt; iter: 2  value: 661.5358 mgc: 655.4229 ustep: 0.6608936 
+#&gt; iter: 3  value: 157.4222 mgc: 200.1971 ustep: 0.8129723 
+#&gt; iter: 4  value: 59.89017 mgc: 73.42781 ustep: 0.9016596 
+#&gt; iter: 5  value: 51.44848 mgc: 20.83789 ustep: 0.9495626 
+#&gt; iter: 6  value: 51.32799 mgc: 2.773436 ustep: 0.9744576 
+#&gt; iter: 7  value: 51.32795 mgc: 0.0606976 ustep: 0.9871475 
+#&gt; iter: 8  value: 51.32795 mgc: 3.636332e-05 ustep: 0.9935536 
+#&gt; iter: 9  mgc: 2.563564e-09 
+#&gt; iter: 1  value: -263.1056 mgc: 5.024066 ustep: 1 
+#&gt; iter: 2  value: -263.1541 mgc: 0.1985915 ustep: 1 
+#&gt; iter: 3  value: -263.1541 mgc: 0.0008584019 ustep: 1 
+#&gt; iter: 4  value: -263.1541 mgc: 1.65967e-08 ustep: 1 
+#&gt; mgc: 2.366995e-13 
+#&gt; iter: 1  mgc: 2.366995e-13 
+#&gt; outer mgc:  24.08087 
+#&gt;  76:     189.68445: -4.93790 -0.430047 -0.234045 -0.119563 -0.373866 -0.369002 -0.505894 -0.667952 -8.98919 -12.9024 -1.03540 -0.664490 -1.43733 -1.75032 -0.681422 -1.37941 -1.17206 -1.16956  1.49484
+#&gt; iter: 1  value: -202.4414 mgc: 21.99601 ustep: 1 
+#&gt; iter: 2  value: -202.7146 mgc: 1.600172 ustep: 1 
+#&gt; iter: 3  value: -202.7147 mgc: 0.03281377 ustep: 1 
+#&gt; iter: 4  value: -202.7147 mgc: 2.058064e-05 ustep: 1 
+#&gt; iter: 5  mgc: 6.00231e-12 
+#&gt; iter: 1  value: -271.8038 mgc: 3.645197 ustep: 1 
+#&gt; iter: 2  value: -271.8041 mgc: 0.04011766 ustep: 1 
+#&gt; iter: 3  value: -271.8041 mgc: 1.84617e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.938449e-12 
+#&gt; iter: 1  mgc: 1.938449e-12 
+#&gt; outer mgc:  10.27391 
+#&gt;  77:     184.06909: -4.90627 -0.356234 -0.299081 -0.264004 -0.274900 -0.392517 -0.480044 -0.592932 -9.02084 -12.9089 -0.999938 -0.662775 -1.55294 -1.73815 -0.669105 -1.36053 -1.16734 -1.15030  1.49430
+#&gt; iter: 1  value: -285.3444 mgc: 3.021207 ustep: 1 
+#&gt; iter: 2  value: -285.3451 mgc: 0.0555084 ustep: 1 
+#&gt; iter: 3  value: -285.3451 mgc: 4.139116e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.829781e-11 
+#&gt; iter: 1  mgc: 1.829781e-11 
+#&gt; outer mgc:  23.01487 
+#&gt;  78:     182.48097: -4.87254 -0.417973 -0.337794 -0.210197 -0.382146 -0.303508 -0.383311 -0.502100 -9.01920 -12.9239 -0.980692 -0.663799 -1.67667 -1.73775 -0.652934 -1.38358 -1.16123 -1.11484  1.51745
+#&gt; iter: 1  value: -285.8753 mgc: 3.052317 ustep: 1 
+#&gt; iter: 2  value: -285.8777 mgc: 0.06807121 ustep: 1 
+#&gt; iter: 3  value: -285.8777 mgc: 0.0001220835 ustep: 1 
+#&gt; iter: 4  mgc: 1.744653e-10 
+#&gt; iter: 1  mgc: 1.744653e-10 
+#&gt; outer mgc:  7.587514 
+#&gt;  79:     179.23771: -4.80176 -0.371886 -0.278389 -0.217563 -0.208763 -0.265410 -0.294999 -0.389434 -9.00717 -12.9024 -0.978838 -0.663392 -1.68765 -1.71837 -0.648634 -1.35561 -1.15614 -1.09910  1.51828
+#&gt; iter: 1  value: -295.7925 mgc: 4.466629 ustep: 1 
+#&gt; iter: 2  value: -295.871 mgc: 0.4741623 ustep: 1 
+#&gt; iter: 3  value: -295.871 mgc: 0.003819552 ustep: 1 
+#&gt; iter: 4  value: -295.871 mgc: 1.821013e-07 ustep: 1 
+#&gt; iter: 5  mgc: 2.531308e-13 
+#&gt; iter: 1  value: -295.9973 mgc: 7.046206 ustep: 1 
+#&gt; iter: 2  value: -297.2615 mgc: 2.462087 ustep: 1 
+#&gt; iter: 3  value: -297.2626 mgc: 0.1091438 ustep: 1 
+#&gt; iter: 4  value: -297.2626 mgc: 0.0001620339 ustep: 1 
+#&gt; iter: 5  mgc: 3.519585e-10 
+#&gt; iter: 1  mgc: 3.519585e-10 
+#&gt; outer mgc:  26.5405 
+#&gt;  80:     172.44270: -4.30053 -0.0912515 0.0324695 0.223597 0.200006 0.289666 0.315760 0.222994 -8.70243 -12.6238 -1.00542 -0.654117 -1.78856 -1.66469 -0.633750 -1.37071 -1.12206 -1.06888  1.48510
+#&gt; iter: 1  value: -20.89552 mgc: 26.68207 ustep: 1 
+#&gt; iter: 2  value: -251.1166 mgc: 154.9642 ustep: 1 
+#&gt; iter: 3  value: -286.5599 mgc: 45.66816 ustep: 1 
+#&gt; iter: 4  value: -288.6003 mgc: 10.43611 ustep: 1 
+#&gt; iter: 5  value: -288.611 mgc: 0.7497275 ustep: 1 
+#&gt; iter: 6  value: -288.611 mgc: 0.004344566 ustep: 1 
+#&gt; iter: 7  value: -288.611 mgc: 1.486451e-07 ustep: 1 
+#&gt; mgc: 3.539391e-13 
+#&gt; iter: 1  value: -310.3192 mgc: 3.020742 ustep: 1 
+#&gt; iter: 2  value: -310.3235 mgc: 0.1857213 ustep: 1 
+#&gt; iter: 3  value: -310.3235 mgc: 0.000604944 ustep: 1 
+#&gt; iter: 4  mgc: 6.007574e-09 
+#&gt; iter: 1  mgc: 6.007574e-09 
+#&gt; outer mgc:  12.64177 
+#&gt;  81:     169.21965: -4.31281 -0.0759412 0.0385153 0.137282 0.188658 0.222273 0.254750 0.379042 -8.73616 -12.6443 -1.02132 -0.660925 -1.83184 -1.67722 -0.631524 -1.37050 -1.12862 -1.06578  1.51123
+#&gt; iter: 1  value: -325.8788 mgc: 2.911835 ustep: 1 
+#&gt; iter: 2  value: -325.8803 mgc: 0.09568608 ustep: 1 
+#&gt; iter: 3  value: -325.8803 mgc: 0.0002182409 ustep: 1 
+#&gt; iter: 4  mgc: 9.422791e-10 
+#&gt; iter: 1  mgc: 9.422791e-10 
+#&gt; outer mgc:  8.274987 
+#&gt;  82:     168.24045: -4.31703 -0.117892 -0.0206324 0.169223 0.156075 0.294715 0.380816 0.426799 -8.77184 -12.6957 -1.02279 -0.696728 -1.89941 -1.68612 -0.640046 -1.36756 -1.13286 -1.05572  1.57778
+#&gt; iter: 1  value: -328.6783 mgc: 2.921672 ustep: 1 
+#&gt; iter: 2  value: -328.6797 mgc: 0.1498162 ustep: 1 
+#&gt; iter: 3  value: -328.6797 mgc: 0.0002774165 ustep: 1 
+#&gt; iter: 4  mgc: 1.210382e-09 
+#&gt; iter: 1  mgc: 1.210382e-09 
+#&gt; outer mgc:  6.22638 
+#&gt;  83:     167.99844: -4.39504 -0.177015 -0.00559670 0.113667 0.177010 0.248391 0.302037 0.370762 -8.81939 -12.7546 -0.981032 -0.732043 -1.96282 -1.64821 -0.633373 -1.32131 -1.14779 -1.04803  1.63921
+#&gt; iter: 1  value: -328.7114 mgc: 2.332532 ustep: 1 
+#&gt; iter: 2  value: -328.7164 mgc: 0.2532623 ustep: 1 
+#&gt; iter: 3  value: -328.7164 mgc: 0.001029483 ustep: 1 
+#&gt; iter: 4  value: -328.7164 mgc: 1.390074e-08 ustep: 1 
+#&gt; mgc: 3.206324e-13 
+#&gt; iter: 1  value: -331.7465 mgc: 0.9789111 ustep: 1 
+#&gt; iter: 2  value: -331.7465 mgc: 0.02717115 ustep: 1 
+#&gt; iter: 3  value: -331.7465 mgc: 1.092088e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.493916e-12 
+#&gt; iter: 1  mgc: 1.493916e-12 
+#&gt; outer mgc:  3.152277 
+#&gt;  84:     167.55497: -4.36769 -0.159533 -0.0350658 0.122335 0.159190 0.235110 0.327904 0.404657 -8.79441 -12.7141 -0.979561 -0.724767 -1.97712 -1.65442 -0.640955 -1.35202 -1.15782 -1.03492  1.63283
+#&gt; iter: 1  value: -331.4819 mgc: 0.9317127 ustep: 1 
+#&gt; iter: 2  value: -331.4819 mgc: 0.007630738 ustep: 1 
+#&gt; iter: 3  value: -331.4819 mgc: 1.42309e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.117506e-13 
+#&gt; iter: 1  value: -331.7808 mgc: 0.424052 ustep: 1 
+#&gt; iter: 2  value: -331.7808 mgc: 0.0009144441 ustep: 1 
+#&gt; iter: 3  value: -331.7808 mgc: 1.187355e-08 ustep: 1 
+#&gt; mgc: 4.08118e-13 
+#&gt; iter: 1  mgc: 4.08118e-13 
+#&gt; outer mgc:  2.386748 
+#&gt;  85:     167.51697: -4.35714 -0.154566 -0.0161432 0.112397 0.160851 0.258832 0.324229 0.397280 -8.80143 -12.7150 -0.979670 -0.721206 -1.98040 -1.65485 -0.641728 -1.34640 -1.16325 -1.02849  1.63054
+#&gt; iter: 1  value: -332.4763 mgc: 0.4004899 ustep: 1 
+#&gt; iter: 2  value: -332.4763 mgc: 0.004214659 ustep: 1 
+#&gt; iter: 3  value: -332.4763 mgc: 3.394908e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.42677e-13 
+#&gt; iter: 1  mgc: 5.42677e-13 
+#&gt; outer mgc:  1.072364 
+#&gt;  86:     167.46398: -4.34379 -0.149980 -0.0169849 0.125575 0.173669 0.253344 0.335805 0.415514 -8.79184 -12.7092 -0.980861 -0.709400 -1.98540 -1.65967 -0.644192 -1.34362 -1.16650 -1.02508  1.62572
+#&gt; iter: 1  value: -331.3 mgc: 0.9187182 ustep: 1 
+#&gt; iter: 2  value: -331.3 mgc: 0.001179292 ustep: 1 
+#&gt; iter: 3  mgc: 5.704077e-09 
+#&gt; iter: 1  value: -332.922 mgc: 0.1451049 ustep: 1 
+#&gt; iter: 2  value: -332.922 mgc: 5.171332e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.923806e-11 
+#&gt; iter: 1  mgc: 3.923806e-11 
+#&gt; outer mgc:  0.9317718 
+#&gt;  87:     167.45681: -4.34088 -0.148895 -0.0177915 0.127560 0.166833 0.260809 0.337868 0.413430 -8.79174 -12.7085 -0.983150 -0.709270 -1.98700 -1.65880 -0.644201 -1.34642 -1.16976 -1.02122  1.62590
+#&gt; iter: 1  value: -332.401 mgc: 0.2288624 ustep: 1 
+#&gt; iter: 2  value: -332.401 mgc: 0.000315794 ustep: 1 
+#&gt; iter: 3  mgc: 1.425921e-09 
+#&gt; iter: 1  mgc: 1.425921e-09 
+#&gt; outer mgc:  0.3122827 
+#&gt;  88:     167.45035: -4.33889 -0.148346 -0.0152372 0.126929 0.172600 0.258730 0.339422 0.418082 -8.79097 -12.7077 -0.985924 -0.710952 -1.98817 -1.65164 -0.643778 -1.34784 -1.17182 -1.01685  1.62365
+#&gt; iter: 1  value: -333.4477 mgc: 0.2349607 ustep: 1 
+#&gt; iter: 2  value: -333.4477 mgc: 0.0001002627 ustep: 1 
+#&gt; iter: 3  mgc: 7.609469e-11 
+#&gt; iter: 1  mgc: 7.609469e-11 
+#&gt; outer mgc:  0.304818 
+#&gt;  89:     167.44788: -4.33717 -0.147573 -0.0151754 0.129298 0.173003 0.261096 0.339874 0.418689 -8.78916 -12.7063 -0.988085 -0.714312 -1.98986 -1.65934 -0.644779 -1.34304 -1.17663 -1.01223  1.62315
+#&gt; iter: 1  value: -332.9995 mgc: 0.1994677 ustep: 1 
+#&gt; iter: 2  value: -332.9995 mgc: 0.0001581579 ustep: 1 
+#&gt; iter: 3  mgc: 3.499512e-10 
+#&gt; iter: 1  mgc: 3.499512e-10 
+#&gt; outer mgc:  0.4570345 
+#&gt;  90:     167.44642: -4.33509 -0.147149 -0.0157335 0.129168 0.171086 0.261043 0.343276 0.420379 -8.79129 -12.7079 -0.988582 -0.707840 -1.99228 -1.65432 -0.644192 -1.34731 -1.17959 -1.00738  1.61949
+#&gt; iter: 1  value: -333.1453 mgc: 0.3134183 ustep: 1 
+#&gt; iter: 2  value: -333.1453 mgc: 8.308024e-05 ustep: 1 
+#&gt; iter: 3  mgc: 1.341895e-10 
+#&gt; iter: 1  value: -333.028 mgc: 0.05513931 ustep: 1 
+#&gt; iter: 2  value: -333.028 mgc: 1.280068e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.79865e-12 
+#&gt; iter: 1  mgc: 2.79865e-12 
+#&gt; outer mgc:  0.1826056 
+#&gt;  91:     167.44513: -4.33508 -0.148225 -0.0153714 0.128561 0.173608 0.261226 0.341102 0.420945 -8.79020 -12.7076 -0.989171 -0.708179 -1.99213 -1.65425 -0.644223 -1.34551 -1.17990 -1.00713  1.62005
+#&gt; iter: 1  value: -333.1762 mgc: 0.08882667 ustep: 1 
+#&gt; iter: 2  value: -333.1762 mgc: 1.628854e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.132161e-12 
+#&gt; iter: 1  mgc: 3.132161e-12 
+#&gt; outer mgc:  0.1621939 
+#&gt;  92:     167.44506: -4.33507 -0.147581 -0.0143860 0.129635 0.172919 0.261418 0.342568 0.420240 -8.78951 -12.7063 -0.989552 -0.710273 -1.99249 -1.65317 -0.644500 -1.34495 -1.18066 -1.00698  1.62206
+#&gt; iter: 1  value: -333.3025 mgc: 0.04157859 ustep: 1 
+#&gt; iter: 2  value: -333.3025 mgc: 6.590056e-05 ustep: 1 
+#&gt; iter: 3  mgc: 6.8761e-11 
+#&gt; iter: 1  value: -333.2584 mgc: 0.02165842 ustep: 1 
+#&gt; iter: 2  value: -333.2584 mgc: 1.448728e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.112177e-12 
+#&gt; iter: 1  mgc: 3.112177e-12 
+#&gt; outer mgc:  0.1076691 
+#&gt;  93:     167.44483: -4.33466 -0.147243 -0.0151143 0.129379 0.173538 0.261735 0.341812 0.421245 -8.78973 -12.7067 -0.989400 -0.710654 -1.99268 -1.65369 -0.644511 -1.34546 -1.18082 -1.00676  1.62208
+#&gt; iter: 1  value: -333.2761 mgc: 0.06210332 ustep: 1 
+#&gt; iter: 2  value: -333.2761 mgc: 1.657298e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.808065e-13 
+#&gt; iter: 1  mgc: 3.808065e-13 
+#&gt; outer mgc:  0.06723278 
+#&gt;  94:     167.44479: -4.33461 -0.147629 -0.0147032 0.129247 0.173510 0.261650 0.342435 0.421180 -8.78997 -12.7069 -0.989141 -0.710090 -1.99285 -1.65490 -0.644586 -1.34519 -1.18111 -1.00644  1.62110
+#&gt; iter: 1  value: -333.2956 mgc: 0.02389303 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 2.266588e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.198863e-13 
+#&gt; iter: 1  value: -333.2574 mgc: 0.01161283 ustep: 1 
+#&gt; iter: 2  value: -333.2574 mgc: 1.398438e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.899103e-13 
+#&gt; iter: 1  mgc: 3.899103e-13 
+#&gt; outer mgc:  0.03457435 
+#&gt;  95:     167.44476: -4.33452 -0.147570 -0.0151050 0.129469 0.173413 0.261793 0.342194 0.421291 -8.78982 -12.7069 -0.989225 -0.710072 -1.99282 -1.65464 -0.644566 -1.34503 -1.18120 -1.00630  1.62121
+#&gt; iter: 1  value: -333.2778 mgc: 0.01743879 ustep: 1 
+#&gt; iter: 2  value: -333.2778 mgc: 1.129543e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.974598e-13 
+#&gt; iter: 1  mgc: 3.974598e-13 
+#&gt; outer mgc:  0.01827106 
+#&gt;  96:     167.44474: -4.33442 -0.147589 -0.0149204 0.129328 0.173488 0.261761 0.342409 0.421262 -8.78988 -12.7070 -0.989224 -0.709855 -1.99282 -1.65441 -0.644599 -1.34509 -1.18137 -1.00613  1.62166
+#&gt; iter: 1  value: -333.2588 mgc: 0.01307092 ustep: 1 
+#&gt; iter: 2  value: -333.2588 mgc: 2.587174e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.885781e-13 
+#&gt; iter: 1  mgc: 3.885781e-13 
+#&gt; outer mgc:  0.01972232 
+#&gt;  97:     167.44474: -4.33446 -0.147643 -0.0148604 0.129447 0.173478 0.261805 0.342364 0.421386 -8.78984 -12.7070 -0.989131 -0.710354 -1.99295 -1.65420 -0.644422 -1.34516 -1.18149 -1.00586  1.62161
+#&gt; iter: 1  value: -333.2953 mgc: 0.007182004 ustep: 1 
+#&gt; iter: 2  value: -333.2953 mgc: 4.74423e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.586642e-13 
+#&gt; iter: 1  mgc: 5.586642e-13 
+#&gt; outer mgc:  0.03764271 
+#&gt;  98:     167.44474: -4.33451 -0.147625 -0.0151489 0.129436 0.173447 0.261731 0.342247 0.421270 -8.78991 -12.7070 -0.989157 -0.709957 -1.99300 -1.65426 -0.644538 -1.34512 -1.18169 -1.00557  1.62187
+#&gt; iter: 1  value: -333.2948 mgc: 0.003872649 ustep: 1 
+#&gt; iter: 2  value: -333.2948 mgc: 1.349393e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.206324e-13 
+#&gt; iter: 1  mgc: 3.206324e-13 
+#&gt; outer mgc:  0.01606041 
+#&gt;  99:     167.44473: -4.33437 -0.147604 -0.0149484 0.129327 0.173468 0.261834 0.342393 0.421333 -8.78989 -12.7070 -0.989184 -0.710003 -1.99303 -1.65426 -0.644573 -1.34506 -1.18166 -1.00557  1.62182
+#&gt; iter: 1  value: -333.3016 mgc: 0.004094092 ustep: 1 
+#&gt; iter: 2  value: -333.3016 mgc: 1.626651e-07 ustep: 1 
+#&gt; iter: 3  mgc: 2.983169e-13 
+#&gt; iter: 1  value: -333.2959 mgc: 0.001234251 ustep: 1 
+#&gt; iter: 2  mgc: 8.152307e-09 
+#&gt; iter: 1  mgc: 8.152307e-09 
+#&gt; outer mgc:  0.003096805 
+#&gt; 100:     167.44473: -4.33437 -0.147621 -0.0149738 0.129404 0.173489 0.261788 0.342374 0.421360 -8.78988 -12.7070 -0.989181 -0.710016 -1.99304 -1.65426 -0.644565 -1.34507 -1.18166 -1.00557  1.62181
+#&gt; iter: 1  value: -333.2953 mgc: 0.001299738 ustep: 1 
+#&gt; iter: 2  mgc: 1.575425e-09 
+#&gt; iter: 1  mgc: 1.575425e-09 
+#&gt; outer mgc:  0.00528048 
+#&gt; 101:     167.44473: -4.33437 -0.147621 -0.0149720 0.129399 0.173503 0.261807 0.342405 0.421346 -8.78988 -12.7070 -0.989199 -0.710087 -1.99304 -1.65426 -0.644518 -1.34508 -1.18165 -1.00558  1.62177
+#&gt; iter: 1  value: -333.2963 mgc: 0.001401684 ustep: 1 
+#&gt; iter: 2  value: -333.2963 mgc: 3.271012e-08 ustep: 1 
+#&gt; mgc: 5.093703e-13 
+#&gt; iter: 1  value: -333.2949 mgc: 0.0006052755 ustep: 1 
+#&gt; iter: 2  mgc: 5.821858e-09 
+#&gt; iter: 1  mgc: 5.821858e-09 
+#&gt; outer mgc:  0.003773988 
+#&gt; 102:     167.44473: -4.33437 -0.147623 -0.0149562 0.129398 0.173492 0.261807 0.342374 0.421375 -8.78988 -12.7070 -0.989196 -0.710089 -1.99305 -1.65426 -0.644520 -1.34507 -1.18165 -1.00558  1.62177
+#&gt; iter: 1  value: -333.2947 mgc: 0.0007646571 ustep: 1 
+#&gt; iter: 2  mgc: 2.820092e-09 
+#&gt; iter: 1  mgc: 2.820092e-09 
+#&gt; outer mgc:  0.0009477245 
+#&gt; 103:     167.44473: -4.33437 -0.147610 -0.0149548 0.129401 0.173504 0.261814 0.342395 0.421380 -8.78987 -12.7070 -0.989192 -0.710104 -1.99307 -1.65425 -0.644546 -1.34507 -1.18164 -1.00559  1.62176
+#&gt; iter: 1  value: -333.2985 mgc: 0.0003883347 ustep: 1 
+#&gt; iter: 2  mgc: 7.429701e-10 
+#&gt; iter: 1  value: -333.2964 mgc: 0.000146247 ustep: 1 
+#&gt; iter: 2  mgc: 1.902167e-10 
+#&gt; iter: 1  mgc: 1.902167e-10 
+#&gt; outer mgc:  0.0008326872 
+#&gt; 104:     167.44473: -4.33437 -0.147616 -0.0149534 0.129408 0.173499 0.261813 0.342399 0.421375 -8.78987 -12.7070 -0.989198 -0.710104 -1.99307 -1.65425 -0.644542 -1.34507 -1.18164 -1.00559  1.62176
+#&gt; iter: 1  value: -333.2964 mgc: 0.0001242903 ustep: 1 
+#&gt; iter: 2  mgc: 1.963052e-11 
+#&gt; iter: 1  mgc: 1.963052e-11 
+#&gt; outer mgc:  0.0004069602 
+#&gt; 105:     167.44473: -4.33437 -0.147613 -0.0149530 0.129404 0.173504 0.261813 0.342397 0.421377 -8.78987 -12.7070 -0.989201 -0.710101 -1.99307 -1.65425 -0.644529 -1.34507 -1.18165 -1.00559  1.62176
+#&gt; iter: 1  value: -333.2961 mgc: 0.0001211466 ustep: 1 
+#&gt; iter: 2  mgc: 3.034017e-11 
+#&gt; 106:     167.44473: -4.33437 -0.147613 -0.0149530 0.129404 0.173504 0.261813 0.342397 0.421377 -8.78987 -12.7070 -0.989201 -0.710101 -1.99307 -1.65425 -0.644529 -1.34507 -1.18165 -1.00559  1.62176
+#&gt; iter: 1  mgc: 1.963052e-11 
+#&gt; iter: 1  mgc: 1.963052e-11 
+#&gt; outer mgc:  0.0004069602 
+#&gt; iter: 1  value: -333.2969 mgc: 0.00170604 ustep: 1 
+#&gt; iter: 2  value: -333.2969 mgc: 2.13176e-08 ustep: 1 
+#&gt; mgc: 3.113065e-13 
+#&gt; outer mgc:  0.07018157 
+#&gt; iter: 1  value: -333.2959 mgc: 0.00170604 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 2.131633e-08 ustep: 1 
+#&gt; mgc: 3.441691e-13 
+#&gt; outer mgc:  0.07035529 
+#&gt; iter: 1  value: -333.2966 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2966 mgc: 1.52145e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.606626e-13 
+#&gt; outer mgc:  0.1618747 
+#&gt; iter: 1  value: -333.2962 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2962 mgc: 1.521296e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.861978e-13 
+#&gt; outer mgc:  0.161718 
+#&gt; iter: 1  value: -333.2969 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2969 mgc: 1.229147e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.372858e-13 
+#&gt; outer mgc:  0.2198532 
+#&gt; iter: 1  value: -333.2958 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2958 mgc: 1.228507e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.63265e-13 
+#&gt; outer mgc:  0.2196169 
+#&gt; iter: 1  value: -333.2969 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2969 mgc: 1.178571e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.143352e-13 
+#&gt; outer mgc:  0.2212573 
+#&gt; iter: 1  value: -333.2958 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2958 mgc: 1.177964e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.888623e-13 
+#&gt; outer mgc:  0.2217694 
+#&gt; iter: 1  value: -333.2969 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2969 mgc: 1.331866e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.481659e-13 
+#&gt; outer mgc:  0.2215477 
+#&gt; iter: 1  value: -333.2957 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 1.331132e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.845013e-13 
+#&gt; outer mgc:  0.2207331 
+#&gt; iter: 1  value: -333.2969 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2969 mgc: 1.447862e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.446132e-13 
+#&gt; outer mgc:  0.2181313 
+#&gt; iter: 1  value: -333.2958 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2958 mgc: 1.446995e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.715428e-13 
+#&gt; outer mgc:  0.2186408 
+#&gt; iter: 1  value: -333.2968 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2968 mgc: 1.800152e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.574119e-13 
+#&gt; outer mgc:  0.2104399 
+#&gt; iter: 1  value: -333.2959 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 1.798869e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.375078e-13 
+#&gt; outer mgc:  0.2101722 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.184154e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.227551e-12 
+#&gt; outer mgc:  0.1472125 
+#&gt; iter: 1  value: -333.2961 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2961 mgc: 1.182157e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.186695e-12 
+#&gt; outer mgc:  0.1474096 
+#&gt; iter: 1  value: -333.2968 mgc: 0.01062586 ustep: 1 
+#&gt; iter: 2  value: -333.2968 mgc: 3.380425e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.743672e-13 
+#&gt; outer mgc:  0.1767605 
+#&gt; iter: 1  value: -333.2959 mgc: 0.01062586 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 3.379795e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.614087e-13 
+#&gt; outer mgc:  0.1765323 
+#&gt; iter: 1  value: -333.2967 mgc: 0.007472188 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 2.317868e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.267697e-13 
+#&gt; outer mgc:  0.118817 
+#&gt; iter: 1  value: -333.2961 mgc: 0.007472188 ustep: 1 
+#&gt; iter: 2  value: -333.2961 mgc: 2.317463e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.089751e-13 
+#&gt; outer mgc:  0.1183917 
+#&gt; iter: 1  value: -333.193 mgc: 0.02626243 ustep: 1 
+#&gt; iter: 2  value: -333.193 mgc: 5.145016e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.245493e-13 
+#&gt; outer mgc:  0.07869971 
+#&gt; iter: 1  value: -333.3998 mgc: 0.02631501 ustep: 1 
+#&gt; iter: 2  value: -333.3998 mgc: 5.154156e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.471978e-13 
+#&gt; outer mgc:  0.07862538 
+#&gt; iter: 1  value: -333.2938 mgc: 0.01464718 ustep: 1 
+#&gt; iter: 2  value: -333.2938 mgc: 2.077281e-08 ustep: 1 
+#&gt; mgc: 2.884915e-13 
+#&gt; outer mgc:  0.02863101 
+#&gt; iter: 1  value: -333.2991 mgc: 0.0146765 ustep: 1 
+#&gt; iter: 2  value: -333.2991 mgc: 2.082989e-08 ustep: 1 
+#&gt; mgc: 4.618528e-13 
+#&gt; outer mgc:  0.0285439 
+#&gt; iter: 1  value: -333.1838 mgc: 0.02122109 ustep: 1 
+#&gt; iter: 2  value: -333.1838 mgc: 1.554972e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.987122e-13 
+#&gt; outer mgc:  0.05251595 
+#&gt; iter: 1  value: -333.4091 mgc: 0.02126358 ustep: 1 
+#&gt; iter: 2  value: -333.4091 mgc: 1.558631e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.303224e-13 
+#&gt; outer mgc:  0.05239405 
+#&gt; iter: 1  value: -333.1875 mgc: 0.0256949 ustep: 1 
+#&gt; iter: 2  value: -333.1875 mgc: 1.14445e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.200773e-13 
+#&gt; outer mgc:  0.08225737 
+#&gt; iter: 1  value: -333.4054 mgc: 0.02574634 ustep: 1 
+#&gt; iter: 2  value: -333.4054 mgc: 1.145375e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.503065e-13 
+#&gt; outer mgc:  0.08233862 
+#&gt; iter: 1  value: -333.2961 mgc: 0.002474408 ustep: 1 
+#&gt; iter: 2  value: -333.2961 mgc: 3.148117e-08 ustep: 1 
+#&gt; mgc: 6.923351e-13 
+#&gt; outer mgc:  0.03770078 
+#&gt; iter: 1  value: -333.2968 mgc: 0.002479361 ustep: 1 
+#&gt; iter: 2  value: -333.2968 mgc: 3.160296e-08 ustep: 1 
+#&gt; mgc: 3.916867e-13 
+#&gt; outer mgc:  0.03768371 
+#&gt; iter: 1  value: -333.2598 mgc: 0.01703846 ustep: 1 
+#&gt; iter: 2  value: -333.2598 mgc: 2.323146e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.868017e-13 
+#&gt; outer mgc:  0.1710363 
+#&gt; iter: 1  value: -333.3329 mgc: 0.01707257 ustep: 1 
+#&gt; iter: 2  value: -333.3329 mgc: 2.326515e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.53495e-13 
+#&gt; outer mgc:  0.1710919 
+#&gt; iter: 1  value: -333.2933 mgc: 0.01235183 ustep: 1 
+#&gt; iter: 2  value: -333.2933 mgc: 1.660542e-08 ustep: 1 
+#&gt; mgc: 4.536371e-13 
+#&gt; outer mgc:  0.03189354 
+#&gt; iter: 1  value: -333.2996 mgc: 0.01237656 ustep: 1 
+#&gt; iter: 2  value: -333.2996 mgc: 1.66579e-08 ustep: 1 
+#&gt; mgc: 3.713696e-13 
+#&gt; outer mgc:  0.03174092 
+#&gt; iter: 1  value: -333.2931 mgc: 0.01440212 ustep: 1 
+#&gt; iter: 2  value: -333.2931 mgc: 8.081351e-08 ustep: 1 
+#&gt; mgc: 3.420597e-13 
+#&gt; outer mgc:  0.02956482 
+#&gt; iter: 1  value: -333.2997 mgc: 0.01443096 ustep: 1 
+#&gt; iter: 2  value: -333.2997 mgc: 8.104676e-08 ustep: 1 
+#&gt; mgc: 4.03122e-13 
+#&gt; outer mgc:  0.02947167 
+#&gt; iter: 1  value: -333.3937 mgc: 0.02594615 ustep: 1 
+#&gt; iter: 2  value: -333.3937 mgc: 2.434226e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.423928e-13 
+#&gt; outer mgc:  0.04187515 
+#&gt; iter: 1  value: -333.1992 mgc: 0.02589357 ustep: 1 
+#&gt; iter: 2  value: -333.1992 mgc: 2.431143e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.671818e-13 
+#&gt; outer mgc:  0.04158648 
+#&gt; iter: 1  value: -333.2962 mgc: 0.0001227795 ustep: 1 
+#&gt; iter: 2  mgc: 1.857625e-11 
+#&gt; iter: 1  mgc: 1.857625e-11 
+#&gt; outer mgc:  1.482651e-09 
+#&gt; iter: 1  value: -333.2967 mgc: 0.001706046 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 2.131772e-08 ustep: 1 
+#&gt; mgc: 3.304024e-13 
+#&gt; outer mgc:  0.07026863 
+#&gt; iter: 1  value: -333.2957 mgc: 0.001706046 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 2.131638e-08 ustep: 1 
+#&gt; mgc: 5.480061e-13 
+#&gt; outer mgc:  0.07026861 
+#&gt; iter: 1  value: -333.2964 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2964 mgc: 1.521445e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.712586e-13 
+#&gt; outer mgc:  0.1617967 
+#&gt; iter: 1  value: -333.296 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.296 mgc: 1.521289e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.415046e-13 
+#&gt; outer mgc:  0.1617963 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.229144e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.422329e-13 
+#&gt; outer mgc:  0.2197355 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.228504e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.526379e-13 
+#&gt; outer mgc:  0.2197349 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.178569e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.73479e-13 
+#&gt; outer mgc:  0.2215138 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.177962e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.468337e-13 
+#&gt; outer mgc:  0.2215132 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.331864e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.918044e-13 
+#&gt; outer mgc:  0.2211409 
+#&gt; iter: 1  value: -333.2955 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2955 mgc: 1.33113e-06 ustep: 1 
+#&gt; iter: 3  mgc: 2.984279e-13 
+#&gt; outer mgc:  0.2211402 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.447861e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.298784e-13 
+#&gt; outer mgc:  0.2183867 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.446994e-06 ustep: 1 
+#&gt; iter: 3  mgc: 2.979839e-13 
+#&gt; outer mgc:  0.2183857 
+#&gt; iter: 1  value: -333.2965 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 1.800152e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.733991e-13 
+#&gt; outer mgc:  0.2103066 
+#&gt; iter: 1  value: -333.2957 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 1.798868e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.569678e-13 
+#&gt; outer mgc:  0.2103056 
+#&gt; iter: 1  value: -333.2965 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 1.184155e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.12097e-12 
+#&gt; outer mgc:  0.1473114 
+#&gt; iter: 1  value: -333.2959 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 1.182159e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.128075e-12 
+#&gt; outer mgc:  0.1473108 
+#&gt; iter: 1  value: -333.2966 mgc: 0.01062593 ustep: 1 
+#&gt; iter: 2  value: -333.2966 mgc: 3.380447e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.188561e-13 
+#&gt; outer mgc:  0.1766477 
+#&gt; iter: 1  value: -333.2957 mgc: 0.01062593 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 3.379817e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.146994e-13 
+#&gt; outer mgc:  0.1766469 
+#&gt; iter: 1  value: -333.2965 mgc: 0.007472208 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 2.317871e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.227729e-13 
+#&gt; outer mgc:  0.1186051 
+#&gt; iter: 1  value: -333.2959 mgc: 0.007472208 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 2.317466e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.484502e-13 
+#&gt; outer mgc:  0.1186042 
+#&gt; iter: 1  value: -333.1928 mgc: 0.02626238 ustep: 1 
+#&gt; iter: 2  value: -333.1928 mgc: 5.145028e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.493073e-13 
+#&gt; outer mgc:  0.0786511 
+#&gt; iter: 1  value: -333.3996 mgc: 0.02631496 ustep: 1 
+#&gt; iter: 2  value: -333.3996 mgc: 5.15417e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.343192e-13 
+#&gt; outer mgc:  0.0786745 
+#&gt; iter: 1  value: -333.2936 mgc: 0.01464723 ustep: 1 
+#&gt; iter: 2  value: -333.2936 mgc: 2.077281e-08 ustep: 1 
+#&gt; mgc: 4.636291e-13 
+#&gt; outer mgc:  0.02857573 
+#&gt; iter: 1  value: -333.2989 mgc: 0.01467656 ustep: 1 
+#&gt; iter: 2  value: -333.2989 mgc: 2.083004e-08 ustep: 1 
+#&gt; mgc: 3.117506e-13 
+#&gt; outer mgc:  0.02859926 
+#&gt; iter: 1  value: -333.1836 mgc: 0.02122111 ustep: 1 
+#&gt; iter: 2  value: -333.1836 mgc: 1.554973e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.138911e-13 
+#&gt; outer mgc:  0.05249249 
+#&gt; iter: 1  value: -333.4089 mgc: 0.02126359 ustep: 1 
+#&gt; iter: 2  value: -333.4089 mgc: 1.558633e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.32987e-13 
+#&gt; outer mgc:  0.05241714 
+#&gt; iter: 1  value: -333.1873 mgc: 0.02569484 ustep: 1 
+#&gt; iter: 2  value: -333.1873 mgc: 1.144451e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.596323e-13 
+#&gt; outer mgc:  0.08233989 
+#&gt; iter: 1  value: -333.4052 mgc: 0.02574628 ustep: 1 
+#&gt; iter: 2  value: -333.4052 mgc: 1.145377e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.692602e-13 
+#&gt; outer mgc:  0.08225642 
+#&gt; iter: 1  value: -333.2959 mgc: 0.002474418 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 3.14814e-08 ustep: 1 
+#&gt; mgc: 4.138911e-13 
+#&gt; outer mgc:  0.03765903 
+#&gt; iter: 1  value: -333.2966 mgc: 0.002479372 ustep: 1 
+#&gt; iter: 2  value: -333.2966 mgc: 3.160319e-08 ustep: 1 
+#&gt; mgc: 4.939382e-13 
+#&gt; outer mgc:  0.03772561 
+#&gt; iter: 1  value: -333.2596 mgc: 0.01703843 ustep: 1 
+#&gt; iter: 2  value: -333.2596 mgc: 2.323146e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.801404e-13 
+#&gt; outer mgc:  0.1710082 
+#&gt; iter: 1  value: -333.3327 mgc: 0.01707255 ustep: 1 
+#&gt; iter: 2  value: -333.3327 mgc: 2.326515e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.88134e-13 
+#&gt; outer mgc:  0.1711201 
+#&gt; iter: 1  value: -333.2931 mgc: 0.01235191 ustep: 1 
+#&gt; iter: 2  value: -333.2931 mgc: 1.660583e-08 ustep: 1 
+#&gt; mgc: 4.991563e-13 
+#&gt; outer mgc:  0.03180161 
+#&gt; iter: 1  value: -333.2994 mgc: 0.01237664 ustep: 1 
+#&gt; iter: 2  value: -333.2994 mgc: 1.665813e-08 ustep: 1 
+#&gt; mgc: 4.050094e-13 
+#&gt; outer mgc:  0.03183304 
+#&gt; iter: 1  value: -333.2929 mgc: 0.01440214 ustep: 1 
+#&gt; iter: 2  value: -333.2929 mgc: 8.081481e-08 ustep: 1 
+#&gt; mgc: 4.694023e-13 
+#&gt; outer mgc:  0.02950621 
+#&gt; iter: 1  value: -333.2995 mgc: 0.01443098 ustep: 1 
+#&gt; iter: 2  value: -333.2995 mgc: 8.10481e-08 ustep: 1 
+#&gt; mgc: 4.338752e-13 
+#&gt; outer mgc:  0.02953045 
+#&gt; iter: 1  value: -333.3935 mgc: 0.02594609 ustep: 1 
+#&gt; iter: 2  value: -333.3935 mgc: 2.434222e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.574119e-13 
+#&gt; outer mgc:  0.0417333 
+#&gt; iter: 1  value: -333.199 mgc: 0.02589351 ustep: 1 
+#&gt; iter: 2  value: -333.199 mgc: 2.43114e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.721468e-13 
+#&gt; outer mgc:  0.04172827 
+#&gt; iter: 1  mgc: 3.517333e-10 
+#&gt; iter: 1  mgc: 3.517333e-10 
+#&gt; outer mgc:  7.460759e-12 
+#&gt; iter: 1  value: -333.2967 mgc: 0.001706046 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 2.13177e-08 ustep: 1 
+#&gt; mgc: 4.050094e-13 
+#&gt; outer mgc:  0.07026863 
+#&gt; iter: 1  value: -333.2957 mgc: 0.001706046 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 2.131633e-08 ustep: 1 
+#&gt; mgc: 5.020429e-13 
+#&gt; outer mgc:  0.07026861 
+#&gt; iter: 1  value: -333.2964 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2964 mgc: 1.521444e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.236611e-13 
+#&gt; outer mgc:  0.1617967 
+#&gt; iter: 1  value: -333.296 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.296 mgc: 1.52129e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.938272e-13 
+#&gt; outer mgc:  0.1617963 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.229144e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.169198e-13 
+#&gt; outer mgc:  0.2197355 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.228504e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.423129e-13 
+#&gt; outer mgc:  0.2197349 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.178569e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.694822e-13 
+#&gt; outer mgc:  0.2215138 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.177962e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.138911e-13 
+#&gt; outer mgc:  0.2215132 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.331864e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.774758e-13 
+#&gt; outer mgc:  0.2211409 
+#&gt; iter: 1  value: -333.2955 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2955 mgc: 1.33113e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.646838e-13 
+#&gt; outer mgc:  0.2211402 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.447861e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.47562e-13 
+#&gt; outer mgc:  0.2183867 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.446994e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.269363e-13 
+#&gt; outer mgc:  0.2183857 
+#&gt; iter: 1  value: -333.2965 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 1.800152e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.93463e-13 
+#&gt; outer mgc:  0.2103066 
+#&gt; iter: 1  value: -333.2957 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 1.798868e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.620437e-13 
+#&gt; outer mgc:  0.2103056 
+#&gt; iter: 1  value: -333.2965 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 1.184155e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.154721e-12 
+#&gt; outer mgc:  0.1473114 
+#&gt; iter: 1  value: -333.2959 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 1.182159e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.19913e-12 
+#&gt; outer mgc:  0.1473108 
+#&gt; iter: 1  value: -333.2966 mgc: 0.01062593 ustep: 1 
+#&gt; iter: 2  value: -333.2966 mgc: 3.380448e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.174439e-13 
+#&gt; outer mgc:  0.1766477 
+#&gt; iter: 1  value: -333.2957 mgc: 0.01062593 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 3.379817e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.83058e-13 
+#&gt; outer mgc:  0.1766469 
+#&gt; iter: 1  value: -333.2965 mgc: 0.007472208 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 2.317871e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.125589e-13 
+#&gt; outer mgc:  0.1186051 
+#&gt; iter: 1  value: -333.2959 mgc: 0.007472208 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 2.317465e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.143352e-13 
+#&gt; outer mgc:  0.1186042 
+#&gt; iter: 1  value: -333.1928 mgc: 0.02626238 ustep: 1 
+#&gt; iter: 2  value: -333.1928 mgc: 5.145028e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.83471e-13 
+#&gt; outer mgc:  0.0786511 
+#&gt; iter: 1  value: -333.3996 mgc: 0.02631496 ustep: 1 
+#&gt; iter: 2  value: -333.3996 mgc: 5.154169e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.947953e-13 
+#&gt; outer mgc:  0.0786745 
+#&gt; iter: 1  value: -333.2936 mgc: 0.01464723 ustep: 1 
+#&gt; iter: 2  value: -333.2936 mgc: 2.07727e-08 ustep: 1 
+#&gt; mgc: 4.094503e-13 
+#&gt; outer mgc:  0.02857573 
+#&gt; iter: 1  value: -333.2989 mgc: 0.01467656 ustep: 1 
+#&gt; iter: 2  value: -333.2989 mgc: 2.082998e-08 ustep: 1 
+#&gt; mgc: 3.796963e-13 
+#&gt; outer mgc:  0.02859926 
+#&gt; iter: 1  value: -333.1836 mgc: 0.02122111 ustep: 1 
+#&gt; iter: 2  value: -333.1836 mgc: 1.554973e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.401723e-13 
+#&gt; outer mgc:  0.05249249 
+#&gt; iter: 1  value: -333.4089 mgc: 0.02126359 ustep: 1 
+#&gt; iter: 2  value: -333.4089 mgc: 1.558633e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.698464e-13 
+#&gt; outer mgc:  0.05241714 
+#&gt; iter: 1  value: -333.1873 mgc: 0.02569484 ustep: 1 
+#&gt; iter: 2  value: -333.1873 mgc: 1.144451e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.459455e-13 
+#&gt; outer mgc:  0.08233989 
+#&gt; iter: 1  value: -333.4052 mgc: 0.02574628 ustep: 1 
+#&gt; iter: 2  value: -333.4052 mgc: 1.145377e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.062617e-13 
+#&gt; outer mgc:  0.08225642 
+#&gt; iter: 1  value: -333.2959 mgc: 0.002474418 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 3.148145e-08 ustep: 1 
+#&gt; mgc: 4.227729e-13 
+#&gt; outer mgc:  0.03765903 
+#&gt; iter: 1  value: -333.2966 mgc: 0.002479371 ustep: 1 
+#&gt; iter: 2  value: -333.2966 mgc: 3.160314e-08 ustep: 1 
+#&gt; mgc: 4.454215e-13 
+#&gt; outer mgc:  0.03772561 
+#&gt; iter: 1  value: -333.2596 mgc: 0.01703843 ustep: 1 
+#&gt; iter: 2  value: -333.2596 mgc: 2.323146e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.162537e-13 
+#&gt; outer mgc:  0.1710082 
+#&gt; iter: 1  value: -333.3327 mgc: 0.01707255 ustep: 1 
+#&gt; iter: 2  value: -333.3327 mgc: 2.326515e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.872458e-13 
+#&gt; outer mgc:  0.1711201 
+#&gt; iter: 1  value: -333.2931 mgc: 0.01235191 ustep: 1 
+#&gt; iter: 2  value: -333.2931 mgc: 1.660582e-08 ustep: 1 
+#&gt; mgc: 2.946532e-13 
+#&gt; outer mgc:  0.03180161 
+#&gt; iter: 1  value: -333.2994 mgc: 0.01237664 ustep: 1 
+#&gt; iter: 2  value: -333.2994 mgc: 1.665817e-08 ustep: 1 
+#&gt; mgc: 4.418688e-13 
+#&gt; outer mgc:  0.03183304 
+#&gt; iter: 1  value: -333.2929 mgc: 0.01440214 ustep: 1 
+#&gt; iter: 2  value: -333.2929 mgc: 8.081481e-08 ustep: 1 
+#&gt; mgc: 4.583001e-13 
+#&gt; outer mgc:  0.02950621 
+#&gt; iter: 1  value: -333.2995 mgc: 0.01443098 ustep: 1 
+#&gt; iter: 2  value: -333.2995 mgc: 8.104813e-08 ustep: 1 
+#&gt; mgc: 3.668177e-13 
+#&gt; outer mgc:  0.02953045 
+#&gt; iter: 1  value: -333.3935 mgc: 0.02594609 ustep: 1 
+#&gt; iter: 2  value: -333.3935 mgc: 2.434223e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.363176e-13 
+#&gt; outer mgc:  0.0417333 
+#&gt; iter: 1  value: -333.199 mgc: 0.02589351 ustep: 1 
+#&gt; iter: 2  value: -333.199 mgc: 2.431141e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.112266e-13 
+#&gt; outer mgc:  0.04172827 
+#&gt; iter: 1  mgc: 3.498417e-10 
+#&gt; iter: 1  mgc: 3.498417e-10 
+#&gt; outer mgc:  7.792933e-13 
+#&gt; iter: 1  value: -333.2967 mgc: 0.001706046 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 2.131767e-08 ustep: 1 
+#&gt; mgc: 5.200285e-13 
+#&gt; outer mgc:  0.07026863 
+#&gt; iter: 1  value: -333.2957 mgc: 0.001706046 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 2.131635e-08 ustep: 1 
+#&gt; mgc: 5.866418e-13 
+#&gt; outer mgc:  0.07026861 
+#&gt; iter: 1  value: -333.2964 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2964 mgc: 1.521444e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.527489e-13 
+#&gt; outer mgc:  0.1617967 
+#&gt; iter: 1  value: -333.296 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.296 mgc: 1.52129e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.316547e-13 
+#&gt; outer mgc:  0.1617963 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.229144e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.201084e-13 
+#&gt; outer mgc:  0.2197355 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.228504e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.765876e-13 
+#&gt; outer mgc:  0.2197349 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.178569e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.385381e-13 
+#&gt; outer mgc:  0.2215138 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.177962e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.867218e-13 
+#&gt; outer mgc:  0.2215132 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.331864e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.257217e-13 
+#&gt; outer mgc:  0.2211409 
+#&gt; iter: 1  value: -333.2955 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2955 mgc: 1.33113e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.396483e-13 
+#&gt; outer mgc:  0.2211402 
+#&gt; iter: 1  value: -333.2967 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2967 mgc: 1.447861e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.005685e-13 
+#&gt; outer mgc:  0.2183867 
+#&gt; iter: 1  value: -333.2956 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2956 mgc: 1.446995e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.606004e-13 
+#&gt; outer mgc:  0.2183857 
+#&gt; iter: 1  value: -333.2965 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 1.800152e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.63265e-13 
+#&gt; outer mgc:  0.2103066 
+#&gt; iter: 1  value: -333.2957 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 1.798868e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.517187e-13 
+#&gt; outer mgc:  0.2103056 
+#&gt; iter: 1  value: -333.2965 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 1.184155e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.202682e-12 
+#&gt; outer mgc:  0.1473114 
+#&gt; iter: 1  value: -333.2959 mgc: 0.01473375 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 1.182159e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.25242e-12 
+#&gt; outer mgc:  0.1473108 
+#&gt; iter: 1  value: -333.2966 mgc: 0.01062593 ustep: 1 
+#&gt; iter: 2  value: -333.2966 mgc: 3.380447e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.805845e-13 
+#&gt; outer mgc:  0.1766477 
+#&gt; iter: 1  value: -333.2957 mgc: 0.01062593 ustep: 1 
+#&gt; iter: 2  value: -333.2957 mgc: 3.379817e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.364598e-13 
+#&gt; outer mgc:  0.1766469 
+#&gt; iter: 1  value: -333.2965 mgc: 0.007472208 ustep: 1 
+#&gt; iter: 2  value: -333.2965 mgc: 2.317871e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.271339e-13 
+#&gt; outer mgc:  0.1186051 
+#&gt; iter: 1  value: -333.2959 mgc: 0.007472208 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 2.317466e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.996004e-13 
+#&gt; outer mgc:  0.1186042 
+#&gt; iter: 1  value: -333.1928 mgc: 0.02626238 ustep: 1 
+#&gt; iter: 2  value: -333.1928 mgc: 5.145029e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.623768e-13 
+#&gt; outer mgc:  0.0786511 
+#&gt; iter: 1  value: -333.3996 mgc: 0.02631496 ustep: 1 
+#&gt; iter: 2  value: -333.3996 mgc: 5.154171e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.93463e-13 
+#&gt; outer mgc:  0.0786745 
+#&gt; iter: 1  value: -333.2936 mgc: 0.01464723 ustep: 1 
+#&gt; iter: 2  value: -333.2936 mgc: 2.077273e-08 ustep: 1 
+#&gt; mgc: 4.258816e-13 
+#&gt; outer mgc:  0.02857573 
+#&gt; iter: 1  value: -333.2989 mgc: 0.01467656 ustep: 1 
+#&gt; iter: 2  value: -333.2989 mgc: 2.082994e-08 ustep: 1 
+#&gt; mgc: 3.28626e-13 
+#&gt; outer mgc:  0.02859926 
+#&gt; iter: 1  value: -333.1836 mgc: 0.02122111 ustep: 1 
+#&gt; iter: 2  value: -333.1836 mgc: 1.554973e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.156675e-13 
+#&gt; outer mgc:  0.05249249 
+#&gt; iter: 1  value: -333.4089 mgc: 0.02126359 ustep: 1 
+#&gt; iter: 2  value: -333.4089 mgc: 1.558633e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.005685e-13 
+#&gt; outer mgc:  0.05241714 
+#&gt; iter: 1  value: -333.1873 mgc: 0.02569484 ustep: 1 
+#&gt; iter: 2  value: -333.1873 mgc: 1.144451e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.349055e-13 
+#&gt; outer mgc:  0.08233989 
+#&gt; iter: 1  value: -333.4052 mgc: 0.02574628 ustep: 1 
+#&gt; iter: 2  value: -333.4052 mgc: 1.145377e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.868017e-13 
+#&gt; outer mgc:  0.08225642 
+#&gt; iter: 1  value: -333.2959 mgc: 0.002474418 ustep: 1 
+#&gt; iter: 2  value: -333.2959 mgc: 3.148148e-08 ustep: 1 
+#&gt; mgc: 4.156675e-13 
+#&gt; outer mgc:  0.03765903 
+#&gt; iter: 1  value: -333.2966 mgc: 0.002479371 ustep: 1 
+#&gt; iter: 2  value: -333.2966 mgc: 3.160319e-08 ustep: 1 
+#&gt; mgc: 3.157474e-13 
+#&gt; outer mgc:  0.03772561 
+#&gt; iter: 1  value: -333.2596 mgc: 0.01703843 ustep: 1 
+#&gt; iter: 2  value: -333.2596 mgc: 2.323146e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.281819e-13 
+#&gt; outer mgc:  0.1710082 
+#&gt; iter: 1  value: -333.3327 mgc: 0.01707255 ustep: 1 
+#&gt; iter: 2  value: -333.3327 mgc: 2.326515e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.690381e-13 
+#&gt; outer mgc:  0.1711201 
+#&gt; iter: 1  value: -333.2931 mgc: 0.01235191 ustep: 1 
+#&gt; iter: 2  value: -333.2931 mgc: 1.660587e-08 ustep: 1 
+#&gt; mgc: 3.925749e-13 
+#&gt; outer mgc:  0.03180161 
+#&gt; iter: 1  value: -333.2994 mgc: 0.01237664 ustep: 1 
+#&gt; iter: 2  value: -333.2994 mgc: 1.665821e-08 ustep: 1 
+#&gt; mgc: 5.22693e-13 
+#&gt; outer mgc:  0.03183304 
+#&gt; iter: 1  value: -333.2929 mgc: 0.01440214 ustep: 1 
+#&gt; iter: 2  value: -333.2929 mgc: 8.081476e-08 ustep: 1 
+#&gt; mgc: 5.063727e-13 
+#&gt; outer mgc:  0.02950621 
+#&gt; iter: 1  value: -333.2995 mgc: 0.01443098 ustep: 1 
+#&gt; iter: 2  value: -333.2995 mgc: 8.104809e-08 ustep: 1 
+#&gt; mgc: 6.279421e-13 
+#&gt; outer mgc:  0.02953045 
+#&gt; iter: 1  value: -333.3935 mgc: 0.02594609 ustep: 1 
+#&gt; iter: 2  value: -333.3935 mgc: 2.434223e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.289902e-13 
+#&gt; outer mgc:  0.0417333 
+#&gt; iter: 1  value: -333.199 mgc: 0.02589351 ustep: 1 
+#&gt; iter: 2  value: -333.199 mgc: 2.43114e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.057377e-13 
+#&gt; outer mgc:  0.04172827 
+#&gt; outer mgc:  1 
+#&gt; [1] 1
+#&gt; [1] 2
+#&gt; [1] 3
+#&gt; [1] 4
+#&gt; [1] 5
+#&gt; [1] 6
+#&gt; [1] 7
+#&gt; [1] 8
+#&gt; [1] 9
+#&gt; [1] 10
+#&gt; [1] 11
+#&gt; [1] 12
+#&gt; [1] 13
+#&gt; [1] 14
+#&gt; [1] 15
+#&gt; [1] 16
+#&gt; [1] 17
+#&gt; [1] 18
+#&gt; [1] 19
+#&gt; [1] 20
+#&gt; [1] 21
+#&gt; [1] 22
+#&gt; [1] 23
+#&gt; [1] 24
+#&gt; [1] 25
+#&gt; [1] 26
+#&gt; [1] 27
+#&gt; [1] 28
+#&gt; [1] 29
+#&gt; [1] 30
+#&gt; [1] 31
+#&gt; [1] 32
+#&gt; [1] 33
+#&gt; [1] 34
+#&gt; [1] 35
+#&gt; [1] 36
+#&gt; [1] 37
+#&gt; [1] 38
+#&gt; [1] 39
+#&gt; [1] 40
+#&gt; [1] 41
+#&gt; [1] 42
+#&gt; [1] 43
+#&gt; [1] 44
+#&gt; [1] 45
+#&gt; [1] 46
+#&gt; [1] 47
+#&gt; [1] 48
+#&gt; [1] 49
+#&gt; [1] 50
+#&gt; [1] 51
+#&gt; [1] 52
+#&gt; [1] 53
+#&gt; [1] 54
+#&gt; [1] 55
+#&gt; [1] 56
+#&gt; [1] 57
+#&gt; [1] 58
+#&gt; [1] 59
+#&gt; [1] 60
+#&gt; [1] 61
+#&gt; [1] 62
+#&gt; [1] 63
+#&gt; [1] 64
+#&gt; [1] 65
+#&gt; [1] 66
+#&gt; [1] 67
+#&gt; [1] 68
+#&gt; [1] 69
+#&gt; [1] 70
+#&gt; [1] 71
+#&gt; [1] 72
+#&gt; [1] 73
+#&gt; [1] 74
+#&gt; [1] 75
+#&gt; [1] 76
+#&gt; [1] 77
+#&gt; [1] 78
+#&gt; [1] 79
+#&gt; [1] 80
+#&gt; [1] 81
+#&gt; [1] 82
+#&gt; [1] 83
+#&gt; [1] 84
+#&gt; [1] 85
+#&gt; [1] 86
+#&gt; [1] 87
+#&gt; [1] 88
+#&gt; [1] 89
+#&gt; [1] 90
+#&gt; [1] 91
+#&gt; [1] 92
+#&gt; [1] 93
+#&gt; [1] 94
+#&gt; [1] 95
+#&gt; [1] 96
+#&gt; [1] 97
+#&gt; [1] 98
+#&gt; [1] 99
+#&gt; [1] 100
+#&gt; [1] 101
+#&gt; [1] 102
+#&gt; [1] 103
+#&gt; [1] 104
+#&gt; [1] 105
+#&gt; [1] 106
+#&gt; [1] 107
+#&gt; [1] 108
+#&gt; [1] 109
+#&gt; [1] 110
+#&gt; [1] 111
+#&gt; [1] 112
+#&gt; [1] 113
+#&gt; [1] 114
+#&gt; [1] 115
+#&gt; [1] 116
+#&gt; [1] 117
+#&gt; [1] 118
+#&gt; [1] 119
+#&gt; [1] 120
+#&gt; [1] 121
+#&gt; [1] 122
+#&gt; [1] 123
+#&gt; [1] 124
+#&gt; [1] 125
+#&gt; [1] 126
+#&gt; [1] 127
+#&gt; [1] 128
+#&gt; [1] 129
+#&gt; [1] 130
+#&gt; [1] 131
+#&gt; [1] 132
+#&gt; [1] 133
+#&gt; [1] 134
+#&gt; [1] 135
+#&gt; [1] 136
+#&gt; [1] 137
+#&gt; [1] 138
+#&gt; [1] 139
+#&gt; [1] 140
+#&gt; [1] 141
+#&gt; [1] 142
+#&gt; [1] 143
+#&gt; [1] 144
+#&gt; [1] 145
+#&gt; [1] 146
+#&gt; [1] 147
+#&gt; [1] 148
+#&gt; [1] 149
+#&gt; [1] 150
+#&gt; [1] 151
+#&gt; [1] 152
+#&gt; [1] 153
+#&gt; [1] 154
+#&gt; [1] 155
+#&gt; [1] 156
+#&gt; [1] 157
+#&gt; [1] 158
+#&gt; [1] 159
+#&gt; [1] 160
+#&gt; [1] 161
+#&gt; [1] 162
+#&gt; [1] 163
+#&gt; [1] 164
+#&gt; [1] 165
+#&gt; [1] 166
+#&gt; [1] 167
+#&gt; [1] 168
+#&gt; [1] 169
+#&gt; [1] 170
+#&gt; [1] 171
+#&gt; [1] 172
+#&gt; [1] 173
+#&gt; [1] 174
+#&gt; [1] 175
+#&gt; [1] 176
+#&gt; [1] 177
+#&gt; [1] 178
+#&gt; [1] 179
+#&gt; [1] 180
+#&gt; [1] 181
+#&gt; [1] 182
+#&gt; [1] 183
+#&gt; [1] 184
+#&gt; [1] 185
+#&gt; [1] 186
+#&gt; [1] 187
+#&gt; [1] 188
+#&gt; [1] 189
+#&gt; [1] 190
+#&gt; [1] 191
+#&gt; [1] 192
+#&gt; [1] 193
+#&gt; [1] 194
+#&gt; [1] 195
+#&gt; [1] 196
+#&gt; [1] 197
+#&gt; [1] 198
+#&gt; [1] 199
+#&gt; [1] 200
+#&gt; [1] 201
+#&gt; [1] 202
+#&gt; [1] 203
+#&gt; [1] 204
+#&gt; [1] 205
+#&gt; [1] 206
+#&gt; [1] 207
+#&gt; [1] 208
+#&gt; [1] 209
+#&gt; [1] 210
+#&gt; [1] 211
+#&gt; [1] 212
+#&gt; [1] 213
+#&gt; [1] 214
+#&gt; [1] 215
+#&gt; [1] 216
+#&gt; [1] 217
+#&gt; [1] 218
+#&gt; [1] 219
+#&gt; [1] 220
+#&gt; [1] 221
+#&gt; [1] 222
+#&gt; [1] 223
+#&gt; [1] 224
+#&gt; [1] 225
+#&gt; [1] 226
+#&gt; [1] 227
+#&gt; [1] 228
+#&gt; [1] 229
+#&gt; [1] 230
+#&gt; [1] 231
+#&gt; [1] 232
+#&gt; [1] 233
+#&gt; [1] 234
+#&gt; [1] 235
+#&gt; [1] 236
+#&gt; [1] 237
+#&gt; [1] 238
+#&gt; [1] 239
+#&gt; [1] 240
+#&gt; [1] 241
+#&gt; [1] 242
+#&gt; [1] 243
+#&gt; [1] 244
+#&gt; [1] 245
+#&gt; [1] 246
+#&gt; [1] 247
+#&gt; [1] 248
+#&gt; [1] 249
+#&gt; [1] 250
+#&gt; [1] 251
+#&gt; [1] 252
+#&gt; [1] 253
+#&gt; [1] 254
+#&gt; [1] 255
+#&gt; [1] 256
+#&gt; [1] 257
+#&gt; [1] 258
+#&gt; [1] 259
+#&gt; [1] 260
+#&gt; [1] 261
+#&gt; [1] 262
+#&gt; [1] 263
+#&gt; [1] 264
+#&gt; [1] 265
+#&gt; [1] 266
+#&gt; [1] 267
+#&gt; [1] 268
+#&gt; [1] 269
+#&gt; [1] 270
+#&gt; [1] 271
+#&gt; [1] 272
+#&gt; [1] 273
+#&gt; [1] 274
+#&gt; [1] 275
+#&gt; [1] 276
+#&gt; [1] 277
+#&gt; [1] 278
+#&gt; [1] 279
+#&gt; [1] 280
+#&gt; [1] 281
+#&gt; [1] 282
+#&gt; [1] 283
+#&gt; [1] 284
+#&gt; [1] 285
+#&gt; [1] 286
+#&gt; [1] 287
+#&gt; [1] 288
+#&gt; [1] 289
+#&gt; [1] 290
+#&gt; [1] 291
+#&gt; [1] 292
+#&gt; [1] 293
+#&gt; [1] 294
+#&gt; [1] 295
+#&gt; [1] 296
+#&gt; [1] 297
+#&gt; [1] 298
+#&gt; [1] 299
+#&gt; [1] 300
+#&gt; [1] 301
+#&gt; [1] 302
+#&gt; [1] 303
+#&gt; [1] 304
+#&gt; [1] 305
+#&gt; [1] 306
+#&gt; [1] 307
+#&gt; [1] 308
+#&gt; [1] 309
+#&gt; [1] 310
+#&gt; [1] 311
+#&gt; [1] 312
+#&gt; [1] 313
+#&gt; [1] 314
+#&gt; [1] 315
+#&gt; [1] 316
+#&gt; [1] 317
+#&gt; [1] 318
+#&gt; [1] 319
+#&gt; [1] 320
+#&gt; [1] 321
+#&gt; [1] 322
+#&gt; [1] 323
+#&gt; [1] 324
+#&gt; [1] 325
+#&gt; [1] 326
+#&gt; [1] 327
+#&gt; [1] 328
+#&gt; [1] 329
+#&gt; [1] 330
+#&gt; [1] 331
+#&gt; [1] 332
+#&gt; [1] 333
+#&gt; [1] 334
+#&gt; [1] 335
+#&gt; [1] 336
+#&gt; [1] 337
+#&gt; [1] 338
+#&gt; [1] 339
+#&gt; [1] 340
+#&gt; [1] 341
+#&gt; [1] 342
+#&gt; [1] 343
+#&gt; [1] 344
+#&gt; [1] 345
+#&gt; [1] 346
+#&gt; [1] 347
+#&gt; [1] 348
+#&gt; [1] 349
+#&gt; [1] 350
+#&gt; [1] 351
+#&gt; [1] 352
+#&gt; [1] 353
+#&gt; [1] 354
+#&gt; [1] 355
+#&gt; [1] 356
+#&gt; [1] 357
+#&gt; [1] 358
+#&gt; [1] 359
+#&gt; [1] 360
+#&gt; [1] 361
+#&gt; [1] 362
+#&gt; [1] 363
+#&gt; [1] 364
+#&gt; [1] 365
+#&gt; [1] 366
+#&gt; [1] 367
+#&gt; [1] 368
+#&gt; [1] 369
+#&gt; [1] 370
+#&gt; [1] 371
+#&gt; [1] 372
+#&gt; [1] 373
+#&gt; [1] 374
+#&gt; [1] 375
+#&gt; [1] 376
+#&gt; [1] 377
+#&gt; [1] 378
+#&gt; [1] 379
+#&gt; [1] 380
+#&gt; [1] 381
+#&gt; [1] 382
+#&gt; [1] 383
+#&gt; [1] 384
+#&gt; [1] 385
+#&gt; [1] 386
+#&gt; [1] 387
+#&gt; [1] 388
+#&gt; [1] 389
+#&gt; [1] 390
+#&gt; [1] 391
+#&gt; [1] 392
+#&gt; [1] 393
+#&gt; [1] 394
+#&gt; [1] 395
+#&gt; [1] 396
+#&gt; [1] 397
+#&gt; [1] 398
+#&gt; [1] 399
+#&gt; [1] 400
+#&gt; [1] 401
+#&gt; [1] 402
+#&gt; [1] 403
+#&gt; [1] 404
+#&gt; [1] 405
+#&gt; [1] 406
+#&gt; [1] 407
+#&gt; [1] 408
+#&gt; [1] 409
+#&gt; [1] 410
+#&gt; [1] 411
+#&gt; Order of parameters:
+#&gt;  [1] "logFpar"              "logQpow"              "logSdLogFsta"        
+#&gt;  [4] "logSdLogN"            "logSdLogP"            "logSdLogObs"         
+#&gt;  [7] "logSdLogTotalObs"     "transfIRARdist"       "sigmaObsParUS"       
+#&gt; [10] "rec_loga"             "rec_logb"             "itrans_rho"          
+#&gt; [13] "rhop"                 "logScale"             "logitReleaseSurvival"
+#&gt; [16] "logitRecapturePhi"    "logAlphaSCB"          "logF"                
+#&gt; [19] "logN"                 "logPS"                "missing"             
+#&gt; Not matching template order:
+#&gt;  [1] "logFpar"              "logQpow"              "logSdLogFsta"        
+#&gt;  [4] "logSdLogN"            "logSdLogP"            "logSdLogObs"         
+#&gt;  [7] "logSdLogTotalObs"     "transfIRARdist"       "sigmaObsParUS"       
+#&gt; [10] "rec_loga"             "rec_logb"             "itrans_rho"          
+#&gt; [13] "rhop"                 "logScale"             "logitReleaseSurvival"
+#&gt; [16] "logitRecapturePhi"    "logAlphaSCB"          "logF"                
+#&gt; [19] "logN"                 "missing"             
+#&gt; Your parameter list has been re-ordered.
+#&gt; (Disable this warning with checkParameterOrder=FALSE)
+#&gt; iter: 1  value: 13364.58 mgc: 581.6182 ustep: 0.03522464 
+#&gt; iter: 2  value: 5659.409 mgc: 5393.104 ustep: 0.1877635 
+#&gt; iter: 3  value: 4462.348 mgc: 1442.218 ustep: 0.4333735 
+#&gt; iter: 4  value: 3989.88 mgc: 679.1085 ustep: 0.6583453 
+#&gt; iter: 5  value: 3785.996 mgc: 289.5039 ustep: 0.8114037 
+#&gt; iter: 6  value: 3712.41 mgc: 118.6904 ustep: 0.9007894 
+#&gt; iter: 7  value: 3695.953 mgc: 38.30482 ustep: 0.9491043 
+#&gt; iter: 8  value: 3694.948 mgc: 7.665764 ustep: 0.9742224 
+#&gt; iter: 9  value: 3694.944 mgc: 0.4910224 ustep: 0.9870284 
+#&gt; iter: 10  value: 3694.944 mgc: 0.002282077 ustep: 0.9934937 
+#&gt; iter: 11  value: 3694.944 mgc: 3.335178e-07 ustep: 0.9967418 
+#&gt; iter: 12  mgc: 1.380107e-09 
+#&gt; iter: 1  mgc: 1.380107e-09 
+#&gt; Matching hessian patterns... Done
+#&gt; outer mgc:  4775.994 
+#&gt;   0:     4177.5047: -4.33437 -0.147615 -0.0149544 0.129405 0.173502 0.261813 0.342396 0.421377 -5.00000 -5.00000 -0.989205 -0.710104 -1.99307 -1.65425 -0.644530 -1.34507 -1.18165 -1.00560  1.62175
+#&gt; iter: 1  value: 950.1419 mgc: 28.71541 ustep: 1 
+#&gt; iter: 2  value: 944.9736 mgc: 6.253997 ustep: 1 
+#&gt; iter: 3  value: 944.912 mgc: 1.341636 ustep: 1 
+#&gt; iter: 4  value: 944.9119 mgc: 0.02524788 ustep: 1 
+#&gt; iter: 5  value: 944.9119 mgc: 1.761288e-05 ustep: 1 
+#&gt; iter: 6  mgc: 4.63185e-12 
+#&gt; iter: 1  mgc: 4.63185e-12 
+#&gt; outer mgc:  1010.58 
+#&gt;   1:     1391.5399: -4.33088 -0.0903584 0.0236818 0.148860 0.182926 0.266727 0.344802 0.422749 -5.09357 -5.15949 -0.988953 -0.703659 -1.79303 -1.61412 -0.642719 -1.21291 -0.938241 -0.0879148  1.62102
+#&gt; iter: 1  value: 154.8836 mgc: 15.53661 ustep: 1 
+#&gt; iter: 2  value: 153.9707 mgc: 4.464804 ustep: 1 
+#&gt; iter: 3  value: 153.9702 mgc: 0.04509197 ustep: 1 
+#&gt; iter: 4  value: 153.9702 mgc: 7.727685e-05 ustep: 1 
+#&gt; iter: 5  mgc: 3.39484e-11 
+#&gt; iter: 1  mgc: 3.39484e-11 
+#&gt; outer mgc:  487.1361 
+#&gt;   2:     586.76305: -4.32248 0.00861470 0.0897332 0.181599 0.198231 0.274924 0.348751 0.424646 -5.38764 -5.21556 -0.984928 -0.697155 -1.71503 -1.62162 -0.640202 -1.12938 -0.0912357 0.317221  1.61627
+#&gt; iter: 1  value: -126.1813 mgc: 4.333303 ustep: 1 
+#&gt; iter: 2  value: -126.2294 mgc: 1.327651 ustep: 1 
+#&gt; iter: 3  value: -126.2294 mgc: 0.001384158 ustep: 1 
+#&gt; iter: 4  value: -126.2294 mgc: 5.035677e-08 ustep: 1 
+#&gt; mgc: 3.366196e-13 
+#&gt; iter: 1  mgc: 3.366196e-13 
+#&gt; outer mgc:  104.9248 
+#&gt;   3:     323.34221: -4.31445 0.0553425 0.122039 0.204373 0.211566 0.285277 0.355159 0.429413 -5.49765 -5.34253 -0.990245 -0.686793 -1.77922 -1.66789 -0.639475 -1.27673 0.217359  1.23606  1.61766
+#&gt; iter: 1  value: -207.7404 mgc: 17.80798 ustep: 1 
+#&gt; iter: 2  value: -207.7644 mgc: 0.6286508 ustep: 1 
+#&gt; iter: 3  value: -207.7644 mgc: 0.002878095 ustep: 1 
+#&gt; iter: 4  value: -207.7644 mgc: 7.670459e-08 ustep: 1 
+#&gt; mgc: 3.561595e-13 
+#&gt; iter: 1  mgc: 3.561595e-13 
+#&gt; outer mgc:  54.75839 
+#&gt;   4:     281.90144: -4.30549 -0.234407 0.00776559 0.228506 0.261977 0.350709 0.406498 0.478761 -5.83879 -5.45474 -1.05462 -0.659404 -1.86253 -1.68308 -0.646629 -1.68731 0.939852  1.47148  1.67564
+#&gt; iter: 1  value: -116.9812 mgc: 7.957629 ustep: 1 
+#&gt; iter: 2  value: -116.993 mgc: 0.3582157 ustep: 1 
+#&gt; iter: 3  value: -116.993 mgc: 0.002110959 ustep: 1 
+#&gt; iter: 4  value: -116.993 mgc: 9.457951e-08 ustep: 1 
+#&gt; mgc: 2.653433e-13 
+#&gt; iter: 1  value: -177.3274 mgc: 6.391597 ustep: 1 
+#&gt; iter: 2  value: -177.3286 mgc: 0.118742 ustep: 1 
+#&gt; iter: 3  value: -177.3286 mgc: 0.0001611146 ustep: 1 
+#&gt; iter: 4  mgc: 3.75232e-10 
+#&gt; iter: 1  mgc: 3.75232e-10 
+#&gt; outer mgc:  14.57341 
+#&gt;   5:     265.82325: -4.31062 -0.0940569 0.0623382 0.113952 0.192695 0.302916 0.409784 0.500159 -5.89551 -5.50283 -0.992662 -0.645954 -1.79614 -1.54997 -0.645316 -1.34313 0.984368  1.69638  1.64016
+#&gt; iter: 1  value: -214.6676 mgc: 5.246795 ustep: 1 
+#&gt; iter: 2  value: -214.6696 mgc: 0.1733695 ustep: 1 
+#&gt; iter: 3  value: -214.6696 mgc: 0.0003340808 ustep: 1 
+#&gt; iter: 4  mgc: 1.638483e-09 
+#&gt; iter: 1  value: -199.8552 mgc: 1.895664 ustep: 1 
+#&gt; iter: 2  value: -199.8552 mgc: 0.01221865 ustep: 1 
+#&gt; iter: 3  value: -199.8552 mgc: 3.146853e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.73559e-13 
+#&gt; iter: 1  mgc: 2.73559e-13 
+#&gt; outer mgc:  10.2192 
+#&gt;   6:     262.71858: -4.32151 -0.127126 0.0177588 0.217536 0.212499 0.312807 0.389730 0.479384 -5.95740 -5.54034 -1.01376 -0.645202 -1.85294 -1.61790 -0.648568 -1.40332  1.00725  1.81000  1.66012
+#&gt; iter: 1  value: -200.3921 mgc: 2.774536 ustep: 1 
+#&gt; iter: 2  value: -200.3922 mgc: 0.01926533 ustep: 1 
+#&gt; iter: 3  value: -200.3922 mgc: 3.335834e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.68594e-13 
+#&gt; iter: 1  mgc: 3.68594e-13 
+#&gt; outer mgc:  19.38059 
+#&gt;   7:     262.32522: -4.32363 -0.144788 0.0921987 0.0913828 0.229635 0.310292 0.401080 0.468694 -6.05040 -5.58792 -1.00063 -0.638796 -1.88516 -1.62197 -0.652291 -1.34740  1.02199  1.90156  1.66067
+#&gt; iter: 1  value: -203.936 mgc: 2.382516 ustep: 1 
+#&gt; iter: 2  value: -203.9361 mgc: 0.007948952 ustep: 1 
+#&gt; iter: 3  value: -203.9361 mgc: 1.01415e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.41116e-13 
+#&gt; iter: 1  mgc: 3.41116e-13 
+#&gt; outer mgc:  7.102907 
+#&gt;   8:     259.98201: -4.32607 -0.162247 -0.00580224 0.150153 0.167571 0.300536 0.391214 0.483912 -6.19415 -5.64910 -0.981880 -0.632514 -1.92521 -1.62459 -0.661083 -1.31318 0.993567  1.91300  1.66032
+#&gt; iter: 1  value: -219.2265 mgc: 2.377842 ustep: 1 
+#&gt; iter: 2  value: -219.2266 mgc: 0.0274405 ustep: 1 
+#&gt; iter: 3  value: -219.2266 mgc: 1.051362e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.115641e-12 
+#&gt; iter: 1  mgc: 2.115641e-12 
+#&gt; outer mgc:  15.98043 
+#&gt;   9:     259.88008: -4.34836 -0.194706 0.0493211 0.155069 0.264009 0.290041 0.375960 0.441891 -6.30463 -5.69699 -1.00391 -0.635607 -1.95512 -1.66171 -0.669104 -1.41964 0.973989  1.94170  1.67893
+#&gt; iter: 1  value: -213.0284 mgc: 1.432369 ustep: 1 
+#&gt; iter: 2  value: -213.0284 mgc: 0.004635445 ustep: 1 
+#&gt; iter: 3  value: -213.0284 mgc: 2.853715e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.067857e-13 
+#&gt; iter: 1  mgc: 4.067857e-13 
+#&gt; outer mgc:  7.100961 
+#&gt;  10:     258.39030: -4.34473 -0.169637 0.0175126 0.173430 0.197807 0.305117 0.375493 0.453953 -6.33389 -5.70895 -0.992800 -0.634342 -1.94176 -1.63886 -0.668822 -1.36616 0.965090  1.94314  1.67208
+#&gt; iter: 1  value: -209.9751 mgc: 0.6597185 ustep: 1 
+#&gt; iter: 2  value: -209.9751 mgc: 0.001390797 ustep: 1 
+#&gt; iter: 3  value: -209.9751 mgc: 2.933036e-08 ustep: 1 
+#&gt; mgc: 3.493872e-13 
+#&gt; iter: 1  mgc: 3.493872e-13 
+#&gt; outer mgc:  7.236333 
+#&gt;  11:     257.69643: -4.34221 -0.163771 0.0196048 0.137099 0.206752 0.282288 0.381738 0.461263 -6.41714 -5.74263 -0.986103 -0.633961 -1.93592 -1.62581 -0.669691 -1.34454 0.938503  1.94553  1.66948
+#&gt; iter: 1  value: -213.303 mgc: 0.7200804 ustep: 1 
+#&gt; iter: 2  value: -213.303 mgc: 0.001044769 ustep: 1 
+#&gt; iter: 3  value: -213.303 mgc: 1.896155e-08 ustep: 1 
+#&gt; mgc: 3.43503e-13 
+#&gt; iter: 1  mgc: 3.43503e-13 
+#&gt; outer mgc:  7.387606 
+#&gt;  12:     257.00246: -4.34489 -0.172688 0.00882126 0.177099 0.179365 0.311228 0.371270 0.453551 -6.49415 -5.77292 -0.989574 -0.634930 -1.93993 -1.63339 -0.670954 -1.36325 0.912040  1.94480  1.67310
+#&gt; iter: 1  value: -213.0116 mgc: 0.728898 ustep: 1 
+#&gt; iter: 2  value: -213.0116 mgc: 0.001239026 ustep: 1 
+#&gt; iter: 3  value: -213.0116 mgc: 3.056957e-08 ustep: 1 
+#&gt; mgc: 3.33511e-13 
+#&gt; iter: 1  value: -213.1622 mgc: 0.7682433 ustep: 1 
+#&gt; iter: 2  value: -213.1622 mgc: 0.002936862 ustep: 1 
+#&gt; iter: 3  value: -213.1622 mgc: 1.375303e-07 ustep: 1 
+#&gt; mgc: 3.363976e-13 
+#&gt; iter: 1  mgc: 3.363976e-13 
+#&gt; outer mgc:  14.77274 
+#&gt;  13:     254.05952: -4.35229 -0.170901 0.0796631 0.116631 0.195624 0.323859 0.376586 0.429511 -6.86708 -5.91676 -0.988417 -0.637899 -1.92223 -1.61823 -0.674046 -1.36843 0.784970  1.94025  1.67568
+#&gt; iter: 1  value: -216.0534 mgc: 0.9989718 ustep: 1 
+#&gt; iter: 2  value: -216.0534 mgc: 0.002998148 ustep: 1 
+#&gt; iter: 3  value: -216.0534 mgc: 1.90467e-07 ustep: 1 
+#&gt; iter: 4  mgc: 3.297362e-13 
+#&gt; iter: 1  value: -217.9642 mgc: 1.576384 ustep: 1 
+#&gt; iter: 2  value: -217.9643 mgc: 0.005929594 ustep: 1 
+#&gt; iter: 3  value: -217.9643 mgc: 4.043785e-07 ustep: 1 
+#&gt; iter: 4  mgc: 3.727574e-13 
+#&gt; iter: 1  value: -201.4991 mgc: 3.959977 ustep: 1 
+#&gt; iter: 2  value: -201.4994 mgc: 0.03813979 ustep: 1 
+#&gt; iter: 3  value: -201.4994 mgc: 2.187111e-05 ustep: 1 
+#&gt; iter: 4  mgc: 7.156498e-12 
+#&gt; iter: 1  mgc: 3.727574e-13 
+#&gt; outer mgc:  28.99641 
+#&gt;  14:     244.10507: -4.35607 -0.112031 0.0519795 0.130659 0.319098 0.208834 0.373154 0.450824 -7.87156 -6.28561 -0.994469 -0.644634 -1.87424 -1.60670 -0.670992 -1.36288 0.415401  1.88895  1.68174
+#&gt; iter: 1  value: -241.8633 mgc: 3.846598 ustep: 1 
+#&gt; iter: 2  value: -241.8634 mgc: 0.01268036 ustep: 1 
+#&gt; iter: 3  value: -241.8634 mgc: 3.288422e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.694822e-13 
+#&gt; iter: 1  value: -50.31662 mgc: 20.17752 ustep: 1 
+#&gt; iter: 2  value: -50.40636 mgc: 0.7230521 ustep: 1 
+#&gt; iter: 3  value: -50.40637 mgc: 0.009115938 ustep: 1 
+#&gt; iter: 4  value: -50.40637 mgc: 8.599405e-07 ustep: 1 
+#&gt; iter: 5  mgc: 3.401723e-13 
+#&gt; iter: 1  mgc: 3.694822e-13 
+#&gt; outer mgc:  17.41142 
+#&gt;  15:     230.12688: -4.31842 -0.129697 0.0181021 0.163081 0.278480 0.240939 0.405689 0.480823 -8.87208 -6.63123 -1.01627 -0.644841 -1.86526 -1.68942 -0.652554 -1.32811 -0.0101055  1.85715  1.69299
+#&gt; iter: 1  value: -157.3669 mgc: 11.40741 ustep: 1 
+#&gt; iter: 2  value: -157.3832 mgc: 0.3105311 ustep: 1 
+#&gt; iter: 3  value: -157.3832 mgc: 0.001781465 ustep: 1 
+#&gt; iter: 4  value: -157.3832 mgc: 5.173905e-08 ustep: 1 
+#&gt; mgc: 3.392842e-13 
+#&gt; iter: 1  value: -242.7781 mgc: 1.735689 ustep: 1 
+#&gt; iter: 2  value: -242.7781 mgc: 0.007322484 ustep: 1 
+#&gt; iter: 3  value: -242.7781 mgc: 1.090825e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.625677e-13 
+#&gt; iter: 1  mgc: 2.625677e-13 
+#&gt; outer mgc:  16.90682 
+#&gt;  16:     226.99908: -4.32446 -0.165134 0.0236950 0.174046 0.176163 0.338748 0.379598 0.472319 -8.86064 -6.64952 -0.999145 -0.640362 -1.88166 -1.67448 -0.655458 -1.33632 -0.117586  1.84560  1.68387
+#&gt; iter: 1  value: -245.501 mgc: 1.396692 ustep: 1 
+#&gt; iter: 2  value: -245.501 mgc: 0.006234162 ustep: 1 
+#&gt; iter: 3  value: -245.501 mgc: 5.297513e-07 ustep: 1 
+#&gt; iter: 4  mgc: 3.819167e-13 
+#&gt; iter: 1  mgc: 3.819167e-13 
+#&gt; outer mgc:  15.99528 
+#&gt;  17:     224.34786: -4.33361 -0.182651 0.00189457 0.144850 0.235283 0.264502 0.397904 0.468306 -8.84580 -6.67604 -0.987748 -0.636446 -1.90567 -1.66046 -0.659874 -1.35413 -0.265562  1.83268  1.67873
+#&gt; iter: 1  value: -249.598 mgc: 2.38704 ustep: 1 
+#&gt; iter: 2  value: -249.5981 mgc: 0.03274885 ustep: 1 
+#&gt; iter: 3  value: -249.5981 mgc: 1.362775e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.661982e-12 
+#&gt; iter: 1  mgc: 2.661982e-12 
+#&gt; outer mgc:  11.61613 
+#&gt;  18:     220.94296: -4.36707 -0.187186 0.0206136 0.161057 0.171485 0.324766 0.316477 0.450645 -9.00176 -6.81942 -0.982318 -0.630167 -1.94520 -1.63592 -0.673117 -1.33455 -0.543489  1.82437  1.68076
+#&gt; iter: 1  value: -263.2257 mgc: 2.717873 ustep: 1 
+#&gt; iter: 2  value: -263.2266 mgc: 0.1191415 ustep: 1 
+#&gt; iter: 3  value: -263.2266 mgc: 0.0001988363 ustep: 1 
+#&gt; iter: 4  mgc: 4.319709e-10 
+#&gt; iter: 1  mgc: 4.319709e-10 
+#&gt; outer mgc:  33.64642 
+#&gt;  19:     219.87189: -4.36779 -0.229209 -0.0444771 0.143122 0.131743 0.254224 0.484188 0.340730 -8.84495 -6.92318 -1.01973 -0.641658 -1.96297 -1.67547 -0.682846 -1.32450 -0.762762  1.80425  1.70991
+#&gt; iter: 1  value: -274.1701 mgc: 4.5365 ustep: 1 
+#&gt; iter: 2  value: -274.172 mgc: 0.124238 ustep: 1 
+#&gt; iter: 3  value: -274.172 mgc: 0.0003815096 ustep: 1 
+#&gt; iter: 4  mgc: 2.492384e-09 
+#&gt; iter: 1  mgc: 2.492384e-09 
+#&gt; outer mgc:  14.2399 
+#&gt;  20:     218.74020: -4.34100 -0.256328 -0.0573034 0.0818867 0.222157 0.224255 0.295451 0.500951 -8.70788 -7.03102 -1.05240 -0.666670 -1.93455 -1.76178 -0.677962 -1.25257 -0.900704  1.78102  1.73285
+#&gt; iter: 1  value: -243.8434 mgc: 4.684776 ustep: 1 
+#&gt; iter: 2  value: -243.8436 mgc: 0.03707606 ustep: 1 
+#&gt; iter: 3  value: -243.8436 mgc: 1.289797e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.603251e-12 
+#&gt; iter: 1  mgc: 2.603251e-12 
+#&gt; outer mgc:  10.10643 
+#&gt;  21:     215.20719: -4.35710 -0.161911 0.0262941 0.175735 0.191714 0.337795 0.355266 0.439439 -8.87258 -7.15910 -0.886542 -0.655490 -1.90979 -1.69674 -0.677735 -1.30496 -0.975170  1.76804  1.62906
+#&gt; iter: 1  value: -273.0361 mgc: 10.53557 ustep: 1 
+#&gt; iter: 2  value: -273.0364 mgc: 0.05181714 ustep: 1 
+#&gt; iter: 3  value: -273.0364 mgc: 3.262416e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.741185e-11 
+#&gt; iter: 1  value: -260.4489 mgc: 3.257004 ustep: 1 
+#&gt; iter: 2  value: -260.4489 mgc: 0.009901649 ustep: 1 
+#&gt; iter: 3  value: -260.4489 mgc: 1.250073e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.672618e-13 
+#&gt; iter: 1  mgc: 3.672618e-13 
+#&gt; outer mgc:  7.373567 
+#&gt;  22:     213.65495: -4.35156 -0.205447 -0.0126352 0.138420 0.205295 0.256082 0.383577 0.452965 -8.79835 -7.18540 -0.954252 -0.651748 -1.93356 -1.70057 -0.677538 -1.35044 -1.02158  1.75423  1.67207
+#&gt; iter: 1  value: -264.4025 mgc: 3.498671 ustep: 1 
+#&gt; iter: 2  value: -264.4025 mgc: 0.03937818 ustep: 1 
+#&gt; iter: 3  value: -264.4025 mgc: 1.563105e-05 ustep: 1 
+#&gt; iter: 4  mgc: 3.459455e-12 
+#&gt; iter: 1  mgc: 3.459455e-12 
+#&gt; outer mgc:  13.28402 
+#&gt;  23:     213.43255: -4.35712 -0.192386 -0.00388500 0.146302 0.144518 0.338605 0.342817 0.432248 -8.82006 -7.26367 -1.00265 -0.642887 -1.94934 -1.65823 -0.676104 -1.31774 -1.08513  1.73530  1.70139
+#&gt; iter: 1  value: -263.5903 mgc: 1.398212 ustep: 1 
+#&gt; iter: 2  value: -263.5903 mgc: 0.003684871 ustep: 1 
+#&gt; iter: 3  value: -263.5903 mgc: 2.460347e-07 ustep: 1 
+#&gt; iter: 4  mgc: 3.841372e-13 
+#&gt; iter: 1  mgc: 3.841372e-13 
+#&gt; outer mgc:  5.275087 
+#&gt;  24:     212.39223: -4.36236 -0.209825 0.00486265 0.153612 0.207755 0.273117 0.361593 0.431536 -8.84170 -7.39531 -0.993776 -0.641809 -1.96425 -1.64291 -0.673686 -1.30041 -1.12995  1.71200  1.69630
+#&gt; iter: 1  value: -267.6405 mgc: 2.144266 ustep: 1 
+#&gt; iter: 2  value: -267.6406 mgc: 0.04396519 ustep: 1 
+#&gt; iter: 3  value: -267.6406 mgc: 2.390878e-05 ustep: 1 
+#&gt; iter: 4  mgc: 7.16982e-12 
+#&gt; iter: 1  mgc: 7.16982e-12 
+#&gt; outer mgc:  8.417781 
+#&gt;  25:     212.19472: -4.35918 -0.187099 -0.0412711 0.113604 0.153872 0.290151 0.369123 0.456508 -8.80154 -7.49759 -0.961793 -0.647545 -1.98724 -1.67576 -0.678492 -1.37561 -1.16387  1.69344  1.67954
+#&gt; iter: 1  value: -261.1146 mgc: 1.931173 ustep: 1 
+#&gt; iter: 2  value: -261.1147 mgc: 0.007497964 ustep: 1 
+#&gt; iter: 3  value: -261.1147 mgc: 9.680766e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.013456e-13 
+#&gt; iter: 1  mgc: 4.013456e-13 
+#&gt; outer mgc:  4.501999 
+#&gt;  26:     211.32855: -4.36023 -0.228489 0.00493648 0.151539 0.166612 0.276098 0.365520 0.446134 -8.80404 -7.63561 -0.941218 -0.654177 -1.96393 -1.67629 -0.682728 -1.32028 -1.18787  1.66719  1.66772
+#&gt; iter: 1  value: -267.5139 mgc: 2.141852 ustep: 1 
+#&gt; iter: 2  value: -267.5139 mgc: 0.01199021 ustep: 1 
+#&gt; iter: 3  value: -267.5139 mgc: 2.293722e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.885781e-13 
+#&gt; iter: 1  value: -265.0792 mgc: 0.9356299 ustep: 1 
+#&gt; iter: 2  value: -265.0792 mgc: 0.001684996 ustep: 1 
+#&gt; iter: 3  value: -265.0792 mgc: 3.46667e-08 ustep: 1 
+#&gt; mgc: 3.490541e-13 
+#&gt; iter: 1  mgc: 3.490541e-13 
+#&gt; outer mgc:  3.692074 
+#&gt;  27:     211.04089: -4.36130 -0.195404 -0.0197952 0.130900 0.193071 0.284125 0.361291 0.437121 -8.82454 -7.66241 -0.960544 -0.652369 -1.97011 -1.67290 -0.683082 -1.33056 -1.19458  1.65848  1.67966
+#&gt; iter: 1  value: -265.4949 mgc: 0.7888861 ustep: 1 
+#&gt; iter: 2  value: -265.4949 mgc: 0.0009431974 ustep: 1 
+#&gt; iter: 3  value: -265.4949 mgc: 1.224282e-08 ustep: 1 
+#&gt; mgc: 4.32987e-13 
+#&gt; iter: 1  mgc: 4.32987e-13 
+#&gt; outer mgc:  4.006633 
+#&gt;  28:     210.86530: -4.36457 -0.215197 -0.00115013 0.148669 0.163480 0.277671 0.362787 0.439233 -8.81291 -7.71001 -0.970674 -0.649729 -1.97086 -1.66027 -0.682266 -1.32722 -1.20286  1.64617  1.68583
+#&gt; iter: 1  value: -265.2088 mgc: 0.4433035 ustep: 1 
+#&gt; iter: 2  value: -265.2088 mgc: 0.0007434183 ustep: 1 
+#&gt; iter: 3  value: -265.2088 mgc: 1.007718e-08 ustep: 1 
+#&gt; mgc: 4.911627e-13 
+#&gt; iter: 1  mgc: 4.911627e-13 
+#&gt; outer mgc:  3.788269 
+#&gt;  29:     210.58222: -4.36430 -0.205285 -0.0158869 0.132714 0.192490 0.280463 0.360046 0.435042 -8.82130 -7.76712 -0.968755 -0.648923 -1.97197 -1.65686 -0.681793 -1.32616 -1.20690  1.63530  1.68465
+#&gt; iter: 1  value: -266.3216 mgc: 0.4422312 ustep: 1 
+#&gt; iter: 2  value: -266.3216 mgc: 0.00103516 ustep: 1 
+#&gt; iter: 3  value: -266.3216 mgc: 1.474742e-08 ustep: 1 
+#&gt; mgc: 3.925749e-13 
+#&gt; iter: 1  value: -264.768 mgc: 0.8383073 ustep: 1 
+#&gt; iter: 2  value: -264.768 mgc: 0.0004477836 ustep: 1 
+#&gt; iter: 3  mgc: 3.090543e-09 
+#&gt; iter: 1  value: -256.1545 mgc: 3.757035 ustep: 1 
+#&gt; iter: 2  value: -256.1545 mgc: 0.009482162 ustep: 1 
+#&gt; iter: 3  value: -256.1545 mgc: 1.457141e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.947154e-13 
+#&gt; iter: 1  mgc: 4.947154e-13 
+#&gt; outer mgc:  19.68053 
+#&gt;  30:     208.07599: -4.35446 -0.197819 0.0381951 0.136279 0.203756 0.236258 0.368803 0.465371 -8.91606 -8.90199 -0.866308 -0.657393 -1.97593 -1.69426 -0.679690 -1.29777 -1.25788  1.45918  1.62614
+#&gt; iter: 1  value: -261.6418 mgc: 2.228952 ustep: 1 
+#&gt; iter: 2  value: -261.6419 mgc: 0.01737808 ustep: 1 
+#&gt; iter: 3  value: -261.6419 mgc: 3.820727e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.859135e-13 
+#&gt; iter: 1  value: -254.7525 mgc: 6.11361 ustep: 1 
+#&gt; iter: 2  value: -254.7526 mgc: 0.03034015 ustep: 1 
+#&gt; iter: 3  value: -254.7526 mgc: 4.624272e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.787282e-13 
+#&gt; iter: 1  value: -204.3425 mgc: 10.0755 ustep: 1 
+#&gt; iter: 2  value: -204.3428 mgc: 0.1062313 ustep: 1 
+#&gt; iter: 3  value: -204.3428 mgc: 4.75774e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.360545e-11 
+#&gt; iter: 1  mgc: 4.787282e-13 
+#&gt; outer mgc:  23.75161 
+#&gt;  31:     196.60348: -4.34677 -0.294733 0.00632416 0.198614 0.255532 0.317243 0.395614 0.403246 -8.82692 -11.8810 -0.711721 -0.677986 -1.96477 -1.79840 -0.679179 -1.16571 -1.37547 0.949342  1.54202
+#&gt; iter: 1  value: -283.4329 mgc: 6.901841 ustep: 1 
+#&gt; iter: 2  value: -283.4333 mgc: 0.08463966 ustep: 1 
+#&gt; iter: 3  value: -283.4333 mgc: 5.768946e-05 ustep: 1 
+#&gt; iter: 4  mgc: 4.077716e-11 
+#&gt; iter: 1  value: -300.5334 mgc: 9.295865 ustep: 1 
+#&gt; iter: 2  value: -300.5338 mgc: 0.08979822 ustep: 1 
+#&gt; iter: 3  value: -300.5338 mgc: 6.954431e-05 ustep: 1 
+#&gt; iter: 4  mgc: 6.646861e-11 
+#&gt; iter: 1  mgc: 6.646861e-11 
+#&gt; outer mgc:  18.01281 
+#&gt;  32:     183.15275: -4.35831 -0.207595 -0.0225858 0.146421 0.182626 0.299093 0.362059 0.462632 -8.80683 -13.1046 -0.874333 -0.672915 -1.98394 -1.81478 -0.689647 -1.33132 -1.37825 0.611045  1.65314
+#&gt; iter: 1  value: -279.2577 mgc: 53.21229 ustep: 1 
+#&gt; iter: 2  value: -279.4098 mgc: 1.535077 ustep: 1 
+#&gt; iter: 3  value: -279.4098 mgc: 0.03434372 ustep: 1 
+#&gt; iter: 4  value: -279.4098 mgc: 2.170726e-05 ustep: 1 
+#&gt; iter: 5  mgc: 7.593925e-12 
+#&gt; iter: 1  value: -292.2859 mgc: 9.070349 ustep: 1 
+#&gt; iter: 2  value: -292.2864 mgc: 0.09927546 ustep: 1 
+#&gt; iter: 3  value: -292.2864 mgc: 0.0001239811 ustep: 1 
+#&gt; iter: 4  mgc: 2.289262e-10 
+#&gt; iter: 1  mgc: 2.289262e-10 
+#&gt; outer mgc:  16.67479 
+#&gt;  33:     177.82529: -4.36036 -0.211603 0.0157107 0.114955 0.194653 0.247662 0.394097 0.412073 -8.87913 -13.0715 -0.965677 -0.651192 -1.93097 -1.65812 -0.686125 -1.23918 -1.29940 0.313755  1.69866
+#&gt; iter: 1  value: -309.2883 mgc: 3.306538 ustep: 1 
+#&gt; iter: 2  value: -309.2884 mgc: 0.04951618 ustep: 1 
+#&gt; iter: 3  value: -309.2884 mgc: 2.780824e-05 ustep: 1 
+#&gt; iter: 4  mgc: 7.666756e-12 
+#&gt; iter: 1  mgc: 7.666756e-12 
+#&gt; outer mgc:  16.93636 
+#&gt;  34:     174.20986: -4.36947 -0.234184 -0.0618134 0.126013 0.147833 0.287048 0.316155 0.453276 -8.80957 -12.7632 -0.993944 -0.646769 -1.97504 -1.66254 -0.684157 -1.36142 -1.25801 0.176708  1.71287
+#&gt; iter: 1  value: -304.1023 mgc: 2.82734 ustep: 1 
+#&gt; iter: 2  value: -304.1024 mgc: 0.05017419 ustep: 1 
+#&gt; iter: 3  value: -304.1024 mgc: 3.233781e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.3479e-11 
+#&gt; iter: 1  mgc: 1.3479e-11 
+#&gt; outer mgc:  13.67375 
+#&gt;  35:     171.07076: -4.38891 -0.201969 -0.00219294 0.126874 0.189164 0.257799 0.385348 0.391032 -8.82862 -13.0414 -0.928519 -0.648423 -2.00381 -1.67101 -0.680957 -1.30081 -1.24841 -0.0512005  1.67205
+#&gt; iter: 1  value: -314.3783 mgc: 2.625885 ustep: 1 
+#&gt; iter: 2  value: -314.3785 mgc: 0.0399855 ustep: 1 
+#&gt; iter: 3  value: -314.3785 mgc: 2.409048e-05 ustep: 1 
+#&gt; iter: 4  mgc: 6.641798e-12 
+#&gt; iter: 1  mgc: 6.641798e-12 
+#&gt; outer mgc:  16.04785 
+#&gt;  36:     167.90160: -4.37755 -0.222774 -0.0338264 0.123848 0.146125 0.279306 0.285983 0.468111 -8.85334 -12.7328 -0.980672 -0.653014 -2.00193 -1.65847 -0.682066 -1.32593 -1.22803 -0.241600  1.69939
+#&gt; iter: 1  value: -308.016 mgc: 2.480934 ustep: 1 
+#&gt; iter: 2  value: -308.0166 mgc: 0.09558145 ustep: 1 
+#&gt; iter: 3  value: -308.0166 mgc: 0.0001415838 ustep: 1 
+#&gt; iter: 4  mgc: 2.302372e-10 
+#&gt; iter: 1  value: -312.8809 mgc: 1.328233 ustep: 1 
+#&gt; iter: 2  value: -312.881 mgc: 0.02776543 ustep: 1 
+#&gt; iter: 3  value: -312.881 mgc: 1.317554e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.909895e-12 
+#&gt; iter: 1  mgc: 2.909895e-12 
+#&gt; outer mgc:  12.44912 
+#&gt;  37:     166.16677: -4.37867 -0.226286 -0.0293472 0.118540 0.172605 0.258690 0.379199 0.400974 -8.83183 -12.7392 -0.969722 -0.654253 -1.99582 -1.65333 -0.682750 -1.31768 -1.22681 -0.319186  1.69134
+#&gt; iter: 1  value: -313.8834 mgc: 1.137664 ustep: 1 
+#&gt; iter: 2  value: -313.8834 mgc: 0.01812418 ustep: 1 
+#&gt; iter: 3  value: -313.8834 mgc: 5.021717e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.774758e-13 
+#&gt; iter: 1  mgc: 3.774758e-13 
+#&gt; outer mgc:  10.86081 
+#&gt;  38:     164.93128: -4.37957 -0.215145 -0.0225955 0.131654 0.163198 0.281295 0.307791 0.444546 -8.83024 -12.7464 -0.965072 -0.656753 -1.99588 -1.65412 -0.682797 -1.33085 -1.22599 -0.433238  1.68654
+#&gt; iter: 1  value: -312.3372 mgc: 1.377783 ustep: 1 
+#&gt; iter: 2  value: -312.3372 mgc: 0.01380141 ustep: 1 
+#&gt; iter: 3  value: -312.3372 mgc: 3.48801e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.520828e-13 
+#&gt; iter: 1  value: -313.7844 mgc: 1.063256 ustep: 1 
+#&gt; iter: 2  value: -313.7845 mgc: 0.01141772 ustep: 1 
+#&gt; iter: 3  value: -313.7845 mgc: 2.346185e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.369838e-13 
+#&gt; iter: 1  mgc: 4.369838e-13 
+#&gt; outer mgc:  9.622463 
+#&gt;  39:     164.02921: -4.37749 -0.213603 -0.0214778 0.124250 0.175535 0.258611 0.381213 0.401003 -8.82339 -12.7490 -0.962761 -0.658468 -1.99240 -1.65337 -0.682299 -1.32647 -1.22496 -0.509815  1.68352
+#&gt; iter: 1  value: -314.0916 mgc: 1.218982 ustep: 1 
+#&gt; iter: 2  value: -314.0917 mgc: 0.01601064 ustep: 1 
+#&gt; iter: 3  value: -314.0917 mgc: 4.142463e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.237477e-13 
+#&gt; iter: 1  value: -314.6379 mgc: 0.85637 ustep: 1 
+#&gt; iter: 2  value: -314.6379 mgc: 0.009035348 ustep: 1 
+#&gt; iter: 3  value: -314.6379 mgc: 1.372931e-06 ustep: 1 
+#&gt; iter: 4  mgc: 6.248335e-13 
+#&gt; iter: 1  mgc: 6.248335e-13 
+#&gt; outer mgc:  8.398093 
+#&gt;  40:     163.33798: -4.37716 -0.210553 -0.0204354 0.131251 0.167366 0.279028 0.323326 0.436668 -8.82348 -12.7497 -0.963177 -0.660245 -1.99213 -1.65389 -0.681436 -1.32960 -1.22421 -0.577670  1.68223
+#&gt; iter: 1  value: -315.4984 mgc: 1.507094 ustep: 1 
+#&gt; iter: 2  value: -315.4984 mgc: 0.00438748 ustep: 1 
+#&gt; iter: 3  value: -315.4984 mgc: 3.033004e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.249934e-13 
+#&gt; iter: 1  value: -314.876 mgc: 0.7752813 ustep: 1 
+#&gt; iter: 2  value: -314.876 mgc: 0.005207957 ustep: 1 
+#&gt; iter: 3  value: -314.876 mgc: 5.100828e-07 ustep: 1 
+#&gt; iter: 4  mgc: 3.876899e-13 
+#&gt; iter: 1  mgc: 3.876899e-13 
+#&gt; outer mgc:  7.121452 
+#&gt;  41:     162.82446: -4.37558 -0.208928 -0.0187912 0.127154 0.175583 0.261387 0.375378 0.406908 -8.82047 -12.7491 -0.962122 -0.662050 -1.99048 -1.65445 -0.680593 -1.33101 -1.22328 -0.643013  1.67987
+#&gt; iter: 1  value: -318.0268 mgc: 1.537738 ustep: 1 
+#&gt; iter: 2  value: -318.0268 mgc: 0.00940181 ustep: 1 
+#&gt; iter: 3  value: -318.0268 mgc: 1.879878e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.995204e-13 
+#&gt; iter: 1  mgc: 5.995204e-13 
+#&gt; outer mgc:  6.643402 
+#&gt;  42:     162.48472: -4.36566 -0.172240 -0.00805931 0.120686 0.168492 0.277304 0.341523 0.438499 -8.80398 -12.6423 -0.955358 -0.681402 -2.01449 -1.68510 -0.662091 -1.31028 -1.22113 -0.762529  1.65866
+#&gt; iter: 1  value: -317.0155 mgc: 1.364935 ustep: 1 
+#&gt; iter: 2  value: -317.0155 mgc: 0.003182387 ustep: 1 
+#&gt; iter: 3  value: -317.0155 mgc: 1.312545e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.571898e-13 
+#&gt; iter: 1  mgc: 4.571898e-13 
+#&gt; outer mgc:  7.133376 
+#&gt;  43:     162.05713: -4.36119 -0.194981 -0.0126985 0.164393 0.185220 0.284010 0.365210 0.423738 -8.77072 -12.7775 -0.954748 -0.685801 -2.00357 -1.67916 -0.660764 -1.33679 -1.22362 -0.858817  1.65084
+#&gt; iter: 1  value: -305.2038 mgc: 2.978437 ustep: 1 
+#&gt; iter: 2  value: -305.2038 mgc: 0.0116617 ustep: 1 
+#&gt; iter: 3  value: -305.2038 mgc: 1.271696e-06 ustep: 1 
+#&gt; iter: 4  mgc: 2.924327e-13 
+#&gt; iter: 1  value: -315.767 mgc: 0.4755446 ustep: 1 
+#&gt; iter: 2  value: -315.767 mgc: 0.0009197551 ustep: 1 
+#&gt; iter: 3  value: -315.767 mgc: 1.893529e-08 ustep: 1 
+#&gt; mgc: 2.950973e-13 
+#&gt; iter: 1  mgc: 2.950973e-13 
+#&gt; outer mgc:  2.083552 
+#&gt;  44:     161.69504: -4.36119 -0.188375 -2.49618e-06 0.137395 0.184913 0.280699 0.356464 0.436218 -8.80824 -12.7504 -0.958862 -0.683896 -1.99624 -1.66794 -0.662711 -1.32916 -1.22087 -0.869046  1.65334
+#&gt; iter: 1  value: -314.9896 mgc: 0.8014803 ustep: 1 
+#&gt; iter: 2  value: -314.9896 mgc: 0.001260958 ustep: 1 
+#&gt; iter: 3  value: -314.9896 mgc: 2.749812e-08 ustep: 1 
+#&gt; mgc: 3.588241e-13 
+#&gt; iter: 1  mgc: 3.588241e-13 
+#&gt; outer mgc:  4.063072 
+#&gt;  45:     161.67654: -4.36416 -0.201397 -0.0277643 0.145776 0.171147 0.277149 0.367774 0.429724 -8.80238 -12.7195 -0.968425 -0.679780 -1.98554 -1.65375 -0.667469 -1.33616 -1.21796 -0.896799  1.65994
+#&gt; iter: 1  value: -314.813 mgc: 0.2887121 ustep: 1 
+#&gt; iter: 2  value: -314.813 mgc: 0.0002514981 ustep: 1 
+#&gt; iter: 3  mgc: 1.37289e-09 
+#&gt; iter: 1  mgc: 1.37289e-09 
+#&gt; outer mgc:  1.052556 
+#&gt;  46:     161.59090: -4.36557 -0.194986 -0.00810288 0.133118 0.179238 0.277536 0.355941 0.434162 -8.80875 -12.7250 -0.967652 -0.679124 -1.98469 -1.65327 -0.668003 -1.33504 -1.21683 -0.902612  1.65975
+#&gt; iter: 1  value: -314.7875 mgc: 0.3167375 ustep: 1 
+#&gt; iter: 2  value: -314.7875 mgc: 0.0001045373 ustep: 1 
+#&gt; iter: 3  mgc: 1.827356e-10 
+#&gt; iter: 1  value: -314.6855 mgc: 0.1291661 ustep: 1 
+#&gt; iter: 2  value: -314.6855 mgc: 0.0001522683 ustep: 1 
+#&gt; iter: 3  mgc: 4.911626e-10 
+#&gt; iter: 1  mgc: 4.911626e-10 
+#&gt; outer mgc:  0.8428173 
+#&gt;  47:     161.57955: -4.36643 -0.191666 -0.0113659 0.140096 0.177177 0.276929 0.358939 0.429768 -8.80531 -12.7284 -0.966789 -0.678241 -1.98346 -1.65343 -0.668638 -1.33666 -1.21535 -0.910873  1.65962
+#&gt; iter: 1  value: -314.576 mgc: 0.1136526 ustep: 1 
+#&gt; iter: 2  value: -314.576 mgc: 7.179414e-05 ustep: 1 
+#&gt; iter: 3  mgc: 9.02568e-11 
+#&gt; iter: 1  mgc: 9.02568e-11 
+#&gt; outer mgc:  0.9638514 
+#&gt;  48:     161.57399: -4.36648 -0.190726 -0.00862833 0.133837 0.178060 0.278080 0.352399 0.433027 -8.80485 -12.7290 -0.965507 -0.677792 -1.98275 -1.65493 -0.668521 -1.33607 -1.21435 -0.920547  1.65888
+#&gt; iter: 1  value: -313.9586 mgc: 0.2190279 ustep: 1 
+#&gt; iter: 2  value: -313.9586 mgc: 0.0003392811 ustep: 1 
+#&gt; iter: 3  mgc: 2.356171e-09 
+#&gt; iter: 1  value: -314.5014 mgc: 0.07333339 ustep: 1 
+#&gt; iter: 2  value: -314.5014 mgc: 5.758392e-05 ustep: 1 
+#&gt; iter: 3  mgc: 8.110845e-11 
+#&gt; iter: 1  mgc: 8.110845e-11 
+#&gt; outer mgc:  0.519181 
+#&gt;  49:     161.56780: -4.36674 -0.191086 -0.00915388 0.136925 0.177844 0.276294 0.356500 0.429971 -8.80539 -12.7283 -0.965498 -0.677474 -1.98192 -1.65470 -0.668672 -1.33659 -1.21376 -0.923040  1.65900
+#&gt; iter: 1  value: -314.3154 mgc: 0.09650758 ustep: 1 
+#&gt; iter: 2  value: -314.3154 mgc: 1.690895e-05 ustep: 1 
+#&gt; iter: 3  mgc: 4.647394e-12 
+#&gt; iter: 1  value: -314.1135 mgc: 0.1050066 ustep: 1 
+#&gt; iter: 2  value: -314.1135 mgc: 1.959149e-05 ustep: 1 
+#&gt; iter: 3  mgc: 6.136869e-12 
+#&gt; iter: 1  mgc: 6.136869e-12 
+#&gt; outer mgc:  0.5592478 
+#&gt;  50:     161.56342: -4.36775 -0.191010 -0.00753736 0.137580 0.178857 0.276867 0.352871 0.429519 -8.80528 -12.7257 -0.965428 -0.675885 -1.97811 -1.65356 -0.669198 -1.33843 -1.21075 -0.935295  1.65958
+#&gt; iter: 1  value: -314.297 mgc: 0.1735337 ustep: 1 
+#&gt; iter: 2  value: -314.297 mgc: 6.527844e-05 ustep: 1 
+#&gt; iter: 3  mgc: 5.926748e-11 
+#&gt; iter: 1  value: -314.0843 mgc: 0.0370446 ustep: 1 
+#&gt; iter: 2  value: -314.0843 mgc: 5.607943e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.981571e-13 
+#&gt; iter: 1  mgc: 4.981571e-13 
+#&gt; outer mgc:  0.1794225 
+#&gt;  51:     161.56207: -4.36760 -0.190259 -0.00834647 0.137425 0.178074 0.275963 0.355237 0.428540 -8.80467 -12.7260 -0.965240 -0.675777 -1.97788 -1.65379 -0.669108 -1.33824 -1.21046 -0.936136  1.65951
+#&gt; iter: 1  value: -314.0354 mgc: 0.04383063 ustep: 1 
+#&gt; iter: 2  value: -314.0354 mgc: 6.766898e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.889422e-13 
+#&gt; iter: 1  mgc: 4.889422e-13 
+#&gt; outer mgc:  0.1160747 
+#&gt;  52:     161.56165: -4.36745 -0.189466 -0.00845493 0.136792 0.177536 0.275873 0.354591 0.429187 -8.80420 -12.7263 -0.964858 -0.675462 -1.97724 -1.65442 -0.668828 -1.33809 -1.20960 -0.938650  1.65943
+#&gt; iter: 1  value: -313.923 mgc: 0.04702078 ustep: 1 
+#&gt; iter: 2  value: -313.923 mgc: 5.436096e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.340173e-13 
+#&gt; iter: 1  value: -314.024 mgc: 0.01549612 ustep: 1 
+#&gt; iter: 2  value: -314.024 mgc: 3.076588e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.816947e-13 
+#&gt; iter: 1  mgc: 3.816947e-13 
+#&gt; outer mgc:  0.09708609 
+#&gt;  53:     161.56148: -4.36748 -0.189773 -0.00836697 0.137225 0.177826 0.275760 0.355214 0.428535 -8.80437 -12.7261 -0.964793 -0.675373 -1.97703 -1.65454 -0.668755 -1.33823 -1.20938 -0.939295  1.65943
+#&gt; iter: 1  value: -313.891 mgc: 0.03804197 ustep: 1 
+#&gt; iter: 2  value: -313.891 mgc: 9.293087e-06 ustep: 1 
+#&gt; iter: 3  mgc: 7.297496e-13 
+#&gt; iter: 1  value: -314.0002 mgc: 0.01168817 ustep: 1 
+#&gt; iter: 2  value: -314.0002 mgc: 8.052368e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.769518e-13 
+#&gt; iter: 1  mgc: 4.769518e-13 
+#&gt; outer mgc:  0.07682862 
+#&gt;  54:     161.56139: -4.36750 -0.189743 -0.00830556 0.137168 0.177833 0.275910 0.354705 0.428758 -8.80433 -12.7260 -0.964714 -0.675255 -1.97678 -1.65462 -0.668659 -1.33828 -1.20911 -0.940076  1.65942
+#&gt; iter: 1  value: -313.8927 mgc: 0.03129163 ustep: 1 
+#&gt; iter: 2  value: -313.8927 mgc: 2.246163e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.249934e-13 
+#&gt; iter: 1  value: -313.9886 mgc: 0.006245796 ustep: 1 
+#&gt; iter: 2  value: -313.9886 mgc: 2.565529e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.08118e-13 
+#&gt; iter: 1  mgc: 4.08118e-13 
+#&gt; outer mgc:  0.0668535 
+#&gt;  55:     161.56134: -4.36750 -0.189701 -0.00832097 0.137209 0.177824 0.275783 0.355007 0.428554 -8.80430 -12.7259 -0.964674 -0.675194 -1.97664 -1.65467 -0.668610 -1.33831 -1.20897 -0.940464  1.65942
+#&gt; iter: 1  value: -313.9593 mgc: 0.01451437 ustep: 1 
+#&gt; iter: 2  value: -313.9593 mgc: 5.962561e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.899103e-13 
+#&gt; iter: 1  mgc: 3.899103e-13 
+#&gt; outer mgc:  0.05172333 
+#&gt;  56:     161.56128: -4.36751 -0.189610 -0.00826449 0.137188 0.177809 0.275853 0.354677 0.428657 -8.80423 -12.7258 -0.964585 -0.675036 -1.97631 -1.65478 -0.668481 -1.33838 -1.20862 -0.941443  1.65941
+#&gt; iter: 1  value: -313.8421 mgc: 0.03553151 ustep: 1 
+#&gt; iter: 2  value: -313.8421 mgc: 2.330927e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.53495e-13 
+#&gt; iter: 1  value: -313.9555 mgc: 0.002749143 ustep: 1 
+#&gt; iter: 2  value: -313.9555 mgc: 5.693308e-08 ustep: 1 
+#&gt; mgc: 4.547474e-13 
+#&gt; iter: 1  mgc: 4.547474e-13 
+#&gt; outer mgc:  0.03844587 
+#&gt;  57:     161.56126: -4.36751 -0.189598 -0.00827183 0.137205 0.177811 0.275794 0.354828 0.428560 -8.80422 -12.7258 -0.964574 -0.675015 -1.97627 -1.65479 -0.668463 -1.33839 -1.20857 -0.941564  1.65941
+#&gt; iter: 1  value: -313.9434 mgc: 0.005710879 ustep: 1 
+#&gt; iter: 2  value: -313.9434 mgc: 9.091357e-08 ustep: 1 
+#&gt; iter: 3  mgc: 3.097522e-13 
+#&gt; iter: 1  mgc: 3.097522e-13 
+#&gt; outer mgc:  0.02867925 
+#&gt;  58:     161.56125: -4.36751 -0.189561 -0.00826797 0.137224 0.177809 0.275736 0.354940 0.428461 -8.80419 -12.7258 -0.964540 -0.674947 -1.97613 -1.65483 -0.668408 -1.33842 -1.20843 -0.941944  1.65941
+#&gt; iter: 1  value: -313.8971 mgc: 0.01385418 ustep: 1 
+#&gt; iter: 2  value: -313.8971 mgc: 6.316601e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.370637e-13 
+#&gt; iter: 1  value: -313.9388 mgc: 0.002446482 ustep: 1 
+#&gt; iter: 2  value: -313.9388 mgc: 3.632321e-08 ustep: 1 
+#&gt; mgc: 2.864375e-13 
+#&gt; iter: 1  mgc: 2.864375e-13 
+#&gt; outer mgc:  0.02499117 
+#&gt;  59:     161.56124: -4.36751 -0.189547 -0.00825412 0.137215 0.177806 0.275769 0.354830 0.428511 -8.80418 -12.7258 -0.964529 -0.674921 -1.97608 -1.65485 -0.668385 -1.33843 -1.20837 -0.942087  1.65941
+#&gt; iter: 1  value: -313.9276 mgc: 0.00520606 ustep: 1 
+#&gt; iter: 2  value: -313.9276 mgc: 5.266949e-08 ustep: 1 
+#&gt; mgc: 3.608225e-13 
+#&gt; iter: 1  mgc: 3.608225e-13 
+#&gt; outer mgc:  0.01627609 
+#&gt;  60:     161.56123: -4.36751 -0.189511 -0.00824621 0.137226 0.177806 0.275728 0.354896 0.428442 -8.80415 -12.7257 -0.964498 -0.674856 -1.97596 -1.65488 -0.668331 -1.33846 -1.20824 -0.942432  1.65941
+#&gt; iter: 1  value: -313.9026 mgc: 0.01024815 ustep: 1 
+#&gt; iter: 2  value: -313.9026 mgc: 4.493404e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.790124e-13 
+#&gt; iter: 1  mgc: 6.790124e-13 
+#&gt; outer mgc:  0.0139908 
+#&gt;  61:     161.56123: -4.36747 -0.189398 -0.00823589 0.137321 0.177815 0.275790 0.354870 0.428495 -8.80404 -12.7256 -0.964500 -0.674347 -1.97572 -1.65493 -0.667908 -1.33854 -1.20808 -0.942780  1.65934
+#&gt; iter: 1  value: -313.9159 mgc: 0.008189321 ustep: 1 
+#&gt; iter: 2  value: -313.9159 mgc: 1.031355e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.307665e-13 
+#&gt; iter: 1  value: -313.9054 mgc: 0.001718794 ustep: 1 
+#&gt; iter: 2  mgc: 4.542432e-09 
+#&gt; iter: 1  mgc: 4.542432e-09 
+#&gt; outer mgc:  0.008592455 
+#&gt;  62:     161.56122: -4.36747 -0.189410 -0.00815279 0.137235 0.177852 0.275768 0.354847 0.428505 -8.80408 -12.7256 -0.964504 -0.674410 -1.97571 -1.65495 -0.667976 -1.33852 -1.20806 -0.942831  1.65935
+#&gt; iter: 1  value: -313.9071 mgc: 0.001431404 ustep: 1 
+#&gt; iter: 2  mgc: 6.31343e-09 
+#&gt; iter: 1  mgc: 6.31343e-09 
+#&gt; outer mgc:  0.01138723 
+#&gt;  63:     161.56122: -4.36748 -0.189418 -0.00823176 0.137300 0.177806 0.275774 0.354856 0.428484 -8.80407 -12.7256 -0.964496 -0.674488 -1.97571 -1.65496 -0.668057 -1.33852 -1.20804 -0.942894  1.65937
+#&gt; iter: 1  value: -313.9093 mgc: 0.001574342 ustep: 1 
+#&gt; iter: 2  mgc: 5.691768e-09 
+#&gt; iter: 1  mgc: 5.691768e-09 
+#&gt; outer mgc:  0.009954231 
+#&gt;  64:     161.56122: -4.36749 -0.189437 -0.00816864 0.137208 0.177844 0.275761 0.354826 0.428490 -8.80410 -12.7257 -0.964486 -0.674574 -1.97573 -1.65497 -0.668122 -1.33851 -1.20803 -0.942945  1.65937
+#&gt; iter: 1  value: -313.9115 mgc: 0.002199687 ustep: 1 
+#&gt; iter: 2  value: -313.9115 mgc: 2.281555e-08 ustep: 1 
+#&gt; mgc: 4.090062e-13 
+#&gt; iter: 1  mgc: 4.090062e-13 
+#&gt; outer mgc:  0.004772242 
+#&gt;  65:     161.56122: -4.36750 -0.189448 -0.00823170 0.137254 0.177801 0.275763 0.354816 0.428461 -8.80410 -12.7257 -0.964468 -0.674694 -1.97577 -1.65497 -0.668178 -1.33850 -1.20803 -0.942997  1.65937
+#&gt; iter: 1  value: -313.8961 mgc: 0.00269232 ustep: 1 
+#&gt; iter: 2  value: -313.8961 mgc: 2.568747e-08 ustep: 1 
+#&gt; mgc: 2.939871e-13 
+#&gt; iter: 1  value: -313.9054 mgc: 0.001079865 ustep: 1 
+#&gt; iter: 2  mgc: 5.352208e-09 
+#&gt; iter: 1  mgc: 5.352208e-09 
+#&gt; outer mgc:  0.003003276 
+#&gt;  66:     161.56122: -4.36751 -0.189432 -0.00820326 0.137241 0.177813 0.275729 0.354819 0.428455 -8.80409 -12.7256 -0.964454 -0.674691 -1.97573 -1.65495 -0.668193 -1.33851 -1.20800 -0.943012  1.65938
+#&gt; iter: 1  value: -313.9063 mgc: 0.00118899 ustep: 1 
+#&gt; iter: 2  mgc: 2.209554e-09 
+#&gt; iter: 1  value: -313.9072 mgc: 0.0004854763 ustep: 1 
+#&gt; iter: 2  mgc: 5.652602e-10 
+#&gt; iter: 1  mgc: 5.652602e-10 
+#&gt; outer mgc:  0.003663562 
+#&gt;  67:     161.56122: -4.36751 -0.189438 -0.00821008 0.137238 0.177800 0.275756 0.354812 0.428450 -8.80410 -12.7257 -0.964460 -0.674697 -1.97572 -1.65495 -0.668201 -1.33852 -1.20799 -0.943025  1.65939
+#&gt; iter: 1  value: -313.9066 mgc: 0.0004379846 ustep: 1 
+#&gt; iter: 2  mgc: 3.037406e-10 
+#&gt; iter: 1  mgc: 3.037406e-10 
+#&gt; outer mgc:  0.001019205 
+#&gt;  68:     161.56122: -4.36751 -0.189452 -0.00821416 0.137230 0.177806 0.275736 0.354816 0.428453 -8.80411 -12.7257 -0.964451 -0.674694 -1.97572 -1.65495 -0.668207 -1.33852 -1.20798 -0.943041  1.65940
+#&gt; iter: 1  value: -313.9074 mgc: 0.0005426387 ustep: 1 
+#&gt; iter: 2  mgc: 4.42842e-09 
+#&gt; iter: 1  mgc: 4.42842e-09 
+#&gt; outer mgc:  0.001292528 
+#&gt;  69:     161.56122: -4.36751 -0.189433 -0.00821475 0.137239 0.177801 0.275729 0.354803 0.428437 -8.80410 -12.7257 -0.964449 -0.674700 -1.97572 -1.65496 -0.668214 -1.33852 -1.20798 -0.943050  1.65941
+#&gt; iter: 1  value: -313.905 mgc: 0.0005381333 ustep: 1 
+#&gt; iter: 2  mgc: 1.88472e-09 
+#&gt; iter: 1  mgc: 1.88472e-09 
+#&gt; outer mgc:  0.001720372 
+#&gt;  70:     161.56122: -4.36752 -0.189437 -0.00820756 0.137231 0.177803 0.275744 0.354811 0.428445 -8.80410 -12.7257 -0.964447 -0.674726 -1.97571 -1.65495 -0.668209 -1.33852 -1.20797 -0.943063  1.65940
+#&gt; iter: 1  value: -313.9054 mgc: 0.0001610574 ustep: 1 
+#&gt; iter: 2  mgc: 1.335954e-10 
+#&gt; iter: 1  mgc: 1.335954e-10 
+#&gt; outer mgc:  0.0005222872 
+#&gt;  71:     161.56122: -4.36751 -0.189441 -0.00821212 0.137235 0.177804 0.275734 0.354811 0.428445 -8.80410 -12.7257 -0.964448 -0.674723 -1.97571 -1.65495 -0.668213 -1.33852 -1.20797 -0.943065  1.65940
+#&gt; iter: 1  value: -313.9068 mgc: 0.0002461953 ustep: 1 
+#&gt; iter: 2  mgc: 2.8114e-10 
+#&gt; iter: 1  mgc: 2.8114e-10 
+#&gt; outer mgc:  0.000307711 
+#&gt;  72:     161.56122: -4.36752 -0.189442 -0.00821324 0.137233 0.177802 0.275736 0.354809 0.428444 -8.80410 -12.7257 -0.964449 -0.674712 -1.97572 -1.65496 -0.668222 -1.33852 -1.20797 -0.943065  1.65940
+#&gt; iter: 1  value: -313.9058 mgc: 0.0001757139 ustep: 1 
+#&gt; iter: 2  mgc: 1.139478e-09 
+#&gt;  73:     161.56122: -4.36752 -0.189442 -0.00821324 0.137233 0.177802 0.275736 0.354809 0.428444 -8.80410 -12.7257 -0.964449 -0.674712 -1.97572 -1.65496 -0.668222 -1.33852 -1.20797 -0.943065  1.65940
+#&gt; iter: 1  mgc: 2.8114e-10 
+#&gt; iter: 1  mgc: 2.8114e-10 
+#&gt; outer mgc:  0.000307711 
+#&gt; iter: 1  value: -313.9073 mgc: 0.001794735 ustep: 1 
+#&gt; iter: 2  value: -313.9073 mgc: 2.38812e-08 ustep: 1 
+#&gt; mgc: 4.118927e-13 
+#&gt; outer mgc:  0.06952795 
+#&gt; iter: 1  value: -313.9063 mgc: 0.001794735 ustep: 1 
+#&gt; iter: 2  value: -313.9063 mgc: 2.387962e-08 ustep: 1 
+#&gt; mgc: 4.056755e-13 
+#&gt; outer mgc:  0.07014334 
+#&gt; iter: 1  value: -313.907 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.907 mgc: 1.504906e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.919398e-13 
+#&gt; outer mgc:  0.1489249 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.504756e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.448353e-13 
+#&gt; outer mgc:  0.1487112 
+#&gt; iter: 1  value: -313.9072 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9072 mgc: 1.226747e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.398704e-13 
+#&gt; outer mgc:  0.2055011 
+#&gt; iter: 1  value: -313.9062 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9062 mgc: 1.226108e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.169198e-13 
+#&gt; outer mgc:  0.2054799 
+#&gt; iter: 1  value: -313.9073 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9073 mgc: 1.17892e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.338752e-13 
+#&gt; outer mgc:  0.2073011 
+#&gt; iter: 1  value: -313.9062 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9062 mgc: 1.178312e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.369838e-13 
+#&gt; outer mgc:  0.207244 
+#&gt; iter: 1  value: -313.9073 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9073 mgc: 1.33398e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.863576e-13 
+#&gt; outer mgc:  0.2068409 
+#&gt; iter: 1  value: -313.9061 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9061 mgc: 1.333243e-06 ustep: 1 
+#&gt; iter: 3  mgc: 2.4869e-13 
+#&gt; outer mgc:  0.2069798 
+#&gt; iter: 1  value: -313.9073 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9073 mgc: 1.444737e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.117506e-13 
+#&gt; outer mgc:  0.204599 
+#&gt; iter: 1  value: -313.9062 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9062 mgc: 1.443873e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.885781e-13 
+#&gt; outer mgc:  0.2042305 
+#&gt; iter: 1  value: -313.9072 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9072 mgc: 1.789059e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.281819e-13 
+#&gt; outer mgc:  0.1969033 
+#&gt; iter: 1  value: -313.9063 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9063 mgc: 1.787787e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.579359e-13 
+#&gt; outer mgc:  0.1969109 
+#&gt; iter: 1  value: -313.9071 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9071 mgc: 1.174986e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.197353e-12 
+#&gt; outer mgc:  0.1362322 
+#&gt; iter: 1  value: -313.9064 mgc: 0.01454189 ustep: 1 
+#&gt; iter: 2  value: -313.9064 mgc: 1.173011e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.119194e-12 
+#&gt; outer mgc:  0.1359953 
+#&gt; iter: 1  value: -313.9072 mgc: 0.01120028 ustep: 1 
+#&gt; iter: 2  value: -313.9072 mgc: 3.833885e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.522738e-13 
+#&gt; outer mgc:  0.1737019 
+#&gt; iter: 1  value: -313.9063 mgc: 0.01120028 ustep: 1 
+#&gt; iter: 2  value: -313.9063 mgc: 3.833113e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.805845e-13 
+#&gt; outer mgc:  0.1739357 
+#&gt; iter: 1  value: -313.9071 mgc: 0.006593801 ustep: 1 
+#&gt; iter: 2  value: -313.9071 mgc: 1.909878e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.471978e-13 
+#&gt; outer mgc:  0.1018388 
+#&gt; iter: 1  value: -313.9065 mgc: 0.006593801 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 1.90957e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.361755e-13 
+#&gt; outer mgc:  0.1016687 
+#&gt; iter: 1  value: -313.808 mgc: 0.02604227 ustep: 1 
+#&gt; iter: 2  value: -313.808 mgc: 5.082723e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.82645e-13 
+#&gt; outer mgc:  0.07414123 
+#&gt; iter: 1  value: -314.0056 mgc: 0.02609441 ustep: 1 
+#&gt; iter: 2  value: -314.0056 mgc: 5.091624e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.458656e-13 
+#&gt; outer mgc:  0.07445784 
+#&gt; iter: 1  value: -313.9043 mgc: 0.01381564 ustep: 1 
+#&gt; iter: 2  value: -313.9043 mgc: 1.940193e-08 ustep: 1 
+#&gt; mgc: 4.256595e-13 
+#&gt; outer mgc:  0.02755198 
+#&gt; iter: 1  value: -313.9093 mgc: 0.0138433 ustep: 1 
+#&gt; iter: 2  value: -313.9093 mgc: 1.945631e-08 ustep: 1 
+#&gt; mgc: 3.500533e-13 
+#&gt; outer mgc:  0.02747736 
+#&gt; iter: 1  value: -313.8002 mgc: 0.02072598 ustep: 1 
+#&gt; iter: 2  value: -313.8002 mgc: 1.425874e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.796963e-13 
+#&gt; outer mgc:  0.0469331 
+#&gt; iter: 1  value: -314.0135 mgc: 0.02076747 ustep: 1 
+#&gt; iter: 2  value: -314.0135 mgc: 1.428957e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.667378e-13 
+#&gt; outer mgc:  0.04718958 
+#&gt; iter: 1  value: -313.8023 mgc: 0.02548148 ustep: 1 
+#&gt; iter: 2  value: -313.8023 mgc: 1.137828e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.334311e-13 
+#&gt; outer mgc:  0.07809451 
+#&gt; iter: 1  value: -314.0113 mgc: 0.02553249 ustep: 1 
+#&gt; iter: 2  value: -314.0113 mgc: 1.138708e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.13527e-13 
+#&gt; outer mgc:  0.07844671 
+#&gt; iter: 1  value: -313.9065 mgc: 0.002487186 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 3.102626e-08 ustep: 1 
+#&gt; mgc: 4.949374e-13 
+#&gt; outer mgc:  0.03548302 
+#&gt; iter: 1  value: -313.9071 mgc: 0.002492165 ustep: 1 
+#&gt; iter: 2  value: -313.9071 mgc: 3.114587e-08 ustep: 1 
+#&gt; mgc: 4.116707e-13 
+#&gt; outer mgc:  0.03579068 
+#&gt; iter: 1  value: -313.8716 mgc: 0.01739584 ustep: 1 
+#&gt; iter: 2  value: -313.8716 mgc: 2.095653e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.884981e-13 
+#&gt; outer mgc:  0.1593132 
+#&gt; iter: 1  value: -313.9419 mgc: 0.01743067 ustep: 1 
+#&gt; iter: 2  value: -313.9419 mgc: 2.098719e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.427569e-13 
+#&gt; outer mgc:  0.1594023 
+#&gt; iter: 1  value: -313.9036 mgc: 0.01300177 ustep: 1 
+#&gt; iter: 2  value: -313.9036 mgc: 1.888751e-08 ustep: 1 
+#&gt; mgc: 5.551115e-13 
+#&gt; outer mgc:  0.02884015 
+#&gt; iter: 1  value: -313.91 mgc: 0.0130278 ustep: 1 
+#&gt; iter: 2  value: -313.91 mgc: 1.89458e-08 ustep: 1 
+#&gt; mgc: 4.13003e-13 
+#&gt; outer mgc:  0.02885762 
+#&gt; iter: 1  value: -313.9039 mgc: 0.01324533 ustep: 1 
+#&gt; iter: 2  value: -313.9039 mgc: 7.47977e-08 ustep: 1 
+#&gt; mgc: 3.874678e-13 
+#&gt; outer mgc:  0.02802036 
+#&gt; iter: 1  value: -313.9098 mgc: 0.01327185 ustep: 1 
+#&gt; iter: 2  value: -313.9098 mgc: 7.501996e-08 ustep: 1 
+#&gt; mgc: 4.134471e-13 
+#&gt; outer mgc:  0.02815431 
+#&gt; iter: 1  value: -314.0001 mgc: 0.02576433 ustep: 1 
+#&gt; iter: 2  value: -314.0001 mgc: 2.441014e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.317346e-13 
+#&gt; outer mgc:  0.04003396 
+#&gt; iter: 1  value: -313.8136 mgc: 0.0257122 ustep: 1 
+#&gt; iter: 2  value: -313.8136 mgc: 2.438035e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.343192e-13 
+#&gt; outer mgc:  0.03989694 
+#&gt; iter: 1  value: -313.9062 mgc: 9.880005e-05 ustep: 1 
+#&gt; iter: 2  mgc: 5.427125e-11 
+#&gt; iter: 1  mgc: 5.427125e-11 
+#&gt; outer mgc:  2.13004e-09 
+#&gt; iter: 1  value: -313.9066 mgc: 0.001794722 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 2.388078e-08 ustep: 1 
+#&gt; mgc: 4.208855e-13 
+#&gt; outer mgc:  0.06983517 
+#&gt; iter: 1  value: -313.9057 mgc: 0.001794722 ustep: 1 
+#&gt; iter: 2  value: -313.9057 mgc: 2.387923e-08 ustep: 1 
+#&gt; mgc: 2.913225e-13 
+#&gt; outer mgc:  0.06983515 
+#&gt; iter: 1  value: -313.9063 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9063 mgc: 1.504913e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.517187e-13 
+#&gt; outer mgc:  0.1488183 
+#&gt; iter: 1  value: -313.9059 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9059 mgc: 1.504763e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.157474e-13 
+#&gt; outer mgc:  0.148818 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.226756e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.450573e-13 
+#&gt; outer mgc:  0.205491 
+#&gt; iter: 1  value: -313.9056 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9056 mgc: 1.226116e-06 ustep: 1 
+#&gt; iter: 3  mgc: 2.979839e-13 
+#&gt; outer mgc:  0.2054903 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.178927e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.533041e-13 
+#&gt; outer mgc:  0.207273 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.178319e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.036771e-13 
+#&gt; outer mgc:  0.2072724 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.333987e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.690381e-13 
+#&gt; outer mgc:  0.2069109 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.33325e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.890221e-13 
+#&gt; outer mgc:  0.2069101 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.444743e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.671818e-13 
+#&gt; outer mgc:  0.2044154 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.443878e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.796163e-13 
+#&gt; outer mgc:  0.2044143 
+#&gt; iter: 1  value: -313.9065 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 1.789062e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.912426e-13 
+#&gt; outer mgc:  0.1969078 
+#&gt; iter: 1  value: -313.9057 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9057 mgc: 1.787791e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.004885e-13 
+#&gt; outer mgc:  0.1969067 
+#&gt; iter: 1  value: -313.9064 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9064 mgc: 1.174987e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.16005e-12 
+#&gt; outer mgc:  0.1361149 
+#&gt; iter: 1  value: -313.9058 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 1.173012e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.17959e-12 
+#&gt; outer mgc:  0.1361122 
+#&gt; iter: 1  value: -313.9065 mgc: 0.01120028 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 3.833897e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.952394e-13 
+#&gt; outer mgc:  0.1738192 
+#&gt; iter: 1  value: -313.9056 mgc: 0.01120028 ustep: 1 
+#&gt; iter: 2  value: -313.9056 mgc: 3.833124e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.854694e-13 
+#&gt; outer mgc:  0.1738182 
+#&gt; iter: 1  value: -313.9064 mgc: 0.006593782 ustep: 1 
+#&gt; iter: 2  value: -313.9064 mgc: 1.909875e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.254375e-13 
+#&gt; outer mgc:  0.1017537 
+#&gt; iter: 1  value: -313.9058 mgc: 0.006593782 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 1.909568e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.672618e-13 
+#&gt; outer mgc:  0.1017531 
+#&gt; iter: 1  value: -313.8074 mgc: 0.02604218 ustep: 1 
+#&gt; iter: 2  value: -313.8074 mgc: 5.082694e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.476108e-13 
+#&gt; outer mgc:  0.07428842 
+#&gt; iter: 1  value: -314.0049 mgc: 0.02609431 ustep: 1 
+#&gt; iter: 2  value: -314.0049 mgc: 5.091595e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.836931e-13 
+#&gt; outer mgc:  0.07431036 
+#&gt; iter: 1  value: -313.9037 mgc: 0.01381568 ustep: 1 
+#&gt; iter: 2  value: -313.9037 mgc: 1.940212e-08 ustep: 1 
+#&gt; mgc: 3.854694e-13 
+#&gt; outer mgc:  0.0275028 
+#&gt; iter: 1  value: -313.9086 mgc: 0.01384334 ustep: 1 
+#&gt; iter: 2  value: -313.9086 mgc: 1.945645e-08 ustep: 1 
+#&gt; mgc: 4.62741e-13 
+#&gt; outer mgc:  0.02752656 
+#&gt; iter: 1  value: -313.7995 mgc: 0.02072592 ustep: 1 
+#&gt; iter: 2  value: -313.7995 mgc: 1.42587e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.636291e-13 
+#&gt; outer mgc:  0.04709868 
+#&gt; iter: 1  value: -314.0128 mgc: 0.02076741 ustep: 1 
+#&gt; iter: 2  value: -314.0128 mgc: 1.428952e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.63265e-13 
+#&gt; outer mgc:  0.04702447 
+#&gt; iter: 1  value: -313.8017 mgc: 0.02548139 ustep: 1 
+#&gt; iter: 2  value: -313.8017 mgc: 1.137818e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.987921e-13 
+#&gt; outer mgc:  0.07831052 
+#&gt; iter: 1  value: -314.0107 mgc: 0.0255324 ustep: 1 
+#&gt; iter: 2  value: -314.0107 mgc: 1.138699e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.336531e-13 
+#&gt; outer mgc:  0.07823073 
+#&gt; iter: 1  value: -313.9058 mgc: 0.002487181 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 3.102634e-08 ustep: 1 
+#&gt; mgc: 5.258016e-13 
+#&gt; outer mgc:  0.03560549 
+#&gt; iter: 1  value: -313.9065 mgc: 0.00249216 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 3.114587e-08 ustep: 1 
+#&gt; mgc: 4.702905e-13 
+#&gt; outer mgc:  0.03566778 
+#&gt; iter: 1  value: -313.871 mgc: 0.01739583 ustep: 1 
+#&gt; iter: 2  value: -313.871 mgc: 2.095639e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.790301e-13 
+#&gt; outer mgc:  0.159313 
+#&gt; iter: 1  value: -313.9412 mgc: 0.01743066 ustep: 1 
+#&gt; iter: 2  value: -313.9412 mgc: 2.098706e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.325429e-13 
+#&gt; outer mgc:  0.159402 
+#&gt; iter: 1  value: -313.903 mgc: 0.01300176 ustep: 1 
+#&gt; iter: 2  value: -313.903 mgc: 1.888729e-08 ustep: 1 
+#&gt; mgc: 4.636291e-13 
+#&gt; outer mgc:  0.02883637 
+#&gt; iter: 1  value: -313.9093 mgc: 0.01302779 ustep: 1 
+#&gt; iter: 2  value: -313.9093 mgc: 1.894562e-08 ustep: 1 
+#&gt; mgc: 4.967138e-13 
+#&gt; outer mgc:  0.02886138 
+#&gt; iter: 1  value: -313.9032 mgc: 0.01324528 ustep: 1 
+#&gt; iter: 2  value: -313.9032 mgc: 7.479774e-08 ustep: 1 
+#&gt; mgc: 3.963496e-13 
+#&gt; outer mgc:  0.02807541 
+#&gt; iter: 1  value: -313.9091 mgc: 0.0132718 ustep: 1 
+#&gt; iter: 2  value: -313.9091 mgc: 7.502004e-08 ustep: 1 
+#&gt; mgc: 5.253575e-13 
+#&gt; outer mgc:  0.02809912 
+#&gt; iter: 1  value: -313.9994 mgc: 0.02576424 ustep: 1 
+#&gt; iter: 2  value: -313.9994 mgc: 2.441003e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.973799e-13 
+#&gt; outer mgc:  0.03996681 
+#&gt; iter: 1  value: -313.8129 mgc: 0.02571211 ustep: 1 
+#&gt; iter: 2  value: -313.8129 mgc: 2.438025e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.663736e-13 
+#&gt; outer mgc:  0.03996395 
+#&gt; iter: 1  mgc: 1.813607e-10 
+#&gt; iter: 1  mgc: 1.813607e-10 
+#&gt; outer mgc:  6.320541e-12 
+#&gt; iter: 1  value: -313.9066 mgc: 0.001794722 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 2.388082e-08 ustep: 1 
+#&gt; mgc: 4.716227e-13 
+#&gt; outer mgc:  0.06983517 
+#&gt; iter: 1  value: -313.9057 mgc: 0.001794722 ustep: 1 
+#&gt; iter: 2  value: -313.9057 mgc: 2.387926e-08 ustep: 1 
+#&gt; mgc: 3.921308e-13 
+#&gt; outer mgc:  0.06983514 
+#&gt; iter: 1  value: -313.9063 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9063 mgc: 1.504913e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.576028e-13 
+#&gt; outer mgc:  0.1488183 
+#&gt; iter: 1  value: -313.9059 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9059 mgc: 1.504764e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.654854e-13 
+#&gt; outer mgc:  0.148818 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.226756e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.338752e-13 
+#&gt; outer mgc:  0.205491 
+#&gt; iter: 1  value: -313.9056 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9056 mgc: 1.226116e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.628209e-13 
+#&gt; outer mgc:  0.2054903 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.178927e-06 ustep: 1 
+#&gt; iter: 3  mgc: 2.833289e-13 
+#&gt; outer mgc:  0.207273 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.178319e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.343992e-13 
+#&gt; outer mgc:  0.2072724 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.333987e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.967937e-13 
+#&gt; outer mgc:  0.2069109 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.33325e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.245493e-13 
+#&gt; outer mgc:  0.2069101 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.444743e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.98126e-13 
+#&gt; outer mgc:  0.2044154 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.443878e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.485301e-13 
+#&gt; outer mgc:  0.2044143 
+#&gt; iter: 1  value: -313.9065 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 1.789062e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.591571e-13 
+#&gt; outer mgc:  0.1969078 
+#&gt; iter: 1  value: -313.9057 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9057 mgc: 1.787791e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.081979e-13 
+#&gt; outer mgc:  0.1969067 
+#&gt; iter: 1  value: -313.9064 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9064 mgc: 1.174987e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.126299e-12 
+#&gt; outer mgc:  0.1361149 
+#&gt; iter: 1  value: -313.9058 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 1.173012e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.090772e-12 
+#&gt; outer mgc:  0.1361122 
+#&gt; iter: 1  value: -313.9065 mgc: 0.01120028 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 3.833897e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.552714e-13 
+#&gt; outer mgc:  0.1738192 
+#&gt; iter: 1  value: -313.9056 mgc: 0.01120028 ustep: 1 
+#&gt; iter: 2  value: -313.9056 mgc: 3.833124e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.144152e-13 
+#&gt; outer mgc:  0.1738182 
+#&gt; iter: 1  value: -313.9064 mgc: 0.006593782 ustep: 1 
+#&gt; iter: 2  value: -313.9064 mgc: 1.909875e-07 ustep: 1 
+#&gt; iter: 3  mgc: 2.962075e-13 
+#&gt; outer mgc:  0.1017537 
+#&gt; iter: 1  value: -313.9058 mgc: 0.006593782 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 1.909567e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.063416e-13 
+#&gt; outer mgc:  0.1017531 
+#&gt; iter: 1  value: -313.8074 mgc: 0.02604218 ustep: 1 
+#&gt; iter: 2  value: -313.8074 mgc: 5.082697e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.313527e-13 
+#&gt; outer mgc:  0.07428843 
+#&gt; iter: 1  value: -314.0049 mgc: 0.02609431 ustep: 1 
+#&gt; iter: 2  value: -314.0049 mgc: 5.091594e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.166356e-13 
+#&gt; outer mgc:  0.07431036 
+#&gt; iter: 1  value: -313.9037 mgc: 0.01381568 ustep: 1 
+#&gt; iter: 2  value: -313.9037 mgc: 1.940208e-08 ustep: 1 
+#&gt; mgc: 4.156675e-13 
+#&gt; outer mgc:  0.0275028 
+#&gt; iter: 1  value: -313.9086 mgc: 0.01384334 ustep: 1 
+#&gt; iter: 2  value: -313.9086 mgc: 1.945649e-08 ustep: 1 
+#&gt; mgc: 5.322409e-13 
+#&gt; outer mgc:  0.02752656 
+#&gt; iter: 1  value: -313.7995 mgc: 0.02072592 ustep: 1 
+#&gt; iter: 2  value: -313.7995 mgc: 1.42587e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.174439e-13 
+#&gt; outer mgc:  0.04709868 
+#&gt; iter: 1  value: -314.0128 mgc: 0.02076741 ustep: 1 
+#&gt; iter: 2  value: -314.0128 mgc: 1.428952e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.351519e-13 
+#&gt; outer mgc:  0.04702447 
+#&gt; iter: 1  value: -313.8017 mgc: 0.02548139 ustep: 1 
+#&gt; iter: 2  value: -313.8017 mgc: 1.137818e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.494183e-13 
+#&gt; outer mgc:  0.07831052 
+#&gt; iter: 1  value: -314.0107 mgc: 0.0255324 ustep: 1 
+#&gt; iter: 2  value: -314.0107 mgc: 1.138699e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.93463e-13 
+#&gt; outer mgc:  0.07823073 
+#&gt; iter: 1  value: -313.9058 mgc: 0.002487181 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 3.102631e-08 ustep: 1 
+#&gt; mgc: 4.406475e-13 
+#&gt; outer mgc:  0.0356055 
+#&gt; iter: 1  value: -313.9065 mgc: 0.00249216 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 3.114587e-08 ustep: 1 
+#&gt; mgc: 4.023448e-13 
+#&gt; outer mgc:  0.03566778 
+#&gt; iter: 1  value: -313.871 mgc: 0.01739583 ustep: 1 
+#&gt; iter: 2  value: -313.871 mgc: 2.095639e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.17808e-13 
+#&gt; outer mgc:  0.159313 
+#&gt; iter: 1  value: -313.9412 mgc: 0.01743066 ustep: 1 
+#&gt; iter: 2  value: -313.9412 mgc: 2.098706e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.121148e-13 
+#&gt; outer mgc:  0.159402 
+#&gt; iter: 1  value: -313.903 mgc: 0.01300176 ustep: 1 
+#&gt; iter: 2  value: -313.903 mgc: 1.88874e-08 ustep: 1 
+#&gt; mgc: 4.227729e-13 
+#&gt; outer mgc:  0.02883637 
+#&gt; iter: 1  value: -313.9093 mgc: 0.01302779 ustep: 1 
+#&gt; iter: 2  value: -313.9093 mgc: 1.89456e-08 ustep: 1 
+#&gt; mgc: 3.365086e-13 
+#&gt; outer mgc:  0.02886138 
+#&gt; iter: 1  value: -313.9032 mgc: 0.01324528 ustep: 1 
+#&gt; iter: 2  value: -313.9032 mgc: 7.479775e-08 ustep: 1 
+#&gt; mgc: 4.372058e-13 
+#&gt; outer mgc:  0.02807541 
+#&gt; iter: 1  value: -313.9091 mgc: 0.0132718 ustep: 1 
+#&gt; iter: 2  value: -313.9091 mgc: 7.501995e-08 ustep: 1 
+#&gt; mgc: 2.948752e-13 
+#&gt; outer mgc:  0.02809912 
+#&gt; iter: 1  value: -313.9994 mgc: 0.02576424 ustep: 1 
+#&gt; iter: 2  value: -313.9994 mgc: 2.441003e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.43201e-13 
+#&gt; outer mgc:  0.0399668 
+#&gt; iter: 1  value: -313.8129 mgc: 0.02571211 ustep: 1 
+#&gt; iter: 2  value: -313.8129 mgc: 2.438026e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.893863e-13 
+#&gt; outer mgc:  0.03996395 
+#&gt; iter: 1  mgc: 1.801137e-10 
+#&gt; iter: 1  mgc: 1.801137e-10 
+#&gt; outer mgc:  1.090461e-12 
+#&gt; iter: 1  value: -313.9066 mgc: 0.001794722 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 2.388079e-08 ustep: 1 
+#&gt; mgc: 3.916867e-13 
+#&gt; outer mgc:  0.06983517 
+#&gt; iter: 1  value: -313.9057 mgc: 0.001794722 ustep: 1 
+#&gt; iter: 2  value: -313.9057 mgc: 2.387927e-08 ustep: 1 
+#&gt; mgc: 2.997602e-13 
+#&gt; outer mgc:  0.06983514 
+#&gt; iter: 1  value: -313.9063 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9063 mgc: 1.504914e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.863576e-13 
+#&gt; outer mgc:  0.1488183 
+#&gt; iter: 1  value: -313.9059 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9059 mgc: 1.504763e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.045653e-13 
+#&gt; outer mgc:  0.148818 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.226756e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.526068e-13 
+#&gt; outer mgc:  0.205491 
+#&gt; iter: 1  value: -313.9056 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9056 mgc: 1.226116e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.543832e-13 
+#&gt; outer mgc:  0.2054903 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.178927e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.049294e-13 
+#&gt; outer mgc:  0.207273 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.178319e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.604406e-13 
+#&gt; outer mgc:  0.2072724 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.333987e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.071499e-13 
+#&gt; outer mgc:  0.2069109 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.33325e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.677059e-13 
+#&gt; outer mgc:  0.2069101 
+#&gt; iter: 1  value: -313.9066 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9066 mgc: 1.444743e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.694023e-13 
+#&gt; outer mgc:  0.2044154 
+#&gt; iter: 1  value: -313.9055 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9055 mgc: 1.443878e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.571898e-13 
+#&gt; outer mgc:  0.2044143 
+#&gt; iter: 1  value: -313.9065 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 1.789062e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.343992e-13 
+#&gt; outer mgc:  0.1969078 
+#&gt; iter: 1  value: -313.9057 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9057 mgc: 1.787791e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.03455e-13 
+#&gt; outer mgc:  0.1969067 
+#&gt; iter: 1  value: -313.9064 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9064 mgc: 1.174987e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.181366e-12 
+#&gt; outer mgc:  0.1361149 
+#&gt; iter: 1  value: -313.9058 mgc: 0.01454192 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 1.173012e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.227551e-12 
+#&gt; outer mgc:  0.1361122 
+#&gt; iter: 1  value: -313.9065 mgc: 0.01120028 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 3.833897e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.177458e-13 
+#&gt; outer mgc:  0.1738192 
+#&gt; iter: 1  value: -313.9056 mgc: 0.01120028 ustep: 1 
+#&gt; iter: 2  value: -313.9056 mgc: 3.833125e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.986323e-13 
+#&gt; outer mgc:  0.1738182 
+#&gt; iter: 1  value: -313.9064 mgc: 0.006593782 ustep: 1 
+#&gt; iter: 2  value: -313.9064 mgc: 1.909876e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.289902e-13 
+#&gt; outer mgc:  0.1017537 
+#&gt; iter: 1  value: -313.9058 mgc: 0.006593782 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 1.909567e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.863576e-13 
+#&gt; outer mgc:  0.1017531 
+#&gt; iter: 1  value: -313.8074 mgc: 0.02604218 ustep: 1 
+#&gt; iter: 2  value: -313.8074 mgc: 5.082694e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.828049e-13 
+#&gt; outer mgc:  0.07428843 
+#&gt; iter: 1  value: -314.0049 mgc: 0.02609431 ustep: 1 
+#&gt; iter: 2  value: -314.0049 mgc: 5.091595e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.730349e-13 
+#&gt; outer mgc:  0.07431036 
+#&gt; iter: 1  value: -313.9037 mgc: 0.01381568 ustep: 1 
+#&gt; iter: 2  value: -313.9037 mgc: 1.940211e-08 ustep: 1 
+#&gt; mgc: 3.690381e-13 
+#&gt; outer mgc:  0.0275028 
+#&gt; iter: 1  value: -313.9086 mgc: 0.01384334 ustep: 1 
+#&gt; iter: 2  value: -313.9086 mgc: 1.945647e-08 ustep: 1 
+#&gt; mgc: 3.459455e-13 
+#&gt; outer mgc:  0.02752656 
+#&gt; iter: 1  value: -313.7995 mgc: 0.02072592 ustep: 1 
+#&gt; iter: 2  value: -313.7995 mgc: 1.42587e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.592682e-13 
+#&gt; outer mgc:  0.04709868 
+#&gt; iter: 1  value: -314.0128 mgc: 0.02076741 ustep: 1 
+#&gt; iter: 2  value: -314.0128 mgc: 1.428952e-06 ustep: 1 
+#&gt; iter: 3  mgc: 2.784439e-13 
+#&gt; outer mgc:  0.04702447 
+#&gt; iter: 1  value: -313.8017 mgc: 0.02548139 ustep: 1 
+#&gt; iter: 2  value: -313.8017 mgc: 1.137818e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.764766e-13 
+#&gt; outer mgc:  0.07831052 
+#&gt; iter: 1  value: -314.0107 mgc: 0.0255324 ustep: 1 
+#&gt; iter: 2  value: -314.0107 mgc: 1.138698e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.836931e-13 
+#&gt; outer mgc:  0.07823073 
+#&gt; iter: 1  value: -313.9058 mgc: 0.002487181 ustep: 1 
+#&gt; iter: 2  value: -313.9058 mgc: 3.102627e-08 ustep: 1 
+#&gt; mgc: 4.596323e-13 
+#&gt; outer mgc:  0.0356055 
+#&gt; iter: 1  value: -313.9065 mgc: 0.00249216 ustep: 1 
+#&gt; iter: 2  value: -313.9065 mgc: 3.114588e-08 ustep: 1 
+#&gt; mgc: 4.800049e-13 
+#&gt; outer mgc:  0.03566778 
+#&gt; iter: 1  value: -313.871 mgc: 0.01739583 ustep: 1 
+#&gt; iter: 2  value: -313.871 mgc: 2.095639e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.05096e-13 
+#&gt; outer mgc:  0.159313 
+#&gt; iter: 1  value: -313.9412 mgc: 0.01743066 ustep: 1 
+#&gt; iter: 2  value: -313.9412 mgc: 2.098706e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.574674e-13 
+#&gt; outer mgc:  0.159402 
+#&gt; iter: 1  value: -313.903 mgc: 0.01300176 ustep: 1 
+#&gt; iter: 2  value: -313.903 mgc: 1.88874e-08 ustep: 1 
+#&gt; mgc: 5.258016e-13 
+#&gt; outer mgc:  0.02883637 
+#&gt; iter: 1  value: -313.9093 mgc: 0.01302779 ustep: 1 
+#&gt; iter: 2  value: -313.9093 mgc: 1.894565e-08 ustep: 1 
+#&gt; mgc: 3.059775e-13 
+#&gt; outer mgc:  0.02886138 
+#&gt; iter: 1  value: -313.9032 mgc: 0.01324528 ustep: 1 
+#&gt; iter: 2  value: -313.9032 mgc: 7.47978e-08 ustep: 1 
+#&gt; mgc: 3.872458e-13 
+#&gt; outer mgc:  0.02807541 
+#&gt; iter: 1  value: -313.9091 mgc: 0.0132718 ustep: 1 
+#&gt; iter: 2  value: -313.9091 mgc: 7.502001e-08 ustep: 1 
+#&gt; mgc: 2.966516e-13 
+#&gt; outer mgc:  0.02809912 
+#&gt; iter: 1  value: -313.9994 mgc: 0.02576424 ustep: 1 
+#&gt; iter: 2  value: -313.9994 mgc: 2.441002e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.053113e-13 
+#&gt; outer mgc:  0.0399668 
+#&gt; iter: 1  value: -313.8129 mgc: 0.02571211 ustep: 1 
+#&gt; iter: 2  value: -313.8129 mgc: 2.438026e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.246359e-13 
+#&gt; outer mgc:  0.03996395 
+#&gt; outer mgc:  1 
+#&gt; [1] 1
+#&gt; [1] 2
+#&gt; [1] 3
+#&gt; [1] 4
+#&gt; [1] 5
+#&gt; [1] 6
+#&gt; [1] 7
+#&gt; [1] 8
+#&gt; [1] 9
+#&gt; [1] 10
+#&gt; [1] 11
+#&gt; [1] 12
+#&gt; [1] 13
+#&gt; [1] 14
+#&gt; [1] 15
+#&gt; [1] 16
+#&gt; [1] 17
+#&gt; [1] 18
+#&gt; [1] 19
+#&gt; [1] 20
+#&gt; [1] 21
+#&gt; [1] 22
+#&gt; [1] 23
+#&gt; [1] 24
+#&gt; [1] 25
+#&gt; [1] 26
+#&gt; [1] 27
+#&gt; [1] 28
+#&gt; [1] 29
+#&gt; [1] 30
+#&gt; [1] 31
+#&gt; [1] 32
+#&gt; [1] 33
+#&gt; [1] 34
+#&gt; [1] 35
+#&gt; [1] 36
+#&gt; [1] 37
+#&gt; [1] 38
+#&gt; [1] 39
+#&gt; [1] 40
+#&gt; [1] 41
+#&gt; [1] 42
+#&gt; [1] 43
+#&gt; [1] 44
+#&gt; [1] 45
+#&gt; [1] 46
+#&gt; [1] 47
+#&gt; [1] 48
+#&gt; [1] 49
+#&gt; [1] 50
+#&gt; [1] 51
+#&gt; [1] 52
+#&gt; [1] 53
+#&gt; [1] 54
+#&gt; [1] 55
+#&gt; [1] 56
+#&gt; [1] 57
+#&gt; [1] 58
+#&gt; [1] 59
+#&gt; [1] 60
+#&gt; [1] 61
+#&gt; [1] 62
+#&gt; [1] 63
+#&gt; [1] 64
+#&gt; [1] 65
+#&gt; [1] 66
+#&gt; [1] 67
+#&gt; [1] 68
+#&gt; [1] 69
+#&gt; [1] 70
+#&gt; [1] 71
+#&gt; [1] 72
+#&gt; [1] 73
+#&gt; [1] 74
+#&gt; [1] 75
+#&gt; [1] 76
+#&gt; [1] 77
+#&gt; [1] 78
+#&gt; [1] 79
+#&gt; [1] 80
+#&gt; [1] 81
+#&gt; [1] 82
+#&gt; [1] 83
+#&gt; [1] 84
+#&gt; [1] 85
+#&gt; [1] 86
+#&gt; [1] 87
+#&gt; [1] 88
+#&gt; [1] 89
+#&gt; [1] 90
+#&gt; [1] 91
+#&gt; [1] 92
+#&gt; [1] 93
+#&gt; [1] 94
+#&gt; [1] 95
+#&gt; [1] 96
+#&gt; [1] 97
+#&gt; [1] 98
+#&gt; [1] 99
+#&gt; [1] 100
+#&gt; [1] 101
+#&gt; [1] 102
+#&gt; [1] 103
+#&gt; [1] 104
+#&gt; [1] 105
+#&gt; [1] 106
+#&gt; [1] 107
+#&gt; [1] 108
+#&gt; [1] 109
+#&gt; [1] 110
+#&gt; [1] 111
+#&gt; [1] 112
+#&gt; [1] 113
+#&gt; [1] 114
+#&gt; [1] 115
+#&gt; [1] 116
+#&gt; [1] 117
+#&gt; [1] 118
+#&gt; [1] 119
+#&gt; [1] 120
+#&gt; [1] 121
+#&gt; [1] 122
+#&gt; [1] 123
+#&gt; [1] 124
+#&gt; [1] 125
+#&gt; [1] 126
+#&gt; [1] 127
+#&gt; [1] 128
+#&gt; [1] 129
+#&gt; [1] 130
+#&gt; [1] 131
+#&gt; [1] 132
+#&gt; [1] 133
+#&gt; [1] 134
+#&gt; [1] 135
+#&gt; [1] 136
+#&gt; [1] 137
+#&gt; [1] 138
+#&gt; [1] 139
+#&gt; [1] 140
+#&gt; [1] 141
+#&gt; [1] 142
+#&gt; [1] 143
+#&gt; [1] 144
+#&gt; [1] 145
+#&gt; [1] 146
+#&gt; [1] 147
+#&gt; [1] 148
+#&gt; [1] 149
+#&gt; [1] 150
+#&gt; [1] 151
+#&gt; [1] 152
+#&gt; [1] 153
+#&gt; [1] 154
+#&gt; [1] 155
+#&gt; [1] 156
+#&gt; [1] 157
+#&gt; [1] 158
+#&gt; [1] 159
+#&gt; [1] 160
+#&gt; [1] 161
+#&gt; [1] 162
+#&gt; [1] 163
+#&gt; [1] 164
+#&gt; [1] 165
+#&gt; [1] 166
+#&gt; [1] 167
+#&gt; [1] 168
+#&gt; [1] 169
+#&gt; [1] 170
+#&gt; [1] 171
+#&gt; [1] 172
+#&gt; [1] 173
+#&gt; [1] 174
+#&gt; [1] 175
+#&gt; [1] 176
+#&gt; [1] 177
+#&gt; [1] 178
+#&gt; [1] 179
+#&gt; [1] 180
+#&gt; [1] 181
+#&gt; [1] 182
+#&gt; [1] 183
+#&gt; [1] 184
+#&gt; [1] 185
+#&gt; [1] 186
+#&gt; [1] 187
+#&gt; [1] 188
+#&gt; [1] 189
+#&gt; [1] 190
+#&gt; [1] 191
+#&gt; [1] 192
+#&gt; [1] 193
+#&gt; [1] 194
+#&gt; [1] 195
+#&gt; [1] 196
+#&gt; [1] 197
+#&gt; [1] 198
+#&gt; [1] 199
+#&gt; [1] 200
+#&gt; [1] 201
+#&gt; [1] 202
+#&gt; [1] 203
+#&gt; [1] 204
+#&gt; [1] 205
+#&gt; [1] 206
+#&gt; [1] 207
+#&gt; [1] 208
+#&gt; [1] 209
+#&gt; [1] 210
+#&gt; [1] 211
+#&gt; [1] 212
+#&gt; [1] 213
+#&gt; [1] 214
+#&gt; [1] 215
+#&gt; [1] 216
+#&gt; [1] 217
+#&gt; [1] 218
+#&gt; [1] 219
+#&gt; [1] 220
+#&gt; [1] 221
+#&gt; [1] 222
+#&gt; [1] 223
+#&gt; [1] 224
+#&gt; [1] 225
+#&gt; [1] 226
+#&gt; [1] 227
+#&gt; [1] 228
+#&gt; [1] 229
+#&gt; [1] 230
+#&gt; [1] 231
+#&gt; [1] 232
+#&gt; [1] 233
+#&gt; [1] 234
+#&gt; [1] 235
+#&gt; [1] 236
+#&gt; [1] 237
+#&gt; [1] 238
+#&gt; [1] 239
+#&gt; [1] 240
+#&gt; [1] 241
+#&gt; [1] 242
+#&gt; [1] 243
+#&gt; [1] 244
+#&gt; [1] 245
+#&gt; [1] 246
+#&gt; [1] 247
+#&gt; [1] 248
+#&gt; [1] 249
+#&gt; [1] 250
+#&gt; [1] 251
+#&gt; [1] 252
+#&gt; [1] 253
+#&gt; [1] 254
+#&gt; [1] 255
+#&gt; [1] 256
+#&gt; [1] 257
+#&gt; [1] 258
+#&gt; [1] 259
+#&gt; [1] 260
+#&gt; [1] 261
+#&gt; [1] 262
+#&gt; [1] 263
+#&gt; [1] 264
+#&gt; [1] 265
+#&gt; [1] 266
+#&gt; [1] 267
+#&gt; [1] 268
+#&gt; [1] 269
+#&gt; [1] 270
+#&gt; [1] 271
+#&gt; [1] 272
+#&gt; [1] 273
+#&gt; [1] 274
+#&gt; [1] 275
+#&gt; [1] 276
+#&gt; [1] 277
+#&gt; [1] 278
+#&gt; [1] 279
+#&gt; [1] 280
+#&gt; [1] 281
+#&gt; [1] 282
+#&gt; [1] 283
+#&gt; [1] 284
+#&gt; [1] 285
+#&gt; [1] 286
+#&gt; [1] 287
+#&gt; [1] 288
+#&gt; [1] 289
+#&gt; [1] 290
+#&gt; [1] 291
+#&gt; [1] 292
+#&gt; [1] 293
+#&gt; [1] 294
+#&gt; [1] 295
+#&gt; [1] 296
+#&gt; [1] 297
+#&gt; [1] 298
+#&gt; [1] 299
+#&gt; [1] 300
+#&gt; [1] 301
+#&gt; [1] 302
+#&gt; [1] 303
+#&gt; [1] 304
+#&gt; [1] 305
+#&gt; [1] 306
+#&gt; [1] 307
+#&gt; [1] 308
+#&gt; [1] 309
+#&gt; [1] 310
+#&gt; [1] 311
+#&gt; [1] 312
+#&gt; [1] 313
+#&gt; [1] 314
+#&gt; [1] 315
+#&gt; [1] 316
+#&gt; [1] 317
+#&gt; [1] 318
+#&gt; [1] 319
+#&gt; [1] 320
+#&gt; [1] 321
+#&gt; [1] 322
+#&gt; [1] 323
+#&gt; [1] 324
+#&gt; [1] 325
+#&gt; [1] 326
+#&gt; [1] 327
+#&gt; [1] 328
+#&gt; [1] 329
+#&gt; [1] 330
+#&gt; [1] 331
+#&gt; [1] 332
+#&gt; [1] 333
+#&gt; [1] 334
+#&gt; [1] 335
+#&gt; [1] 336
+#&gt; [1] 337
+#&gt; [1] 338
+#&gt; [1] 339
+#&gt; [1] 340
+#&gt; [1] 341
+#&gt; [1] 342
+#&gt; [1] 343
+#&gt; [1] 344
+#&gt; [1] 345
+#&gt; [1] 346
+#&gt; [1] 347
+#&gt; [1] 348
+#&gt; [1] 349
+#&gt; [1] 350
+#&gt; [1] 351
+#&gt; [1] 352
+#&gt; [1] 353
+#&gt; [1] 354
+#&gt; [1] 355
+#&gt; [1] 356
+#&gt; [1] 357
+#&gt; [1] 358
+#&gt; [1] 359
+#&gt; [1] 360
+#&gt; [1] 361
+#&gt; [1] 362
+#&gt; [1] 363
+#&gt; [1] 364
+#&gt; [1] 365
+#&gt; [1] 366
+#&gt; [1] 367
+#&gt; [1] 368
+#&gt; [1] 369
+#&gt; [1] 370
+#&gt; [1] 371
+#&gt; [1] 372
+#&gt; [1] 373
+#&gt; [1] 374
+#&gt; [1] 375
+#&gt; [1] 376
+#&gt; [1] 377
+#&gt; [1] 378
+#&gt; [1] 379
+#&gt; [1] 380
+#&gt; [1] 381
+#&gt; [1] 382
+#&gt; [1] 383
+#&gt; [1] 384
+#&gt; [1] 385
+#&gt; [1] 386
+#&gt; [1] 387
+#&gt; [1] 388
+#&gt; [1] 389
+#&gt; [1] 390
+#&gt; [1] 391
+#&gt; Order of parameters:
+#&gt;  [1] "logFpar"              "logQpow"              "logSdLogFsta"        
+#&gt;  [4] "logSdLogN"            "logSdLogP"            "logSdLogObs"         
+#&gt;  [7] "logSdLogTotalObs"     "transfIRARdist"       "sigmaObsParUS"       
+#&gt; [10] "rec_loga"             "rec_logb"             "itrans_rho"          
+#&gt; [13] "rhop"                 "logScale"             "logitReleaseSurvival"
+#&gt; [16] "logitRecapturePhi"    "logAlphaSCB"          "logF"                
+#&gt; [19] "logN"                 "logPS"                "missing"             
+#&gt; Not matching template order:
+#&gt;  [1] "logFpar"              "logQpow"              "logSdLogFsta"        
+#&gt;  [4] "logSdLogN"            "logSdLogP"            "logSdLogObs"         
+#&gt;  [7] "logSdLogTotalObs"     "transfIRARdist"       "sigmaObsParUS"       
+#&gt; [10] "rec_loga"             "rec_logb"             "itrans_rho"          
+#&gt; [13] "rhop"                 "logScale"             "logitReleaseSurvival"
+#&gt; [16] "logitRecapturePhi"    "logAlphaSCB"          "logF"                
+#&gt; [19] "logN"                 "missing"             
+#&gt; Your parameter list has been re-ordered.
+#&gt; (Disable this warning with checkParameterOrder=FALSE)
+#&gt; iter: 1  value: 11880.57 mgc: 569.8542 ustep: 0.03522464 
+#&gt; iter: 2  value: 4894.278 mgc: 4405.638 ustep: 0.1877635 
+#&gt; iter: 3  value: 3847.644 mgc: 1208.221 ustep: 0.4333735 
+#&gt; iter: 4  value: 3444.467 mgc: 566.9286 ustep: 0.6583453 
+#&gt; iter: 5  value: 3271.031 mgc: 241.061 ustep: 0.8114037 
+#&gt; iter: 6  value: 3212.91 mgc: 96.10163 ustep: 0.9007894 
+#&gt; iter: 7  value: 3202.425 mgc: 28.65439 ustep: 0.9491043 
+#&gt; iter: 8  value: 3202.016 mgc: 4.739872 ustep: 0.9742224 
+#&gt; iter: 9  value: 3202.016 mgc: 0.19739 ustep: 0.9870284 
+#&gt; iter: 10  value: 3202.016 mgc: 0.0004037373 ustep: 0.9934937 
+#&gt; iter: 11  value: 3202.016 mgc: 3.751034e-07 ustep: 0.9967418 
+#&gt; iter: 12  mgc: 2.581284e-09 
+#&gt; iter: 1  mgc: 2.581284e-09 
+#&gt; Matching hessian patterns... Done
+#&gt; outer mgc:  4049.373 
+#&gt;   0:     3658.8610: -4.36752 -0.189442 -0.00821339 0.137233 0.177801 0.275734 0.354808 0.428442 -5.00000 -5.00000 -0.964447 -0.674714 -1.97571 -1.65495 -0.668218 -1.33852 -1.20797 -0.943064  1.65941
+#&gt; iter: 1  value: 819.877 mgc: 25.73003 ustep: 1 
+#&gt; iter: 2  value: 815.637 mgc: 5.935327 ustep: 1 
+#&gt; iter: 3  value: 815.5786 mgc: 1.27437 ustep: 1 
+#&gt; iter: 4  value: 815.5785 mgc: 0.02790887 ustep: 1 
+#&gt; iter: 5  value: 815.5785 mgc: 2.477682e-05 ustep: 1 
+#&gt; iter: 6  mgc: 1.086953e-11 
+#&gt; iter: 1  mgc: 1.086953e-11 
+#&gt; outer mgc:  923.9612 
+#&gt;   1:     1238.6735: -4.36344 -0.128526 0.0332943 0.157727 0.187581 0.280741 0.356779 0.428572 -5.10960 -5.15653 -0.963055 -0.668270 -1.78356 -1.61257 -0.665749 -1.20534 -0.925537 -0.0368557  1.65691
+#&gt; iter: 1  value: 118.7902 mgc: 15.13013 ustep: 1 
+#&gt; iter: 2  value: 117.8049 mgc: 5.548233 ustep: 1 
+#&gt; iter: 3  value: 117.8044 mgc: 0.04565591 ustep: 1 
+#&gt; iter: 4  value: 117.8044 mgc: 9.574106e-05 ustep: 1 
+#&gt; iter: 5  mgc: 2.652634e-11 
+#&gt; iter: 1  mgc: 2.652634e-11 
+#&gt; outer mgc:  423.8655 
+#&gt;   2:     527.51572: -4.35380 -0.0271382 0.101548 0.191182 0.202926 0.288937 0.359370 0.427019 -5.40779 -5.21218 -0.955893 -0.662499 -1.71342 -1.61469 -0.661303 -1.13316 -0.0728193 0.355632  1.64650
+#&gt; iter: 1  value: -126.5401 mgc: 3.751754 ustep: 1 
+#&gt; iter: 2  value: -126.5807 mgc: 1.19188 ustep: 1 
+#&gt; iter: 3  value: -126.5807 mgc: 0.001480703 ustep: 1 
+#&gt; iter: 4  value: -126.5807 mgc: 8.810683e-08 ustep: 1 
+#&gt; iter: 5  mgc: 3.703704e-13 
+#&gt; iter: 1  mgc: 3.703704e-13 
+#&gt; outer mgc:  86.85276 
+#&gt;   3:     294.93997: -4.34436 0.0332530 0.140527 0.216448 0.216545 0.299116 0.362177 0.423459 -5.52849 -5.34316 -0.958960 -0.655132 -1.76453 -1.64579 -0.656579 -1.26783 0.258836  1.26680  1.63980
+#&gt; iter: 1  value: -212.1511 mgc: 20.50219 ustep: 1 
+#&gt; iter: 2  value: -212.1599 mgc: 0.25918 ustep: 1 
+#&gt; iter: 3  value: -212.1599 mgc: 0.0004725584 ustep: 1 
+#&gt; iter: 4  mgc: 2.278432e-09 
+#&gt; iter: 1  mgc: 2.278432e-09 
+#&gt; outer mgc:  71.05769 
+#&gt;   4:     268.11616: -4.32676 -0.147816 0.0559710 0.255343 0.270588 0.355713 0.376573 0.406060 -5.86277 -5.45111 -1.04668 -0.640762 -1.98728 -1.65737 -0.642120 -1.82228 0.904066  1.47956  1.67648
+#&gt; iter: 1  value: -117.1152 mgc: 7.40478 ustep: 1 
+#&gt; iter: 2  value: -117.1246 mgc: 0.2620097 ustep: 1 
+#&gt; iter: 3  value: -117.1246 mgc: 0.0009369157 ustep: 1 
+#&gt; iter: 4  value: -117.1246 mgc: 1.566833e-08 ustep: 1 
+#&gt; mgc: 3.03757e-13 
+#&gt; iter: 1  mgc: 3.03757e-13 
+#&gt; outer mgc:  45.60899 
+#&gt;   5:     263.32513: -4.33586 0.0124002 0.186300 0.0406816 0.143014 0.229001 0.384110 0.479172 -5.95813 -5.52652 -0.934705 -0.623562 -1.81248 -1.32642 -0.638382 -1.06103 0.976888  1.81653  1.59058
+#&gt; iter: 1  value: -192.0488 mgc: 4.594797 ustep: 1 
+#&gt; iter: 2  value: -192.0491 mgc: 0.04064147 ustep: 1 
+#&gt; iter: 3  value: -192.0491 mgc: 2.856911e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.084199e-11 
+#&gt; iter: 1  mgc: 2.084199e-11 
+#&gt; outer mgc:  17.09224 
+#&gt;   6:     244.60609: -4.37391 -0.0487640 0.0200944 0.220381 0.163787 0.294262 0.365058 0.425250 -6.12547 -5.59879 -1.02751 -0.644966 -1.91389 -1.58510 -0.650892 -1.29055 0.964559  1.86629  1.63502
+#&gt; iter: 1  value: -208.5526 mgc: 8.278686 ustep: 1 
+#&gt; iter: 2  value: -208.5534 mgc: 0.1006471 ustep: 1 
+#&gt; iter: 3  value: -208.5534 mgc: 4.530159e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.210943e-11 
+#&gt; iter: 1  value: -201.9069 mgc: 1.683546 ustep: 1 
+#&gt; iter: 2  value: -201.9069 mgc: 0.006697855 ustep: 1 
+#&gt; iter: 3  value: -201.9069 mgc: 2.047073e-07 ustep: 1 
+#&gt; iter: 4  mgc: 3.139711e-13 
+#&gt; iter: 1  mgc: 3.139711e-13 
+#&gt; outer mgc:  7.062205 
+#&gt;   7:     242.11225: -4.37051 -0.0986899 0.0748513 0.179555 0.210464 0.299846 0.362098 0.413253 -6.16344 -5.61571 -1.02356 -0.643683 -1.94387 -1.60031 -0.651338 -1.38153 0.963290  1.88395  1.63367
+#&gt; iter: 1  value: -205.2603 mgc: 1.772126 ustep: 1 
+#&gt; iter: 2  value: -205.2603 mgc: 0.006155158 ustep: 1 
+#&gt; iter: 3  value: -205.2603 mgc: 1.323266e-07 ustep: 1 
+#&gt; mgc: 3.765876e-13 
+#&gt; iter: 1  mgc: 3.765876e-13 
+#&gt; outer mgc:  6.964763 
+#&gt;   8:     241.11878: -4.36314 -0.134788 0.0541909 0.210656 0.205765 0.308761 0.357529 0.404548 -6.25364 -5.65485 -1.00297 -0.638873 -1.99145 -1.58078 -0.651485 -1.44529 0.954892  1.91565  1.62138
+#&gt; iter: 1  value: -205.6146 mgc: 1.954705 ustep: 1 
+#&gt; iter: 2  value: -205.6146 mgc: 0.006746722 ustep: 1 
+#&gt; iter: 3  value: -205.6146 mgc: 5.065293e-07 ustep: 1 
+#&gt; iter: 4  mgc: 3.98348e-13 
+#&gt; iter: 1  mgc: 3.98348e-13 
+#&gt; outer mgc:  10.1104 
+#&gt;   9:     240.32765: -4.36483 -0.122272 0.0683876 0.141578 0.222635 0.290283 0.361382 0.406678 -6.35405 -5.69603 -1.00430 -0.637699 -2.01908 -1.56195 -0.653054 -1.40373 0.933941  1.92814  1.62096
+#&gt; iter: 1  value: -221.2575 mgc: 1.494967 ustep: 1 
+#&gt; iter: 2  value: -221.2575 mgc: 0.01129197 ustep: 1 
+#&gt; iter: 3  value: -221.2575 mgc: 1.527249e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.801404e-13 
+#&gt; iter: 1  mgc: 3.801404e-13 
+#&gt; outer mgc:  7.306157 
+#&gt;  10:     238.38515: -4.38599 -0.141707 0.0889912 0.193205 0.176145 0.311676 0.346713 0.401183 -6.59292 -5.79152 -1.04627 -0.645602 -2.06425 -1.59806 -0.660049 -1.38460 0.865000  1.94139  1.64418
+#&gt; iter: 1  value: -218.6132 mgc: 1.975376 ustep: 1 
+#&gt; iter: 2  value: -218.6132 mgc: 0.00927836 ustep: 1 
+#&gt; iter: 3  value: -218.6132 mgc: 2.079092e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.893863e-13 
+#&gt; iter: 1  mgc: 4.893863e-13 
+#&gt; outer mgc:  15.64747 
+#&gt;  11:     236.81289: -4.38296 -0.130076 -0.00555160 0.204876 0.256782 0.275060 0.371073 0.392970 -6.81826 -5.87796 -1.02061 -0.650281 -2.06848 -1.58110 -0.664583 -1.41254 0.788023  1.94330  1.62641
+#&gt; iter: 1  value: -210.6992 mgc: 1.824869 ustep: 1 
+#&gt; iter: 2  value: -210.6993 mgc: 0.03415621 ustep: 1 
+#&gt; iter: 3  value: -210.6993 mgc: 1.305342e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.312817e-12 
+#&gt; iter: 1  mgc: 2.312817e-12 
+#&gt; outer mgc:  9.45964 
+#&gt;  12:     233.68180: -4.36984 -0.123536 0.0434810 0.166939 0.186267 0.336933 0.353215 0.419381 -7.04357 -5.95703 -0.986551 -0.657541 -2.01713 -1.57290 -0.666564 -1.42634 0.696818  1.93248  1.60256
+#&gt; iter: 1  value: -212.9345 mgc: 2.283282 ustep: 1 
+#&gt; iter: 2  value: -212.9346 mgc: 0.01317194 ustep: 1 
+#&gt; iter: 3  value: -212.9346 mgc: 3.765116e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.476419e-13 
+#&gt; iter: 1  mgc: 4.476419e-13 
+#&gt; outer mgc:  21.80579 
+#&gt;  13:     232.57967: -4.36744 -0.155886 0.107770 0.219596 0.231933 0.215598 0.394863 0.403082 -7.24495 -6.02484 -1.00810 -0.655007 -2.01182 -1.56909 -0.662331 -1.39719 0.595099  1.91768  1.61438
+#&gt; iter: 1  value: -221.8789 mgc: 1.752542 ustep: 1 
+#&gt; iter: 2  value: -221.879 mgc: 0.008518175 ustep: 1 
+#&gt; iter: 3  value: -221.879 mgc: 1.834686e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.719247e-13 
+#&gt; iter: 1  mgc: 3.719247e-13 
+#&gt; outer mgc:  8.834163 
+#&gt;  14:     228.37444: -4.36414 -0.127709 0.0699377 0.216633 0.224002 0.316429 0.337591 0.397160 -7.47181 -6.10049 -1.02870 -0.653513 -2.01474 -1.58345 -0.659715 -1.39589 0.493971  1.91743  1.62675
+#&gt; iter: 1  value: -217.7066 mgc: 2.534976 ustep: 1 
+#&gt; iter: 2  value: -217.7067 mgc: 0.02847122 ustep: 1 
+#&gt; iter: 3  value: -217.7067 mgc: 2.009203e-05 ustep: 1 
+#&gt; iter: 4  mgc: 5.785594e-12 
+#&gt; iter: 1  mgc: 5.785594e-12 
+#&gt; outer mgc:  19.65612 
+#&gt;  15:     227.20271: -4.35749 -0.108501 0.0727995 0.105955 0.182318 0.255172 0.433648 0.410218 -7.64131 -6.15172 -0.991082 -0.646036 -2.03583 -1.54677 -0.656973 -1.43507 0.356340  1.88758  1.60539
+#&gt; iter: 1  value: -223.6582 mgc: 1.851631 ustep: 1 
+#&gt; iter: 2  value: -223.6582 mgc: 0.01370618 ustep: 1 
+#&gt; iter: 3  value: -223.6582 mgc: 4.277496e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.855005e-13 
+#&gt; iter: 1  mgc: 4.855005e-13 
+#&gt; outer mgc:  10.11148 
+#&gt;  16:     222.25106: -4.36566 -0.124373 0.0488107 0.194240 0.195415 0.301311 0.344246 0.436088 -7.85747 -6.21814 -0.998408 -0.646770 -2.03179 -1.55733 -0.656370 -1.41765 0.243681  1.88244  1.60921
+#&gt; iter: 1  value: -228.9332 mgc: 1.819283 ustep: 1 
+#&gt; iter: 2  value: -228.9338 mgc: 0.0952408 ustep: 1 
+#&gt; iter: 3  value: -228.9338 mgc: 0.0001289824 ustep: 1 
+#&gt; iter: 4  mgc: 1.987157e-10 
+#&gt; iter: 1  mgc: 1.987157e-10 
+#&gt; outer mgc:  20.34491 
+#&gt;  17:     220.36958: -4.36475 -0.140704 0.103915 0.149874 0.245765 0.303906 0.433444 0.345307 -8.04049 -6.26981 -1.01079 -0.645943 -2.04464 -1.56133 -0.657340 -1.40890 0.0915977  1.86741  1.61703
+#&gt; iter: 1  value: -235.3892 mgc: 1.442713 ustep: 1 
+#&gt; iter: 2  value: -235.3894 mgc: 0.04102048 ustep: 1 
+#&gt; iter: 3  value: -235.3894 mgc: 2.769547e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.226474e-11 
+#&gt; iter: 1  mgc: 1.226474e-11 
+#&gt; outer mgc:  12.3344 
+#&gt;  18:     214.74866: -4.36381 -0.122560 0.0709121 0.200151 0.214770 0.302584 0.352238 0.414935 -8.25621 -6.33382 -1.01427 -0.647086 -2.04384 -1.56680 -0.657320 -1.40612 -0.0385680  1.86256  1.61864
+#&gt; iter: 1  value: -239.235 mgc: 2.28678 ustep: 1 
+#&gt; iter: 2  value: -239.235 mgc: 0.01502735 ustep: 1 
+#&gt; iter: 3  value: -239.235 mgc: 4.057704e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.226308e-13 
+#&gt; iter: 1  mgc: 3.226308e-13 
+#&gt; outer mgc:  23.57629 
+#&gt;  19:     207.81536: -4.35438 -0.136435 0.0478365 0.113980 0.192897 0.323721 0.450014 0.368509 -8.59144 -6.43507 -0.992229 -0.644152 -2.05835 -1.53803 -0.657313 -1.43318 -0.473393  1.83048  1.60650
+#&gt; iter: 1  value: -243.4414 mgc: 3.496952 ustep: 1 
+#&gt; iter: 2  value: -243.4417 mgc: 0.06203072 ustep: 1 
+#&gt; iter: 3  value: -243.4417 mgc: 7.226015e-05 ustep: 1 
+#&gt; iter: 4  mgc: 8.117262e-11 
+#&gt; iter: 1  mgc: 8.117262e-11 
+#&gt; outer mgc:  21.72708 
+#&gt;  20:     204.74971: -4.36462 -0.154400 0.0729176 0.185374 0.239699 0.261214 0.325859 0.455493 -9.01585 -6.57232 -0.995148 -0.645196 -2.05975 -1.55081 -0.657667 -1.40433 -0.790638  1.81752  1.60951
+#&gt; iter: 1  value: -241.6183 mgc: 4.253277 ustep: 1 
+#&gt; iter: 2  value: -241.62 mgc: 0.2065215 ustep: 1 
+#&gt; iter: 3  value: -241.62 mgc: 0.0006375265 ustep: 1 
+#&gt; iter: 4  mgc: 6.160766e-09 
+#&gt; iter: 1  value: -249.9945 mgc: 1.743166 ustep: 1 
+#&gt; iter: 2  value: -249.9949 mgc: 0.08105986 ustep: 1 
+#&gt; iter: 3  value: -249.9949 mgc: 9.201463e-05 ustep: 1 
+#&gt; iter: 4  mgc: 9.977441e-11 
+#&gt; iter: 1  mgc: 9.977441e-11 
+#&gt; outer mgc:  12.03772 
+#&gt;  21:     201.56668: -4.36836 -0.209800 6.23568e-05 0.165127 0.163390 0.339146 0.403773 0.372874 -8.84940 -6.59573 -1.00408 -0.645372 -2.06730 -1.56495 -0.660900 -1.39011 -0.828561  1.81546  1.61935
+#&gt; iter: 1  value: -251.0927 mgc: 2.198311 ustep: 1 
+#&gt; iter: 2  value: -251.0929 mgc: 0.04996612 ustep: 1 
+#&gt; iter: 3  value: -251.0929 mgc: 4.852239e-05 ustep: 1 
+#&gt; iter: 4  mgc: 3.479095e-11 
+#&gt; iter: 1  mgc: 3.479095e-11 
+#&gt; outer mgc:  14.73369 
+#&gt;  22:     201.12273: -4.38308 -0.217783 0.0385283 0.127060 0.233662 0.231616 0.290993 0.450718 -8.74489 -6.62592 -0.993952 -0.643469 -2.09075 -1.55721 -0.665529 -1.38050 -0.941192  1.80555  1.61881
+#&gt; iter: 1  value: -253.9164 mgc: 2.497214 ustep: 1 
+#&gt; iter: 2  value: -253.9177 mgc: 0.1331121 ustep: 1 
+#&gt; iter: 3  value: -253.9177 mgc: 0.0002791114 ustep: 1 
+#&gt; iter: 4  mgc: 1.079048e-09 
+#&gt; iter: 1  mgc: 1.079048e-09 
+#&gt; outer mgc:  7.865378 
+#&gt;  23:     198.55092: -4.40095 -0.157105 0.0637724 0.155841 0.193961 0.280947 0.354759 0.335964 -8.74876 -6.72252 -0.960880 -0.642828 -2.12260 -1.56134 -0.677502 -1.37960 -1.10045  1.79328  1.60904
+#&gt; iter: 1  value: -265.7549 mgc: 3.456362 ustep: 1 
+#&gt; iter: 2  value: -265.7555 mgc: 0.07953978 ustep: 1 
+#&gt; iter: 3  value: -265.7555 mgc: 0.0001164956 ustep: 1 
+#&gt; iter: 4  mgc: 1.837952e-10 
+#&gt; iter: 1  value: -258.9031 mgc: 1.435261 ustep: 1 
+#&gt; iter: 2  value: -258.9032 mgc: 0.04294044 ustep: 1 
+#&gt; iter: 3  value: -258.9032 mgc: 2.79875e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.006839e-11 
+#&gt; iter: 1  mgc: 1.006839e-11 
+#&gt; outer mgc:  9.490305 
+#&gt;  24:     198.13410: -4.39439 -0.186195 0.0167855 0.178850 0.184166 0.280404 0.303393 0.398509 -8.75898 -6.74728 -0.983587 -0.645067 -2.11819 -1.57266 -0.675433 -1.39734 -1.13538  1.78958  1.62243
+#&gt; iter: 1  value: -259.8993 mgc: 1.452627 ustep: 1 
+#&gt; iter: 2  value: -259.8993 mgc: 0.003450995 ustep: 1 
+#&gt; iter: 3  value: -259.8993 mgc: 3.601569e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.184431e-13 
+#&gt; iter: 1  mgc: 4.184431e-13 
+#&gt; outer mgc:  5.42949 
+#&gt;  25:     197.63465: -4.38756 -0.215378 0.0275587 0.138225 0.190145 0.277957 0.364407 0.379766 -8.79287 -6.79902 -0.994654 -0.646576 -2.10870 -1.57313 -0.674006 -1.38832 -1.18447  1.78427  1.62932
+#&gt; iter: 1  value: -257.713 mgc: 0.657265 ustep: 1 
+#&gt; iter: 2  value: -257.713 mgc: 0.001332085 ustep: 1 
+#&gt; iter: 3  value: -257.713 mgc: 3.969856e-08 ustep: 1 
+#&gt; mgc: 6.497025e-13 
+#&gt; iter: 1  mgc: 6.497025e-13 
+#&gt; outer mgc:  3.161855 
+#&gt;  26:     197.16386: -4.39272 -0.207905 0.0263613 0.170263 0.193468 0.292409 0.333684 0.387926 -8.78986 -6.89390 -0.984968 -0.648736 -2.09922 -1.57241 -0.674884 -1.37776 -1.22437  1.77321  1.62446
+#&gt; iter: 1  value: -262.1285 mgc: 1.152858 ustep: 1 
+#&gt; iter: 2  value: -262.1285 mgc: 0.002641732 ustep: 1 
+#&gt; iter: 3  value: -262.1285 mgc: 1.076697e-07 ustep: 1 
+#&gt; mgc: 6.195044e-13 
+#&gt; iter: 1  mgc: 6.195044e-13 
+#&gt; outer mgc:  3.4086 
+#&gt;  27:     196.91943: -4.38894 -0.186020 0.0241720 0.144217 0.176949 0.270023 0.351264 0.386789 -8.75598 -6.98327 -0.989983 -0.648551 -2.11001 -1.58407 -0.675908 -1.40517 -1.25153  1.75894  1.62921
+#&gt; iter: 1  value: -261.4498 mgc: 0.6870025 ustep: 1 
+#&gt; iter: 2  value: -261.4498 mgc: 0.002059901 ustep: 1 
+#&gt; iter: 3  value: -261.4498 mgc: 5.709163e-08 ustep: 1 
+#&gt; mgc: 4.514167e-13 
+#&gt; iter: 1  mgc: 4.514167e-13 
+#&gt; outer mgc:  3.24129 
+#&gt;  28:     196.44040: -4.38988 -0.191146 0.0309881 0.163060 0.189981 0.282594 0.336564 0.379801 -8.78626 -7.08764 -0.989310 -0.646594 -2.10696 -1.58104 -0.675183 -1.39047 -1.26019  1.74333  1.62914
+#&gt; iter: 1  value: -257.6722 mgc: 0.8045821 ustep: 1 
+#&gt; iter: 2  value: -257.6722 mgc: 0.001446955 ustep: 1 
+#&gt; iter: 3  value: -257.6722 mgc: 5.946466e-08 ustep: 1 
+#&gt; mgc: 6.235013e-13 
+#&gt; iter: 1  value: -260.0212 mgc: 0.3510332 ustep: 1 
+#&gt; iter: 2  value: -260.0212 mgc: 0.000276055 ustep: 1 
+#&gt; iter: 3  mgc: 2.12894e-09 
+#&gt; iter: 1  mgc: 2.12894e-09 
+#&gt; outer mgc:  3.276429 
+#&gt;  29:     196.32851: -4.39072 -0.207044 0.0231781 0.155350 0.183764 0.284042 0.345415 0.382017 -8.76198 -7.12141 -0.986108 -0.646624 -2.10383 -1.57551 -0.674936 -1.38316 -1.26730  1.73478  1.62735
+#&gt; iter: 1  value: -260.7225 mgc: 0.3183875 ustep: 1 
+#&gt; iter: 2  value: -260.7225 mgc: 0.0005141091 ustep: 1 
+#&gt; iter: 3  mgc: 3.546843e-09 
+#&gt; iter: 1  mgc: 3.546843e-09 
+#&gt; outer mgc:  3.306125 
+#&gt;  30:     196.18539: -4.39214 -0.195291 0.0299108 0.160720 0.188851 0.282808 0.338497 0.387477 -8.78822 -7.15802 -0.986190 -0.647083 -2.10484 -1.57814 -0.675278 -1.38830 -1.27160  1.72722  1.62743
+#&gt; iter: 1  value: -261.5711 mgc: 0.2659356 ustep: 1 
+#&gt; iter: 2  value: -261.5711 mgc: 0.0003108598 ustep: 1 
+#&gt; iter: 3  mgc: 1.513312e-09 
+#&gt; iter: 1  value: -263.1817 mgc: 0.2332693 ustep: 1 
+#&gt; iter: 2  value: -263.1817 mgc: 0.000216715 ustep: 1 
+#&gt; iter: 3  mgc: 4.798473e-10 
+#&gt; iter: 1  value: -270.859 mgc: 1.209153 ustep: 1 
+#&gt; iter: 2  value: -270.859 mgc: 0.005641135 ustep: 1 
+#&gt; iter: 3  value: -270.859 mgc: 3.08871e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.138911e-13 
+#&gt; iter: 1  value: -282.9866 mgc: 2.316395 ustep: 1 
+#&gt; iter: 2  value: -282.9866 mgc: 0.01594861 ustep: 1 
+#&gt; iter: 3  value: -282.9866 mgc: 2.286919e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.422329e-13 
+#&gt; iter: 1  mgc: 5.422329e-13 
+#&gt; outer mgc:  22.19861 
+#&gt;  31:     193.40038: -4.41779 -0.164755 -0.0397751 0.164998 0.127060 0.235969 0.423712 0.403623 -8.81882 -8.93207 -1.02874 -0.661488 -2.10818 -1.68933 -0.687773 -1.45848 -1.16604  1.47723  1.65528
+#&gt; iter: 1  value: -279.7075 mgc: 1.165694 ustep: 1 
+#&gt; iter: 2  value: -279.7075 mgc: 0.003369037 ustep: 1 
+#&gt; iter: 3  value: -279.7075 mgc: 1.657667e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.986323e-13 
+#&gt; iter: 1  value: -220.4317 mgc: 5.392065 ustep: 1 
+#&gt; iter: 2  value: -220.4337 mgc: 0.2155998 ustep: 1 
+#&gt; iter: 3  value: -220.4337 mgc: 0.000365214 ustep: 1 
+#&gt; iter: 4  mgc: 1.316103e-09 
+#&gt; iter: 1  mgc: 5.986323e-13 
+#&gt; outer mgc:  11.52995 
+#&gt;  32:     181.53991: -4.40107 -0.182686 -0.0220550 0.154451 0.174834 0.255065 0.377448 0.413834 -8.81105 -10.7070 -0.998477 -0.660332 -2.05033 -1.66117 -0.687011 -1.42585 -1.12275  1.16579  1.62938
+#&gt; iter: 1  value: -255.2115 mgc: 1.65163 ustep: 1 
+#&gt; iter: 2  value: -255.2115 mgc: 0.01316899 ustep: 1 
+#&gt; iter: 3  value: -255.2115 mgc: 3.242563e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.227729e-13 
+#&gt; iter: 1  mgc: 4.227729e-13 
+#&gt; outer mgc:  14.85811 
+#&gt;  33:     175.59360: -4.36923 -0.219626 0.0501486 0.141332 0.248982 0.305977 0.281566 0.411635 -8.78092 -14.2488 -0.948754 -0.651265 -1.94952 -1.57134 -0.679268 -1.35358 -1.04465 0.499498  1.58519
+#&gt; iter: 1  value: -182.6336 mgc: 25.64655 ustep: 1 
+#&gt; iter: 2  value: -184.9003 mgc: 4.757749 ustep: 1 
+#&gt; iter: 3  value: -184.9295 mgc: 1.002014 ustep: 1 
+#&gt; iter: 4  value: -184.9295 mgc: 0.01582449 ustep: 1 
+#&gt; iter: 5  value: -184.9295 mgc: 1.021153e-05 ustep: 1 
+#&gt; iter: 6  mgc: 3.521183e-12 
+#&gt; iter: 1  value: -280.4265 mgc: 3.274775 ustep: 1 
+#&gt; iter: 2  value: -280.4273 mgc: 0.1097253 ustep: 1 
+#&gt; iter: 3  value: -280.4273 mgc: 0.0001946777 ustep: 1 
+#&gt; iter: 4  mgc: 4.871534e-10 
+#&gt; iter: 1  mgc: 4.871534e-10 
+#&gt; outer mgc:  22.62102 
+#&gt;  34:     172.46060: -4.38598 -0.222839 0.0173983 0.196838 0.103767 0.278377 0.412870 0.318824 -8.79182 -13.9488 -1.00598 -0.641350 -2.04524 -1.58200 -0.669566 -1.39552 -1.12827 0.485447  1.63063
+#&gt; iter: 1  value: -287.3317 mgc: 3.269581 ustep: 1 
+#&gt; iter: 2  value: -287.3318 mgc: 0.0337268 ustep: 1 
+#&gt; iter: 3  value: -287.3318 mgc: 1.4506e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.525979e-12 
+#&gt; iter: 1  mgc: 2.525979e-12 
+#&gt; outer mgc:  10.93164 
+#&gt;  35:     167.27395: -4.40605 -0.246397 0.0397960 0.117471 0.176013 0.286647 0.291582 0.361292 -8.78007 -13.6064 -1.00554 -0.629616 -2.10884 -1.53050 -0.661232 -1.35389 -1.21582 0.433493  1.64011
+#&gt; iter: 1  value: -287.6626 mgc: 2.934804 ustep: 1 
+#&gt; iter: 2  value: -287.6626 mgc: 0.01200873 ustep: 1 
+#&gt; iter: 3  value: -287.6626 mgc: 1.977117e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.018763e-13 
+#&gt; iter: 1  mgc: 5.018763e-13 
+#&gt; outer mgc:  13.87433 
+#&gt;  36:     163.47899: -4.40166 -0.229952 -0.0341017 0.153325 0.182040 0.260776 0.374411 0.343144 -8.80060 -13.2624 -0.928454 -0.637122 -2.14263 -1.55379 -0.677797 -1.38694 -1.29403 0.308116  1.60164
+#&gt; iter: 1  value: -290.231 mgc: 1.640724 ustep: 1 
+#&gt; iter: 2  value: -290.231 mgc: 0.01063865 ustep: 1 
+#&gt; iter: 3  value: -290.231 mgc: 2.582898e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.721468e-13 
+#&gt; iter: 1  mgc: 3.721468e-13 
+#&gt; outer mgc:  15.93626 
+#&gt;  37:     160.29184: -4.39059 -0.242941 0.0620596 0.164160 0.117195 0.301267 0.329348 0.365452 -8.79201 -12.9007 -0.946448 -0.646834 -2.12224 -1.54595 -0.688602 -1.37190 -1.30887 0.183699  1.61300
+#&gt; iter: 1  value: -312.7098 mgc: 10.32505 ustep: 1 
+#&gt; iter: 2  value: -312.7101 mgc: 0.07772334 ustep: 1 
+#&gt; iter: 3  value: -312.7101 mgc: 2.615566e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.219824e-11 
+#&gt; iter: 1  mgc: 1.219824e-11 
+#&gt; outer mgc:  22.04848 
+#&gt;  38:     158.60522: -4.35432 -0.179179 -0.0141388 0.116410 0.262494 0.265712 0.277020 0.385423 -8.78881 -12.7823 -1.13598 -0.645168 -2.07544 -1.49073 -0.665891 -1.43394 -1.28539 -0.0532440  1.71699
+#&gt; iter: 1  value: -305.7296 mgc: 5.511078 ustep: 1 
+#&gt; iter: 2  value: -305.7299 mgc: 0.07148247 ustep: 1 
+#&gt; iter: 3  value: -305.7299 mgc: 6.62252e-05 ustep: 1 
+#&gt; iter: 4  mgc: 5.641532e-11 
+#&gt; iter: 1  mgc: 5.641532e-11 
+#&gt; outer mgc:  15.48074 
+#&gt;  39:     153.57088: -4.44238 -0.210250 0.0142767 0.175677 0.220264 0.286068 0.418180 0.367502 -8.79064 -12.5577 -1.01431 -0.638714 -2.09370 -1.57101 -0.609942 -1.35216 -1.22785 -0.256857  1.65460
+#&gt; iter: 1  value: -302.5041 mgc: 4.178589 ustep: 1 
+#&gt; iter: 2  value: -302.5085 mgc: 0.3108899 ustep: 1 
+#&gt; iter: 3  value: -302.5085 mgc: 0.001363279 ustep: 1 
+#&gt; iter: 4  value: -302.5085 mgc: 2.095407e-08 ustep: 1 
+#&gt; mgc: 6.066259e-13 
+#&gt; iter: 1  value: -307.6445 mgc: 1.834543 ustep: 1 
+#&gt; iter: 2  value: -307.6446 mgc: 0.04455284 ustep: 1 
+#&gt; iter: 3  value: -307.6446 mgc: 2.689273e-05 ustep: 1 
+#&gt; iter: 4  mgc: 7.682743e-12 
+#&gt; iter: 1  mgc: 7.682743e-12 
+#&gt; outer mgc:  12.37582 
+#&gt;  40:     151.65475: -4.41884 -0.197373 0.0353187 0.156179 0.181664 0.306373 0.314032 0.427277 -8.77396 -12.5801 -0.998930 -0.642893 -2.10192 -1.57509 -0.622335 -1.38244 -1.23838 -0.345090  1.64442
+#&gt; iter: 1  value: -307.3364 mgc: 1.354022 ustep: 1 
+#&gt; iter: 2  value: -307.3365 mgc: 0.0293676 ustep: 1 
+#&gt; iter: 3  value: -307.3365 mgc: 1.418322e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.556177e-12 
+#&gt; iter: 1  mgc: 2.556177e-12 
+#&gt; outer mgc:  11.88801 
+#&gt;  41:     150.23138: -4.38294 -0.194975 0.0238842 0.160063 0.191741 0.259381 0.386739 0.365290 -8.77673 -12.6195 -0.974641 -0.653928 -2.10610 -1.59090 -0.650369 -1.38297 -1.24468 -0.452381  1.62721
+#&gt; iter: 1  value: -309.1833 mgc: 1.528599 ustep: 1 
+#&gt; iter: 2  value: -309.1833 mgc: 0.006665512 ustep: 1 
+#&gt; iter: 3  value: -309.1833 mgc: 6.308508e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.201084e-13 
+#&gt; iter: 1  mgc: 4.201084e-13 
+#&gt; outer mgc:  9.441668 
+#&gt;  42:     148.80457: -4.41105 -0.220352 0.0199088 0.162872 0.191852 0.295240 0.315516 0.387890 -8.79906 -12.6759 -0.975358 -0.669362 -2.12522 -1.58174 -0.693010 -1.36903 -1.23202 -0.567056  1.62125
+#&gt; iter: 1  value: -310.2241 mgc: 2.348233 ustep: 1 
+#&gt; iter: 2  value: -310.2241 mgc: 0.006550848 ustep: 1 
+#&gt; iter: 3  value: -310.2241 mgc: 4.707246e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.258816e-13 
+#&gt; iter: 1  mgc: 4.258816e-13 
+#&gt; outer mgc:  7.881789 
+#&gt;  43:     147.81887: -4.41453 -0.191489 0.0232914 0.135153 0.168914 0.260366 0.366636 0.377033 -8.76904 -12.6460 -0.994438 -0.668391 -2.11359 -1.55064 -0.662938 -1.41390 -1.25465 -0.690424  1.62774
+#&gt; iter: 1  value: -311.8818 mgc: 1.527129 ustep: 1 
+#&gt; iter: 2  value: -311.8818 mgc: 0.008498566 ustep: 1 
+#&gt; iter: 3  value: -311.8818 mgc: 8.878608e-07 ustep: 1 
+#&gt; iter: 4  mgc: 6.163958e-13 
+#&gt; iter: 1  mgc: 6.163958e-13 
+#&gt; outer mgc:  5.470514 
+#&gt;  44:     147.24215: -4.33930 -0.175682 0.0235952 0.175631 0.197846 0.292812 0.313812 0.361870 -8.76470 -12.6159 -0.983559 -0.657531 -2.11849 -1.58251 -0.608838 -1.38412 -1.24122 -0.787219  1.62213
+#&gt; iter: 1  value: -311.0193 mgc: 1.769431 ustep: 1 
+#&gt; iter: 2  value: -311.0197 mgc: 0.06717081 ustep: 1 
+#&gt; iter: 3  value: -311.0197 mgc: 8.007545e-05 ustep: 1 
+#&gt; iter: 4  mgc: 9.19389e-11 
+#&gt; iter: 1  mgc: 9.19389e-11 
+#&gt; outer mgc:  5.13481 
+#&gt;  45:     146.88356: -4.40170 -0.193497 0.0510451 0.159568 0.201382 0.278758 0.367705 0.419009 -8.77194 -12.6963 -0.959836 -0.663047 -2.10521 -1.62037 -0.626448 -1.37978 -1.23527 -0.871948  1.60853
+#&gt; iter: 1  value: -307.3847 mgc: 2.6469 ustep: 1 
+#&gt; iter: 2  value: -307.3847 mgc: 0.01438715 ustep: 1 
+#&gt; iter: 3  value: -307.3847 mgc: 3.183191e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.47562e-13 
+#&gt; iter: 1  mgc: 5.47562e-13 
+#&gt; outer mgc:  6.007341 
+#&gt;  46:     146.70768: -4.43097 -0.197790 0.00297928 0.166153 0.177488 0.310902 0.355914 0.390742 -8.77280 -12.6299 -0.989330 -0.677735 -2.08373 -1.55297 -0.709422 -1.40159 -1.24409 -0.936691  1.62080
+#&gt; iter: 1  value: -309.6128 mgc: 1.533147 ustep: 1 
+#&gt; iter: 2  value: -309.6137 mgc: 0.08372005 ustep: 1 
+#&gt; iter: 3  value: -309.6137 mgc: 0.000135101 ustep: 1 
+#&gt; iter: 4  mgc: 2.928768e-10 
+#&gt; iter: 1  value: -309.3358 mgc: 0.7646494 ustep: 1 
+#&gt; iter: 2  value: -309.3358 mgc: 0.00181365 ustep: 1 
+#&gt; iter: 3  value: -309.3358 mgc: 6.477461e-08 ustep: 1 
+#&gt; mgc: 5.209166e-13 
+#&gt; iter: 1  mgc: 5.209166e-13 
+#&gt; outer mgc:  2.721972 
+#&gt;  47:     146.42917: -4.41297 -0.188462 0.0381413 0.149122 0.195731 0.273817 0.344644 0.394608 -8.77122 -12.6470 -0.987047 -0.678074 -2.09138 -1.56665 -0.698920 -1.39836 -1.24520 -0.948195  1.61965
+#&gt; iter: 1  value: -311.9278 mgc: 0.6925165 ustep: 1 
+#&gt; iter: 2  value: -311.9278 mgc: 0.008387192 ustep: 1 
+#&gt; iter: 3  value: -311.9278 mgc: 9.812992e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.511946e-13 
+#&gt; iter: 1  mgc: 4.511946e-13 
+#&gt; outer mgc:  3.283093 
+#&gt;  48:     146.36615: -4.38651 -0.184172 0.0149353 0.166495 0.171296 0.286652 0.337679 0.372838 -8.76633 -12.6608 -0.982388 -0.680702 -2.10649 -1.58554 -0.672200 -1.39418 -1.24502 -0.961458  1.61651
+#&gt; iter: 1  value: -310.1657 mgc: 0.4614547 ustep: 1 
+#&gt; iter: 2  value: -310.1657 mgc: 0.0006867801 ustep: 1 
+#&gt; iter: 3  mgc: 8.147539e-09 
+#&gt; iter: 1  mgc: 8.147539e-09 
+#&gt; outer mgc:  2.587009 
+#&gt;  49:     146.34969: -4.39390 -0.184885 0.0228799 0.146614 0.193032 0.283943 0.333862 0.365492 -8.76725 -12.6392 -0.974545 -0.679871 -2.11065 -1.58166 -0.623436 -1.39143 -1.24715 -0.982000  1.60418
+#&gt; iter: 1  value: -309.7794 mgc: 0.8130102 ustep: 1 
+#&gt; iter: 2  value: -309.7794 mgc: 0.0169345 ustep: 1 
+#&gt; iter: 3  value: -309.7794 mgc: 4.242404e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.82645e-13 
+#&gt; iter: 1  value: -310.8334 mgc: 0.3608077 ustep: 1 
+#&gt; iter: 2  value: -310.8334 mgc: 0.001634277 ustep: 1 
+#&gt; iter: 3  value: -310.8334 mgc: 3.65892e-08 ustep: 1 
+#&gt; mgc: 4.153344e-13 
+#&gt; iter: 1  mgc: 4.153344e-13 
+#&gt; outer mgc:  1.913581 
+#&gt;  50:     146.29985: -4.39464 -0.184615 0.0310788 0.164244 0.176316 0.274976 0.332924 0.376358 -8.76604 -12.6483 -0.978410 -0.679755 -2.10850 -1.58232 -0.632687 -1.39598 -1.24707 -0.987724  1.60704
+#&gt; iter: 1  value: -310.7169 mgc: 0.2753062 ustep: 1 
+#&gt; iter: 2  value: -310.7169 mgc: 0.000459802 ustep: 1 
+#&gt; iter: 3  mgc: 4.612374e-09 
+#&gt; iter: 1  mgc: 4.612374e-09 
+#&gt; outer mgc:  0.8441117 
+#&gt;  51:     146.26687: -4.38782 -0.178085 0.0341052 0.158144 0.189229 0.282911 0.339351 0.375270 -8.76218 -12.6465 -0.977606 -0.676403 -2.10386 -1.58397 -0.657010 -1.39476 -1.24530 -0.994116  1.61022
+#&gt; iter: 1  value: -309.8266 mgc: 0.5729649 ustep: 1 
+#&gt; iter: 2  value: -309.8266 mgc: 0.003730926 ustep: 1 
+#&gt; iter: 3  value: -309.8266 mgc: 2.164869e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.900524e-13 
+#&gt; iter: 1  value: -310.6719 mgc: 0.1251192 ustep: 1 
+#&gt; iter: 2  value: -310.6719 mgc: 0.0003899532 ustep: 1 
+#&gt; iter: 3  mgc: 2.13082e-09 
+#&gt; iter: 1  mgc: 2.13082e-09 
+#&gt; outer mgc:  0.6539873 
+#&gt;  52:     146.26101: -4.38923 -0.180516 0.0304116 0.162364 0.185354 0.281543 0.336917 0.380865 -8.76264 -12.6465 -0.978535 -0.676721 -2.10292 -1.58257 -0.658426 -1.39576 -1.24529 -0.997665  1.61080
+#&gt; iter: 1  value: -310.5413 mgc: 0.1396141 ustep: 1 
+#&gt; iter: 2  value: -310.5413 mgc: 5.118916e-05 ustep: 1 
+#&gt; iter: 3  mgc: 5.436973e-11 
+#&gt; iter: 1  mgc: 5.436973e-11 
+#&gt; outer mgc:  0.433038 
+#&gt;  53:     146.25851: -4.38991 -0.184887 0.0300244 0.157170 0.186324 0.281056 0.340063 0.378580 -8.76632 -12.6479 -0.979313 -0.678612 -2.10120 -1.58093 -0.659675 -1.39581 -1.24570 -1.00231  1.61212
+#&gt; iter: 1  value: -310.3088 mgc: 0.1380044 ustep: 1 
+#&gt; iter: 2  value: -310.3088 mgc: 2.944438e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.100253e-11 
+#&gt; iter: 1  mgc: 2.100253e-11 
+#&gt; outer mgc:  0.3419055 
+#&gt;  54:     146.25719: -4.39649 -0.180274 0.0308119 0.159620 0.186616 0.282721 0.337566 0.377574 -8.76426 -12.6493 -0.978813 -0.680092 -2.10029 -1.57976 -0.660976 -1.39661 -1.24347 -1.00604  1.61194
+#&gt; iter: 1  value: -310.4518 mgc: 0.1039885 ustep: 1 
+#&gt; iter: 2  value: -310.4518 mgc: 0.0001357685 ustep: 1 
+#&gt; iter: 3  mgc: 2.929696e-10 
+#&gt; iter: 1  mgc: 2.929696e-10 
+#&gt; outer mgc:  0.5493197 
+#&gt;  55:     146.25680: -4.39143 -0.181470 0.0300500 0.159060 0.184328 0.278959 0.337848 0.380569 -8.76296 -12.6457 -0.978119 -0.678411 -2.10055 -1.58238 -0.665228 -1.39702 -1.24353 -1.00965  1.61095
+#&gt; iter: 1  value: -310.3812 mgc: 0.0610664 ustep: 1 
+#&gt; iter: 2  value: -310.3812 mgc: 6.927152e-05 ustep: 1 
+#&gt; iter: 3  mgc: 6.711076e-11 
+#&gt; iter: 1  mgc: 6.711076e-11 
+#&gt; outer mgc:  0.2349855 
+#&gt;  56:     146.25527: -4.39173 -0.181131 0.0307013 0.158694 0.186302 0.282496 0.338361 0.378258 -8.76417 -12.6473 -0.978376 -0.678401 -2.10022 -1.58183 -0.664837 -1.39623 -1.24362 -1.01035  1.61110
+#&gt; iter: 1  value: -310.5937 mgc: 0.07780805 ustep: 1 
+#&gt; iter: 2  value: -310.5937 mgc: 8.356922e-05 ustep: 1 
+#&gt; iter: 3  mgc: 1.432466e-10 
+#&gt; iter: 1  mgc: 1.432466e-10 
+#&gt; outer mgc:  0.1775529 
+#&gt;  57:     146.25520: -4.39095 -0.181811 0.0305657 0.160341 0.187200 0.281819 0.339457 0.381018 -8.76420 -12.6488 -0.979606 -0.677610 -2.10098 -1.58093 -0.662310 -1.39606 -1.24377 -1.01133  1.61226
+#&gt; iter: 1  value: -310.4654 mgc: 0.03595736 ustep: 1 
+#&gt; iter: 2  value: -310.4654 mgc: 4.937722e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.053735e-13 
+#&gt; iter: 1  mgc: 5.053735e-13 
+#&gt; outer mgc:  0.1184319 
+#&gt;  58:     146.25496: -4.39094 -0.181110 0.0309618 0.159240 0.186068 0.282669 0.339293 0.380571 -8.76385 -12.6478 -0.979321 -0.678415 -2.10034 -1.58055 -0.662225 -1.39660 -1.24406 -1.01188  1.61203
+#&gt; iter: 1  value: -310.4249 mgc: 0.05085727 ustep: 1 
+#&gt; iter: 2  value: -310.4249 mgc: 1.704204e-05 ustep: 1 
+#&gt; iter: 3  mgc: 5.288214e-12 
+#&gt; iter: 1  mgc: 5.288214e-12 
+#&gt; outer mgc:  0.06308615 
+#&gt;  59:     146.25483: -4.39198 -0.181267 0.0303620 0.159332 0.186447 0.281596 0.338801 0.379462 -8.76390 -12.6477 -0.978684 -0.678803 -2.10034 -1.58143 -0.663059 -1.39645 -1.24384 -1.01240  1.61138
+#&gt; iter: 1  value: -310.3998 mgc: 0.02881759 ustep: 1 
+#&gt; iter: 2  value: -310.3998 mgc: 6.986252e-06 ustep: 1 
+#&gt; iter: 3  mgc: 1.45528e-12 
+#&gt; iter: 1  value: -310.4267 mgc: 0.007028325 ustep: 1 
+#&gt; iter: 2  value: -310.4267 mgc: 3.3436e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.920508e-13 
+#&gt; iter: 1  mgc: 4.920508e-13 
+#&gt; outer mgc:  0.0502159 
+#&gt;  60:     146.25481: -4.39185 -0.181312 0.0307507 0.159305 0.186021 0.281928 0.338441 0.379682 -8.76397 -12.6478 -0.978787 -0.678746 -2.10028 -1.58136 -0.663119 -1.39641 -1.24387 -1.01259  1.61144
+#&gt; iter: 1  value: -310.412 mgc: 0.007247957 ustep: 1 
+#&gt; iter: 2  value: -310.412 mgc: 1.871478e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.528111e-13 
+#&gt; iter: 1  mgc: 6.528111e-13 
+#&gt; outer mgc:  0.02048996 
+#&gt;  61:     146.25479: -4.39162 -0.181193 0.0307295 0.159482 0.186242 0.281798 0.338720 0.379662 -8.76387 -12.6477 -0.978858 -0.678171 -2.10012 -1.58124 -0.663253 -1.39646 -1.24391 -1.01283  1.61150
+#&gt; iter: 1  value: -310.4484 mgc: 0.007928362 ustep: 1 
+#&gt; iter: 2  value: -310.4484 mgc: 8.743663e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.742073e-13 
+#&gt; iter: 1  value: -310.4225 mgc: 0.002652712 ustep: 1 
+#&gt; iter: 2  value: -310.4225 mgc: 3.345717e-08 ustep: 1 
+#&gt; mgc: 4.343192e-13 
+#&gt; iter: 1  mgc: 4.343192e-13 
+#&gt; outer mgc:  0.0129552 
+#&gt;  62:     146.25479: -4.39161 -0.181190 0.0306416 0.159345 0.186308 0.281875 0.338666 0.379718 -8.76386 -12.6477 -0.978882 -0.678230 -2.10012 -1.58129 -0.663260 -1.39647 -1.24392 -1.01294  1.61152
+#&gt; iter: 1  value: -310.4261 mgc: 0.002194365 ustep: 1 
+#&gt; iter: 2  value: -310.4261 mgc: 1.653878e-08 ustep: 1 
+#&gt; mgc: 4.6807e-13 
+#&gt; iter: 1  mgc: 4.6807e-13 
+#&gt; outer mgc:  0.01125119 
+#&gt;  63:     146.25479: -4.39159 -0.181220 0.0306619 0.159430 0.186247 0.281833 0.338761 0.379716 -8.76389 -12.6477 -0.978886 -0.678386 -2.10013 -1.58130 -0.663275 -1.39645 -1.24393 -1.01305  1.61154
+#&gt; iter: 1  value: -310.4235 mgc: 0.003787224 ustep: 1 
+#&gt; iter: 2  value: -310.4235 mgc: 2.080712e-08 ustep: 1 
+#&gt; mgc: 5.782042e-13 
+#&gt; iter: 1  mgc: 5.782042e-13 
+#&gt; outer mgc:  0.007557189 
+#&gt;  64:     146.25478: -4.39156 -0.181209 0.0306594 0.159384 0.186308 0.281872 0.338708 0.379759 -8.76387 -12.6477 -0.978873 -0.678585 -2.10014 -1.58125 -0.663293 -1.39645 -1.24392 -1.01313  1.61155
+#&gt; iter: 1  value: -310.4326 mgc: 0.003084692 ustep: 1 
+#&gt; iter: 2  value: -310.4326 mgc: 3.354336e-08 ustep: 1 
+#&gt; mgc: 4.085621e-13 
+#&gt; iter: 1  mgc: 4.085621e-13 
+#&gt; outer mgc:  0.008422222 
+#&gt;  65:     146.25478: -4.39165 -0.181231 0.0306422 0.159349 0.186258 0.281882 0.338703 0.379722 -8.76389 -12.6477 -0.978876 -0.678431 -2.10018 -1.58131 -0.663304 -1.39644 -1.24393 -1.01326  1.61154
+#&gt; iter: 1  value: -310.4089 mgc: 0.004082528 ustep: 1 
+#&gt; iter: 2  value: -310.4089 mgc: 9.843808e-08 ustep: 1 
+#&gt; mgc: 5.200285e-13 
+#&gt; iter: 1  value: -310.4286 mgc: 0.001059416 ustep: 1 
+#&gt; iter: 2  mgc: 3.372929e-09 
+#&gt; iter: 1  mgc: 3.372929e-09 
+#&gt; outer mgc:  0.007486615 
+#&gt;  66:     146.25478: -4.39163 -0.181227 0.0306362 0.159394 0.186276 0.281821 0.338723 0.379727 -8.76390 -12.6477 -0.978865 -0.678443 -2.10017 -1.58130 -0.663301 -1.39644 -1.24393 -1.01329  1.61154
+#&gt; iter: 1  value: -310.4213 mgc: 0.001824629 ustep: 1 
+#&gt; iter: 2  value: -310.4213 mgc: 1.991622e-08 ustep: 1 
+#&gt; mgc: 4.52971e-13 
+#&gt; iter: 1  mgc: 4.52971e-13 
+#&gt; outer mgc:  0.00228856 
+#&gt;  67:     146.25478: -4.39162 -0.181216 0.0306484 0.159382 0.186266 0.281859 0.338721 0.379738 -8.76389 -12.6477 -0.978855 -0.678446 -2.10011 -1.58131 -0.663282 -1.39645 -1.24392 -1.01332  1.61152
+#&gt; iter: 1  value: -310.4297 mgc: 0.001448314 ustep: 1 
+#&gt; iter: 2  mgc: 7.141446e-09 
+#&gt; iter: 1  mgc: 7.141446e-09 
+#&gt; outer mgc:  0.002101137 
+#&gt;  68:     146.25478: -4.39161 -0.181217 0.0306580 0.159385 0.186283 0.281863 0.338721 0.379730 -8.76387 -12.6477 -0.978881 -0.678495 -2.10015 -1.58131 -0.663282 -1.39645 -1.24394 -1.01335  1.61155
+#&gt; iter: 1  value: -310.4248 mgc: 0.001118918 ustep: 1 
+#&gt; iter: 2  mgc: 9.31604e-10 
+#&gt; iter: 1  mgc: 9.31604e-10 
+#&gt; outer mgc:  0.002704129 
+#&gt;  69:     146.25478: -4.39159 -0.181214 0.0306431 0.159393 0.186286 0.281848 0.338723 0.379733 -8.76388 -12.6477 -0.978844 -0.678506 -2.10014 -1.58130 -0.663296 -1.39644 -1.24392 -1.01342  1.61154
+#&gt; iter: 1  value: -310.4218 mgc: 0.00136182 ustep: 1 
+#&gt; iter: 2  mgc: 6.928571e-09 
+#&gt; iter: 1  value: -310.4242 mgc: 0.0006606304 ustep: 1 
+#&gt; iter: 2  mgc: 1.009821e-09 
+#&gt; iter: 1  mgc: 1.009821e-09 
+#&gt; outer mgc:  0.001841682 
+#&gt;  70:     146.25478: -4.39160 -0.181210 0.0306586 0.159381 0.186273 0.281856 0.338717 0.379737 -8.76389 -12.6477 -0.978860 -0.678503 -2.10013 -1.58131 -0.663285 -1.39645 -1.24392 -1.01342  1.61153
+#&gt; iter: 1  value: -310.4233 mgc: 0.000830808 ustep: 1 
+#&gt; iter: 2  mgc: 5.640535e-09 
+#&gt; iter: 1  value: -310.4238 mgc: 0.0002995069 ustep: 1 
+#&gt; iter: 2  mgc: 3.025511e-10 
+#&gt; iter: 1  mgc: 3.025511e-10 
+#&gt; outer mgc:  0.0008701205 
+#&gt;  71:     146.25478: -4.39161 -0.181213 0.0306481 0.159387 0.186277 0.281859 0.338723 0.379739 -8.76388 -12.6477 -0.978860 -0.678502 -2.10012 -1.58131 -0.663281 -1.39645 -1.24393 -1.01342  1.61153
+#&gt; iter: 1  value: -310.4242 mgc: 0.0002219453 ustep: 1 
+#&gt; iter: 2  mgc: 1.876037e-10 
+#&gt; iter: 1  mgc: 1.876037e-10 
+#&gt; outer mgc:  0.0003445219 
+#&gt;  72:     146.25478: -4.39161 -0.181214 0.0306520 0.159385 0.186279 0.281860 0.338724 0.379741 -8.76388 -12.6477 -0.978850 -0.678498 -2.10012 -1.58131 -0.663283 -1.39645 -1.24393 -1.01341  1.61154
+#&gt; iter: 1  mgc: 1.876037e-10 
+#&gt; iter: 1  mgc: 1.876037e-10 
+#&gt; outer mgc:  0.0003445219 
+#&gt; iter: 1  value: -310.4246 mgc: 0.001790142 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.917902e-08 ustep: 1 
+#&gt; mgc: 3.947953e-13 
+#&gt; outer mgc:  0.06579278 
+#&gt; iter: 1  value: -310.4237 mgc: 0.001790142 ustep: 1 
+#&gt; iter: 2  value: -310.4237 mgc: 1.917783e-08 ustep: 1 
+#&gt; mgc: 4.227729e-13 
+#&gt; outer mgc:  0.06582594 
+#&gt; iter: 1  value: -310.4243 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4243 mgc: 1.830854e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.457856e-13 
+#&gt; outer mgc:  0.1562403 
+#&gt; iter: 1  value: -310.4238 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4238 mgc: 1.830623e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.581402e-13 
+#&gt; outer mgc:  0.1566426 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.254311e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.506395e-13 
+#&gt; outer mgc:  0.2215053 
+#&gt; iter: 1  value: -310.4235 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4235 mgc: 1.253603e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.597123e-13 
+#&gt; outer mgc:  0.2214118 
+#&gt; iter: 1  value: -310.4247 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4247 mgc: 1.205016e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.124789e-13 
+#&gt; outer mgc:  0.2230062 
+#&gt; iter: 1  value: -310.4234 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4234 mgc: 1.204345e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.396483e-13 
+#&gt; outer mgc:  0.2236273 
+#&gt; iter: 1  value: -310.4247 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4247 mgc: 1.345939e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.198064e-13 
+#&gt; outer mgc:  0.223087 
+#&gt; iter: 1  value: -310.4234 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4234 mgc: 1.345144e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.614087e-13 
+#&gt; outer mgc:  0.2223976 
+#&gt; iter: 1  value: -310.4247 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4247 mgc: 1.529224e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.366818e-13 
+#&gt; outer mgc:  0.2199083 
+#&gt; iter: 1  value: -310.4234 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4234 mgc: 1.528234e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.064216e-13 
+#&gt; outer mgc:  0.2195083 
+#&gt; iter: 1  value: -310.4245 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.965075e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.613288e-13 
+#&gt; outer mgc:  0.2110677 
+#&gt; iter: 1  value: -310.4236 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4236 mgc: 1.963565e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.019807e-13 
+#&gt; outer mgc:  0.210761 
+#&gt; iter: 1  value: -310.4245 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.366854e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.952305e-12 
+#&gt; outer mgc:  0.138869 
+#&gt; iter: 1  value: -310.4237 mgc: 0.01632818 ustep: 1 
+#&gt; iter: 2  value: -310.4237 mgc: 1.364377e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.003819e-12 
+#&gt; outer mgc:  0.13903 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01203555 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 3.206654e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.817569e-13 
+#&gt; outer mgc:  0.1806858 
+#&gt; iter: 1  value: -310.4236 mgc: 0.01203555 ustep: 1 
+#&gt; iter: 2  value: -310.4236 mgc: 3.206131e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.240875e-13 
+#&gt; outer mgc:  0.180119 
+#&gt; iter: 1  value: -310.4245 mgc: 0.007589933 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.850488e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.284662e-13 
+#&gt; outer mgc:  0.1118305 
+#&gt; iter: 1  value: -310.4238 mgc: 0.007589933 ustep: 1 
+#&gt; iter: 2  value: -310.4238 mgc: 1.85024e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.27578e-13 
+#&gt; outer mgc:  0.1119795 
+#&gt; iter: 1  value: -310.3302 mgc: 0.02416348 ustep: 1 
+#&gt; iter: 2  value: -310.3302 mgc: 5.844907e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.705924e-13 
+#&gt; outer mgc:  0.07009882 
+#&gt; iter: 1  value: -310.5181 mgc: 0.02421185 ustep: 1 
+#&gt; iter: 2  value: -310.5181 mgc: 5.855196e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.991563e-13 
+#&gt; outer mgc:  0.06945916 
+#&gt; iter: 1  value: -310.4219 mgc: 0.01343115 ustep: 1 
+#&gt; iter: 2  value: -310.4219 mgc: 1.703707e-08 ustep: 1 
+#&gt; mgc: 4.565237e-13 
+#&gt; outer mgc:  0.02655276 
+#&gt; iter: 1  value: -310.4264 mgc: 0.01345804 ustep: 1 
+#&gt; iter: 2  value: -310.4264 mgc: 1.708595e-08 ustep: 1 
+#&gt; mgc: 3.561595e-13 
+#&gt; outer mgc:  0.02663181 
+#&gt; iter: 1  value: -310.3172 mgc: 0.02280531 ustep: 1 
+#&gt; iter: 2  value: -310.3172 mgc: 1.008399e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.426459e-13 
+#&gt; outer mgc:  0.03621504 
+#&gt; iter: 1  value: -310.5312 mgc: 0.02285097 ustep: 1 
+#&gt; iter: 2  value: -310.5312 mgc: 1.009946e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.387601e-13 
+#&gt; outer mgc:  0.03619343 
+#&gt; iter: 1  value: -310.331 mgc: 0.02351306 ustep: 1 
+#&gt; iter: 2  value: -310.331 mgc: 9.947535e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.012968e-13 
+#&gt; outer mgc:  0.08802971 
+#&gt; iter: 1  value: -310.5173 mgc: 0.02356013 ustep: 1 
+#&gt; iter: 2  value: -310.5173 mgc: 9.962223e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.021539e-13 
+#&gt; outer mgc:  0.087748 
+#&gt; iter: 1  value: -310.4239 mgc: 0.002361471 ustep: 1 
+#&gt; iter: 2  value: -310.4239 mgc: 2.510354e-08 ustep: 1 
+#&gt; mgc: 5.595524e-13 
+#&gt; outer mgc:  0.03404218 
+#&gt; iter: 1  value: -310.4244 mgc: 0.002366199 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 2.520238e-08 ustep: 1 
+#&gt; mgc: 4.831691e-13 
+#&gt; outer mgc:  0.0340836 
+#&gt; iter: 1  value: -310.3897 mgc: 0.01618166 ustep: 1 
+#&gt; iter: 2  value: -310.3897 mgc: 1.178116e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.409806e-13 
+#&gt; outer mgc:  0.1581275 
+#&gt; iter: 1  value: -310.4585 mgc: 0.01621405 ustep: 1 
+#&gt; iter: 2  value: -310.4585 mgc: 1.179406e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.950795e-13 
+#&gt; outer mgc:  0.1578226 
+#&gt; iter: 1  value: -310.4211 mgc: 0.01329999 ustep: 1 
+#&gt; iter: 2  value: -310.4211 mgc: 2.611314e-08 ustep: 1 
+#&gt; mgc: 5.249134e-13 
+#&gt; outer mgc:  0.02696701 
+#&gt; iter: 1  value: -310.4272 mgc: 0.01332662 ustep: 1 
+#&gt; iter: 2  value: -310.4272 mgc: 2.616362e-08 ustep: 1 
+#&gt; mgc: 5.115908e-13 
+#&gt; outer mgc:  0.02713816 
+#&gt; iter: 1  value: -310.4212 mgc: 0.01387125 ustep: 1 
+#&gt; iter: 2  value: -310.4212 mgc: 7.706163e-08 ustep: 1 
+#&gt; mgc: 4.609646e-13 
+#&gt; outer mgc:  0.0270297 
+#&gt; iter: 1  value: -310.4271 mgc: 0.01389902 ustep: 1 
+#&gt; iter: 2  value: -310.4271 mgc: 7.727198e-08 ustep: 1 
+#&gt; mgc: 5.067058e-13 
+#&gt; outer mgc:  0.02745446 
+#&gt; iter: 1  value: -310.5123 mgc: 0.02385041 ustep: 1 
+#&gt; iter: 2  value: -310.5123 mgc: 2.793877e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.716227e-13 
+#&gt; outer mgc:  0.03694924 
+#&gt; iter: 1  value: -310.336 mgc: 0.02380204 ustep: 1 
+#&gt; iter: 2  value: -310.336 mgc: 2.790584e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.681011e-13 
+#&gt; outer mgc:  0.03689752 
+#&gt; iter: 1  value: -310.4241 mgc: 0.0001111539 ustep: 1 
+#&gt; iter: 2  mgc: 1.585003e-10 
+#&gt; iter: 1  mgc: 1.585003e-10 
+#&gt; outer mgc:  2.749064e-09 
+#&gt; iter: 1  value: -310.4245 mgc: 0.001790142 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.917896e-08 ustep: 1 
+#&gt; mgc: 4.742873e-13 
+#&gt; outer mgc:  0.06580939 
+#&gt; iter: 1  value: -310.4236 mgc: 0.001790142 ustep: 1 
+#&gt; iter: 2  value: -310.4236 mgc: 1.917781e-08 ustep: 1 
+#&gt; mgc: 4.374279e-13 
+#&gt; outer mgc:  0.06580938 
+#&gt; iter: 1  value: -310.4242 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4242 mgc: 1.830867e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.320189e-13 
+#&gt; outer mgc:  0.1564418 
+#&gt; iter: 1  value: -310.4237 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4237 mgc: 1.830636e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.62741e-13 
+#&gt; outer mgc:  0.1564415 
+#&gt; iter: 1  value: -310.4245 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.25432e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.020917e-13 
+#&gt; outer mgc:  0.2214592 
+#&gt; iter: 1  value: -310.4234 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4234 mgc: 1.253612e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.08642e-13 
+#&gt; outer mgc:  0.2214587 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.205023e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.07292e-13 
+#&gt; outer mgc:  0.2233173 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.204353e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.263256e-13 
+#&gt; outer mgc:  0.2233169 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.345947e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.462297e-13 
+#&gt; outer mgc:  0.2227429 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.345151e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.049294e-13 
+#&gt; outer mgc:  0.2227425 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.529231e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.084511e-13 
+#&gt; outer mgc:  0.219709 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.52824e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.173639e-13 
+#&gt; outer mgc:  0.2197084 
+#&gt; iter: 1  value: -310.4244 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.965078e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.405365e-13 
+#&gt; outer mgc:  0.210915 
+#&gt; iter: 1  value: -310.4235 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4235 mgc: 1.963568e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.703704e-13 
+#&gt; outer mgc:  0.2109145 
+#&gt; iter: 1  value: -310.4244 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.366854e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.863487e-12 
+#&gt; outer mgc:  0.1389481 
+#&gt; iter: 1  value: -310.4236 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4236 mgc: 1.364378e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.950529e-12 
+#&gt; outer mgc:  0.1389511 
+#&gt; iter: 1  value: -310.4245 mgc: 0.01203548 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 3.206642e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.78364e-13 
+#&gt; outer mgc:  0.1804019 
+#&gt; iter: 1  value: -310.4235 mgc: 0.01203548 ustep: 1 
+#&gt; iter: 2  value: -310.4235 mgc: 3.20612e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.644996e-13 
+#&gt; outer mgc:  0.1804012 
+#&gt; iter: 1  value: -310.4244 mgc: 0.007589825 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.850453e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.419487e-13 
+#&gt; outer mgc:  0.111904 
+#&gt; iter: 1  value: -310.4237 mgc: 0.007589826 ustep: 1 
+#&gt; iter: 2  value: -310.4237 mgc: 1.850204e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.803447e-13 
+#&gt; outer mgc:  0.1119033 
+#&gt; iter: 1  value: -310.3301 mgc: 0.02416353 ustep: 1 
+#&gt; iter: 2  value: -310.3301 mgc: 5.844931e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.517497e-13 
+#&gt; outer mgc:  0.06976962 
+#&gt; iter: 1  value: -310.518 mgc: 0.02421191 ustep: 1 
+#&gt; iter: 2  value: -310.518 mgc: 5.855214e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.246292e-13 
+#&gt; outer mgc:  0.06978918 
+#&gt; iter: 1  value: -310.4218 mgc: 0.01343111 ustep: 1 
+#&gt; iter: 2  value: -310.4218 mgc: 1.703708e-08 ustep: 1 
+#&gt; mgc: 5.320189e-13 
+#&gt; outer mgc:  0.02657995 
+#&gt; iter: 1  value: -310.4263 mgc: 0.013458 ustep: 1 
+#&gt; iter: 2  value: -310.4263 mgc: 1.708603e-08 ustep: 1 
+#&gt; mgc: 4.987122e-13 
+#&gt; outer mgc:  0.02660453 
+#&gt; iter: 1  value: -310.3171 mgc: 0.02280534 ustep: 1 
+#&gt; iter: 2  value: -310.3171 mgc: 1.008393e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.742873e-13 
+#&gt; outer mgc:  0.0362368 
+#&gt; iter: 1  value: -310.5311 mgc: 0.02285099 ustep: 1 
+#&gt; iter: 2  value: -310.5311 mgc: 1.00994e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.559997e-13 
+#&gt; outer mgc:  0.03617213 
+#&gt; iter: 1  value: -310.3309 mgc: 0.02351312 ustep: 1 
+#&gt; iter: 2  value: -310.3309 mgc: 9.947507e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.245493e-13 
+#&gt; outer mgc:  0.08791765 
+#&gt; iter: 1  value: -310.5172 mgc: 0.02356019 ustep: 1 
+#&gt; iter: 2  value: -310.5172 mgc: 9.96222e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.297984e-13 
+#&gt; outer mgc:  0.08785986 
+#&gt; iter: 1  value: -310.4238 mgc: 0.00236147 ustep: 1 
+#&gt; iter: 2  value: -310.4238 mgc: 2.51035e-08 ustep: 1 
+#&gt; mgc: 6.252776e-13 
+#&gt; outer mgc:  0.03403256 
+#&gt; iter: 1  value: -310.4243 mgc: 0.002366198 ustep: 1 
+#&gt; iter: 2  value: -310.4243 mgc: 2.52023e-08 ustep: 1 
+#&gt; mgc: 6.51923e-13 
+#&gt; outer mgc:  0.03409326 
+#&gt; iter: 1  value: -310.3896 mgc: 0.01618176 ustep: 1 
+#&gt; iter: 2  value: -310.3896 mgc: 1.178112e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.746514e-13 
+#&gt; outer mgc:  0.1579203 
+#&gt; iter: 1  value: -310.4584 mgc: 0.01621415 ustep: 1 
+#&gt; iter: 2  value: -310.4584 mgc: 1.179402e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.540257e-13 
+#&gt; outer mgc:  0.1580299 
+#&gt; iter: 1  value: -310.421 mgc: 0.01329997 ustep: 1 
+#&gt; iter: 2  value: -310.421 mgc: 2.61131e-08 ustep: 1 
+#&gt; mgc: 5.053735e-13 
+#&gt; outer mgc:  0.02704184 
+#&gt; iter: 1  value: -310.4271 mgc: 0.0133266 ustep: 1 
+#&gt; iter: 2  value: -310.4271 mgc: 2.616358e-08 ustep: 1 
+#&gt; mgc: 5.329071e-13 
+#&gt; outer mgc:  0.02706319 
+#&gt; iter: 1  value: -310.4211 mgc: 0.01387109 ustep: 1 
+#&gt; iter: 2  value: -310.4211 mgc: 7.706014e-08 ustep: 1 
+#&gt; mgc: 4.720668e-13 
+#&gt; outer mgc:  0.02723014 
+#&gt; iter: 1  value: -310.427 mgc: 0.01389886 ustep: 1 
+#&gt; iter: 2  value: -310.427 mgc: 7.727053e-08 ustep: 1 
+#&gt; mgc: 5.355716e-13 
+#&gt; outer mgc:  0.02725364 
+#&gt; iter: 1  value: -310.5122 mgc: 0.02385046 ustep: 1 
+#&gt; iter: 2  value: -310.5122 mgc: 2.793865e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.681011e-13 
+#&gt; outer mgc:  0.03692506 
+#&gt; iter: 1  value: -310.3359 mgc: 0.02380208 ustep: 1 
+#&gt; iter: 2  value: -310.3359 mgc: 2.79057e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.737633e-13 
+#&gt; outer mgc:  0.03692174 
+#&gt; iter: 1  mgc: 6.066925e-10 
+#&gt; iter: 1  mgc: 6.066925e-10 
+#&gt; outer mgc:  3.948462e-11 
+#&gt; iter: 1  value: -310.4245 mgc: 0.001790142 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.917895e-08 ustep: 1 
+#&gt; mgc: 4.760636e-13 
+#&gt; outer mgc:  0.06580939 
+#&gt; iter: 1  value: -310.4236 mgc: 0.001790142 ustep: 1 
+#&gt; iter: 2  value: -310.4236 mgc: 1.917786e-08 ustep: 1 
+#&gt; mgc: 5.009326e-13 
+#&gt; outer mgc:  0.06580938 
+#&gt; iter: 1  value: -310.4242 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4242 mgc: 1.830867e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.080381e-13 
+#&gt; outer mgc:  0.1564418 
+#&gt; iter: 1  value: -310.4237 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4237 mgc: 1.830636e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.268808e-13 
+#&gt; outer mgc:  0.1564415 
+#&gt; iter: 1  value: -310.4245 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.254321e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.311307e-13 
+#&gt; outer mgc:  0.2214592 
+#&gt; iter: 1  value: -310.4234 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4234 mgc: 1.253612e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.240253e-13 
+#&gt; outer mgc:  0.2214587 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.205023e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.920508e-13 
+#&gt; outer mgc:  0.2233173 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.204353e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.054534e-13 
+#&gt; outer mgc:  0.2233169 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.345947e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.218048e-13 
+#&gt; outer mgc:  0.2227429 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.345151e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.231371e-13 
+#&gt; outer mgc:  0.2227425 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.52923e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.156675e-13 
+#&gt; outer mgc:  0.219709 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.528241e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.672618e-13 
+#&gt; outer mgc:  0.2197084 
+#&gt; iter: 1  value: -310.4244 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.965078e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.800604e-13 
+#&gt; outer mgc:  0.210915 
+#&gt; iter: 1  value: -310.4235 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4235 mgc: 1.963568e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.202993e-13 
+#&gt; outer mgc:  0.2109145 
+#&gt; iter: 1  value: -310.4244 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.366854e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.973621e-12 
+#&gt; outer mgc:  0.1389481 
+#&gt; iter: 1  value: -310.4236 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4236 mgc: 1.364378e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.966516e-12 
+#&gt; outer mgc:  0.1389511 
+#&gt; iter: 1  value: -310.4245 mgc: 0.01203548 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 3.206642e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.085621e-13 
+#&gt; outer mgc:  0.1804019 
+#&gt; iter: 1  value: -310.4235 mgc: 0.01203548 ustep: 1 
+#&gt; iter: 2  value: -310.4235 mgc: 3.20612e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.534151e-13 
+#&gt; outer mgc:  0.1804012 
+#&gt; iter: 1  value: -310.4244 mgc: 0.007589826 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.850454e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.197442e-13 
+#&gt; outer mgc:  0.111904 
+#&gt; iter: 1  value: -310.4237 mgc: 0.007589826 ustep: 1 
+#&gt; iter: 2  value: -310.4237 mgc: 1.850204e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.330669e-13 
+#&gt; outer mgc:  0.1119033 
+#&gt; iter: 1  value: -310.3301 mgc: 0.02416353 ustep: 1 
+#&gt; iter: 2  value: -310.3301 mgc: 5.844934e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.799805e-13 
+#&gt; outer mgc:  0.06976963 
+#&gt; iter: 1  value: -310.518 mgc: 0.02421191 ustep: 1 
+#&gt; iter: 2  value: -310.518 mgc: 5.855214e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.160317e-13 
+#&gt; outer mgc:  0.06978918 
+#&gt; iter: 1  value: -310.4218 mgc: 0.01343111 ustep: 1 
+#&gt; iter: 2  value: -310.4218 mgc: 1.703709e-08 ustep: 1 
+#&gt; mgc: 5.42455e-13 
+#&gt; outer mgc:  0.02657995 
+#&gt; iter: 1  value: -310.4263 mgc: 0.013458 ustep: 1 
+#&gt; iter: 2  value: -310.4263 mgc: 1.708605e-08 ustep: 1 
+#&gt; mgc: 4.193312e-13 
+#&gt; outer mgc:  0.02660453 
+#&gt; iter: 1  value: -310.3171 mgc: 0.02280534 ustep: 1 
+#&gt; iter: 2  value: -310.3171 mgc: 1.008393e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.471667e-13 
+#&gt; outer mgc:  0.0362368 
+#&gt; iter: 1  value: -310.5311 mgc: 0.02285099 ustep: 1 
+#&gt; iter: 2  value: -310.5311 mgc: 1.00994e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.857537e-13 
+#&gt; outer mgc:  0.03617213 
+#&gt; iter: 1  value: -310.3309 mgc: 0.02351312 ustep: 1 
+#&gt; iter: 2  value: -310.3309 mgc: 9.947506e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.641532e-13 
+#&gt; outer mgc:  0.08791765 
+#&gt; iter: 1  value: -310.5172 mgc: 0.02356019 ustep: 1 
+#&gt; iter: 2  value: -310.5172 mgc: 9.96222e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.556355e-13 
+#&gt; outer mgc:  0.08785986 
+#&gt; iter: 1  value: -310.4238 mgc: 0.00236147 ustep: 1 
+#&gt; iter: 2  value: -310.4238 mgc: 2.510357e-08 ustep: 1 
+#&gt; mgc: 3.83471e-13 
+#&gt; outer mgc:  0.03403256 
+#&gt; iter: 1  value: -310.4243 mgc: 0.002366198 ustep: 1 
+#&gt; iter: 2  value: -310.4243 mgc: 2.520234e-08 ustep: 1 
+#&gt; mgc: 4.493073e-13 
+#&gt; outer mgc:  0.03409326 
+#&gt; iter: 1  value: -310.3896 mgc: 0.01618176 ustep: 1 
+#&gt; iter: 2  value: -310.3896 mgc: 1.178113e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.520029e-13 
+#&gt; outer mgc:  0.1579203 
+#&gt; iter: 1  value: -310.4584 mgc: 0.01621415 ustep: 1 
+#&gt; iter: 2  value: -310.4584 mgc: 1.179402e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.17586e-13 
+#&gt; outer mgc:  0.1580299 
+#&gt; iter: 1  value: -310.421 mgc: 0.01329997 ustep: 1 
+#&gt; iter: 2  value: -310.421 mgc: 2.611313e-08 ustep: 1 
+#&gt; mgc: 4.498624e-13 
+#&gt; outer mgc:  0.02704184 
+#&gt; iter: 1  value: -310.4271 mgc: 0.0133266 ustep: 1 
+#&gt; iter: 2  value: -310.4271 mgc: 2.61637e-08 ustep: 1 
+#&gt; mgc: 4.445333e-13 
+#&gt; outer mgc:  0.02706319 
+#&gt; iter: 1  value: -310.4211 mgc: 0.01387109 ustep: 1 
+#&gt; iter: 2  value: -310.4211 mgc: 7.706019e-08 ustep: 1 
+#&gt; mgc: 4.145573e-13 
+#&gt; outer mgc:  0.02723014 
+#&gt; iter: 1  value: -310.427 mgc: 0.01389886 ustep: 1 
+#&gt; iter: 2  value: -310.427 mgc: 7.727045e-08 ustep: 1 
+#&gt; mgc: 6.030731e-13 
+#&gt; outer mgc:  0.02725364 
+#&gt; iter: 1  value: -310.5122 mgc: 0.02385046 ustep: 1 
+#&gt; iter: 2  value: -310.5122 mgc: 2.793865e-07 ustep: 1 
+#&gt; iter: 3  mgc: 8.086865e-13 
+#&gt; outer mgc:  0.03692506 
+#&gt; iter: 1  value: -310.3359 mgc: 0.02380208 ustep: 1 
+#&gt; iter: 2  value: -310.3359 mgc: 2.790571e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.334311e-13 
+#&gt; outer mgc:  0.03692174 
+#&gt; iter: 1  mgc: 6.142935e-10 
+#&gt; iter: 1  mgc: 6.142935e-10 
+#&gt; outer mgc:  1.726078e-12 
+#&gt; iter: 1  value: -310.4245 mgc: 0.001790142 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.917895e-08 ustep: 1 
+#&gt; mgc: 4.831691e-13 
+#&gt; outer mgc:  0.06580939 
+#&gt; iter: 1  value: -310.4236 mgc: 0.001790142 ustep: 1 
+#&gt; iter: 2  value: -310.4236 mgc: 1.917779e-08 ustep: 1 
+#&gt; mgc: 5.062617e-13 
+#&gt; outer mgc:  0.06580938 
+#&gt; iter: 1  value: -310.4242 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4242 mgc: 1.830867e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.520828e-13 
+#&gt; outer mgc:  0.1564418 
+#&gt; iter: 1  value: -310.4237 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4237 mgc: 1.830636e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.141443e-13 
+#&gt; outer mgc:  0.1564415 
+#&gt; iter: 1  value: -310.4245 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 1.25432e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.505285e-13 
+#&gt; outer mgc:  0.2214592 
+#&gt; iter: 1  value: -310.4234 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4234 mgc: 1.253612e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.409007e-13 
+#&gt; outer mgc:  0.2214587 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.205023e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.202816e-13 
+#&gt; outer mgc:  0.2233173 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.204353e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.453415e-13 
+#&gt; outer mgc:  0.2233169 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.345947e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.102585e-13 
+#&gt; outer mgc:  0.2227429 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.345151e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.37268e-13 
+#&gt; outer mgc:  0.2227425 
+#&gt; iter: 1  value: -310.4246 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4246 mgc: 1.52923e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.507505e-13 
+#&gt; outer mgc:  0.219709 
+#&gt; iter: 1  value: -310.4233 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4233 mgc: 1.52824e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.759837e-13 
+#&gt; outer mgc:  0.2197084 
+#&gt; iter: 1  value: -310.4244 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.965078e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.601874e-13 
+#&gt; outer mgc:  0.210915 
+#&gt; iter: 1  value: -310.4235 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4235 mgc: 1.963568e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.03233e-13 
+#&gt; outer mgc:  0.2109145 
+#&gt; iter: 1  value: -310.4244 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.366854e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.019807e-12 
+#&gt; outer mgc:  0.1389481 
+#&gt; iter: 1  value: -310.4236 mgc: 0.01632823 ustep: 1 
+#&gt; iter: 2  value: -310.4236 mgc: 1.364378e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.888356e-12 
+#&gt; outer mgc:  0.1389511 
+#&gt; iter: 1  value: -310.4245 mgc: 0.01203548 ustep: 1 
+#&gt; iter: 2  value: -310.4245 mgc: 3.206643e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.666578e-13 
+#&gt; outer mgc:  0.1804019 
+#&gt; iter: 1  value: -310.4235 mgc: 0.01203548 ustep: 1 
+#&gt; iter: 2  value: -310.4235 mgc: 3.206121e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.053735e-13 
+#&gt; outer mgc:  0.1804012 
+#&gt; iter: 1  value: -310.4244 mgc: 0.007589826 ustep: 1 
+#&gt; iter: 2  value: -310.4244 mgc: 1.850454e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.654055e-13 
+#&gt; outer mgc:  0.111904 
+#&gt; iter: 1  value: -310.4237 mgc: 0.007589826 ustep: 1 
+#&gt; iter: 2  value: -310.4237 mgc: 1.850204e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.602985e-13 
+#&gt; outer mgc:  0.1119033 
+#&gt; iter: 1  value: -310.3301 mgc: 0.02416353 ustep: 1 
+#&gt; iter: 2  value: -310.3301 mgc: 5.844933e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.063416e-13 
+#&gt; outer mgc:  0.06976963 
+#&gt; iter: 1  value: -310.518 mgc: 0.02421191 ustep: 1 
+#&gt; iter: 2  value: -310.518 mgc: 5.855215e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.425172e-13 
+#&gt; outer mgc:  0.06978918 
+#&gt; iter: 1  value: -310.4218 mgc: 0.01343111 ustep: 1 
+#&gt; iter: 2  value: -310.4218 mgc: 1.703711e-08 ustep: 1 
+#&gt; mgc: 5.82645e-13 
+#&gt; outer mgc:  0.02657995 
+#&gt; iter: 1  value: -310.4263 mgc: 0.013458 ustep: 1 
+#&gt; iter: 2  value: -310.4263 mgc: 1.708602e-08 ustep: 1 
+#&gt; mgc: 4.165557e-13 
+#&gt; outer mgc:  0.02660453 
+#&gt; iter: 1  value: -310.3171 mgc: 0.02280534 ustep: 1 
+#&gt; iter: 2  value: -310.3171 mgc: 1.008393e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.023448e-13 
+#&gt; outer mgc:  0.0362368 
+#&gt; iter: 1  value: -310.5311 mgc: 0.02285099 ustep: 1 
+#&gt; iter: 2  value: -310.5311 mgc: 1.00994e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.551914e-13 
+#&gt; outer mgc:  0.03617213 
+#&gt; iter: 1  value: -310.3309 mgc: 0.02351312 ustep: 1 
+#&gt; iter: 2  value: -310.3309 mgc: 9.947506e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.618528e-13 
+#&gt; outer mgc:  0.08791765 
+#&gt; iter: 1  value: -310.5172 mgc: 0.02356019 ustep: 1 
+#&gt; iter: 2  value: -310.5172 mgc: 9.962218e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.298784e-13 
+#&gt; outer mgc:  0.08785986 
+#&gt; iter: 1  value: -310.4238 mgc: 0.00236147 ustep: 1 
+#&gt; iter: 2  value: -310.4238 mgc: 2.510353e-08 ustep: 1 
+#&gt; mgc: 5.151435e-13 
+#&gt; outer mgc:  0.03403256 
+#&gt; iter: 1  value: -310.4243 mgc: 0.002366198 ustep: 1 
+#&gt; iter: 2  value: -310.4243 mgc: 2.52023e-08 ustep: 1 
+#&gt; mgc: 5.991319e-13 
+#&gt; outer mgc:  0.03409326 
+#&gt; iter: 1  value: -310.3896 mgc: 0.01618176 ustep: 1 
+#&gt; iter: 2  value: -310.3896 mgc: 1.178113e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.609646e-13 
+#&gt; outer mgc:  0.1579203 
+#&gt; iter: 1  value: -310.4584 mgc: 0.01621415 ustep: 1 
+#&gt; iter: 2  value: -310.4584 mgc: 1.179402e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.43201e-13 
+#&gt; outer mgc:  0.1580299 
+#&gt; iter: 1  value: -310.421 mgc: 0.01329997 ustep: 1 
+#&gt; iter: 2  value: -310.421 mgc: 2.611318e-08 ustep: 1 
+#&gt; mgc: 4.831691e-13 
+#&gt; outer mgc:  0.02704184 
+#&gt; iter: 1  value: -310.4271 mgc: 0.0133266 ustep: 1 
+#&gt; iter: 2  value: -310.4271 mgc: 2.616372e-08 ustep: 1 
+#&gt; mgc: 3.857747e-13 
+#&gt; outer mgc:  0.02706319 
+#&gt; iter: 1  value: -310.4211 mgc: 0.01387109 ustep: 1 
+#&gt; iter: 2  value: -310.4211 mgc: 7.70601e-08 ustep: 1 
+#&gt; mgc: 5.118128e-13 
+#&gt; outer mgc:  0.02723014 
+#&gt; iter: 1  value: -310.427 mgc: 0.01389886 ustep: 1 
+#&gt; iter: 2  value: -310.427 mgc: 7.727046e-08 ustep: 1 
+#&gt; mgc: 5.124789e-13 
+#&gt; outer mgc:  0.02725364 
+#&gt; iter: 1  value: -310.5122 mgc: 0.02385046 ustep: 1 
+#&gt; iter: 2  value: -310.5122 mgc: 2.793865e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.533352e-13 
+#&gt; outer mgc:  0.03692506 
+#&gt; iter: 1  value: -310.3359 mgc: 0.02380208 ustep: 1 
+#&gt; iter: 2  value: -310.3359 mgc: 2.79057e-07 ustep: 1 
+#&gt; iter: 3  mgc: 3.665956e-13 
+#&gt; outer mgc:  0.03692174 
+#&gt; outer mgc:  1 
+#&gt; [1] 1
+#&gt; [1] 2
+#&gt; [1] 3
+#&gt; [1] 4
+#&gt; [1] 5
+#&gt; [1] 6
+#&gt; [1] 7
+#&gt; [1] 8
+#&gt; [1] 9
+#&gt; [1] 10
+#&gt; [1] 11
+#&gt; [1] 12
+#&gt; [1] 13
+#&gt; [1] 14
+#&gt; [1] 15
+#&gt; [1] 16
+#&gt; [1] 17
+#&gt; [1] 18
+#&gt; [1] 19
+#&gt; [1] 20
+#&gt; [1] 21
+#&gt; [1] 22
+#&gt; [1] 23
+#&gt; [1] 24
+#&gt; [1] 25
+#&gt; [1] 26
+#&gt; [1] 27
+#&gt; [1] 28
+#&gt; [1] 29
+#&gt; [1] 30
+#&gt; [1] 31
+#&gt; [1] 32
+#&gt; [1] 33
+#&gt; [1] 34
+#&gt; [1] 35
+#&gt; [1] 36
+#&gt; [1] 37
+#&gt; [1] 38
+#&gt; [1] 39
+#&gt; [1] 40
+#&gt; [1] 41
+#&gt; [1] 42
+#&gt; [1] 43
+#&gt; [1] 44
+#&gt; [1] 45
+#&gt; [1] 46
+#&gt; [1] 47
+#&gt; [1] 48
+#&gt; [1] 49
+#&gt; [1] 50
+#&gt; [1] 51
+#&gt; [1] 52
+#&gt; [1] 53
+#&gt; [1] 54
+#&gt; [1] 55
+#&gt; [1] 56
+#&gt; [1] 57
+#&gt; [1] 58
+#&gt; [1] 59
+#&gt; [1] 60
+#&gt; [1] 61
+#&gt; [1] 62
+#&gt; [1] 63
+#&gt; [1] 64
+#&gt; [1] 65
+#&gt; [1] 66
+#&gt; [1] 67
+#&gt; [1] 68
+#&gt; [1] 69
+#&gt; [1] 70
+#&gt; [1] 71
+#&gt; [1] 72
+#&gt; [1] 73
+#&gt; [1] 74
+#&gt; [1] 75
+#&gt; [1] 76
+#&gt; [1] 77
+#&gt; [1] 78
+#&gt; [1] 79
+#&gt; [1] 80
+#&gt; [1] 81
+#&gt; [1] 82
+#&gt; [1] 83
+#&gt; [1] 84
+#&gt; [1] 85
+#&gt; [1] 86
+#&gt; [1] 87
+#&gt; [1] 88
+#&gt; [1] 89
+#&gt; [1] 90
+#&gt; [1] 91
+#&gt; [1] 92
+#&gt; [1] 93
+#&gt; [1] 94
+#&gt; [1] 95
+#&gt; [1] 96
+#&gt; [1] 97
+#&gt; [1] 98
+#&gt; [1] 99
+#&gt; [1] 100
+#&gt; [1] 101
+#&gt; [1] 102
+#&gt; [1] 103
+#&gt; [1] 104
+#&gt; [1] 105
+#&gt; [1] 106
+#&gt; [1] 107
+#&gt; [1] 108
+#&gt; [1] 109
+#&gt; [1] 110
+#&gt; [1] 111
+#&gt; [1] 112
+#&gt; [1] 113
+#&gt; [1] 114
+#&gt; [1] 115
+#&gt; [1] 116
+#&gt; [1] 117
+#&gt; [1] 118
+#&gt; [1] 119
+#&gt; [1] 120
+#&gt; [1] 121
+#&gt; [1] 122
+#&gt; [1] 123
+#&gt; [1] 124
+#&gt; [1] 125
+#&gt; [1] 126
+#&gt; [1] 127
+#&gt; [1] 128
+#&gt; [1] 129
+#&gt; [1] 130
+#&gt; [1] 131
+#&gt; [1] 132
+#&gt; [1] 133
+#&gt; [1] 134
+#&gt; [1] 135
+#&gt; [1] 136
+#&gt; [1] 137
+#&gt; [1] 138
+#&gt; [1] 139
+#&gt; [1] 140
+#&gt; [1] 141
+#&gt; [1] 142
+#&gt; [1] 143
+#&gt; [1] 144
+#&gt; [1] 145
+#&gt; [1] 146
+#&gt; [1] 147
+#&gt; [1] 148
+#&gt; [1] 149
+#&gt; [1] 150
+#&gt; [1] 151
+#&gt; [1] 152
+#&gt; [1] 153
+#&gt; [1] 154
+#&gt; [1] 155
+#&gt; [1] 156
+#&gt; [1] 157
+#&gt; [1] 158
+#&gt; [1] 159
+#&gt; [1] 160
+#&gt; [1] 161
+#&gt; [1] 162
+#&gt; [1] 163
+#&gt; [1] 164
+#&gt; [1] 165
+#&gt; [1] 166
+#&gt; [1] 167
+#&gt; [1] 168
+#&gt; [1] 169
+#&gt; [1] 170
+#&gt; [1] 171
+#&gt; [1] 172
+#&gt; [1] 173
+#&gt; [1] 174
+#&gt; [1] 175
+#&gt; [1] 176
+#&gt; [1] 177
+#&gt; [1] 178
+#&gt; [1] 179
+#&gt; [1] 180
+#&gt; [1] 181
+#&gt; [1] 182
+#&gt; [1] 183
+#&gt; [1] 184
+#&gt; [1] 185
+#&gt; [1] 186
+#&gt; [1] 187
+#&gt; [1] 188
+#&gt; [1] 189
+#&gt; [1] 190
+#&gt; [1] 191
+#&gt; [1] 192
+#&gt; [1] 193
+#&gt; [1] 194
+#&gt; [1] 195
+#&gt; [1] 196
+#&gt; [1] 197
+#&gt; [1] 198
+#&gt; [1] 199
+#&gt; [1] 200
+#&gt; [1] 201
+#&gt; [1] 202
+#&gt; [1] 203
+#&gt; [1] 204
+#&gt; [1] 205
+#&gt; [1] 206
+#&gt; [1] 207
+#&gt; [1] 208
+#&gt; [1] 209
+#&gt; [1] 210
+#&gt; [1] 211
+#&gt; [1] 212
+#&gt; [1] 213
+#&gt; [1] 214
+#&gt; [1] 215
+#&gt; [1] 216
+#&gt; [1] 217
+#&gt; [1] 218
+#&gt; [1] 219
+#&gt; [1] 220
+#&gt; [1] 221
+#&gt; [1] 222
+#&gt; [1] 223
+#&gt; [1] 224
+#&gt; [1] 225
+#&gt; [1] 226
+#&gt; [1] 227
+#&gt; [1] 228
+#&gt; [1] 229
+#&gt; [1] 230
+#&gt; [1] 231
+#&gt; [1] 232
+#&gt; [1] 233
+#&gt; [1] 234
+#&gt; [1] 235
+#&gt; [1] 236
+#&gt; [1] 237
+#&gt; [1] 238
+#&gt; [1] 239
+#&gt; [1] 240
+#&gt; [1] 241
+#&gt; [1] 242
+#&gt; [1] 243
+#&gt; [1] 244
+#&gt; [1] 245
+#&gt; [1] 246
+#&gt; [1] 247
+#&gt; [1] 248
+#&gt; [1] 249
+#&gt; [1] 250
+#&gt; [1] 251
+#&gt; [1] 252
+#&gt; [1] 253
+#&gt; [1] 254
+#&gt; [1] 255
+#&gt; [1] 256
+#&gt; [1] 257
+#&gt; [1] 258
+#&gt; [1] 259
+#&gt; [1] 260
+#&gt; [1] 261
+#&gt; [1] 262
+#&gt; [1] 263
+#&gt; [1] 264
+#&gt; [1] 265
+#&gt; [1] 266
+#&gt; [1] 267
+#&gt; [1] 268
+#&gt; [1] 269
+#&gt; [1] 270
+#&gt; [1] 271
+#&gt; [1] 272
+#&gt; [1] 273
+#&gt; [1] 274
+#&gt; [1] 275
+#&gt; [1] 276
+#&gt; [1] 277
+#&gt; [1] 278
+#&gt; [1] 279
+#&gt; [1] 280
+#&gt; [1] 281
+#&gt; [1] 282
+#&gt; [1] 283
+#&gt; [1] 284
+#&gt; [1] 285
+#&gt; [1] 286
+#&gt; [1] 287
+#&gt; [1] 288
+#&gt; [1] 289
+#&gt; [1] 290
+#&gt; [1] 291
+#&gt; [1] 292
+#&gt; [1] 293
+#&gt; [1] 294
+#&gt; [1] 295
+#&gt; [1] 296
+#&gt; [1] 297
+#&gt; [1] 298
+#&gt; [1] 299
+#&gt; [1] 300
+#&gt; [1] 301
+#&gt; [1] 302
+#&gt; [1] 303
+#&gt; [1] 304
+#&gt; [1] 305
+#&gt; [1] 306
+#&gt; [1] 307
+#&gt; [1] 308
+#&gt; [1] 309
+#&gt; [1] 310
+#&gt; [1] 311
+#&gt; [1] 312
+#&gt; [1] 313
+#&gt; [1] 314
+#&gt; [1] 315
+#&gt; [1] 316
+#&gt; [1] 317
+#&gt; [1] 318
+#&gt; [1] 319
+#&gt; [1] 320
+#&gt; [1] 321
+#&gt; [1] 322
+#&gt; [1] 323
+#&gt; [1] 324
+#&gt; [1] 325
+#&gt; [1] 326
+#&gt; [1] 327
+#&gt; [1] 328
+#&gt; [1] 329
+#&gt; [1] 330
+#&gt; [1] 331
+#&gt; [1] 332
+#&gt; [1] 333
+#&gt; [1] 334
+#&gt; [1] 335
+#&gt; [1] 336
+#&gt; [1] 337
+#&gt; [1] 338
+#&gt; [1] 339
+#&gt; [1] 340
+#&gt; [1] 341
+#&gt; [1] 342
+#&gt; [1] 343
+#&gt; [1] 344
+#&gt; [1] 345
+#&gt; [1] 346
+#&gt; [1] 347
+#&gt; [1] 348
+#&gt; [1] 349
+#&gt; [1] 350
+#&gt; [1] 351
+#&gt; [1] 352
+#&gt; [1] 353
+#&gt; [1] 354
+#&gt; [1] 355
+#&gt; [1] 356
+#&gt; [1] 357
+#&gt; [1] 358
+#&gt; [1] 359
+#&gt; [1] 360
+#&gt; [1] 361
+#&gt; [1] 362
+#&gt; [1] 363
+#&gt; [1] 364
+#&gt; [1] 365
+#&gt; [1] 366
+#&gt; [1] 367
+#&gt; [1] 368
+#&gt; [1] 369
+#&gt; [1] 370
+#&gt; [1] 371
+#&gt; Order of parameters:
+#&gt;  [1] "logFpar"              "logQpow"              "logSdLogFsta"        
+#&gt;  [4] "logSdLogN"            "logSdLogP"            "logSdLogObs"         
+#&gt;  [7] "logSdLogTotalObs"     "transfIRARdist"       "sigmaObsParUS"       
+#&gt; [10] "rec_loga"             "rec_logb"             "itrans_rho"          
+#&gt; [13] "rhop"                 "logScale"             "logitReleaseSurvival"
+#&gt; [16] "logitRecapturePhi"    "logAlphaSCB"          "logF"                
+#&gt; [19] "logN"                 "logPS"                "missing"             
+#&gt; Not matching template order:
+#&gt;  [1] "logFpar"              "logQpow"              "logSdLogFsta"        
+#&gt;  [4] "logSdLogN"            "logSdLogP"            "logSdLogObs"         
+#&gt;  [7] "logSdLogTotalObs"     "transfIRARdist"       "sigmaObsParUS"       
+#&gt; [10] "rec_loga"             "rec_logb"             "itrans_rho"          
+#&gt; [13] "rhop"                 "logScale"             "logitReleaseSurvival"
+#&gt; [16] "logitRecapturePhi"    "logAlphaSCB"          "logF"                
+#&gt; [19] "logN"                 "missing"             
+#&gt; Your parameter list has been re-ordered.
+#&gt; (Disable this warning with checkParameterOrder=FALSE)
+#&gt; iter: 1  value: 11954.7 mgc: 495.3621 ustep: 0.01776843 
+#&gt; iter: 2  value: 4231.599 mgc: 181.4436 ustep: 0.133385 
+#&gt; iter: 3  value: 3592.718 mgc: 67.08111 ustep: 0.3652825 
+#&gt; iter: 4  value: 3499.568 mgc: 27.35839 ustep: 0.6044256 
+#&gt; iter: 5  value: 3467.253 mgc: 6.32767 ustep: 0.7774704 
+#&gt; iter: 6  value: 3462.566 mgc: 2.114915 ustep: 0.8817547 
+#&gt; iter: 7  value: 3462.251 mgc: 1.290939 ustep: 0.939024 
+#&gt; iter: 8  value: 3462.243 mgc: 0.166112 ustep: 0.9690356 
+#&gt; iter: 9  value: 3462.243 mgc: 0.006702631 ustep: 0.9843976 
+#&gt; iter: 10  value: 3462.243 mgc: 6.024624e-05 ustep: 0.9921689 
+#&gt; iter: 11  value: 3462.243 mgc: 6.091443e-07 ustep: 0.9960772 
+#&gt; iter: 12  mgc: 4.255245e-09 
+#&gt; iter: 1  mgc: 4.255245e-09 
+#&gt; Matching hessian patterns... Done
+#&gt; outer mgc:  4421.995 
+#&gt;   0:     3900.3430: -4.39161 -0.181213 0.0306512 0.159385 0.186277 0.281858 0.338722 0.379738 -5.00000 -5.00000 -0.978859 -0.678496 -2.10012 -1.58131 -0.663283 -1.39645 -1.24393 -1.01340  1.61153
+#&gt; iter: 1  value: 883.8258 mgc: 29.28959 ustep: 1 
+#&gt; iter: 2  value: 880.3584 mgc: 6.398637 ustep: 1 
+#&gt; iter: 3  value: 880.3105 mgc: 1.433209 ustep: 1 
+#&gt; iter: 4  value: 880.3104 mgc: 0.03583635 ustep: 1 
+#&gt; iter: 5  value: 880.3104 mgc: 3.410459e-05 ustep: 1 
+#&gt; iter: 6  mgc: 2.199307e-11 
+#&gt; iter: 1  mgc: 2.199307e-11 
+#&gt; outer mgc:  991.1267 
+#&gt;   1:     1285.9407: -4.38830 -0.123198 0.0690287 0.179444 0.197138 0.287262 0.341305 0.380724 -5.10263 -5.15758 -0.979642 -0.672597 -1.91968 -1.52997 -0.661647 -1.27067 -0.970241 -0.100569  1.61121
+#&gt; iter: 1  value: 131.2736 mgc: 16.39627 ustep: 1 
+#&gt; iter: 2  value: 130.4044 mgc: 5.422536 ustep: 1 
+#&gt; iter: 3  value: 130.4033 mgc: 0.1063145 ustep: 1 
+#&gt; iter: 4  value: 130.4033 mgc: 0.0005470065 ustep: 1 
+#&gt; iter: 5  mgc: 1.081547e-09 
+#&gt; iter: 1  mgc: 1.081547e-09 
+#&gt; outer mgc:  449.7299 
+#&gt;   2:     524.70829: -4.38122 -0.0257591 0.128125 0.211018 0.215226 0.296346 0.345598 0.381873 -5.39397 -5.21381 -0.978531 -0.666420 -1.85847 -1.53300 -0.659817 -1.20201 -0.116782 0.300148  1.60698
+#&gt; iter: 1  value: -131.1543 mgc: 4.94644 ustep: 1 
+#&gt; iter: 2  value: -131.2184 mgc: 1.972092 ustep: 1 
+#&gt; iter: 3  value: -131.2184 mgc: 0.005347579 ustep: 1 
+#&gt; iter: 4  value: -131.2184 mgc: 1.005085e-06 ustep: 1 
+#&gt; iter: 5  mgc: 3.845813e-13 
+#&gt; iter: 1  mgc: 3.845813e-13 
+#&gt; outer mgc:  100.6298 
+#&gt;   3:     282.10987: -4.37638 0.0378004 0.141856 0.229851 0.234839 0.309121 0.353032 0.385106 -5.50039 -5.34048 -0.990185 -0.656863 -1.94697 -1.58384 -0.661203 -1.36072 0.180678  1.21835  1.60639
+#&gt; iter: 1  value: -208.9544 mgc: 13.88132 ustep: 1 
+#&gt; iter: 2  value: -208.9678 mgc: 0.4309594 ustep: 1 
+#&gt; iter: 3  value: -208.9678 mgc: 0.0008624454 ustep: 1 
+#&gt; iter: 4  value: -208.9678 mgc: 1.128863e-08 ustep: 1 
+#&gt; mgc: 3.910205e-13 
+#&gt; iter: 1  mgc: 3.910205e-13 
+#&gt; outer mgc:  50.40831 
+#&gt;   4:     243.20354: -4.38428 -0.101325 -0.0715853 0.223699 0.320489 0.389614 0.410867 0.412250 -5.86627 -5.45301 -1.11847 -0.631094 -2.08082 -1.53756 -0.685274 -1.71201 0.925579  1.44736  1.65200
+#&gt; iter: 1  value: -146.5742 mgc: 11.07693 ustep: 1 
+#&gt; iter: 2  value: -146.5955 mgc: 0.4839032 ustep: 1 
+#&gt; iter: 3  value: -146.5955 mgc: 0.006982426 ustep: 1 
+#&gt; iter: 4  value: -146.5955 mgc: 6.880041e-07 ustep: 1 
+#&gt; iter: 5  mgc: 4.654055e-13 
+#&gt; iter: 1  value: -195.9216 mgc: 8.291409 ustep: 1 
+#&gt; iter: 2  value: -195.9247 mgc: 0.1913666 ustep: 1 
+#&gt; iter: 3  value: -195.9247 mgc: 0.001025268 ustep: 1 
+#&gt; iter: 4  value: -195.9247 mgc: 1.028049e-08 ustep: 1 
+#&gt; mgc: 4.236611e-13 
+#&gt; iter: 1  mgc: 4.236611e-13 
+#&gt; outer mgc:  28.79329 
+#&gt;   5:     230.18557: -4.38936 -0.0909888 0.179661 0.164091 0.192627 0.322054 0.394914 0.449509 -5.90986 -5.49147 -1.08943 -0.621960 -2.05156 -1.45468 -0.686045 -1.43878 0.954065  1.62480  1.62744
+#&gt; iter: 1  value: -194.8561 mgc: 6.742251 ustep: 1 
+#&gt; iter: 2  value: -194.8567 mgc: 0.1175381 ustep: 1 
+#&gt; iter: 3  value: -194.8567 mgc: 0.0001553679 ustep: 1 
+#&gt; iter: 4  mgc: 3.035154e-10 
+#&gt; iter: 1  value: -203.7933 mgc: 3.093358 ustep: 1 
+#&gt; iter: 2  value: -203.7934 mgc: 0.01545417 ustep: 1 
+#&gt; iter: 3  value: -203.7934 mgc: 9.074237e-06 ustep: 1 
+#&gt; iter: 4  mgc: 6.372125e-13 
+#&gt; iter: 1  mgc: 6.372125e-13 
+#&gt; outer mgc:  11.07179 
+#&gt;   6:     226.07532: -4.38931 -0.0513114 0.0280233 0.226264 0.260837 0.336225 0.392738 0.422755 -5.94863 -5.51739 -1.08987 -0.620302 -2.07075 -1.48566 -0.689721 -1.42593 0.967971  1.71348  1.62449
+#&gt; iter: 1  value: -212.4676 mgc: 2.077211 ustep: 1 
+#&gt; iter: 2  value: -212.4676 mgc: 0.01199953 ustep: 1 
+#&gt; iter: 3  value: -212.4676 mgc: 2.196099e-06 ustep: 1 
+#&gt; iter: 4  mgc: 3.241851e-13 
+#&gt; iter: 1  mgc: 3.241851e-13 
+#&gt; outer mgc:  18.37672 
+#&gt;   7:     224.89115: -4.39096 -0.0854088 0.130333 0.167091 0.233804 0.350071 0.389831 0.423101 -6.03091 -5.56508 -1.08820 -0.615844 -2.11160 -1.52453 -0.695653 -1.45077 0.987608  1.84136  1.61696
+#&gt; iter: 1  value: -215.5323 mgc: 2.726135 ustep: 1 
+#&gt; iter: 2  value: -215.5323 mgc: 0.009619398 ustep: 1 
+#&gt; iter: 3  value: -215.5323 mgc: 1.364424e-06 ustep: 1 
+#&gt; iter: 4  mgc: 6.190604e-13 
+#&gt; iter: 1  mgc: 6.190604e-13 
+#&gt; outer mgc:  10.57778 
+#&gt;   8:     223.09023: -4.39247 -0.105264 0.0446968 0.234952 0.214063 0.300171 0.394306 0.438232 -6.17699 -5.62772 -1.07278 -0.608147 -2.16439 -1.52055 -0.705258 -1.43583 0.964998  1.86681  1.59559
+#&gt; iter: 1  value: -214.2925 mgc: 2.358442 ustep: 1 
+#&gt; iter: 2  value: -214.2926 mgc: 0.04596301 ustep: 1 
+#&gt; iter: 3  value: -214.2926 mgc: 2.706756e-05 ustep: 1 
+#&gt; iter: 4  mgc: 9.47864e-12 
+#&gt; iter: 1  mgc: 9.47864e-12 
+#&gt; outer mgc:  15.1839 
+#&gt;   9:     222.83367: -4.39849 -0.0801508 0.0251113 0.133946 0.294864 0.382528 0.376730 0.393633 -6.29254 -5.67693 -1.07094 -0.605476 -2.18325 -1.50414 -0.712781 -1.39932 0.939412  1.88617  1.58722
+#&gt; iter: 1  value: -218.6681 mgc: 1.476955 ustep: 1 
+#&gt; iter: 2  value: -218.6682 mgc: 0.009091426 ustep: 1 
+#&gt; iter: 3  value: -218.6682 mgc: 7.482414e-07 ustep: 1 
+#&gt; iter: 4  mgc: 8.117951e-13 
+#&gt; iter: 1  mgc: 8.117951e-13 
+#&gt; outer mgc:  6.783877 
+#&gt;  10:     220.42721: -4.40954 -0.0772149 0.0653609 0.213688 0.233490 0.347781 0.391291 0.394689 -6.45146 -5.74119 -1.09136 -0.608610 -2.18722 -1.49312 -0.718608 -1.39670 0.890626  1.89282  1.59398
+#&gt; iter: 1  value: -225.7512 mgc: 2.353497 ustep: 1 
+#&gt; iter: 2  value: -225.7516 mgc: 0.1334939 ustep: 1 
+#&gt; iter: 3  value: -225.7516 mgc: 0.0002061898 ustep: 1 
+#&gt; iter: 4  mgc: 4.704486e-10 
+#&gt; iter: 1  value: -222.5824 mgc: 0.9860027 ustep: 1 
+#&gt; iter: 2  value: -222.5824 mgc: 0.02415373 ustep: 1 
+#&gt; iter: 3  value: -222.5824 mgc: 7.054661e-06 ustep: 1 
+#&gt; iter: 4  mgc: 6.261658e-13 
+#&gt; iter: 1  mgc: 6.261658e-13 
+#&gt; outer mgc:  6.904035 
+#&gt;  11:     219.80969: -4.40213 -0.0861673 0.0482933 0.190093 0.259772 0.321943 0.376451 0.424561 -6.50589 -5.76358 -1.09059 -0.609237 -2.19394 -1.51102 -0.717775 -1.43625 0.871073  1.90183  1.59242
+#&gt; iter: 1  value: -221.1911 mgc: 0.883788 ustep: 1 
+#&gt; iter: 2  value: -221.1911 mgc: 0.007216455 ustep: 1 
+#&gt; iter: 3  value: -221.1911 mgc: 6.374138e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.813927e-13 
+#&gt; iter: 1  mgc: 4.813927e-13 
+#&gt; outer mgc:  7.016003 
+#&gt;  12:     219.33476: -4.40026 -0.0934871 0.0530894 0.208226 0.218799 0.351310 0.401271 0.402051 -6.56753 -5.78798 -1.08511 -0.608647 -2.19362 -1.50650 -0.717603 -1.42073 0.848891  1.90804  1.58751
+#&gt; iter: 1  value: -221.8095 mgc: 0.7266614 ustep: 1 
+#&gt; iter: 2  value: -221.8095 mgc: 0.004463347 ustep: 1 
+#&gt; iter: 3  value: -221.8095 mgc: 3.476209e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.320189e-13 
+#&gt; iter: 1  mgc: 5.320189e-13 
+#&gt; outer mgc:  7.138574 
+#&gt;  13:     218.61807: -4.39947 -0.0915863 0.0494650 0.191761 0.260359 0.324986 0.378199 0.422980 -6.63391 -5.81292 -1.08400 -0.608714 -2.19522 -1.50621 -0.717154 -1.42091 0.824468  1.91004  1.58582
+#&gt; iter: 1  value: -223.9353 mgc: 0.7838282 ustep: 1 
+#&gt; iter: 2  value: -223.9353 mgc: 0.002429015 ustep: 1 
+#&gt; iter: 3  value: -223.9353 mgc: 1.185193e-07 ustep: 1 
+#&gt; mgc: 4.409806e-13 
+#&gt; iter: 1  value: -224.9771 mgc: 0.8014888 ustep: 1 
+#&gt; iter: 2  value: -224.9771 mgc: 0.0006342184 ustep: 1 
+#&gt; iter: 3  mgc: 7.272831e-09 
+#&gt; iter: 1  value: -228.702 mgc: 4.419556 ustep: 1 
+#&gt; iter: 2  value: -228.702 mgc: 0.01793816 ustep: 1 
+#&gt; iter: 3  value: -228.702 mgc: 9.3782e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.134781e-13 
+#&gt; iter: 1  value: 1495.189 mgc: 64.47084 ustep: 1 
+#&gt; iter: 2  value: 1490.725 mgc: 5.466638 ustep: 1 
+#&gt; iter: 3  value: 1490.712 mgc: 0.8998543 ustep: 1 
+#&gt; iter: 4  value: 1490.712 mgc: 0.0002933243 ustep: 1 
+#&gt; iter: 5  mgc: 1.214126e-09 
+#&gt; iter: 1  mgc: 5.134781e-13 
+#&gt; outer mgc:  35.40929 
+#&gt;  14:     206.41838: -4.39364 0.0639244 -0.0570210 0.215279 0.287979 0.364732 0.393525 0.432215 -8.16538 -6.34699 -1.10418 -0.619704 -2.13045 -1.46000 -0.699736 -1.48947 0.288555  1.88382  1.59440
+#&gt; iter: 1  value: -215.3965 mgc: 3.387591 ustep: 1 
+#&gt; iter: 2  value: -215.3966 mgc: 0.1110918 ustep: 1 
+#&gt; iter: 3  value: -215.3966 mgc: 3.574387e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.760636e-13 
+#&gt; iter: 1  value: -232.9532 mgc: 2.078439 ustep: 1 
+#&gt; iter: 2  value: -232.9532 mgc: 0.01395541 ustep: 1 
+#&gt; iter: 3  value: -232.9532 mgc: 4.59687e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.967138e-13 
+#&gt; iter: 1  mgc: 4.967138e-13 
+#&gt; outer mgc:  16.08152 
+#&gt;  15:     197.29628: -4.39033 0.0216849 0.0263473 0.229527 0.283371 0.361679 0.408983 0.428441 -8.81881 -6.57669 -1.11389 -0.621774 -2.09403 -1.44980 -0.691186 -1.44308 0.0205231  1.87285  1.59910
+#&gt; iter: 1  value: -239.1384 mgc: 11.87877 ustep: 1 
+#&gt; iter: 2  value: -239.1406 mgc: 0.1179395 ustep: 1 
+#&gt; iter: 3  value: -239.1406 mgc: 0.0002134344 ustep: 1 
+#&gt; iter: 4  mgc: 2.678702e-10 
+#&gt; iter: 1  value: -241.8823 mgc: 3.372785 ustep: 1 
+#&gt; iter: 2  value: -241.8823 mgc: 0.0107899 ustep: 1 
+#&gt; iter: 3  value: -241.8823 mgc: 2.187554e-06 ustep: 1 
+#&gt; iter: 4  mgc: 6.012968e-13 
+#&gt; iter: 1  mgc: 6.012968e-13 
+#&gt; outer mgc:  16.75918 
+#&gt;  16:     194.31306: -4.38590 -0.107189 0.119699 0.198976 0.240290 0.344801 0.399097 0.444239 -8.79946 -6.59708 -1.11611 -0.617996 -2.11375 -1.49528 -0.693427 -1.43721 -0.104016  1.85131  1.60184
+#&gt; iter: 1  value: -245.6299 mgc: 3.18202 ustep: 1 
+#&gt; iter: 2  value: -245.63 mgc: 0.02188136 ustep: 1 
+#&gt; iter: 3  value: -245.63 mgc: 1.342922e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.877609e-12 
+#&gt; iter: 1  mgc: 1.877609e-12 
+#&gt; outer mgc:  17.78352 
+#&gt;  17:     192.16557: -4.38701 -0.0796076 -0.0310857 0.219621 0.267535 0.342708 0.402945 0.424455 -8.79077 -6.62504 -1.10422 -0.614444 -2.13669 -1.51249 -0.699536 -1.41970 -0.247025  1.83346  1.59673
+#&gt; iter: 1  value: -249.8403 mgc: 1.988172 ustep: 1 
+#&gt; iter: 2  value: -249.8403 mgc: 0.007819243 ustep: 1 
+#&gt; iter: 3  value: -249.8403 mgc: 2.345797e-06 ustep: 1 
+#&gt; iter: 4  mgc: 6.936673e-13 
+#&gt; iter: 1  mgc: 6.936673e-13 
+#&gt; outer mgc:  13.15766 
+#&gt;  18:     189.54333: -4.39328 -0.124682 0.0748749 0.173317 0.232391 0.340226 0.388305 0.431443 -8.87350 -6.68167 -1.09932 -0.612123 -2.14849 -1.52347 -0.703045 -1.41652 -0.390580  1.82192  1.59596
+#&gt; iter: 1  value: -250.7369 mgc: 2.652351 ustep: 1 
+#&gt; iter: 2  value: -250.737 mgc: 0.02845141 ustep: 1 
+#&gt; iter: 3  value: -250.737 mgc: 8.442378e-06 ustep: 1 
+#&gt; iter: 4  mgc: 1.103562e-12 
+#&gt; iter: 1  value: -252.9638 mgc: 2.288227 ustep: 1 
+#&gt; iter: 2  value: -252.9638 mgc: 0.009254281 ustep: 1 
+#&gt; iter: 3  value: -252.9638 mgc: 1.904837e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.239942e-13 
+#&gt; iter: 1  mgc: 4.239942e-13 
+#&gt; outer mgc:  16.56001 
+#&gt;  19:     187.68901: -4.40243 -0.117259 -0.0383788 0.224339 0.252019 0.320835 0.395940 0.407263 -8.83335 -6.72431 -1.08842 -0.608814 -2.16980 -1.52624 -0.710840 -1.41605 -0.551714  1.80687  1.59305
+#&gt; iter: 1  value: -247.9762 mgc: 3.550051 ustep: 1 
+#&gt; iter: 2  value: -247.9764 mgc: 0.0514762 ustep: 1 
+#&gt; iter: 3  value: -247.9764 mgc: 3.994582e-05 ustep: 1 
+#&gt; iter: 4  mgc: 2.465428e-11 
+#&gt; iter: 1  value: -253.9912 mgc: 2.021736 ustep: 1 
+#&gt; iter: 2  value: -253.9912 mgc: 0.006660775 ustep: 1 
+#&gt; iter: 3  value: -253.9912 mgc: 2.239321e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.862777e-13 
+#&gt; iter: 1  mgc: 4.862777e-13 
+#&gt; outer mgc:  11.65182 
+#&gt;  20:     185.77229: -4.41658 -0.116036 0.0603059 0.166777 0.226768 0.325724 0.375600 0.404173 -8.71136 -6.73812 -1.07749 -0.605863 -2.18670 -1.51672 -0.719649 -1.39295 -0.628823  1.80278  1.59059
+#&gt; iter: 1  value: -261.5602 mgc: 1.673433 ustep: 1 
+#&gt; iter: 2  value: -261.5602 mgc: 0.004033312 ustep: 1 
+#&gt; iter: 3  value: -261.5602 mgc: 4.602821e-07 ustep: 1 
+#&gt; iter: 4  mgc: 7.1676e-13 
+#&gt; iter: 1  mgc: 7.1676e-13 
+#&gt; outer mgc:  13.12779 
+#&gt;  21:     184.50027: -4.41166 -0.127845 -0.0167169 0.227366 0.242929 0.320797 0.379266 0.400474 -8.72642 -6.77448 -1.08380 -0.605879 -2.20132 -1.53861 -0.722356 -1.44041 -0.776058  1.79054  1.59733
+#&gt; iter: 1  value: -261.307 mgc: 3.610063 ustep: 1 
+#&gt; iter: 2  value: -261.307 mgc: 0.04104145 ustep: 1 
+#&gt; iter: 3  value: -261.307 mgc: 7.492428e-07 ustep: 1 
+#&gt; iter: 4  mgc: 6.086243e-13 
+#&gt; iter: 1  value: -261.2837 mgc: 1.592667 ustep: 1 
+#&gt; iter: 2  value: -261.2837 mgc: 0.004997503 ustep: 1 
+#&gt; iter: 3  value: -261.2837 mgc: 3.830965e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.693224e-13 
+#&gt; iter: 1  mgc: 5.693224e-13 
+#&gt; outer mgc:  8.389024 
+#&gt;  22:     183.09725: -4.41059 -0.136399 0.0599043 0.158602 0.231710 0.332452 0.373297 0.407160 -8.80193 -6.82396 -1.08159 -0.604870 -2.20001 -1.53113 -0.722650 -1.41315 -0.877778  1.78456  1.59789
+#&gt; iter: 1  value: -262.3899 mgc: 1.54369 ustep: 1 
+#&gt; iter: 2  value: -262.3899 mgc: 0.003776355 ustep: 1 
+#&gt; iter: 3  value: -262.3899 mgc: 2.640098e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.280221e-13 
+#&gt; iter: 1  mgc: 5.280221e-13 
+#&gt; outer mgc:  10.11864 
+#&gt;  23:     182.34670: -4.41167 -0.133558 -0.0205141 0.213339 0.226252 0.309185 0.387019 0.407279 -8.82505 -6.89654 -1.07893 -0.603792 -2.20512 -1.53001 -0.724191 -1.40443 -0.996649  1.77617  1.60081
+#&gt; iter: 1  value: -261.4575 mgc: 1.248896 ustep: 1 
+#&gt; iter: 2  value: -261.4575 mgc: 0.005606882 ustep: 1 
+#&gt; iter: 3  value: -261.4575 mgc: 4.586927e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.67324e-13 
+#&gt; iter: 1  mgc: 5.67324e-13 
+#&gt; outer mgc:  9.343032 
+#&gt;  24:     181.85778: -4.41762 -0.152435 0.0328986 0.161187 0.229717 0.322085 0.382976 0.398997 -8.67656 -6.91056 -1.07196 -0.602160 -2.20980 -1.52268 -0.726980 -1.37802 -1.02862  1.77077  1.60141
+#&gt; iter: 1  value: -268.1362 mgc: 1.278319 ustep: 1 
+#&gt; iter: 2  value: -268.1362 mgc: 0.006079555 ustep: 1 
+#&gt; iter: 3  value: -268.1362 mgc: 3.874555e-07 ustep: 1 
+#&gt; iter: 4  mgc: 6.039613e-13 
+#&gt; iter: 1  mgc: 6.039613e-13 
+#&gt; outer mgc:  7.064203 
+#&gt;  25:     181.19250: -4.41663 -0.129075 0.0511986 0.198543 0.236439 0.339809 0.355231 0.406818 -8.79596 -6.96817 -1.07588 -0.603115 -2.21850 -1.54947 -0.728707 -1.43191 -1.10246  1.76076  1.60826
+#&gt; iter: 1  value: -265.0829 mgc: 1.820292 ustep: 1 
+#&gt; iter: 2  value: -265.0829 mgc: 0.009948273 ustep: 1 
+#&gt; iter: 3  value: -265.0829 mgc: 2.471838e-06 ustep: 1 
+#&gt; iter: 4  mgc: 7.043255e-13 
+#&gt; iter: 1  value: -265.8387 mgc: 0.8650911 ustep: 1 
+#&gt; iter: 2  value: -265.8387 mgc: 0.002997378 ustep: 1 
+#&gt; iter: 3  value: -265.8387 mgc: 9.206987e-08 ustep: 1 
+#&gt; mgc: 5.004885e-13 
+#&gt; iter: 1  mgc: 5.004885e-13 
+#&gt; outer mgc:  4.162641 
+#&gt;  26:     180.63316: -4.41375 -0.142253 0.0224996 0.181946 0.236235 0.318266 0.389445 0.397512 -8.75494 -6.98573 -1.07128 -0.601704 -2.21524 -1.53719 -0.728318 -1.40198 -1.12823  1.75673  1.60663
+#&gt; iter: 1  value: -266.7913 mgc: 0.700356 ustep: 1 
+#&gt; iter: 2  value: -266.7913 mgc: 0.003634679 ustep: 1 
+#&gt; iter: 3  value: -266.7913 mgc: 2.251928e-07 ustep: 1 
+#&gt; iter: 4  mgc: 4.152234e-13 
+#&gt; iter: 1  mgc: 4.152234e-13 
+#&gt; outer mgc:  7.069995 
+#&gt;  27:     180.46840: -4.41475 -0.149298 0.0377462 0.181578 0.221222 0.338553 0.350368 0.417532 -8.75538 -7.02217 -1.06966 -0.600752 -2.21955 -1.53890 -0.729029 -1.40257 -1.17813  1.74894  1.60878
+#&gt; iter: 1  value: -268.3368 mgc: 0.6584926 ustep: 1 
+#&gt; iter: 2  value: -268.3368 mgc: 0.003915795 ustep: 1 
+#&gt; iter: 3  value: -268.3368 mgc: 2.601787e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.939693e-13 
+#&gt; iter: 1  mgc: 5.939693e-13 
+#&gt; outer mgc:  3.09201 
+#&gt;  28:     180.09853: -4.41516 -0.148143 0.0393973 0.178369 0.238242 0.320334 0.387506 0.396509 -8.76852 -7.07429 -1.06829 -0.600185 -2.22137 -1.54573 -0.729736 -1.40768 -1.21355  1.74080  1.61200
+#&gt; iter: 1  value: -267.0743 mgc: 0.7944575 ustep: 1 
+#&gt; iter: 2  value: -267.0743 mgc: 0.002267263 ustep: 1 
+#&gt; iter: 3  value: -267.0743 mgc: 1.175503e-07 ustep: 1 
+#&gt; mgc: 6.184046e-13 
+#&gt; iter: 1  mgc: 6.184046e-13 
+#&gt; outer mgc:  5.755294 
+#&gt;  29:     179.98131: -4.41450 -0.141186 0.00481601 0.198321 0.223735 0.329467 0.363697 0.412252 -8.74707 -7.12553 -1.06375 -0.599046 -2.22127 -1.53884 -0.729858 -1.39151 -1.23628  1.73228  1.61283
+#&gt; iter: 1  value: -267.8784 mgc: 0.655354 ustep: 1 
+#&gt; iter: 2  value: -267.8784 mgc: 0.0007750352 ustep: 1 
+#&gt; iter: 3  value: -267.8784 mgc: 1.16565e-08 ustep: 1 
+#&gt; mgc: 5.582201e-13 
+#&gt; iter: 1  mgc: 5.582201e-13 
+#&gt; outer mgc:  3.256592 
+#&gt;  30:     179.63231: -4.41429 -0.156114 0.0358969 0.167692 0.230135 0.330768 0.371524 0.407251 -8.76078 -7.18665 -1.06306 -0.598446 -2.22046 -1.54180 -0.729988 -1.39326 -1.25804  1.72321  1.61566
+#&gt; iter: 1  value: -269.4189 mgc: 0.712954 ustep: 1 
+#&gt; iter: 2  value: -269.4189 mgc: 0.0009869585 ustep: 1 
+#&gt; iter: 3  value: -269.4189 mgc: 2.818962e-08 ustep: 1 
+#&gt; mgc: 5.311307e-13 
+#&gt; iter: 1  mgc: 5.311307e-13 
+#&gt; outer mgc:  6.181399 
+#&gt;  31:     179.53515: -4.41571 -0.144673 0.0132971 0.206797 0.231799 0.311229 0.388500 0.398031 -8.76467 -7.24268 -1.06200 -0.598081 -2.22405 -1.54851 -0.731113 -1.40405 -1.27693  1.71165  1.61795
+#&gt; iter: 1  value: -269.4946 mgc: 0.4538426 ustep: 1 
+#&gt; iter: 2  value: -269.4946 mgc: 0.0004820625 ustep: 1 
+#&gt; iter: 3  mgc: 5.275158e-09 
+#&gt; iter: 1  mgc: 5.275158e-09 
+#&gt; outer mgc:  3.210779 
+#&gt;  32:     179.15308: -4.41592 -0.151802 0.0255398 0.182509 0.229973 0.329703 0.367669 0.405697 -8.76055 -7.31139 -1.06051 -0.597428 -2.22302 -1.54821 -0.731118 -1.39758 -1.29177  1.70056  1.61942
+#&gt; iter: 1  value: -268.3315 mgc: 0.7484155 ustep: 1 
+#&gt; iter: 2  value: -268.3315 mgc: 0.002258009 ustep: 1 
+#&gt; iter: 3  value: -268.3315 mgc: 7.500519e-08 ustep: 1 
+#&gt; mgc: 7.878143e-13 
+#&gt; iter: 1  value: -269.0239 mgc: 0.3656055 ustep: 1 
+#&gt; iter: 2  value: -269.0239 mgc: 0.0005389534 ustep: 1 
+#&gt; iter: 3  mgc: 4.251756e-09 
+#&gt; iter: 1  mgc: 4.251756e-09 
+#&gt; outer mgc:  3.232986 
+#&gt;  33:     179.06530: -4.41545 -0.151080 0.0276868 0.179956 0.232379 0.316005 0.387733 0.398162 -8.76125 -7.34021 -1.05871 -0.597035 -2.22243 -1.54574 -0.731234 -1.39372 -1.29723  1.69444  1.61919
+#&gt; iter: 1  value: -269.3459 mgc: 0.3295587 ustep: 1 
+#&gt; iter: 2  value: -269.3459 mgc: 0.0007183879 ustep: 1 
+#&gt; iter: 3  mgc: 7.724429e-09 
+#&gt; iter: 1  mgc: 7.724429e-09 
+#&gt; outer mgc:  3.252078 
+#&gt;  34:     178.94958: -4.41553 -0.152478 0.0249242 0.182555 0.228656 0.328718 0.368250 0.407050 -8.76135 -7.36987 -1.05866 -0.596848 -2.22291 -1.54601 -0.731234 -1.39546 -1.30181  1.68875  1.61998
+#&gt; iter: 1  value: -269.9153 mgc: 0.3352168 ustep: 1 
+#&gt; iter: 2  value: -269.9153 mgc: 0.0007876892 ustep: 1 
+#&gt; iter: 3  value: -269.9153 mgc: 1.020935e-08 ustep: 1 
+#&gt; mgc: 7.274181e-13 
+#&gt; iter: 1  mgc: 7.274181e-13 
+#&gt; outer mgc:  3.293647 
+#&gt;  35:     178.71096: -4.41541 -0.156446 0.0249205 0.182489 0.233048 0.317335 0.387616 0.397667 -8.76348 -7.44360 -1.05868 -0.596544 -2.22258 -1.54788 -0.731272 -1.39673 -1.31180  1.67552  1.62158
+#&gt; iter: 1  value: -270.4098 mgc: 0.3978603 ustep: 1 
+#&gt; iter: 2  value: -270.4098 mgc: 0.0007995442 ustep: 1 
+#&gt; iter: 3  value: -270.4098 mgc: 1.277749e-08 ustep: 1 
+#&gt; mgc: 5.400125e-13 
+#&gt; iter: 1  value: -272.4798 mgc: 0.9337702 ustep: 1 
+#&gt; iter: 2  value: -272.4798 mgc: 0.002447814 ustep: 1 
+#&gt; iter: 3  value: -272.4798 mgc: 1.232359e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.260514e-13 
+#&gt; iter: 1  value: -275.4115 mgc: 2.058109 ustep: 1 
+#&gt; iter: 2  value: -275.4115 mgc: 0.009960457 ustep: 1 
+#&gt; iter: 3  value: -275.4115 mgc: 1.876134e-06 ustep: 1 
+#&gt; iter: 4  mgc: 7.887024e-13 
+#&gt; iter: 1  mgc: 7.887024e-13 
+#&gt; outer mgc:  20.29652 
+#&gt;  36:     175.88387: -4.42653 -0.0720784 -0.0266570 0.188664 0.124878 0.205747 0.382759 0.413823 -8.78384 -9.06353 -1.04070 -0.592277 -2.23824 -1.59342 -0.734860 -1.34061 -1.48065  1.38386  1.62094
+#&gt; iter: 1  value: -280.8328 mgc: 2.342634 ustep: 1 
+#&gt; iter: 2  value: -280.8329 mgc: 0.04208466 ustep: 1 
+#&gt; iter: 3  value: -280.8329 mgc: 2.698209e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.026645e-11 
+#&gt; iter: 1  value: -220.4302 mgc: 16.63917 ustep: 1 
+#&gt; iter: 2  value: -220.4314 mgc: 0.1288545 ustep: 1 
+#&gt; iter: 3  value: -220.4314 mgc: 0.0003182413 ustep: 1 
+#&gt; iter: 4  mgc: 1.775603e-09 
+#&gt; iter: 1  mgc: 1.026645e-11 
+#&gt; outer mgc:  13.13427 
+#&gt;  37:     166.55423: -4.45078 -0.139642 -0.0277669 0.218483 0.164755 0.238273 0.348960 0.361518 -8.73159 -10.6946 -1.01577 -0.587884 -2.22694 -1.59831 -0.740370 -1.30816 -1.58759  1.08488  1.61487
+#&gt; iter: 1  value: -248.0111 mgc: 15.26071 ustep: 1 
+#&gt; iter: 2  value: -248.022 mgc: 0.3110638 ustep: 1 
+#&gt; iter: 3  value: -248.022 mgc: 0.001518241 ustep: 1 
+#&gt; iter: 4  value: -248.022 mgc: 2.423157e-08 ustep: 1 
+#&gt; mgc: 7.264189e-13 
+#&gt; iter: 1  value: -248.7717 mgc: 12.69441 ustep: 1 
+#&gt; iter: 2  value: -248.7789 mgc: 0.2858459 ustep: 1 
+#&gt; iter: 3  value: -248.7789 mgc: 0.001257476 ustep: 1 
+#&gt; iter: 4  value: -248.7789 mgc: 1.603296e-08 ustep: 1 
+#&gt; mgc: 5.186962e-13 
+#&gt; iter: 1  value: -284.298 mgc: 3.09942 ustep: 1 
+#&gt; iter: 2  value: -284.298 mgc: 0.008968263 ustep: 1 
+#&gt; iter: 3  value: -284.298 mgc: 1.236315e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.480061e-13 
+#&gt; iter: 1  mgc: 5.480061e-13 
+#&gt; outer mgc:  10.40245 
+#&gt;  38:     164.10843: -4.44389 -0.155241 0.0371918 0.152476 0.220008 0.308317 0.337660 0.357727 -8.81003 -10.7188 -1.02456 -0.588696 -2.21558 -1.59358 -0.739362 -1.36335 -1.54476  1.02790  1.62079
+#&gt; iter: 1  value: -284.1236 mgc: 2.556855 ustep: 1 
+#&gt; iter: 2  value: -284.1236 mgc: 0.007568464 ustep: 1 
+#&gt; iter: 3  value: -284.1236 mgc: 8.157496e-07 ustep: 1 
+#&gt; iter: 4  mgc: 5.517808e-13 
+#&gt; iter: 1  mgc: 5.517808e-13 
+#&gt; outer mgc:  16.5595 
+#&gt;  39:     163.16877: -4.43749 -0.190070 -0.0181812 0.186663 0.206757 0.295345 0.359241 0.373008 -8.71449 -10.7946 -1.03080 -0.588631 -2.20709 -1.57485 -0.737608 -1.38473 -1.49410 0.943114  1.62500
+#&gt; iter: 1  value: -285.568 mgc: 1.337796 ustep: 1 
+#&gt; iter: 2  value: -285.568 mgc: 0.002143322 ustep: 1 
+#&gt; iter: 3  value: -285.568 mgc: 5.017961e-08 ustep: 1 
+#&gt; mgc: 4.907186e-13 
+#&gt; iter: 1  mgc: 4.907186e-13 
+#&gt; outer mgc:  8.024057 
+#&gt;  40:     161.13768: -4.43524 -0.164953 0.0268802 0.171882 0.220730 0.309514 0.353579 0.375172 -8.78734 -10.9352 -1.03247 -0.588816 -2.20410 -1.57021 -0.736981 -1.38375 -1.47614 0.885230  1.62607
+#&gt; iter: 1  value: -288.7034 mgc: 2.273121 ustep: 1 
+#&gt; iter: 2  value: -288.7034 mgc: 0.006897555 ustep: 1 
+#&gt; iter: 3  value: -288.7034 mgc: 2.099556e-07 ustep: 1 
+#&gt; iter: 4  mgc: 6.277201e-13 
+#&gt; iter: 1  value: -291.2614 mgc: 0.5816527 ustep: 1 
+#&gt; iter: 2  value: -291.2614 mgc: 0.0003713689 ustep: 1 
+#&gt; iter: 3  mgc: 2.520451e-09 
+#&gt; iter: 1  value: -288.8066 mgc: 3.567518 ustep: 1 
+#&gt; iter: 2  value: -288.8066 mgc: 0.01403304 ustep: 1 
+#&gt; iter: 3  value: -288.8066 mgc: 2.144078e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.908329e-13 
+#&gt; iter: 1  mgc: 5.908329e-13 
+#&gt; outer mgc:  16.81753 
+#&gt;  41:     154.63426: -4.43963 -0.241863 0.0281961 0.202165 0.268920 0.357639 0.341739 0.355932 -8.73998 -13.8291 -1.02060 -0.581514 -2.18144 -1.55542 -0.740447 -1.40246 -1.54212 0.179501  1.63097
+#&gt; iter: 1  value: -304.169 mgc: 25.17848 ustep: 1 
+#&gt; iter: 2  value: -305.1161 mgc: 3.559258 ustep: 1 
+#&gt; iter: 3  value: -305.1213 mgc: 0.3352276 ustep: 1 
+#&gt; iter: 4  value: -305.1213 mgc: 0.002814536 ustep: 1 
+#&gt; iter: 5  value: -305.1213 mgc: 1.691273e-07 ustep: 1 
+#&gt; iter: 6  mgc: 6.838974e-13 
+#&gt; iter: 1  value: -283.7192 mgc: 4.799098 ustep: 1 
+#&gt; iter: 2  value: -283.7211 mgc: 0.1279529 ustep: 1 
+#&gt; iter: 3  value: -283.7211 mgc: 0.0003024895 ustep: 1 
+#&gt; iter: 4  mgc: 1.539939e-09 
+#&gt; iter: 1  value: -291.838 mgc: 1.940291 ustep: 1 
+#&gt; iter: 2  value: -291.838 mgc: 0.01612446 ustep: 1 
+#&gt; iter: 3  value: -291.838 mgc: 4.532886e-06 ustep: 1 
+#&gt; iter: 4  mgc: 5.722089e-13 
+#&gt; iter: 1  mgc: 5.722089e-13 
+#&gt; outer mgc:  12.59965 
+#&gt;  42:     152.08502: -4.43131 -0.168873 0.0151021 0.172267 0.215408 0.300490 0.369813 0.387089 -8.83930 -13.7463 -1.02636 -0.583223 -2.18654 -1.55930 -0.738273 -1.37658 -1.50635 0.183355  1.63314
+#&gt; iter: 1  value: -295.63 mgc: 2.173189 ustep: 1 
+#&gt; iter: 2  value: -295.63 mgc: 0.005711761 ustep: 1 
+#&gt; iter: 3  value: -295.63 mgc: 1.727655e-07 ustep: 1 
+#&gt; mgc: 5.537792e-13 
+#&gt; iter: 1  mgc: 5.537792e-13 
+#&gt; outer mgc:  18.47773 
+#&gt;  43:     150.88777: -4.43452 -0.224903 -0.0249600 0.147248 0.212264 0.319144 0.350337 0.385404 -8.73616 -13.6282 -1.03353 -0.585464 -2.19268 -1.56971 -0.738111 -1.38310 -1.46437 0.162639  1.63716
+#&gt; iter: 1  value: -299.766 mgc: 1.318482 ustep: 1 
+#&gt; iter: 2  value: -299.766 mgc: 0.003097964 ustep: 1 
+#&gt; iter: 3  value: -299.766 mgc: 7.897476e-08 ustep: 1 
+#&gt; mgc: 5.089262e-13 
+#&gt; iter: 1  mgc: 5.089262e-13 
+#&gt; outer mgc:  11.42965 
+#&gt;  44:     148.35027: -4.43173 -0.167779 0.0135994 0.173758 0.205008 0.288175 0.366297 0.385691 -8.80564 -13.5034 -1.03823 -0.587440 -2.20666 -1.56818 -0.737768 -1.38375 -1.41343 0.106227  1.63700
+#&gt; iter: 1  value: -300.2796 mgc: 0.9163747 ustep: 1 
+#&gt; iter: 2  value: -300.2796 mgc: 0.002073133 ustep: 1 
+#&gt; iter: 3  value: -300.2796 mgc: 5.931457e-08 ustep: 1 
+#&gt; mgc: 5.213607e-13 
+#&gt; iter: 1  mgc: 5.213607e-13 
+#&gt; outer mgc:  10.82269 
+#&gt;  45:     146.63148: -4.43486 -0.212316 -0.0174453 0.140033 0.227065 0.340227 0.342572 0.375262 -8.76784 -13.3670 -1.03569 -0.590383 -2.20679 -1.56028 -0.737733 -1.38465 -1.38993 0.0392539  1.63352
+#&gt; iter: 1  value: -304.9987 mgc: 2.601952 ustep: 1 
+#&gt; iter: 2  value: -304.9987 mgc: 0.01228281 ustep: 1 
+#&gt; iter: 3  value: -304.9987 mgc: 2.405495e-06 ustep: 1 
+#&gt; iter: 4  mgc: 8.166801e-13 
+#&gt; iter: 1  value: -307.1261 mgc: 3.66418 ustep: 1 
+#&gt; iter: 2  value: -307.1262 mgc: 0.03819483 ustep: 1 
+#&gt; iter: 3  value: -307.1262 mgc: 4.621547e-06 ustep: 1 
+#&gt; iter: 4  mgc: 6.545875e-13 
+#&gt; iter: 1  mgc: 6.545875e-13 
+#&gt; outer mgc:  21.23247 
+#&gt;  46:     140.77936: -4.42615 -0.121407 0.00480684 0.240721 0.190327 0.253905 0.387415 0.429226 -8.62328 -12.7643 -1.03731 -0.602245 -2.25464 -1.53185 -0.740156 -1.38669 -1.21331 -0.327242  1.61182
+#&gt; iter: 1  value: -337.985 mgc: 10.61458 ustep: 1 
+#&gt; iter: 2  value: -337.9894 mgc: 0.1662766 ustep: 1 
+#&gt; iter: 3  value: -337.9894 mgc: 0.0008025404 ustep: 1 
+#&gt; iter: 4  value: -337.9894 mgc: 1.183416e-08 ustep: 1 
+#&gt; mgc: 5.208056e-13 
+#&gt; iter: 1  value: -317.2311 mgc: 2.938271 ustep: 1 
+#&gt; iter: 2  value: -317.2311 mgc: 0.01390821 ustep: 1 
+#&gt; iter: 3  value: -317.2311 mgc: 3.715471e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.987122e-13 
+#&gt; iter: 1  mgc: 4.987122e-13 
+#&gt; outer mgc:  9.700462 
+#&gt;  47:     136.91522: -4.39841 -0.131253 0.0280207 0.151171 0.234891 0.344842 0.388567 0.413265 -8.76121 -12.6996 -1.07476 -0.613836 -2.24641 -1.57165 -0.731793 -1.36764 -1.16999 -0.446518  1.62256
+#&gt; iter: 1  value: -309.2798 mgc: 2.469529 ustep: 1 
+#&gt; iter: 2  value: -309.2798 mgc: 0.01836065 ustep: 1 
+#&gt; iter: 3  value: -309.2798 mgc: 4.283244e-06 ustep: 1 
+#&gt; iter: 4  mgc: 4.767298e-13 
+#&gt; iter: 1  mgc: 4.767298e-13 
+#&gt; outer mgc:  20.47781 
+#&gt;  48:     136.42167: -4.42105 -0.210380 -0.00648500 0.253697 0.215510 0.286344 0.371378 0.420101 -8.76174 -12.6570 -1.03762 -0.624607 -2.23851 -1.52877 -0.728865 -1.41993 -1.21595 -0.618042  1.59285
+#&gt; iter: 1  value: -312.469 mgc: 3.504985 ustep: 1 
+#&gt; iter: 2  value: -312.4692 mgc: 0.04997497 ustep: 1 
+#&gt; iter: 3  value: -312.4692 mgc: 3.361425e-05 ustep: 1 
+#&gt; iter: 4  mgc: 1.293188e-11 
+#&gt; iter: 1  mgc: 1.293188e-11 
+#&gt; outer mgc:  5.544254 
+#&gt;  49:     134.40551: -4.44774 -0.103853 0.00855051 0.169267 0.225493 0.294064 0.367695 0.371995 -8.70134 -12.6342 -1.05093 -0.643782 -2.22550 -1.56265 -0.729487 -1.38327 -1.17125 -0.795994  1.58613
+#&gt; iter: 1  value: -312.5947 mgc: 4.118634 ustep: 1 
+#&gt; iter: 2  value: -312.5947 mgc: 0.0173783 ustep: 1 
+#&gt; iter: 3  value: -312.5947 mgc: 6.744634e-06 ustep: 1 
+#&gt; iter: 4  mgc: 8.437695e-13 
+#&gt; iter: 1  value: -313.3217 mgc: 1.136723 ustep: 1 
+#&gt; iter: 2  value: -313.3217 mgc: 0.003061846 ustep: 1 
+#&gt; iter: 3  value: -313.3217 mgc: 1.138783e-07 ustep: 1 
+#&gt; mgc: 6.596945e-13 
+#&gt; iter: 1  mgc: 6.596945e-13 
+#&gt; outer mgc:  3.633355 
+#&gt;  50:     133.97443: -4.43763 -0.133048 0.0365904 0.178481 0.217534 0.317546 0.352537 0.381848 -8.73470 -12.6305 -1.05305 -0.642639 -2.22475 -1.55689 -0.728036 -1.40270 -1.17824 -0.822462  1.58751
+#&gt; iter: 1  value: -313.2255 mgc: 0.6454691 ustep: 1 
+#&gt; iter: 2  value: -313.2255 mgc: 0.002028338 ustep: 1 
+#&gt; iter: 3  value: -313.2255 mgc: 1.192389e-07 ustep: 1 
+#&gt; mgc: 5.049294e-13 
+#&gt; iter: 1  mgc: 5.049294e-13 
+#&gt; outer mgc:  4.114329 
+#&gt;  51:     133.84826: -4.41678 -0.140521 0.00671852 0.177149 0.232670 0.305886 0.380495 0.387034 -8.74074 -12.6302 -1.05725 -0.639776 -2.22677 -1.54302 -0.725374 -1.40443 -1.18701 -0.868889  1.58956
+#&gt; iter: 1  value: -317.4345 mgc: 0.949614 ustep: 1 
+#&gt; iter: 2  value: -317.4345 mgc: 0.01023161 ustep: 1 
+#&gt; iter: 3  value: -317.4345 mgc: 2.104903e-06 ustep: 1 
+#&gt; iter: 4  mgc: 6.883383e-13 
+#&gt; iter: 1  mgc: 6.883383e-13 
+#&gt; outer mgc:  2.269559 
+#&gt;  52:     133.70728: -4.41018 -0.137433 0.0337502 0.194174 0.230556 0.326867 0.376182 0.413242 -8.72837 -12.6314 -1.06728 -0.635648 -2.24671 -1.55110 -0.721862 -1.39501 -1.18679 -0.913296  1.59525
+#&gt; iter: 1  value: -310.3173 mgc: 1.117824 ustep: 1 
+#&gt; iter: 2  value: -310.3173 mgc: 0.005670055 ustep: 1 
+#&gt; iter: 3  value: -310.3173 mgc: 7.261293e-08 ustep: 1 
+#&gt; mgc: 5.031531e-13 
+#&gt; iter: 1  value: -316.1368 mgc: 0.3523935 ustep: 1 
+#&gt; iter: 2  value: -316.1368 mgc: 0.0007434262 ustep: 1 
+#&gt; iter: 3  mgc: 8.091268e-09 
+#&gt; iter: 1  mgc: 8.091268e-09 
+#&gt; outer mgc:  1.447839 
+#&gt;  53:     133.66050: -4.41036 -0.131701 0.0304113 0.177943 0.237404 0.327283 0.384806 0.404952 -8.73319 -12.6287 -1.06068 -0.636560 -2.24564 -1.54482 -0.722580 -1.40261 -1.19205 -0.924532  1.59090
+#&gt; iter: 1  value: -314.4103 mgc: 0.3019909 ustep: 1 
+#&gt; iter: 2  value: -314.4103 mgc: 0.0009840019 ustep: 1 
+#&gt; iter: 3  value: -314.4103 mgc: 1.648682e-08 ustep: 1 
+#&gt; mgc: 5.17808e-13 
+#&gt; iter: 1  mgc: 5.17808e-13 
+#&gt; outer mgc:  1.573129 
+#&gt;  54:     133.63882: -4.41469 -0.134145 0.0298417 0.188530 0.227357 0.324064 0.370686 0.404057 -8.73241 -12.6301 -1.05236 -0.640056 -2.24354 -1.54024 -0.724199 -1.40696 -1.19498 -0.939142  1.58437
+#&gt; iter: 1  value: -315.6423 mgc: 0.4001086 ustep: 1 
+#&gt; iter: 2  value: -315.6423 mgc: 0.003986104 ustep: 1 
+#&gt; iter: 3  value: -315.6423 mgc: 2.471371e-07 ustep: 1 
+#&gt; iter: 4  mgc: 6.51923e-13 
+#&gt; iter: 1  mgc: 6.51923e-13 
+#&gt; outer mgc:  0.9415288 
+#&gt;  55:     133.62191: -4.42144 -0.136899 0.0258721 0.181331 0.229531 0.314880 0.370852 0.389958 -8.73215 -12.6276 -1.06085 -0.644486 -2.23969 -1.54779 -0.725343 -1.40494 -1.19650 -0.954932  1.58739
+#&gt; iter: 1  value: -312.2477 mgc: 0.2306791 ustep: 1 
+#&gt; iter: 2  value: -312.2477 mgc: 0.002206415 ustep: 1 
+#&gt; iter: 3  value: -312.2477 mgc: 7.738887e-08 ustep: 1 
+#&gt; mgc: 5.042633e-13 
+#&gt; iter: 1  value: -314.8963 mgc: 0.1295637 ustep: 1 
+#&gt; iter: 2  value: -314.8963 mgc: 0.0002700554 ustep: 1 
+#&gt; iter: 3  mgc: 9.976997e-10 
+#&gt; iter: 1  mgc: 9.976997e-10 
+#&gt; outer mgc:  0.6050467 
+#&gt;  56:     133.61280: -4.42020 -0.135569 0.0281325 0.178686 0.226156 0.320593 0.367710 0.393708 -8.73413 -12.6287 -1.05808 -0.643946 -2.23901 -1.54428 -0.724951 -1.40489 -1.19779 -0.958837  1.58565
+#&gt; iter: 1  value: -314.3519 mgc: 0.1218682 ustep: 1 
+#&gt; iter: 2  value: -314.3519 mgc: 0.0001784218 ustep: 1 
+#&gt; iter: 3  mgc: 6.138698e-10 
+#&gt; iter: 1  mgc: 6.138698e-10 
+#&gt; outer mgc:  0.6317282 
+#&gt;  57:     133.60938: -4.41865 -0.135273 0.0268649 0.180812 0.230123 0.318122 0.374194 0.395384 -8.73298 -12.6292 -1.05480 -0.642649 -2.23843 -1.54380 -0.723925 -1.40548 -1.19900 -0.964457  1.58346
+#&gt; iter: 1  value: -314.7871 mgc: 0.1123841 ustep: 1 
+#&gt; iter: 2  value: -314.7871 mgc: 0.0003644717 ustep: 1 
+#&gt; iter: 3  mgc: 2.43053e-09 
+#&gt; iter: 1  mgc: 2.43053e-09 
+#&gt; outer mgc:  0.4046145 
+#&gt;  58:     133.60658: -4.41428 -0.132843 0.0285481 0.183434 0.229378 0.322432 0.372895 0.399940 -8.73114 -12.6266 -1.05621 -0.640461 -2.23867 -1.54581 -0.722503 -1.40677 -1.20071 -0.969425  1.58402
+#&gt; iter: 1  value: -314.5065 mgc: 0.2364116 ustep: 1 
+#&gt; iter: 2  value: -314.5065 mgc: 8.675024e-05 ustep: 1 
+#&gt; iter: 3  mgc: 7.627038e-11 
+#&gt; iter: 1  value: -314.5377 mgc: 0.06549543 ustep: 1 
+#&gt; iter: 2  value: -314.5377 mgc: 3.609576e-05 ustep: 1 
+#&gt; iter: 3  mgc: 1.694822e-11 
+#&gt; iter: 1  mgc: 1.694822e-11 
+#&gt; outer mgc:  0.3082547 
+#&gt;  59:     133.60523: -4.41486 -0.133712 0.0300592 0.180555 0.230970 0.321886 0.374859 0.398650 -8.73175 -12.6270 -1.05614 -0.640639 -2.23840 -1.54389 -0.722596 -1.40514 -1.20085 -0.971621  1.58390
+#&gt; iter: 1  value: -314.7037 mgc: 0.08937145 ustep: 1 
+#&gt; iter: 2  value: -314.7037 mgc: 1.576459e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.118394e-12 
+#&gt; iter: 1  mgc: 3.118394e-12 
+#&gt; outer mgc:  0.1849563 
+#&gt;  60:     133.60433: -4.41702 -0.134553 0.0282025 0.182011 0.229298 0.322229 0.373597 0.399875 -8.73239 -12.6274 -1.05758 -0.641246 -2.23945 -1.54218 -0.722958 -1.40514 -1.20004 -0.974172  1.58462
+#&gt; iter: 1  value: -314.7852 mgc: 0.07013208 ustep: 1 
+#&gt; iter: 2  value: -314.7852 mgc: 0.0001188593 ustep: 1 
+#&gt; iter: 3  mgc: 2.536245e-10 
+#&gt; iter: 1  mgc: 2.536245e-10 
+#&gt; outer mgc:  0.1384556 
+#&gt;  61:     133.60377: -4.41487 -0.134422 0.0283695 0.181228 0.229385 0.320887 0.372671 0.396989 -8.73222 -12.6281 -1.05626 -0.642608 -2.24115 -1.54280 -0.723585 -1.40618 -1.19940 -0.976548  1.58380
+#&gt; iter: 1  value: -314.5775 mgc: 0.05777365 ustep: 1 
+#&gt; iter: 2  value: -314.5775 mgc: 6.749219e-05 ustep: 1 
+#&gt; iter: 3  mgc: 7.823653e-11 
+#&gt; iter: 1  mgc: 7.823653e-11 
+#&gt; outer mgc:  0.2684456 
+#&gt;  62:     133.60370: -4.41816 -0.134694 0.0290082 0.179999 0.229564 0.322199 0.373208 0.398854 -8.73238 -12.6273 -1.05567 -0.642519 -2.24013 -1.54325 -0.723269 -1.40528 -1.19928 -0.979672  1.58306
+#&gt; iter: 1  value: -314.646 mgc: 0.03585814 ustep: 1 
+#&gt; iter: 2  value: -314.646 mgc: 4.564176e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.039613e-13 
+#&gt; iter: 1  mgc: 6.039613e-13 
+#&gt; outer mgc:  0.1858229 
+#&gt;  63:     133.60339: -4.41720 -0.134414 0.0279231 0.181843 0.229474 0.321199 0.373654 0.398248 -8.73209 -12.6275 -1.05609 -0.642438 -2.24013 -1.54320 -0.723257 -1.40575 -1.19929 -0.980146  1.58329
+#&gt; iter: 1  value: -314.5771 mgc: 0.0611357 ustep: 1 
+#&gt; iter: 2  value: -314.5771 mgc: 3.187117e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.608047e-13 
+#&gt; iter: 1  mgc: 6.608047e-13 
+#&gt; outer mgc:  0.07563208 
+#&gt;  64:     133.60322: -4.41613 -0.134174 0.0287969 0.181088 0.229442 0.321505 0.372953 0.398346 -8.73174 -12.6272 -1.05723 -0.641764 -2.23920 -1.54201 -0.722993 -1.40576 -1.19903 -0.980767  1.58358
+#&gt; iter: 1  value: -314.5823 mgc: 0.08481385 ustep: 1 
+#&gt; iter: 2  value: -314.5823 mgc: 1.318376e-05 ustep: 1 
+#&gt; iter: 3  mgc: 2.30771e-12 
+#&gt; iter: 1  value: -314.6259 mgc: 0.01950497 ustep: 1 
+#&gt; iter: 2  value: -314.6259 mgc: 8.786539e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.7784e-13 
+#&gt; iter: 1  mgc: 4.7784e-13 
+#&gt; outer mgc:  0.05862984 
+#&gt;  65:     133.60316: -4.41616 -0.134020 0.0285533 0.181323 0.229700 0.321554 0.373457 0.397999 -8.73189 -12.6272 -1.05704 -0.641827 -2.23937 -1.54255 -0.722994 -1.40610 -1.19899 -0.981091  1.58348
+#&gt; iter: 1  value: -314.601 mgc: 0.02644237 ustep: 1 
+#&gt; iter: 2  value: -314.601 mgc: 2.533521e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.17284e-13 
+#&gt; iter: 1  mgc: 6.17284e-13 
+#&gt; outer mgc:  0.06178442 
+#&gt;  66:     133.60313: -4.41599 -0.134119 0.0287806 0.181229 0.229579 0.321688 0.373048 0.398384 -8.73182 -12.6272 -1.05657 -0.641974 -2.23952 -1.54294 -0.722958 -1.40584 -1.19880 -0.981468  1.58319
+#&gt; iter: 1  value: -314.6413 mgc: 0.01429643 ustep: 1 
+#&gt; iter: 2  value: -314.6413 mgc: 1.186481e-06 ustep: 1 
+#&gt; iter: 3  mgc: 8.695267e-13 
+#&gt; iter: 1  mgc: 8.695267e-13 
+#&gt; outer mgc:  0.05005835 
+#&gt;  67:     133.60312: -4.41599 -0.134126 0.0287449 0.181262 0.229672 0.321502 0.373526 0.398523 -8.73173 -12.6270 -1.05668 -0.642291 -2.23986 -1.54287 -0.723028 -1.40573 -1.19838 -0.982117  1.58322
+#&gt; iter: 1  value: -314.6543 mgc: 0.02255248 ustep: 1 
+#&gt; iter: 2  value: -314.6543 mgc: 6.462147e-07 ustep: 1 
+#&gt; iter: 3  mgc: 8.131273e-13 
+#&gt; iter: 1  value: -314.6419 mgc: 0.008177964 ustep: 1 
+#&gt; iter: 2  value: -314.6419 mgc: 3.033434e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.838974e-13 
+#&gt; iter: 1  mgc: 6.838974e-13 
+#&gt; outer mgc:  0.04225582 
+#&gt;  68:     133.60311: -4.41603 -0.133968 0.0287016 0.181331 0.229714 0.321876 0.373314 0.398421 -8.73173 -12.6271 -1.05667 -0.642250 -2.23986 -1.54284 -0.723026 -1.40590 -1.19840 -0.982262  1.58321
+#&gt; iter: 1  value: -314.6329 mgc: 0.005948041 ustep: 1 
+#&gt; iter: 2  value: -314.6329 mgc: 1.261402e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.266898e-13 
+#&gt; iter: 1  mgc: 5.266898e-13 
+#&gt; outer mgc:  0.01893696 
+#&gt;  69:     133.60310: -4.41621 -0.133902 0.0288309 0.181372 0.229786 0.321618 0.373399 0.398360 -8.73162 -12.6271 -1.05669 -0.641971 -2.23984 -1.54273 -0.722953 -1.40597 -1.19846 -0.982467  1.58317
+#&gt; iter: 1  value: -314.6059 mgc: 0.008572822 ustep: 1 
+#&gt; iter: 2  value: -314.6059 mgc: 1.655734e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.926992e-13 
+#&gt; iter: 1  mgc: 7.926992e-13 
+#&gt; outer mgc:  0.01266795 
+#&gt;  70:     133.60310: -4.41610 -0.133971 0.0286777 0.181279 0.229616 0.321615 0.373332 0.398316 -8.73173 -12.6270 -1.05673 -0.641780 -2.23956 -1.54280 -0.722906 -1.40591 -1.19835 -0.982669  1.58312
+#&gt; iter: 1  value: -314.604 mgc: 0.006001472 ustep: 1 
+#&gt; iter: 2  value: -314.604 mgc: 7.28761e-08 ustep: 1 
+#&gt; iter: 3  mgc: 6.923351e-13 
+#&gt; iter: 1  mgc: 6.923351e-13 
+#&gt; outer mgc:  0.009731294 
+#&gt;  71:     133.60310: -4.41605 -0.133949 0.0287685 0.181302 0.229722 0.321714 0.373319 0.398373 -8.73166 -12.6270 -1.05675 -0.642248 -2.23951 -1.54278 -0.723027 -1.40593 -1.19840 -0.982792  1.58313
+#&gt; iter: 1  value: -314.6371 mgc: 0.01299263 ustep: 1 
+#&gt; iter: 2  value: -314.6371 mgc: 2.711858e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.568879e-13 
+#&gt; iter: 1  value: -314.6151 mgc: 0.003715843 ustep: 1 
+#&gt; iter: 2  value: -314.6151 mgc: 3.316409e-08 ustep: 1 
+#&gt; mgc: 5.893064e-13 
+#&gt; iter: 1  value: -314.6076 mgc: 0.001486542 ustep: 1 
+#&gt; iter: 2  mgc: 4.045353e-09 
+#&gt; iter: 1  mgc: 4.045353e-09 
+#&gt; outer mgc:  0.007851413 
+#&gt;  72:     133.60310: -4.41606 -0.133932 0.0287495 0.181339 0.229704 0.321651 0.373383 0.398352 -8.73167 -12.6270 -1.05673 -0.642217 -2.23955 -1.54280 -0.723012 -1.40594 -1.19839 -0.982819  1.58313
+#&gt; iter: 1  value: -314.6141 mgc: 0.002159087 ustep: 1 
+#&gt; iter: 2  mgc: 7.369789e-09 
+#&gt; iter: 1  mgc: 7.369789e-09 
+#&gt; outer mgc:  0.004272418 
+#&gt;  73:     133.60309: -4.41606 -0.133937 0.0287632 0.181314 0.229712 0.321688 0.373337 0.398360 -8.73167 -12.6270 -1.05672 -0.642174 -2.23963 -1.54279 -0.722981 -1.40594 -1.19838 -0.982848  1.58313
+#&gt; iter: 1  value: -314.6215 mgc: 0.002632966 ustep: 1 
+#&gt; iter: 2  value: -314.6215 mgc: 1.505991e-08 ustep: 1 
+#&gt; mgc: 6.689094e-13 
+#&gt; iter: 1  mgc: 6.689094e-13 
+#&gt; outer mgc:  0.005133541 
+#&gt;  74:     133.60309: -4.41607 -0.133940 0.0287516 0.181335 0.229712 0.321664 0.373374 0.398345 -8.73166 -12.6270 -1.05671 -0.642121 -2.23972 -1.54277 -0.722979 -1.40593 -1.19836 -0.982879  1.58313
+#&gt; iter: 1  value: -314.6235 mgc: 0.001721385 ustep: 1 
+#&gt; iter: 2  value: -314.6235 mgc: 2.902467e-08 ustep: 1 
+#&gt; mgc: 8.100187e-13 
+#&gt; iter: 1  mgc: 8.100187e-13 
+#&gt; outer mgc:  0.005296875 
+#&gt;  75:     133.60309: -4.41607 -0.133923 0.0287621 0.181312 0.229703 0.321670 0.373371 0.398381 -8.73165 -12.6270 -1.05672 -0.642056 -2.23973 -1.54277 -0.723014 -1.40597 -1.19830 -0.982920  1.58313
+#&gt; iter: 1  value: -314.6211 mgc: 0.000943523 ustep: 1 
+#&gt; iter: 2  value: -314.6211 mgc: 1.200701e-08 ustep: 1 
+#&gt; mgc: 7.682743e-13 
+#&gt; iter: 1  mgc: 7.682743e-13 
+#&gt; outer mgc:  0.00207023 
+#&gt;  76:     133.60309: -4.41607 -0.133935 0.0287548 0.181331 0.229717 0.321689 0.373359 0.398363 -8.73166 -12.6270 -1.05671 -0.642060 -2.23973 -1.54276 -0.723001 -1.40593 -1.19830 -0.982933  1.58313
+#&gt; iter: 1  value: -314.622 mgc: 0.0004011904 ustep: 1 
+#&gt; iter: 2  mgc: 1.153598e-09 
+#&gt; iter: 1  mgc: 1.153598e-09 
+#&gt; outer mgc:  0.001562763 
+#&gt;  77:     133.60309: -4.41606 -0.133935 0.0287638 0.181316 0.229710 0.321672 0.373363 0.398365 -8.73166 -12.6270 -1.05671 -0.642074 -2.23973 -1.54278 -0.722953 -1.40594 -1.19829 -0.982949  1.58312
+#&gt; iter: 1  value: -314.6198 mgc: 0.000590136 ustep: 1 
+#&gt; iter: 2  mgc: 1.896243e-09 
+#&gt; iter: 1  value: -314.6214 mgc: 0.0002400879 ustep: 1 
+#&gt; iter: 2  mgc: 2.039862e-10 
+#&gt; iter: 1  mgc: 2.039862e-10 
+#&gt; outer mgc:  0.001325142 
+#&gt;  78:     133.60309: -4.41606 -0.133933 0.0287532 0.181328 0.229709 0.321683 0.373356 0.398362 -8.73166 -12.6270 -1.05671 -0.642075 -2.23973 -1.54277 -0.722952 -1.40594 -1.19829 -0.982958  1.58312
+#&gt; iter: 1  value: -314.6213 mgc: 0.0002393137 ustep: 1 
+#&gt; iter: 2  mgc: 8.278433e-11 
+#&gt; iter: 1  mgc: 8.278433e-11 
+#&gt; outer mgc:  0.0006659752 
+#&gt;  79:     133.60309: -4.41606 -0.133934 0.0287586 0.181322 0.229712 0.321678 0.373358 0.398362 -8.73166 -12.6270 -1.05670 -0.642072 -2.23974 -1.54278 -0.722969 -1.40593 -1.19829 -0.982970  1.58311
+#&gt; iter: 1  value: -314.622 mgc: 0.0002653324 ustep: 1 
+#&gt; iter: 2  mgc: 1.325825e-10 
+#&gt; iter: 1  mgc: 1.325825e-10 
+#&gt; outer mgc:  0.00105824 
+#&gt;  80:     133.60309: -4.41606 -0.133934 0.0287566 0.181325 0.229707 0.321678 0.373361 0.398362 -8.73165 -12.6270 -1.05671 -0.642077 -2.23974 -1.54278 -0.722960 -1.40594 -1.19829 -0.982990  1.58311
+#&gt; iter: 1  value: -314.6218 mgc: 0.0002820138 ustep: 1 
+#&gt; iter: 2  mgc: 1.427419e-10 
+#&gt; iter: 1  mgc: 1.427419e-10 
+#&gt; outer mgc:  0.0006857344 
+#&gt;  81:     133.60309: -4.41606 -0.133931 0.0287612 0.181321 0.229713 0.321680 0.373359 0.398363 -8.73165 -12.6270 -1.05671 -0.642078 -2.23974 -1.54277 -0.722945 -1.40594 -1.19828 -0.983001  1.58311
+#&gt; iter: 1  value: -314.6215 mgc: 0.0002187001 ustep: 1 
+#&gt; iter: 2  mgc: 3.170531e-11 
+#&gt; iter: 1  mgc: 3.170531e-11 
+#&gt; outer mgc:  0.0002926158 
+#&gt;  82:     133.60309: -4.41606 -0.133931 0.0287589 0.181324 0.229712 0.321680 0.373358 0.398362 -8.73165 -12.6270 -1.05670 -0.642077 -2.23974 -1.54277 -0.722952 -1.40594 -1.19827 -0.983004  1.58311
+#&gt; iter: 1  value: -314.6221 mgc: 9.237985e-05 ustep: 1 
+#&gt; iter: 2  mgc: 4.242295e-11 
+#&gt; iter: 1  mgc: 4.242295e-11 
+#&gt; outer mgc:  0.0003474376 
+#&gt;  83:     133.60309: -4.41606 -0.133932 0.0287578 0.181324 0.229712 0.321679 0.373361 0.398362 -8.73165 -12.6270 -1.05671 -0.642079 -2.23974 -1.54278 -0.722960 -1.40593 -1.19828 -0.983004  1.58311
+#&gt; iter: 1  mgc: 4.242295e-11 
+#&gt; iter: 1  mgc: 4.242295e-11 
+#&gt; outer mgc:  0.0003474376 
+#&gt; iter: 1  value: -314.6225 mgc: 0.002043975 ustep: 1 
+#&gt; iter: 2  value: -314.6225 mgc: 2.11264e-08 ustep: 1 
+#&gt; mgc: 5.950795e-13 
+#&gt; outer mgc:  0.06982187 
+#&gt; iter: 1  value: -314.6216 mgc: 0.002043975 ustep: 1 
+#&gt; iter: 2  value: -314.6216 mgc: 2.112501e-08 ustep: 1 
+#&gt; mgc: 4.454215e-13 
+#&gt; outer mgc:  0.07000194 
+#&gt; iter: 1  value: -314.6223 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6223 mgc: 2.054649e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.47038e-13 
+#&gt; outer mgc:  0.149363 
+#&gt; iter: 1  value: -314.6217 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6217 mgc: 2.054329e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.329071e-13 
+#&gt; outer mgc:  0.1492876 
+#&gt; iter: 1  value: -314.6226 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6226 mgc: 1.065573e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.210277e-13 
+#&gt; outer mgc:  0.2189021 
+#&gt; iter: 1  value: -314.6213 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 1.064983e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.304646e-13 
+#&gt; outer mgc:  0.2194367 
+#&gt; iter: 1  value: -314.6226 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6226 mgc: 1.045276e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.343192e-13 
+#&gt; outer mgc:  0.2215746 
+#&gt; iter: 1  value: -314.6213 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 1.044669e-06 ustep: 1 
+#&gt; iter: 3  mgc: 7.265299e-13 
+#&gt; outer mgc:  0.2212746 
+#&gt; iter: 1  value: -314.6226 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6226 mgc: 1.163606e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.344614e-13 
+#&gt; outer mgc:  0.2207397 
+#&gt; iter: 1  value: -314.6213 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 1.162926e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.204726e-13 
+#&gt; outer mgc:  0.2207303 
+#&gt; iter: 1  value: -314.6226 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6226 mgc: 1.409834e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.261658e-13 
+#&gt; outer mgc:  0.2172019 
+#&gt; iter: 1  value: -314.6213 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 1.408916e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.614087e-13 
+#&gt; outer mgc:  0.2174711 
+#&gt; iter: 1  value: -314.6224 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6224 mgc: 1.968706e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.42153e-13 
+#&gt; outer mgc:  0.2081427 
+#&gt; iter: 1  value: -314.6215 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6215 mgc: 1.967158e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.942713e-13 
+#&gt; outer mgc:  0.2075854 
+#&gt; iter: 1  value: -314.6224 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6224 mgc: 1.474321e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.661071e-12 
+#&gt; outer mgc:  0.1358531 
+#&gt; iter: 1  value: -314.6216 mgc: 0.01664099 ustep: 1 
+#&gt; iter: 2  value: -314.6216 mgc: 1.471543e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.546941e-12 
+#&gt; outer mgc:  0.1360651 
+#&gt; iter: 1  value: -314.6224 mgc: 0.01098527 ustep: 1 
+#&gt; iter: 2  value: -314.6224 mgc: 3.340974e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.835332e-13 
+#&gt; outer mgc:  0.161184 
+#&gt; iter: 1  value: -314.6215 mgc: 0.01098527 ustep: 1 
+#&gt; iter: 2  value: -314.6215 mgc: 3.340091e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.710987e-13 
+#&gt; outer mgc:  0.1617031 
+#&gt; iter: 1  value: -314.6223 mgc: 0.007142102 ustep: 1 
+#&gt; iter: 2  value: -314.6223 mgc: 2.399126e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.092904e-13 
+#&gt; outer mgc:  0.1034546 
+#&gt; iter: 1  value: -314.6217 mgc: 0.007142102 ustep: 1 
+#&gt; iter: 2  value: -314.6217 mgc: 2.398559e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.72653e-13 
+#&gt; outer mgc:  0.1027593 
+#&gt; iter: 1  value: -314.5309 mgc: 0.023758 ustep: 1 
+#&gt; iter: 2  value: -314.5309 mgc: 8.052313e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.400747e-13 
+#&gt; outer mgc:  0.06130107 
+#&gt; iter: 1  value: -314.7131 mgc: 0.02380556 ustep: 1 
+#&gt; iter: 2  value: -314.7131 mgc: 8.065588e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.735412e-13 
+#&gt; outer mgc:  0.06154553 
+#&gt; iter: 1  value: -314.6201 mgc: 0.0124989 ustep: 1 
+#&gt; iter: 2  value: -314.6201 mgc: 1.302427e-08 ustep: 1 
+#&gt; mgc: 8.117951e-13 
+#&gt; outer mgc:  0.02596327 
+#&gt; iter: 1  value: -314.624 mgc: 0.01252392 ustep: 1 
+#&gt; iter: 2  value: -314.624 mgc: 1.306362e-08 ustep: 1 
+#&gt; mgc: 6.972201e-13 
+#&gt; outer mgc:  0.02606441 
+#&gt; iter: 1  value: -314.515 mgc: 0.02411682 ustep: 1 
+#&gt; iter: 2  value: -314.515 mgc: 7.673964e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.32383e-13 
+#&gt; outer mgc:  0.02666018 
+#&gt; iter: 1  value: -314.7291 mgc: 0.02416511 ustep: 1 
+#&gt; iter: 2  value: -314.7291 mgc: 7.701803e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.140954e-13 
+#&gt; outer mgc:  0.02667557 
+#&gt; iter: 1  value: -314.5387 mgc: 0.02314257 ustep: 1 
+#&gt; iter: 2  value: -314.5387 mgc: 1.024967e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.476419e-13 
+#&gt; outer mgc:  0.09291028 
+#&gt; iter: 1  value: -314.7054 mgc: 0.0231889 ustep: 1 
+#&gt; iter: 2  value: -314.7054 mgc: 1.027505e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.659917e-13 
+#&gt; outer mgc:  0.09277958 
+#&gt; iter: 1  value: -314.6218 mgc: 0.002743128 ustep: 1 
+#&gt; iter: 2  value: -314.6218 mgc: 3.161434e-08 ustep: 1 
+#&gt; mgc: 6.692424e-13 
+#&gt; outer mgc:  0.03202385 
+#&gt; iter: 1  value: -314.6223 mgc: 0.00274862 ustep: 1 
+#&gt; iter: 2  value: -314.6223 mgc: 3.173006e-08 ustep: 1 
+#&gt; mgc: 5.897505e-13 
+#&gt; outer mgc:  0.03205971 
+#&gt; iter: 1  value: -314.5908 mgc: 0.01994634 ustep: 1 
+#&gt; iter: 2  value: -314.5908 mgc: 1.426607e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.303224e-13 
+#&gt; outer mgc:  0.1555258 
+#&gt; iter: 1  value: -314.6532 mgc: 0.01998628 ustep: 1 
+#&gt; iter: 2  value: -314.6532 mgc: 1.428e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.640732e-13 
+#&gt; outer mgc:  0.1552816 
+#&gt; iter: 1  value: -314.6195 mgc: 0.01188829 ustep: 1 
+#&gt; iter: 2  value: -314.6195 mgc: 2.078929e-07 ustep: 1 
+#&gt; mgc: 7.727152e-13 
+#&gt; outer mgc:  0.02351628 
+#&gt; iter: 1  value: -314.6246 mgc: 0.01191209 ustep: 1 
+#&gt; iter: 2  value: -314.6246 mgc: 2.079938e-07 ustep: 1 
+#&gt; mgc: 5.528911e-13 
+#&gt; outer mgc:  0.02360365 
+#&gt; iter: 1  value: -314.6195 mgc: 0.01398104 ustep: 1 
+#&gt; iter: 2  value: -314.6195 mgc: 2.772143e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.127321e-13 
+#&gt; outer mgc:  0.02348654 
+#&gt; iter: 1  value: -314.6246 mgc: 0.01400903 ustep: 1 
+#&gt; iter: 2  value: -314.6246 mgc: 2.778073e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.710987e-13 
+#&gt; outer mgc:  0.02356391 
+#&gt; iter: 1  value: -314.707 mgc: 0.0236604 ustep: 1 
+#&gt; iter: 2  value: -314.707 mgc: 3.965225e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.927792e-13 
+#&gt; outer mgc:  0.03210742 
+#&gt; iter: 1  value: -314.5372 mgc: 0.02361346 ustep: 1 
+#&gt; iter: 2  value: -314.5372 mgc: 3.956436e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.636291e-13 
+#&gt; outer mgc:  0.03197546 
+#&gt; iter: 1  value: -314.6217 mgc: 8.746612e-05 ustep: 1 
+#&gt; iter: 2  mgc: 1.944356e-11 
+#&gt; iter: 1  mgc: 1.944356e-11 
+#&gt; outer mgc:  9.861943e-10 
+#&gt; iter: 1  value: -314.6221 mgc: 0.002043976 ustep: 1 
+#&gt; iter: 2  value: -314.6221 mgc: 2.11264e-08 ustep: 1 
+#&gt; mgc: 7.303047e-13 
+#&gt; outer mgc:  0.06991194 
+#&gt; iter: 1  value: -314.6212 mgc: 0.002043976 ustep: 1 
+#&gt; iter: 2  value: -314.6212 mgc: 2.112511e-08 ustep: 1 
+#&gt; mgc: 7.112089e-13 
+#&gt; outer mgc:  0.06991192 
+#&gt; iter: 1  value: -314.6219 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6219 mgc: 2.05466e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.874501e-13 
+#&gt; outer mgc:  0.1493257 
+#&gt; iter: 1  value: -314.6213 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 2.05434e-07 ustep: 1 
+#&gt; iter: 3  mgc: 8.106849e-13 
+#&gt; outer mgc:  0.1493254 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.065581e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.899103e-13 
+#&gt; outer mgc:  0.21917 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.064991e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.213607e-13 
+#&gt; outer mgc:  0.2191696 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.045283e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.984518e-13 
+#&gt; outer mgc:  0.2214251 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.044676e-06 ustep: 1 
+#&gt; iter: 3  mgc: 7.558398e-13 
+#&gt; outer mgc:  0.2214249 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.163614e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.128431e-13 
+#&gt; outer mgc:  0.2207353 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.162934e-06 ustep: 1 
+#&gt; iter: 3  mgc: 7.012169e-13 
+#&gt; outer mgc:  0.2207354 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.409841e-06 ustep: 1 
+#&gt; iter: 3  mgc: 8.335554e-13 
+#&gt; outer mgc:  0.2173369 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.408923e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.609646e-13 
+#&gt; outer mgc:  0.2173369 
+#&gt; iter: 1  value: -314.622 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 1.968712e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.861978e-13 
+#&gt; outer mgc:  0.2078643 
+#&gt; iter: 1  value: -314.6211 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6211 mgc: 1.967164e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.986323e-13 
+#&gt; outer mgc:  0.2078645 
+#&gt; iter: 1  value: -314.622 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 1.474323e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.709033e-12 
+#&gt; outer mgc:  0.1359576 
+#&gt; iter: 1  value: -314.6212 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6212 mgc: 1.471545e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.728573e-12 
+#&gt; outer mgc:  0.1359611 
+#&gt; iter: 1  value: -314.6221 mgc: 0.01098524 ustep: 1 
+#&gt; iter: 2  value: -314.6221 mgc: 3.34095e-07 ustep: 1 
+#&gt; iter: 3  mgc: 8.091305e-13 
+#&gt; outer mgc:  0.1614434 
+#&gt; iter: 1  value: -314.6211 mgc: 0.01098524 ustep: 1 
+#&gt; iter: 2  value: -314.6211 mgc: 3.340068e-07 ustep: 1 
+#&gt; iter: 3  mgc: 8.149037e-13 
+#&gt; outer mgc:  0.1614431 
+#&gt; iter: 1  value: -314.622 mgc: 0.007142088 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 2.399119e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.633272e-13 
+#&gt; outer mgc:  0.1031069 
+#&gt; iter: 1  value: -314.6213 mgc: 0.007142088 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 2.398551e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.32383e-13 
+#&gt; outer mgc:  0.1031065 
+#&gt; iter: 1  value: -314.5305 mgc: 0.02375803 ustep: 1 
+#&gt; iter: 2  value: -314.5305 mgc: 8.052261e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.469581e-13 
+#&gt; outer mgc:  0.06141667 
+#&gt; iter: 1  value: -314.7128 mgc: 0.02380559 ustep: 1 
+#&gt; iter: 2  value: -314.7128 mgc: 8.065535e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.82645e-13 
+#&gt; outer mgc:  0.06142997 
+#&gt; iter: 1  value: -314.6197 mgc: 0.01249887 ustep: 1 
+#&gt; iter: 2  value: -314.6197 mgc: 1.302423e-08 ustep: 1 
+#&gt; mgc: 6.030731e-13 
+#&gt; outer mgc:  0.02600026 
+#&gt; iter: 1  value: -314.6236 mgc: 0.01252389 ustep: 1 
+#&gt; iter: 2  value: -314.6236 mgc: 1.306364e-08 ustep: 1 
+#&gt; mgc: 9.146017e-13 
+#&gt; outer mgc:  0.02602733 
+#&gt; iter: 1  value: -314.5146 mgc: 0.02411684 ustep: 1 
+#&gt; iter: 2  value: -314.5146 mgc: 7.673935e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.933032e-13 
+#&gt; outer mgc:  0.02669567 
+#&gt; iter: 1  value: -314.7287 mgc: 0.02416512 ustep: 1 
+#&gt; iter: 2  value: -314.7287 mgc: 7.701774e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.911449e-13 
+#&gt; outer mgc:  0.0266404 
+#&gt; iter: 1  value: -314.5383 mgc: 0.0231426 ustep: 1 
+#&gt; iter: 2  value: -314.5383 mgc: 1.024967e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.468959e-13 
+#&gt; outer mgc:  0.09286461 
+#&gt; iter: 1  value: -314.705 mgc: 0.02318893 ustep: 1 
+#&gt; iter: 2  value: -314.705 mgc: 1.027506e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.454837e-13 
+#&gt; outer mgc:  0.09282485 
+#&gt; iter: 1  value: -314.6214 mgc: 0.002743125 ustep: 1 
+#&gt; iter: 2  value: -314.6214 mgc: 3.161424e-08 ustep: 1 
+#&gt; mgc: 5.633272e-13 
+#&gt; outer mgc:  0.0320135 
+#&gt; iter: 1  value: -314.6219 mgc: 0.002748617 ustep: 1 
+#&gt; iter: 2  value: -314.6219 mgc: 3.172952e-08 ustep: 1 
+#&gt; mgc: 5.689893e-13 
+#&gt; outer mgc:  0.03207011 
+#&gt; iter: 1  value: -314.5904 mgc: 0.01994637 ustep: 1 
+#&gt; iter: 2  value: -314.5904 mgc: 1.426603e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.000445e-13 
+#&gt; outer mgc:  0.155339 
+#&gt; iter: 1  value: -314.6528 mgc: 0.0199863 ustep: 1 
+#&gt; iter: 2  value: -314.6528 mgc: 1.427996e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.836131e-13 
+#&gt; outer mgc:  0.1554685 
+#&gt; iter: 1  value: -314.6191 mgc: 0.01188824 ustep: 1 
+#&gt; iter: 2  value: -314.6191 mgc: 2.07891e-07 ustep: 1 
+#&gt; mgc: 5.933032e-13 
+#&gt; outer mgc:  0.02355092 
+#&gt; iter: 1  value: -314.6242 mgc: 0.01191204 ustep: 1 
+#&gt; iter: 2  value: -314.6242 mgc: 2.079917e-07 ustep: 1 
+#&gt; mgc: 5.514478e-13 
+#&gt; outer mgc:  0.02356899 
+#&gt; iter: 1  value: -314.6191 mgc: 0.01398097 ustep: 1 
+#&gt; iter: 2  value: -314.6191 mgc: 2.772116e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.087664e-13 
+#&gt; outer mgc:  0.02351788 
+#&gt; iter: 1  value: -314.6242 mgc: 0.01400896 ustep: 1 
+#&gt; iter: 2  value: -314.6242 mgc: 2.778043e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.568879e-13 
+#&gt; outer mgc:  0.02353257 
+#&gt; iter: 1  value: -314.7066 mgc: 0.02366038 ustep: 1 
+#&gt; iter: 2  value: -314.7066 mgc: 3.965184e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.857642e-13 
+#&gt; outer mgc:  0.03204353 
+#&gt; iter: 1  value: -314.5368 mgc: 0.02361344 ustep: 1 
+#&gt; iter: 2  value: -314.5368 mgc: 3.956393e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.72653e-13 
+#&gt; outer mgc:  0.03203937 
+#&gt; iter: 1  mgc: 6.875579e-10 
+#&gt; iter: 1  mgc: 6.875579e-10 
+#&gt; outer mgc:  2.240874e-12 
+#&gt; iter: 1  value: -314.6221 mgc: 0.002043976 ustep: 1 
+#&gt; iter: 2  value: -314.6221 mgc: 2.112641e-08 ustep: 1 
+#&gt; mgc: 4.707346e-13 
+#&gt; outer mgc:  0.06991194 
+#&gt; iter: 1  value: -314.6212 mgc: 0.002043976 ustep: 1 
+#&gt; iter: 2  value: -314.6212 mgc: 2.112503e-08 ustep: 1 
+#&gt; mgc: 5.950795e-13 
+#&gt; outer mgc:  0.06991192 
+#&gt; iter: 1  value: -314.6219 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6219 mgc: 2.054659e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.936673e-13 
+#&gt; outer mgc:  0.1493257 
+#&gt; iter: 1  value: -314.6213 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 2.05434e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.471179e-13 
+#&gt; outer mgc:  0.1493254 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.065581e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.057377e-13 
+#&gt; outer mgc:  0.21917 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.064991e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.764278e-13 
+#&gt; outer mgc:  0.2191696 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.045283e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.07514e-13 
+#&gt; outer mgc:  0.2214251 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.044676e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.453415e-13 
+#&gt; outer mgc:  0.2214249 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.163614e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.857537e-13 
+#&gt; outer mgc:  0.2207353 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.162934e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.213607e-13 
+#&gt; outer mgc:  0.2207354 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.409841e-06 ustep: 1 
+#&gt; iter: 3  mgc: 8.177903e-13 
+#&gt; outer mgc:  0.2173369 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.408923e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.844214e-13 
+#&gt; outer mgc:  0.2173369 
+#&gt; iter: 1  value: -314.622 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 1.968712e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.430412e-13 
+#&gt; outer mgc:  0.2078643 
+#&gt; iter: 1  value: -314.6211 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6211 mgc: 1.967164e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.559198e-13 
+#&gt; outer mgc:  0.2078645 
+#&gt; iter: 1  value: -314.622 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 1.474323e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.669953e-12 
+#&gt; outer mgc:  0.1359576 
+#&gt; iter: 1  value: -314.6212 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6212 mgc: 1.471545e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.682388e-12 
+#&gt; outer mgc:  0.1359611 
+#&gt; iter: 1  value: -314.6221 mgc: 0.01098524 ustep: 1 
+#&gt; iter: 2  value: -314.6221 mgc: 3.340955e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.009326e-13 
+#&gt; outer mgc:  0.1614434 
+#&gt; iter: 1  value: -314.6211 mgc: 0.01098524 ustep: 1 
+#&gt; iter: 2  value: -314.6211 mgc: 3.340067e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.192824e-13 
+#&gt; outer mgc:  0.1614431 
+#&gt; iter: 1  value: -314.622 mgc: 0.007142089 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 2.399121e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.360157e-13 
+#&gt; outer mgc:  0.1031069 
+#&gt; iter: 1  value: -314.6213 mgc: 0.007142089 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 2.398549e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.01661e-13 
+#&gt; outer mgc:  0.1031065 
+#&gt; iter: 1  value: -314.5305 mgc: 0.02375803 ustep: 1 
+#&gt; iter: 2  value: -314.5305 mgc: 8.052256e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.327472e-13 
+#&gt; outer mgc:  0.06141667 
+#&gt; iter: 1  value: -314.7128 mgc: 0.02380559 ustep: 1 
+#&gt; iter: 2  value: -314.7128 mgc: 8.065533e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.835643e-13 
+#&gt; outer mgc:  0.06142997 
+#&gt; iter: 1  value: -314.6197 mgc: 0.01249887 ustep: 1 
+#&gt; iter: 2  value: -314.6197 mgc: 1.302425e-08 ustep: 1 
+#&gt; mgc: 4.8761e-13 
+#&gt; outer mgc:  0.02600026 
+#&gt; iter: 1  value: -314.6236 mgc: 0.01252389 ustep: 1 
+#&gt; iter: 2  value: -314.6236 mgc: 1.306366e-08 ustep: 1 
+#&gt; mgc: 7.194245e-13 
+#&gt; outer mgc:  0.02602733 
+#&gt; iter: 1  value: -314.5146 mgc: 0.02411684 ustep: 1 
+#&gt; iter: 2  value: -314.5146 mgc: 7.673935e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.283063e-13 
+#&gt; outer mgc:  0.02669567 
+#&gt; iter: 1  value: -314.7287 mgc: 0.02416512 ustep: 1 
+#&gt; iter: 2  value: -314.7287 mgc: 7.701774e-07 ustep: 1 
+#&gt; iter: 3  mgc: 8.687495e-13 
+#&gt; outer mgc:  0.0266404 
+#&gt; iter: 1  value: -314.5383 mgc: 0.0231426 ustep: 1 
+#&gt; iter: 2  value: -314.5383 mgc: 1.024967e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.631051e-13 
+#&gt; outer mgc:  0.09286461 
+#&gt; iter: 1  value: -314.705 mgc: 0.02318893 ustep: 1 
+#&gt; iter: 2  value: -314.705 mgc: 1.027505e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.528111e-13 
+#&gt; outer mgc:  0.09282485 
+#&gt; iter: 1  value: -314.6214 mgc: 0.002743125 ustep: 1 
+#&gt; iter: 2  value: -314.6214 mgc: 3.161422e-08 ustep: 1 
+#&gt; mgc: 4.911627e-13 
+#&gt; outer mgc:  0.0320135 
+#&gt; iter: 1  value: -314.6219 mgc: 0.002748617 ustep: 1 
+#&gt; iter: 2  value: -314.6219 mgc: 3.17297e-08 ustep: 1 
+#&gt; mgc: 6.739054e-13 
+#&gt; outer mgc:  0.03207011 
+#&gt; iter: 1  value: -314.5904 mgc: 0.01994637 ustep: 1 
+#&gt; iter: 2  value: -314.5904 mgc: 1.426603e-06 ustep: 1 
+#&gt; iter: 3  mgc: 7.791545e-13 
+#&gt; outer mgc:  0.155339 
+#&gt; iter: 1  value: -314.6528 mgc: 0.0199863 ustep: 1 
+#&gt; iter: 2  value: -314.6528 mgc: 1.427996e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.190604e-13 
+#&gt; outer mgc:  0.1554685 
+#&gt; iter: 1  value: -314.6191 mgc: 0.01188824 ustep: 1 
+#&gt; iter: 2  value: -314.6191 mgc: 2.078908e-07 ustep: 1 
+#&gt; mgc: 6.394885e-13 
+#&gt; outer mgc:  0.02355092 
+#&gt; iter: 1  value: -314.6242 mgc: 0.01191204 ustep: 1 
+#&gt; iter: 2  value: -314.6242 mgc: 2.079921e-07 ustep: 1 
+#&gt; mgc: 6.37268e-13 
+#&gt; outer mgc:  0.02356899 
+#&gt; iter: 1  value: -314.6191 mgc: 0.01398097 ustep: 1 
+#&gt; iter: 2  value: -314.6191 mgc: 2.772116e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.732392e-13 
+#&gt; outer mgc:  0.02351788 
+#&gt; iter: 1  value: -314.6242 mgc: 0.01400896 ustep: 1 
+#&gt; iter: 2  value: -314.6242 mgc: 2.778046e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.044054e-13 
+#&gt; outer mgc:  0.02353256 
+#&gt; iter: 1  value: -314.7066 mgc: 0.02366038 ustep: 1 
+#&gt; iter: 2  value: -314.7066 mgc: 3.965188e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.300827e-13 
+#&gt; outer mgc:  0.03204353 
+#&gt; iter: 1  value: -314.5368 mgc: 0.02361344 ustep: 1 
+#&gt; iter: 2  value: -314.5368 mgc: 3.956393e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.625811e-13 
+#&gt; outer mgc:  0.03203937 
+#&gt; iter: 1  mgc: 6.873692e-10 
+#&gt; iter: 1  mgc: 6.873692e-10 
+#&gt; outer mgc:  1.700584e-13 
+#&gt; iter: 1  value: -314.6221 mgc: 0.002043976 ustep: 1 
+#&gt; iter: 2  value: -314.6221 mgc: 2.112648e-08 ustep: 1 
+#&gt; mgc: 6.119549e-13 
+#&gt; outer mgc:  0.06991194 
+#&gt; iter: 1  value: -314.6212 mgc: 0.002043976 ustep: 1 
+#&gt; iter: 2  value: -314.6212 mgc: 2.112508e-08 ustep: 1 
+#&gt; mgc: 6.554757e-13 
+#&gt; outer mgc:  0.06991192 
+#&gt; iter: 1  value: -314.6219 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6219 mgc: 2.05466e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.453415e-13 
+#&gt; outer mgc:  0.1493257 
+#&gt; iter: 1  value: -314.6213 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 2.05434e-07 ustep: 1 
+#&gt; iter: 3  mgc: 8.001377e-13 
+#&gt; outer mgc:  0.1493254 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.065581e-06 ustep: 1 
+#&gt; iter: 3  mgc: 7.132073e-13 
+#&gt; outer mgc:  0.21917 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.064991e-06 ustep: 1 
+#&gt; iter: 3  mgc: 3.890221e-13 
+#&gt; outer mgc:  0.2191696 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.045283e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.200285e-13 
+#&gt; outer mgc:  0.2214251 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.044676e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.409007e-13 
+#&gt; outer mgc:  0.2214249 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.163614e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.963319e-13 
+#&gt; outer mgc:  0.2207353 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.162934e-06 ustep: 1 
+#&gt; iter: 3  mgc: 6.07514e-13 
+#&gt; outer mgc:  0.2207354 
+#&gt; iter: 1  value: -314.6222 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6222 mgc: 1.409841e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.002665e-13 
+#&gt; outer mgc:  0.2173369 
+#&gt; iter: 1  value: -314.6209 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6209 mgc: 1.408923e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.488943e-13 
+#&gt; outer mgc:  0.2173369 
+#&gt; iter: 1  value: -314.622 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 1.968712e-06 ustep: 1 
+#&gt; iter: 3  mgc: 4.538592e-13 
+#&gt; outer mgc:  0.2078643 
+#&gt; iter: 1  value: -314.6211 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6211 mgc: 1.967164e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.502265e-13 
+#&gt; outer mgc:  0.2078645 
+#&gt; iter: 1  value: -314.622 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 1.474323e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.694822e-12 
+#&gt; outer mgc:  0.1359576 
+#&gt; iter: 1  value: -314.6212 mgc: 0.01664104 ustep: 1 
+#&gt; iter: 2  value: -314.6212 mgc: 1.471545e-05 ustep: 1 
+#&gt; iter: 3  mgc: 3.684164e-12 
+#&gt; outer mgc:  0.1359611 
+#&gt; iter: 1  value: -314.6221 mgc: 0.01098524 ustep: 1 
+#&gt; iter: 2  value: -314.6221 mgc: 3.34095e-07 ustep: 1 
+#&gt; iter: 3  mgc: 7.858159e-13 
+#&gt; outer mgc:  0.1614434 
+#&gt; iter: 1  value: -314.6211 mgc: 0.01098524 ustep: 1 
+#&gt; iter: 2  value: -314.6211 mgc: 3.340072e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.363798e-13 
+#&gt; outer mgc:  0.1614431 
+#&gt; iter: 1  value: -314.622 mgc: 0.007142089 ustep: 1 
+#&gt; iter: 2  value: -314.622 mgc: 2.399119e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.936673e-13 
+#&gt; outer mgc:  0.1031069 
+#&gt; iter: 1  value: -314.6213 mgc: 0.007142089 ustep: 1 
+#&gt; iter: 2  value: -314.6213 mgc: 2.39855e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.261658e-13 
+#&gt; outer mgc:  0.1031065 
+#&gt; iter: 1  value: -314.5305 mgc: 0.02375803 ustep: 1 
+#&gt; iter: 2  value: -314.5305 mgc: 8.052259e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.583623e-13 
+#&gt; outer mgc:  0.06141667 
+#&gt; iter: 1  value: -314.7128 mgc: 0.02380559 ustep: 1 
+#&gt; iter: 2  value: -314.7128 mgc: 8.065535e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.169198e-13 
+#&gt; outer mgc:  0.06142997 
+#&gt; iter: 1  value: -314.6197 mgc: 0.01249887 ustep: 1 
+#&gt; iter: 2  value: -314.6197 mgc: 1.30242e-08 ustep: 1 
+#&gt; mgc: 7.709389e-13 
+#&gt; outer mgc:  0.02600026 
+#&gt; iter: 1  value: -314.6236 mgc: 0.01252389 ustep: 1 
+#&gt; iter: 2  value: -314.6236 mgc: 1.306362e-08 ustep: 1 
+#&gt; mgc: 5.986323e-13 
+#&gt; outer mgc:  0.02602733 
+#&gt; iter: 1  value: -314.5146 mgc: 0.02411684 ustep: 1 
+#&gt; iter: 2  value: -314.5146 mgc: 7.673936e-07 ustep: 1 
+#&gt; iter: 3  mgc: 4.884981e-13 
+#&gt; outer mgc:  0.02669567 
+#&gt; iter: 1  value: -314.7287 mgc: 0.02416512 ustep: 1 
+#&gt; iter: 2  value: -314.7287 mgc: 7.701774e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.004086e-13 
+#&gt; outer mgc:  0.0266404 
+#&gt; iter: 1  value: -314.5383 mgc: 0.0231426 ustep: 1 
+#&gt; iter: 2  value: -314.5383 mgc: 1.024967e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.491163e-13 
+#&gt; outer mgc:  0.09286461 
+#&gt; iter: 1  value: -314.705 mgc: 0.02318893 ustep: 1 
+#&gt; iter: 2  value: -314.705 mgc: 1.027506e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.386802e-13 
+#&gt; outer mgc:  0.09282485 
+#&gt; iter: 1  value: -314.6214 mgc: 0.002743125 ustep: 1 
+#&gt; iter: 2  value: -314.6214 mgc: 3.161401e-08 ustep: 1 
+#&gt; mgc: 5.488943e-13 
+#&gt; outer mgc:  0.0320135 
+#&gt; iter: 1  value: -314.6219 mgc: 0.002748617 ustep: 1 
+#&gt; iter: 2  value: -314.6219 mgc: 3.172953e-08 ustep: 1 
+#&gt; mgc: 7.243095e-13 
+#&gt; outer mgc:  0.03207011 
+#&gt; iter: 1  value: -314.5904 mgc: 0.01994637 ustep: 1 
+#&gt; iter: 2  value: -314.5904 mgc: 1.426603e-06 ustep: 1 
+#&gt; iter: 3  mgc: 5.631051e-13 
+#&gt; outer mgc:  0.155339 
+#&gt; iter: 1  value: -314.6528 mgc: 0.0199863 ustep: 1 
+#&gt; iter: 2  value: -314.6528 mgc: 1.427996e-06 ustep: 1 
+#&gt; iter: 3  mgc: 7.114309e-13 
+#&gt; outer mgc:  0.1554685 
+#&gt; iter: 1  value: -314.6191 mgc: 0.01188824 ustep: 1 
+#&gt; iter: 2  value: -314.6191 mgc: 2.078911e-07 ustep: 1 
+#&gt; mgc: 5.373479e-13 
+#&gt; outer mgc:  0.02355092 
+#&gt; iter: 1  value: -314.6242 mgc: 0.01191204 ustep: 1 
+#&gt; iter: 2  value: -314.6242 mgc: 2.079919e-07 ustep: 1 
+#&gt; mgc: 5.767609e-13 
+#&gt; outer mgc:  0.02356899 
+#&gt; iter: 1  value: -314.6191 mgc: 0.01398097 ustep: 1 
+#&gt; iter: 2  value: -314.6191 mgc: 2.772114e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.403766e-13 
+#&gt; outer mgc:  0.02351788 
+#&gt; iter: 1  value: -314.6242 mgc: 0.01400896 ustep: 1 
+#&gt; iter: 2  value: -314.6242 mgc: 2.778044e-07 ustep: 1 
+#&gt; iter: 3  mgc: 6.712408e-13 
+#&gt; outer mgc:  0.02353256 
+#&gt; iter: 1  value: -314.7066 mgc: 0.02366038 ustep: 1 
+#&gt; iter: 2  value: -314.7066 mgc: 3.965186e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.793144e-13 
+#&gt; outer mgc:  0.03204353 
+#&gt; iter: 1  value: -314.5368 mgc: 0.02361344 ustep: 1 
+#&gt; iter: 2  value: -314.5368 mgc: 3.956393e-07 ustep: 1 
+#&gt; iter: 3  mgc: 5.737633e-13 
+#&gt; outer mgc:  0.03203937 
+#&gt; outer mgc:  1 
+#&gt; [1] 1
+#&gt; [1] 2
+#&gt; [1] 3
+#&gt; [1] 4
+#&gt; [1] 5
+#&gt; [1] 6
+#&gt; [1] 7
+#&gt; [1] 8
+#&gt; [1] 9
+#&gt; [1] 10
+#&gt; [1] 11
+#&gt; [1] 12
+#&gt; [1] 13
+#&gt; [1] 14
+#&gt; [1] 15
+#&gt; [1] 16
+#&gt; [1] 17
+#&gt; [1] 18
+#&gt; [1] 19
+#&gt; [1] 20
+#&gt; [1] 21
+#&gt; [1] 22
+#&gt; [1] 23
+#&gt; [1] 24
+#&gt; [1] 25
+#&gt; [1] 26
+#&gt; [1] 27
+#&gt; [1] 28
+#&gt; [1] 29
+#&gt; [1] 30
+#&gt; [1] 31
+#&gt; [1] 32
+#&gt; [1] 33
+#&gt; [1] 34
+#&gt; [1] 35
+#&gt; [1] 36
+#&gt; [1] 37
+#&gt; [1] 38
+#&gt; [1] 39
+#&gt; [1] 40
+#&gt; [1] 41
+#&gt; [1] 42
+#&gt; [1] 43
+#&gt; [1] 44
+#&gt; [1] 45
+#&gt; [1] 46
+#&gt; [1] 47
+#&gt; [1] 48
+#&gt; [1] 49
+#&gt; [1] 50
+#&gt; [1] 51
+#&gt; [1] 52
+#&gt; [1] 53
+#&gt; [1] 54
+#&gt; [1] 55
+#&gt; [1] 56
+#&gt; [1] 57
+#&gt; [1] 58
+#&gt; [1] 59
+#&gt; [1] 60
+#&gt; [1] 61
+#&gt; [1] 62
+#&gt; [1] 63
+#&gt; [1] 64
+#&gt; [1] 65
+#&gt; [1] 66
+#&gt; [1] 67
+#&gt; [1] 68
+#&gt; [1] 69
+#&gt; [1] 70
+#&gt; [1] 71
+#&gt; [1] 72
+#&gt; [1] 73
+#&gt; [1] 74
+#&gt; [1] 75
+#&gt; [1] 76
+#&gt; [1] 77
+#&gt; [1] 78
+#&gt; [1] 79
+#&gt; [1] 80
+#&gt; [1] 81
+#&gt; [1] 82
+#&gt; [1] 83
+#&gt; [1] 84
+#&gt; [1] 85
+#&gt; [1] 86
+#&gt; [1] 87
+#&gt; [1] 88
+#&gt; [1] 89
+#&gt; [1] 90
+#&gt; [1] 91
+#&gt; [1] 92
+#&gt; [1] 93
+#&gt; [1] 94
+#&gt; [1] 95
+#&gt; [1] 96
+#&gt; [1] 97
+#&gt; [1] 98
+#&gt; [1] 99
+#&gt; [1] 100
+#&gt; [1] 101
+#&gt; [1] 102
+#&gt; [1] 103
+#&gt; [1] 104
+#&gt; [1] 105
+#&gt; [1] 106
+#&gt; [1] 107
+#&gt; [1] 108
+#&gt; [1] 109
+#&gt; [1] 110
+#&gt; [1] 111
+#&gt; [1] 112
+#&gt; [1] 113
+#&gt; [1] 114
+#&gt; [1] 115
+#&gt; [1] 116
+#&gt; [1] 117
+#&gt; [1] 118
+#&gt; [1] 119
+#&gt; [1] 120
+#&gt; [1] 121
+#&gt; [1] 122
+#&gt; [1] 123
+#&gt; [1] 124
+#&gt; [1] 125
+#&gt; [1] 126
+#&gt; [1] 127
+#&gt; [1] 128
+#&gt; [1] 129
+#&gt; [1] 130
+#&gt; [1] 131
+#&gt; [1] 132
+#&gt; [1] 133
+#&gt; [1] 134
+#&gt; [1] 135
+#&gt; [1] 136
+#&gt; [1] 137
+#&gt; [1] 138
+#&gt; [1] 139
+#&gt; [1] 140
+#&gt; [1] 141
+#&gt; [1] 142
+#&gt; [1] 143
+#&gt; [1] 144
+#&gt; [1] 145
+#&gt; [1] 146
+#&gt; [1] 147
+#&gt; [1] 148
+#&gt; [1] 149
+#&gt; [1] 150
+#&gt; [1] 151
+#&gt; [1] 152
+#&gt; [1] 153
+#&gt; [1] 154
+#&gt; [1] 155
+#&gt; [1] 156
+#&gt; [1] 157
+#&gt; [1] 158
+#&gt; [1] 159
+#&gt; [1] 160
+#&gt; [1] 161
+#&gt; [1] 162
+#&gt; [1] 163
+#&gt; [1] 164
+#&gt; [1] 165
+#&gt; [1] 166
+#&gt; [1] 167
+#&gt; [1] 168
+#&gt; [1] 169
+#&gt; [1] 170
+#&gt; [1] 171
+#&gt; [1] 172
+#&gt; [1] 173
+#&gt; [1] 174
+#&gt; [1] 175
+#&gt; [1] 176
+#&gt; [1] 177
+#&gt; [1] 178
+#&gt; [1] 179
+#&gt; [1] 180
+#&gt; [1] 181
+#&gt; [1] 182
+#&gt; [1] 183
+#&gt; [1] 184
+#&gt; [1] 185
+#&gt; [1] 186
+#&gt; [1] 187
+#&gt; [1] 188
+#&gt; [1] 189
+#&gt; [1] 190
+#&gt; [1] 191
+#&gt; [1] 192
+#&gt; [1] 193
+#&gt; [1] 194
+#&gt; [1] 195
+#&gt; [1] 196
+#&gt; [1] 197
+#&gt; [1] 198
+#&gt; [1] 199
+#&gt; [1] 200
+#&gt; [1] 201
+#&gt; [1] 202
+#&gt; [1] 203
+#&gt; [1] 204
+#&gt; [1] 205
+#&gt; [1] 206
+#&gt; [1] 207
+#&gt; [1] 208
+#&gt; [1] 209
+#&gt; [1] 210
+#&gt; [1] 211
+#&gt; [1] 212
+#&gt; [1] 213
+#&gt; [1] 214
+#&gt; [1] 215
+#&gt; [1] 216
+#&gt; [1] 217
+#&gt; [1] 218
+#&gt; [1] 219
+#&gt; [1] 220
+#&gt; [1] 221
+#&gt; [1] 222
+#&gt; [1] 223
+#&gt; [1] 224
+#&gt; [1] 225
+#&gt; [1] 226
+#&gt; [1] 227
+#&gt; [1] 228
+#&gt; [1] 229
+#&gt; [1] 230
+#&gt; [1] 231
+#&gt; [1] 232
+#&gt; [1] 233
+#&gt; [1] 234
+#&gt; [1] 235
+#&gt; [1] 236
+#&gt; [1] 237
+#&gt; [1] 238
+#&gt; [1] 239
+#&gt; [1] 240
+#&gt; [1] 241
+#&gt; [1] 242
+#&gt; [1] 243
+#&gt; [1] 244
+#&gt; [1] 245
+#&gt; [1] 246
+#&gt; [1] 247
+#&gt; [1] 248
+#&gt; [1] 249
+#&gt; [1] 250
+#&gt; [1] 251
+#&gt; [1] 252
+#&gt; [1] 253
+#&gt; [1] 254
+#&gt; [1] 255
+#&gt; [1] 256
+#&gt; [1] 257
+#&gt; [1] 258
+#&gt; [1] 259
+#&gt; [1] 260
+#&gt; [1] 261
+#&gt; [1] 262
+#&gt; [1] 263
+#&gt; [1] 264
+#&gt; [1] 265
+#&gt; [1] 266
+#&gt; [1] 267
+#&gt; [1] 268
+#&gt; [1] 269
+#&gt; [1] 270
+#&gt; [1] 271
+#&gt; [1] 272
+#&gt; [1] 273
+#&gt; [1] 274
+#&gt; [1] 275
+#&gt; [1] 276
+#&gt; [1] 277
+#&gt; [1] 278
+#&gt; [1] 279
+#&gt; [1] 280
+#&gt; [1] 281
+#&gt; [1] 282
+#&gt; [1] 283
+#&gt; [1] 284
+#&gt; [1] 285
+#&gt; [1] 286
+#&gt; [1] 287
+#&gt; [1] 288
+#&gt; [1] 289
+#&gt; [1] 290
+#&gt; [1] 291
+#&gt; [1] 292
+#&gt; [1] 293
+#&gt; [1] 294
+#&gt; [1] 295
+#&gt; [1] 296
+#&gt; [1] 297
+#&gt; [1] 298
+#&gt; [1] 299
+#&gt; [1] 300
+#&gt; [1] 301
+#&gt; [1] 302
+#&gt; [1] 303
+#&gt; [1] 304
+#&gt; [1] 305
+#&gt; [1] 306
+#&gt; [1] 307
+#&gt; [1] 308
+#&gt; [1] 309
+#&gt; [1] 310
+#&gt; [1] 311
+#&gt; [1] 312
+#&gt; [1] 313
+#&gt; [1] 314
+#&gt; [1] 315
+#&gt; [1] 316
+#&gt; [1] 317
+#&gt; [1] 318
+#&gt; [1] 319
+#&gt; [1] 320
+#&gt; [1] 321
+#&gt; [1] 322
+#&gt; [1] 323
+#&gt; [1] 324
+#&gt; [1] 325
+#&gt; [1] 326
+#&gt; [1] 327
+#&gt; [1] 328
+#&gt; [1] 329
+#&gt; [1] 330
+#&gt; [1] 331
+#&gt; [1] 332
+#&gt; [1] 333
+#&gt; [1] 334
+#&gt; [1] 335
+#&gt; [1] 336
+#&gt; [1] 337
+#&gt; [1] 338
+#&gt; [1] 339
+#&gt; [1] 340
+#&gt; [1] 341
+#&gt; [1] 342
+#&gt; [1] 343
+#&gt; [1] 344
+#&gt; [1] 345
+#&gt; [1] 346
+#&gt; [1] 347
+#&gt; [1] 348
+#&gt; [1] 349
+#&gt; [1] 350
+#&gt; [1] 351</div><div class='input'>
 <span class='co'>#Make an FLStocks object and plot the results</span>
 <span class='no'>NSH.retro</span> <span class='kw'>&lt;-</span> <span class='no'>res</span> + <span class='no'>NSH</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>NSH.retro</span>)</div><div class='output co'>#&gt; <span class='error'>Error in dfs[[i]]: subscript out of bounds</span></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>NSH.retro</span>)</div><div class='img'><img src='retro-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Based on code by Laurence Kell, modified by Niels T. Hintzen and Mark R. Payne</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -200,7 +6964,7 @@ penultimate and final year and so on.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

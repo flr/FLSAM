@@ -57,8 +57,8 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
     detach("package:doParallel",unload=TRUE)
   if("foreach" %in% (.packages()))
     detach("package:foreach",unload=TRUE)
-  if("iterators" %in% (.packages()))
-    detach("package:iterators",unload=TRUE)
+  #if("iterators" %in% (.packages()))
+  #  detach("package:iterators",unload=TRUE)
 
   #- Fill the results of the simulations
   if(!return.sam){

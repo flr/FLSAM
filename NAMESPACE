@@ -1,5 +1,5 @@
-import("FLCore")
 import("utils")
+import("FLCore")
 importFrom(stockassessment,defcon)
 importFrom(stockassessment,defpar)
 importFrom(stockassessment,setup.sam.data)
@@ -23,7 +23,7 @@ importFrom("graphics", "abline", "axis", "barplot", "contour", "grid",
   "layout", "lcm", "legend", "lines", "par", "points",
   "polygon", "text", "title")
 importFrom("grDevices", "colorRampPalette")
-importFrom("stats", "acf", "aggregate", "approxfun", "as.ts",
+importFrom("stats", "acf", "aggregate", "approxfun", "as.ts", "setNames",
   "cov2cor", "density", "loess.smooth", "na.omit", "na.pass",
   "nlminb", "pchisq", "qqline", "qqnorm")
 importFrom("methods", "as", "is", "new", "slot", "slot<-", "slotNames",

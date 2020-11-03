@@ -1,5 +1,5 @@
-NSH: NSH NSH.tun
+NSH: NSH NSH.tun NSH.ctrl
 NSH.sam
-SOL: SOL SOL.tun
+SOL: SOL SOL.tun SOL.ctrl
 SOL.sam
 HERAS.sams

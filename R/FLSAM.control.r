@@ -160,7 +160,7 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
       }
       for(slt.name in slotNames(object)){
         slt <- slot(object,slt.name)
-        if(class(slt)=="matrix"){
+        if(is(slt, "matrix")){
           remaining.fleets <- setdiff(rownames(slt),fleets)
           slot(object,slt.name) <- slt[remaining.fleets,,drop=FALSE]
         }
@@ -175,7 +175,7 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
     if(!missing("ages")) {
       for(slt.name in slotNames(object)) {
         slt <- slot(object,slt.name)
-        if(class(slt)=="matrix") {
+        if(is(slt, "matrix")) {
           remaining.ages <- setdiff(colnames(slt),ages)
           if(slt.name == "cor.obs"){
             mincol <- unique(unlist(sapply(ages,grep,colnames(object@cor.obs))))
@@ -196,7 +196,7 @@ setMethod("update", signature(object="FLSAM.control"),
   function(object){
 
   for(iSlt in slotNames(object)){
-    if(class(slot(object,iSlt))=="matrix"){
+    if(is(slot(object,iSlt), "matrix")){
       isNA <- which(slot(object,iSlt)==-1)
       slot(object,iSlt)[isNA] <- NA
       slot(object,iSlt)[]  <-  as.numeric(factor(slot(object,iSlt)))-1
@@ -226,7 +226,7 @@ setValidity("FLSAM.control",
     dmns <- list()
     dms  <- list()
     for(iSlt in slotNames(object)){
-      if(class(slot(object,iSlt)) == "matrix"){
+      if(is(slot(object,iSlt), "matrix")){
         dmns[[iSlt]]  <- dimnames(slot(object,iSlt))
         dms[[iSlt]]   <- dim(slot(object,iSlt))
       }
