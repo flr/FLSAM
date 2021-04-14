@@ -1,11 +1,12 @@
 .onAttach <- function(lib,pkg) {
+
 packageStartupMessage(sprintf("\nFLSAM %s (%s)",packageDescription("FLSAM")$Version,
            packageDescription("FLSAM")$Date), "\n",
 "------------------------------------------------------------------------------
 
 * NOTE: This version of FLSAM requires a particular version of the
     'stockassessment' package. Please install using
-    devtools::install_github('fishwollower/SAM/stockassessment', ref='component')
+	  devtools::install_github('fishfollower/SAM/stockassessment', ref='components')
 
 * This package is an FLR wrapper to SAM, the State-space Assessment Model
     developed by Anders Nielsen, DTU-Aqua. For details regarding SAM, 
@@ -25,4 +26,3 @@ packageStartupMessage(sprintf("\nFLSAM %s (%s)",packageDescription("FLSAM")$Vers
 if(packageVersion("stockassessment") != "0.5.4")
   stop("Version of stockassessment is not compatible with FLSAM, see above.")
 }
-
