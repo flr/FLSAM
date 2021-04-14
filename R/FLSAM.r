@@ -65,14 +65,6 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
   #get datasets ready
   data  <- conf <- par <- list()
 
-  if("doParallel" %in% (.packages()))
-    detach("package:doParallel",unload=TRUE)
-  if("foreach" %in% (.packages()))
-    detach("package:foreach",unload=TRUE)
-  if("iterators" %in% (.packages()))
-    detach("package:iterators",unload=TRUE)
-
-
   require(doParallel)
   ncores <- detectCores()-1
   ncores <- ifelse(iters<ncores,iters,ncores)
@@ -91,7 +83,7 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
                    ret <- iPar }
                  return(ret)}
   if(!is.null(starting.sam))
-    par <- foreach(i = 1:iters) %dopar% checkUpdate(i,starting.sam[[i]],par[[i]])
+    par <- foreach(i = 1:iters) %dopar% checkUpdate(i,starting.sam,par[[i]])
 
 #  for(i in 1:iters){
 #    iTun <- tun
@@ -134,12 +126,7 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
     resSAM <- as(resSAM,"FLSAMs")
   }
   stopCluster(cl)
-  if("doParallel" %in% (.packages()))
-    detach("package:doParallel",unload=TRUE)
-  if("foreach" %in% (.packages()))
-    detach("package:foreach",unload=TRUE)
-  if("iterators" %in% (.packages()))
-    detach("package:iterators",unload=TRUE)
+  
   if(!return.sam){
     for(i in 1:iters){
       if(!is.na(unlist(res[[i]]$sdrep)[1])){

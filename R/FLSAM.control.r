@@ -145,9 +145,7 @@ FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYear
 }
 
 #Function for dropping ages or surveys from a FLSAM.control
-if (!isGeneric("drop.from.control")) {
     setGeneric("drop.from.control",function(object,...) standardGeneric("drop.from.control"))
-}
 setMethod("drop.from.control",signature(object="FLSAM.control"),
   function(object,fleets="missing",ages="missing") {
     #Drop the fleets first
