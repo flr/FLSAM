@@ -1,5 +1,5 @@
 Package: FLSAM
-Title: FLSAM, an Implementation of the State-Space Assessment Model for FLR
+Title: An Implementation of the State-Space Assessment Model for FLR
 Version: 2.1.1
 Date: 2020-05-26
 Authors@R: c(
