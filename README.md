@@ -1,7 +1,7 @@
 
 # FLSAM
-- Version: 2.1.0
-- Date: 2018-11-27
+- Version: 2.1.1
+- Date: 2020-05-26
 - Author: M.R. Payne <mpa ΑΤ aqua.dtu.dk>, N.T. Hintzen <niels.hintzen ΑΤ wur.nl>
 - Maintainer: M.R. Payne <mpa ΑΤ aqua.dtu.dk>, N.T. Hintzen <niels.hintzen ΑΤ wur.nl>
 - Repository: <https://github.com/flr/FLCore/>

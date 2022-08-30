@@ -110,6 +110,14 @@ data(NSH.sam)
 #Perform assessment
 #Takes about two minutes on a 2.4GHz workstation
 sam <- FLSAM(NSH,NSH.tun,NSH.ctrl)
+sam <- FLSAM(NSH,NSH.tun,NSH.ctrl, return.fit=TRUE)
+
+fut <- forecast(sam, fscale = NULL, catchval = NULL, fval = NULL,
+  nosim = 1000, year.base = max(fit$data$years),
+  ave.years = max(fit$data$years) + (-4:0),
+  rec.years = max(fit$data$years) + (-9:0), label = NULL,
+  overwriteSelYears = NULL, deterministic = FALSE)
+
 
 #If you want to re-use the sam object to create a pin file, use this:
 sam <- FLSAM(NSH,NSH.tun,NSH.ctrl,pin.sam=sam)
