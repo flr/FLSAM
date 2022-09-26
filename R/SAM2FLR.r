@@ -37,7 +37,7 @@ SAM2FLR <- function(fit,ctrl){
     dimnames(res@components) <- list(component=compnames,years=compyears[1]:compyears[2])
   }
   #- Fill stock and harvest
-  res@stock.n <- FLQuant(t(stockassessment::ntable(fit)),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+  res@stock.n <- FLQuant(t(stockassessmentComp::ntable(fit)),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
                                                         year=ctrl@range["minyear"]:ctrl@range["maxyear"],
                                                         unit="unique",
                                                         season="all",
@@ -45,7 +45,7 @@ SAM2FLR <- function(fit,ctrl){
                                                         iter=1))
                                                           
   if(length(grep("catch",rownames(ctrl@states)))==1)
-    res@harvest <- FLQuant(t(stockassessment::faytable(fit)),
+    res@harvest <- FLQuant(t(stockassessmentComp::faytable(fit)),
                                                         dimnames = list(age = ctrl@range["min"]:ctrl@range["max"],
                                                         year = ctrl@range["minyear"]:ctrl@range["maxyear"],
                                                         unit = "unique", season = "all", area = "unique",

@@ -23,6 +23,6 @@ packageStartupMessage(sprintf("\nFLSAM %s (%s)",packageDescription("FLSAM")$Vers
     help(package='FLSAM') to get started there.
 ------------------------------------------------------------------------------")
 
-if(packageVersion("stockassessment") != "0.5.4")
+if(packageVersion("stockassessmentComp") != "0.5.4")
   stop("Version of stockassessment is not compatible with FLSAM, see above.")
 }

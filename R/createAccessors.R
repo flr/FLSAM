@@ -12,7 +12,7 @@ FLSAMcreateFLAccesors <- function(class, exclude=character(1), include=missing) 
 	for (x in names(slots)) {
 		# check method is defined already and signatures match
 		eval(
-		substitute(if(isGeneric(x) && names(formals(x)) != "object") {warning(paste("Accesor
+		substitute(if(isGeneric(x) && names(formals(x))[1] != "object") {warning(paste("Accesor
 			method for", x, "conflicts with a differently defined generic. Type", x,
 			"for more information")); break}, list(x=x))
 			)

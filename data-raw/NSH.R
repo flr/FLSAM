@@ -13,6 +13,9 @@ load("NSH.RData")
 
 NSH.ctrl <- FLSAM.control(NSH, NSH.tun)
 
+# FIX bug in desc
+NSH.tun[[1]]@desc <- "Spawning component adundance index"
+
 save(NSH, NSH.tun, NSH.ctrl, file="../data/NSH.RData", compress="xz")
 
 NSH.sam <- FLSAM(NSH, NSH.tun, NSH.ctrl)

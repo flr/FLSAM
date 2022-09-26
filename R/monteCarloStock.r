@@ -29,7 +29,7 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   ncores <- ifelse(realisations<ncores,realisations,ncores)
   cl <- makeCluster(ncores)
   clusterEvalQ(cl,library(FLSAM))
-  clusterEvalQ(cl,library(stockassessment))
+  clusterEvalQ(cl,library(stockassessmentComp))
   registerDoParallel(cl)
 
   #- Function to run a new assessment on each of the simulated datasets
