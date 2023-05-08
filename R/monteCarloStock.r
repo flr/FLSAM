@@ -1,11 +1,11 @@
-monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL, ncores=detectCores()-1, ...){
+monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,set.pars=NULL,ncores=detectCores()-1, ...){
   
   require(doParallel)
   ctrl              <- sam@control
   
   #-Create new stock object with nr of realisations in iter slot
   if(class(stck)=="FLStocks"){
-    idxStck           <- which.max(unlist(lapply(NSHs,function(x){x@range["maxyear"]})))
+    idxStck           <- which.max(unlist(lapply(stck,function(x){x@range["maxyear"]})))
     mcstck            <- propagate(stck[[idxStck]],iter=realisations)
     mcstck            <- window(mcstck,start=range(sam)["minyear"],end=range(sam)["maxyear"])
     mcstck@stock.n[]  <- NA
@@ -20,7 +20,39 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   #- Run first an assessment and generate new data to fit new assessment on
   sam@control@simulate <- TRUE
   sam@control@residuals<- FALSE
-  object            <- FLSAM(stck,tun,sam@control,return.fit=T)
+  if(!is.null(set.pars)){
+    matchNames <- matrix(c("logN.vars","logSdLogN",
+                           "logP.vars","logSdLogP",
+                           "catchabilities","logFpar",
+                           "power.law.exps","logQpow",
+                           "f.vars","logSdLogFsta",
+                           "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
+    if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
+        warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
+    set.pars <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
+    
+
+    mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
+    for(i in names(mapDef))
+      mapDef[[i]] <- parS[[i]]
+    map           <- mapDef
+
+    for(i in 1:nrow(set.pars)){
+      parS[[set.pars$SAM[i]]][set.pars$number[i]+1] <- set.pars$value[i]
+      map[[set.pars$SAM[[i]]]][set.pars$number[i]+1] <- NA
+    }
+    map=list(logSdLogN=as.factor(map$logSdLogN),
+             logSdLogP=as.factor(map$logSdLogP),
+             logFpar=as.factor(map$logFpar),
+             logQpow=as.factor(map$logQpow),
+             logSdLogFsta=as.factor(map$logSdLogFsta),
+             logSdLogObs=as.factor(map$logSdLogObs))
+    map <- map[which(names(map) %in% set.pars$SAM)]
+
+    object            <- FLSAM(stck,tun,sam@control,set.pars=set.pars,return.fit=T)
+  } else {
+    object            <- FLSAM(stck,tun,sam@control,return.fit=T)
+  }
   simdat            <- replicate(realisations,
                                	c(object$data[names(object$data)!="logobs"],#all the old data
                                	object$obj$simulate(unlist(object$pl))["logobs"]),#simulated observations
@@ -38,7 +70,12 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
       simdat[[i]]$logobs[which(is.na(object$data$logobs))] <- NA
   }
   #clusterExport(cl,varlist=c("simdat","object"),envir=environment())
-  runs <- foreach(i = 1:realisations) %dopar% try(sam.fitfast(simdat[[i]],object$conf,object$pl,silent=T,...))
+  if(!is.null(set.pars)){
+    runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdat[[i]],object$conf,object$pl,map=map,silent=T,...))
+  } else {
+    runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdat[[i]],object$conf,object$pl,silent=T,...))
+  }
+
   stopCluster(cl) #shut it down
   
   if(return.sam){

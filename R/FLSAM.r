@@ -6,6 +6,10 @@ setClass("FLSAM",
            n.states   = "integer",
            states     = "matrix",
            components = "matrix",
+           stock.wt   = "FLQuant",
+           catch.wt   = "FLQuant",
+           mat        = "FLQuant",
+           m          = "FLQuant",
            nlogl      = "numeric",
            vcov       = "matrix",
            rescov     = "matrix",
@@ -21,18 +25,50 @@ setClass("FLSAM",
            return(TRUE)}
 )
 
-FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NULL,...){
+FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NULL,set.pars=NULL,...){
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
   if(class(stcks)=="FLStock") stcks <- FLStocks(residual=stcks)
-  data  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
-  conf  <- ctrl2conf(ctrl,data)
-  par   <- defpar(data,conf)
+  dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
+  confS  <- ctrl2conf(ctrl,dataS)
+  parS   <- defpar(dataS,confS)
   if(!is.null(starting.values))
-    par <- updateStart(par,FLSAM2par(starting.values))
+    parS <- updateStart(parS,FLSAM2par(starting.values))
 
-  fit   <- sam.fit(data,conf,par,sim.condRE=ctrl@simulate,...)
+   if(!is.null(set.pars)){
+    
+    matchNames <- matrix(c("logN.vars","logSdLogN",
+                           "logP.vars","logSdLogP",
+                           "catchabilities","logFpar",
+                           "power.law.exps","logQpow",
+                           "f.vars","logSdLogFsta",
+                           "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
+    if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
+        warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
+    set.pars <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
+    
+
+    mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
+    for(i in names(mapDef))
+      mapDef[[i]] <- parS[[i]]
+    map           <- mapDef
+
+    for(i in 1:nrow(set.pars)){
+      parS[[set.pars$SAM[i]]][set.pars$number[i]+1] <- set.pars$value[i]
+      map[[set.pars$SAM[[i]]]][set.pars$number[i]+1] <- NA
+    }
+    map=list(logSdLogN=as.factor(map$logSdLogN),
+             logSdLogP=as.factor(map$logSdLogP),
+             logFpar=as.factor(map$logFpar),
+             logQpow=as.factor(map$logQpow),
+             logSdLogFsta=as.factor(map$logSdLogFsta),
+             logSdLogObs=as.factor(map$logSdLogObs))
+    map <- map[which(names(map) %in% set.pars$SAM)]
+    fit   <- sam.fit(dataS,confS,parS,map=map,sim.condRE=ctrl@simulate,...)
+  } else {
+    fit   <- sam.fit(dataS,confS,parS,sim.condRE=ctrl@simulate,...)
+  }
 
   #- Check if you want variance and covariance info
   #- Get FLSAM object back

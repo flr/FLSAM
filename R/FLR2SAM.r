@@ -1,4 +1,5 @@
 ctrl2conf <- function(ctrl,data){
+  noAges            <- diff(range(data$minAgePerFleet[data$minAgePerFleet>=0],data$maxAgePerFleet[data$maxAgePerFleet>=0]))+1
   conf              <- defcon(data)
   conf$minAge[]       <- ctrl@range["min"];
   conf$maxAge[]       <- ctrl@range["max"];
@@ -24,9 +25,30 @@ ctrl2conf <- function(ctrl,data){
   }
   conf$fbarRange[]    <- c(ctrl@range[c("minfbar","maxfbar")])
   conf$keyBiomassTreat[] <- rep(-1,data$noFleets)
-  conf$keyBiomassTreat[which(data$fleetTypes %in% c(3,4))] <- ctrl@biomassTreat[which(ctrl@fleets %in% c(3,4))]
+  conf$keyBiomassTreat[which(data$fleetTypes %in% c(3,4,5))] <- ctrl@biomassTreat[which(ctrl@fleets %in% c(3,4,5))]
   conf$obsLikelihoodFlag[] <- factor(ctrl@likFlag,levels=c("LN","ALN"))
   conf$fixVarToWeight[] <- 0
+
+  # new variables
+  conf$fracMixF[]     <- ctrl@fracMixF
+  conf$fracMixN[]     <- ctrl@fracMixN
+  conf$fracMixObs[]   <- ctrl@fracMixObs
+  conf$constRecBreaks[] <- ctrl@constRecBreaks
+  conf$predVarObsLink[] <- ctrl@predVarObsLink
+  conf$stockWeightModel[] <- ifelse(ctrl@stockWeightModel,1,0)
+  conf$keyStockWeightMean[]   <- ctrl@stockWeightMean
+  conf$keyStockWeightObsVar[] <- ctrl@stockWeightObsVar
+  conf$catchWeightModel[] <- ifelse(ctrl@catchWeightModel,1,0)                                         
+  conf$keyCatchWeightMean[] <- ctrl@catchWeightMean
+  conf$keyCatchWeightObsVar[] <- ctrl@catchWeightObsVar
+  conf$matureModel[] <- ifelse(ctrl@maturityModel,1,0)
+  conf$keyMatureMean[]  <- ctrl@maturityMean
+  conf$mortalityModel[] <- ifelse(ctrl@mortalityModel,1,0)
+  conf$keyMortalityMean[]   <- ctrl@mortalityMean
+  conf$keyMortalityObsVar[] <- ctrl@mortalityObsVar 
+  conf$keyXtraSd[] <- ctrl@XtraSd
+  conf$logNMeanAssumption[] <- ctrl@logNMeanAssumption
+  conf$initState[] <- ctrl@initState
 return(conf)}
 
 conf2ctrl <- function(conf,data){
@@ -57,6 +79,28 @@ conf2ctrl <- function(conf,data){
   ctrl@biomassTreat   <- conf$keyBiomassTreat
   ctrl@likFlag        <- conf$obsLikelihoodFlag
   ctrl@fixVarToWeight <- as.logical(conf$fixVarToWeight)
+
+
+  ctrl@fracMixF    <- conf$fracMixF
+  ctrl@fracMixN    <- conf$fracMixN
+  ctrl@fracMixObs   <- conf$fracMixObs
+  ctrl@constRecBreaks <- conf$constRecBreaks
+  ctrl@predVarObsLink <- conf$predVarObsLink
+  ctrl@stockWeightModel <- conf$stockWeightModel
+  ctrl@stockWeightMean   <- conf$keyStockWeightMean
+  ctrl@stockWeightObsVar <- conf$keyStockWeightObsVar
+  ctrl@catchWeightModel <- conf$catchWeightModel                                         
+  ctrl@catchWeightMean <- conf$keyCatchWeightMean
+  ctrl@catchWeightObsVar <- conf$keyCatchWeightObsVar
+  ctrl@maturityModel <- conf$matureModel
+  ctrl@maturityMean  <- conf$keyMatureMean        
+  ctrl@mortalityModel <- conf$mortalityModel
+  ctrl@mortalityMean   <- conf$keyMortalityMean
+  ctrl@mortalityObsVar <- conf$keyMortalityObsVar
+  ctrl@XtraSd <- conf$keyXtraSd
+  ctrl@logNMeanAssumption <- conf$logNMeanAssumption
+  ctrl@initState <- conf$initState
+
 return(ctrl)}
 
 
@@ -184,7 +228,8 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
   }
 
 
-    sam.dat <-setup.sam.data(surveys=surveysFLR,
+    sam.dat <-setup.sam.data(fleet=NULL,
+                              surveys=surveysFLR,
                               residual.fleets=residual.fleets, # Notice list
                               sum.residual.fleets=sum.fleets,
                               prop.mature=propMat,
@@ -195,7 +240,9 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
                               prop.f=propF,
                               prop.m=propM,
                               natural.mortality=natMort,
-                              land.frac=landFrac)
+                              land.frac=landFrac,
+                              recapture=NULL, #to do: build-in recapture data
+                              keep.all.ages=FALSE)
 
   # Get data weighting
   if(is.null(catch.vars)==F){

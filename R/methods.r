@@ -436,7 +436,7 @@ setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",n='nu
                           slt="logP.vars"),
          "observation correlation"=list(age="transfIRARdist",
                           slt="cor.obs"),
-         "recruitment"=list(val=c("rec_loga","rec_logb"),
+         "recruitment"=list(val=c("rec_pars"),
                           slt="srr"),
          "harvest correlation"=list(val="itrans_rho",
                           slt="cor.F"))

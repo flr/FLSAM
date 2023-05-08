@@ -23,11 +23,11 @@ SAM2FLR <- function(fit,ctrl){
   parssummary[,1]       <- gsub('[0-9]+', '',parssummary[,1])
   res@params  <- parssummary
 
-  res@rescov<- fit$sdrep$cov
-  paramname<- subset(res@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
-                                                 "logCatchByFleet","logfbar","logR","logssb","logtsb","comps"))
-  rownames(res@rescov) <- paramname$name
-  colnames(res@rescov) <- paramname$name
+  rescov    <- TMB:::sdreport(fit$obj, fit$opt$par)
+  res@rescov<- rescov$cov
+  paramname<- names(rescov$value)
+  rownames(res@rescov) <- paramname
+  colnames(res@rescov) <- paramname
 
   #- Get component information
   if(length(ctrl@logP.vars)>0){
@@ -36,6 +36,48 @@ SAM2FLR <- function(fit,ctrl){
     compyears <- range(fit$data$aux[which(fit$data$aux[,2] %in% c(which(ctrl@fleets==6))),1])
     dimnames(res@components) <- list(component=compnames,years=compyears[1]:compyears[2])
   }
+
+  #- Get stock weight information
+  if(ctrl@stockWeightModel){
+    res@stock.wt <- FLQuant(t(exp(fit$pl$logSW[1:length(ctrl@range["minyear"]:ctrl@range["maxyear"]),])),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+                                                        year=ctrl@range["minyear"]:ctrl@range["maxyear"],
+                                                        unit="unique",
+                                                        season="all",
+                                                        area="unique",
+                                                        iter=1))
+  }
+
+  #- Get catch weight information
+  if(ctrl@catchWeightModel){
+    res@catch.wt <- FLQuant(aperm(exp(fit$pl$logCW[1:length(ctrl@range["minyear"]:ctrl@range["maxyear"]),,]),c(2,1,3)),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+                                                        year=ctrl@range["minyear"]:ctrl@range["maxyear"],
+                                                        unit="unique",
+                                                        season="all",
+                                                        area=names(ctrl@fleets)[grep("catch",names(ctrl@fleets))],
+                                                        iter=1))
+  }
+
+  #- Get maturity information
+  if(ctrl@maturityModel){
+    require(boot)
+    res@mat <- FLQuant(t(inv.logit(fit$pl$logitMO[1:length(ctrl@range["minyear"]:ctrl@range["maxyear"]),])),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+                                                        year=ctrl@range["minyear"]:ctrl@range["maxyear"],
+                                                        unit="unique",
+                                                        season="all",
+                                                        area="unique",
+                                                        iter=1))
+  }  
+  #- Get mortality information
+  if(ctrl@mortalityModel){
+    res@m <- FLQuant(t(exp(fit$pl$logNM[1:length(ctrl@range["minyear"]:ctrl@range["maxyear"]),])),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+                                                        year=ctrl@range["minyear"]:ctrl@range["maxyear"],
+                                                        unit="unique",
+                                                        season="all",
+                                                        area="unique",
+                                                        iter=1))
+  }    
+
+
   #- Fill stock and harvest
   res@stock.n <- FLQuant(t(stockassessment::ntable(fit)),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
                                                         year=ctrl@range["minyear"]:ctrl@range["maxyear"],
@@ -81,7 +123,7 @@ SAM2FLR <- function(fit,ctrl){
                                 age=fit$data$aux[,"age"],
                                 log.obs=fit$data$logobs,
                                 log.mdl=fit$rep$predObs,
-                                std.res=oneStepPredict(fit$obj,observation.name="logobs",data.term.indicator="keep",discrete=FALSE)[,"residual"])
+                                std.res=residuals(fit)$residual)
     res@residuals$log.obs[which(is.na(res@residuals$log.obs))] <- fit$pl$missing
     res@residuals$log.mdl[which(!is.finite(res@residuals$log.mdl))] <- NA
     res@residuals$std.res[which(!is.finite(res@residuals$std.res))] <- NA
