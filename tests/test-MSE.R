@@ -14,4 +14,4 @@ data(NSH)
 data(NSH.sam)
 
 NSH.iter <- expand(NSH,iter=1:5)
-res <- FLSAM.MSE(NSH.iter,NSH.tun,NSH.ctrl,starting.sam=NSH.sam)
+# res <- FLSAM.MSE(NSH.iter,NSH.tun,NSH.ctrl,starting.sam=NSH.sam)

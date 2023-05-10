@@ -169,17 +169,14 @@ cor.plot <- function(sam,cols=c("red","white","blue"),full=FALSE) {
 }
 
 #Otolith plot (resample from the variance co-variance matrix and create a plot of all the resampled value)
-if (!isGeneric("otolith")) {
   setGeneric("otolith", function(object, ...)
     standardGeneric("otolith"))
-}
 setMethod("otolith", signature(object="FLSAM"),
 function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.contours=TRUE,
                       margin.plots=TRUE, show.estimate=TRUE,
                       n=100, pch=".", alpha=0.05, show.grid=TRUE,
                       n.grid=50, contour.args=list(),...){
 
-  require(MASS)
   debug <- FALSE
   filled.contours <- FALSE
 
@@ -208,7 +205,8 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
   } else {
       pars <- subset(object@params,name%in%c("beforeLastLogF","beforeLastLogN","lastLogF","lastLogN","logCatch",
                                                  "logCatchByFleet","logfbar","logR","logssb","logtsb","comps"))
-      d <- mvrnorm(n=n,pars$value, object@rescov)
+      browser()
+      d <- mvrnorm(n=n,c(pars$value), object@rescov)
       colnames(d) <- pars$name
       Fbar.all <- d[,colnames(d)=="logfbar"]
       SSB.all <-  d[,colnames(d)=="logssb"]

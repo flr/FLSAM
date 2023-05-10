@@ -3,9 +3,7 @@
 #-------------------------------------------------------------------------------
 
 #- Create generic function for 'looi'
-if (!isGeneric("looi")) {
   setGeneric('looi', function(stck,tun,ctrl,type,...) standardGeneric('looi'))
-}
 
 setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="missing"),
   function(stck,tun,ctrl,type,base.run,set.pars){
@@ -147,13 +145,9 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
 # })
 
 #- Create generic function for 'loo' and 'loi'
-if (!isGeneric("loo")) {
   setGeneric('loo', function(stck,tun,ctrl,type,base.run,set.pars,...) standardGeneric('loo'))
-}
 
-if (!isGeneric("loi")) {
   setGeneric('loi', function(stck,tun,ctrl,type,base.run,set.pars,...) standardGeneric('loi'))
-}
 setMethod("loo",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
   function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
      looi(stck,tun,ctrl,type="loo",base.run,set.pars)
@@ -176,7 +170,6 @@ setMethod("loi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
 # Retro function
 #-------------------------------------------------------------------------------
 
-if (!isGeneric("retro"))
 	setGeneric("retro", function(stock, indices, control, retro, year.range,set.pars)
     	standardGeneric("retro"))
 

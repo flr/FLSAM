@@ -1,8 +1,5 @@
 # merge {{{
 # merge results from FLSAM into FLStock
-if (!isGeneric("merge")) {
-    setGeneric("merge", useAsDefault = merge)
-}
 setMethod("merge", signature(x="FLStock", y="FLSAM"),
   function(x, y, ...)
   {
@@ -176,9 +173,7 @@ setMethod("ssb", signature(object="FLSAMs"),
         }
 )       # }}}
 
-if (!isGeneric("components")) {
     setGeneric("components", function(object) standardGeneric("components"))
-}
 setMethod("components", signature(object="FLSAM"),
         function(object) {
         return(object@components)}
@@ -293,9 +288,7 @@ setMethod("catch.n", signature(object="FLSAMs"),
 )       # }}}
 
 
-if (!isGeneric("f")) {
     setGeneric("f", function(object) standardGeneric("f"))
-}
 setMethod("f", signature(object="FLSAM"),
         function(object) {
           f.states <- subset(.extract.states(object),age<0)
@@ -389,11 +382,10 @@ setMethod("coefficients",signature(object="FLSAMs"),
         }
 )
 
-if (!isGeneric("simulate")) {
-    setGeneric("simulate", function(x,y,z,n) standardGeneric("simulate"))
-}
+setGeneric("simulate", function(x,y,z,n) standardGeneric("simulate"))
 
-setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",n='numeric'),
+setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",
+  n='numeric'),
           function(x,y,z,n=100){
             fit   <- FLSAM(x,y,z,return.fit=T)
             sdrep <- TMB::sdreport(fit$obj,getJointPrecision=T)
@@ -491,9 +483,7 @@ setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",n='nu
 }
 
 
-if (!isGeneric("catchabilities")) {
   setGeneric('catchabilities', function(object) standardGeneric('catchabilities'))
-}
 setMethod("catchabilities",signature(object="FLSAM"),
   function(object) {
     .extract.fleet.parameters(object,"catchability")
@@ -510,9 +500,7 @@ setMethod("catchabilities", signature(object="FLSAMs"),
         }
 )       # }}}
 
-if (!isGeneric("obs.var")) {
   setGeneric('obs.var', function(object) standardGeneric('obs.var'))
-}
 setMethod("obs.var",signature(object="FLSAM"),
     function(object) {
        .extract.fleet.parameters(object,"observation variance")
@@ -529,9 +517,7 @@ setMethod("obs.var", signature(object="FLSAMs"),
         }
 )       # }}}
 
-if (!isGeneric("power.law.exps")) {
   setGeneric('power.law.exps', function(object) standardGeneric('power.law.exps'))
-}
 setMethod("power.law.exps",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"power law")
@@ -548,9 +534,7 @@ setMethod("power.law.exps", signature(object="FLSAMs"),
         }
 )       # }}}
 
-if (!isGeneric("catch.scale")) {
   setGeneric('catch.scale', function(object) standardGeneric('catch.scale'))
-}
 setMethod("catch.scale",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"catch multiplier")
@@ -568,9 +552,7 @@ setMethod("catch.scale", signature(object="FLSAMs"),
 )       # }}}
 
 
-if (!isGeneric("n.var")) {
   setGeneric('n.var', function(object) standardGeneric('n.var'))
-}
 setMethod("n.var",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"number variance")
@@ -587,9 +569,7 @@ setMethod("n.var", signature(object="FLSAMs"),
         }
 )       # }}}
 
-if (!isGeneric("f.var")) {
   setGeneric('f.var', function(object) standardGeneric('f.var'))
-}
 setMethod("f.var",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"harvest variance")
@@ -607,9 +587,7 @@ setMethod("f.var", signature(object="FLSAMs"),
 )       # }}}
 
 
-if (!isGeneric("cor.F")) {
   setGeneric('cor.F', function(object) standardGeneric('cor.F'))
-}
 setMethod("cor.F",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"harvest correlation")
@@ -627,9 +605,7 @@ setMethod("cor.F", signature(object="FLSAMs"),
 )       # }}}
 
 
-if (!isGeneric("cor.obs")) {
   setGeneric('cor.obs', function(object) standardGeneric('cor.obs'))
-}
 setMethod("cor.obs",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"observation correlation")
@@ -646,9 +622,7 @@ setMethod("cor.obs", signature(object="FLSAMs"),
         }
 )       # }}}
 
-if (!isGeneric("rec.pars")) {
   setGeneric('rec.pars', function(object) standardGeneric('rec.pars'))
-}
 setMethod("rec.pars",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"recruitment")
@@ -670,9 +644,7 @@ setMethod("rec.pars", signature(object="FLSAMs"),
 #-------------------------------------------------------------------------------
 
 #- Create generic function for 'lr.test'
-if (!isGeneric("lr.test")) {
   setGeneric('lr.test', function(object,...,type="sequential") standardGeneric('lr.test'))
-}
 
 setMethod("lr.test",signature("FLSAMs"),
   function(object,...,type="sequential"){
@@ -740,9 +712,7 @@ setMethod("lr.test",signature("FLSAM"),
 )
 
 #- Create generic function for 'lr.test'
-if (!isGeneric("mohns.rho")) {
   setGeneric('mohns.rho', function(retro,ref.year,span,type,...) standardGeneric('mohns.rho'))
-}
 setMethod("mohns.rho",signature("FLSAMs"),
 function(retro,ref.year=max(an(names(retro)),na.rm=T),span=5,type="fbar",...){
   if(type == "fbar")

@@ -11,6 +11,22 @@ Additional_repositories: http://flr-project.org/R
 Remotes: fishfollower/SAM/stockassessment
 Imports: methods, utils, TMB, ellipse, MASS, stockassessment
 Suggests: reshape, plyr, RColorBrewer, doParallel
-License: GPL 
+Collate:
+  "FLSAM.control.R"
+  "FLSAM.R"
+  "FLSAM.out.R"
+  "FLR2SAM.R"
+  "SAM2FLR.R"
+  "accessors.R"       
+  "af.R"              
+  "anf.r"
+  "diagnostics.R"
+  "kobe-FLSAM.R"
+  "looi_retro.R"
+  "methods_plots.R"
+  "methods.R"
+  "monteCarloStock.R"
+  "pin.R"
+  "zzz.R"
+License: GPL (>= 2)
 LazyLoad: no
-RoxygenNote: 6.1.0
