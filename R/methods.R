@@ -388,7 +388,7 @@ setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",
   n='numeric'),
           function(x,y,z,n=100){
             fit   <- FLSAM(x,y,z,return.fit=T)
-            sdrep <- TMB::sdreport(fit$obj,getJointPrecision=T)
+            sdrep <- sdreport(fit$obj,getJointPrecision=T)
             sigma <- as.matrix(solve(sdrep$jointPrecision))
             mu    <- c(sdrep$par.fixed,sdrep$par.random)
             sim   <- mvrnorm(n,mu=mu,Sigma=sigma)

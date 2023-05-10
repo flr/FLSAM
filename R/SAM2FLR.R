@@ -23,7 +23,7 @@ SAM2FLR <- function(fit,ctrl){
   parssummary[,1]       <- gsub('[0-9]+', '',parssummary[,1])
   res@params  <- parssummary
 
-  rescov    <- TMB:::sdreport(fit$obj, fit$opt$par)
+  rescov    <- sdreport(fit$obj, fit$opt$par)
   res@rescov<- rescov$cov
   paramname<- names(rescov$value)
   rownames(res@rescov) <- paramname
@@ -79,7 +79,7 @@ SAM2FLR <- function(fit,ctrl){
 
 
   #- Fill stock and harvest
-  res@stock.n <- FLQuant(t(stockassessment::ntable(fit)),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+  res@stock.n <- FLQuant(t(ntable(fit)),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
                                                         year=ctrl@range["minyear"]:ctrl@range["maxyear"],
                                                         unit="unique",
                                                         season="all",
@@ -87,7 +87,7 @@ SAM2FLR <- function(fit,ctrl){
                                                         iter=1))
                                                           
   if(length(grep("catch",rownames(ctrl@states)))==1)
-    res@harvest <- FLQuant(t(stockassessment::faytable(fit)),
+    res@harvest <- FLQuant(t(faytable(fit)),
                                                         dimnames = list(age = ctrl@range["min"]:ctrl@range["max"],
                                                         year = ctrl@range["minyear"]:ctrl@range["maxyear"],
                                                         unit = "unique", season = "all", area = "unique",

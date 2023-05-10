@@ -112,7 +112,7 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
 
   data <- foreach(i = 1:iters) %dopar% FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),FLIndices(lapply(tun, function(x) iter(x,i))),ctrl@sumFleets,catch.vars)
   conf <- foreach(i = 1:iters) %dopar% ctrl2conf(ctrl,data[[i]])
-  par  <- foreach(i = 1:iters) %dopar% stockassessment::defpar(data[[i]],conf[[i]])
+  par  <- foreach(i = 1:iters) %dopar% defpar(data[[i]],conf[[i]])
   checkUpdate <- function(i,iSam,iPar){
                  if(class(iSam)!="logical"){
                    ret <- updateStart(iPar,FLSAM2par(iSam)) } else {
@@ -218,10 +218,10 @@ sam.fitfast <- function(data, conf, parameters, lower=getLowerBounds(parameters)
   parameters$missing <- numeric(nmissing)
   if(length(conf$keyVarLogP)>1){
     ran <- c("logN", "logF","logPS", "missing")
-    obj <- TMB::MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
+    obj <- MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
   } else {
     ran <- c("logN", "logF", "missing")
-    obj <- TMB::MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
+    obj <- MakeADFun(tmball, parameters, random=ran, DLL="stockassessment",...)
   }
 
   lower2<-rep(-Inf,length(obj$par))

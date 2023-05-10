@@ -1,9 +1,6 @@
 import("utils")
 import("FLCore")
-importFrom(stockassessment,defcon)
-importFrom(stockassessment,defpar)
-importFrom(stockassessment,setup.sam.data)
-importFrom(stockassessment,sam.fit)
+import(stockassessment)
 importFrom(TMB,MakeADFun)
 importFrom(TMB,oneStepPredict)
 importFrom(TMB,sdreport)
@@ -23,6 +20,7 @@ importFrom("graphics", "abline", "axis", "barplot", "contour", "grid",
   "layout", "lcm", "legend", "lines", "par", "points",
   "polygon", "text", "title")
 importFrom("grDevices", "colorRampPalette")
+importFrom("MASS", "kde2d")
 importFrom("stats", "acf", "aggregate", "approxfun", "as.ts", "setNames",
   "cov2cor", "density", "loess.smooth", "na.omit", "na.pass",
   "nlminb", "pchisq", "qqline", "qqnorm")
