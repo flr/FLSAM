@@ -99,7 +99,7 @@ FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYear
   #Default constructor
   #Create object
   if(length(stcks)>1 & length(sumFleets)==0) stop("sumFleets must be specified when stcks are provided")
-  if(class(stcks)=="FLStock") stcks <- FLStocks(residual=stcks)
+  if(is(stcks, "FLStock")) stcks <- FLStocks(residual=stcks)
   ctrl <- new("FLSAM.control")
 
   ctrlSAM <- defcon(FLSAM2SAM(stcks,tun,sumFleets,catch.vars))
@@ -265,7 +265,6 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
 
 setMethod("update", signature(object="FLSAM.control"),
   function(object){
-
   for(iSlt in slotNames(object)){
     if(is(slot(object,iSlt), "matrix")){
       isNA <- which(slot(object,iSlt)==-1)

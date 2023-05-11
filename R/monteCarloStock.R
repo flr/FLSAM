@@ -4,7 +4,7 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   ctrl              <- sam@control
   
   #-Create new stock object with nr of realisations in iter slot
-  if(class(stck)=="FLStocks"){
+  if(is(stck, "FLStocks")){
     idxStck           <- which.max(unlist(lapply(stck,function(x){x@range["maxyear"]})))
     mcstck            <- propagate(stck[[idxStck]],iter=realisations)
     mcstck            <- window(mcstck,start=range(sam)["minyear"],end=range(sam)["maxyear"])

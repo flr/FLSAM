@@ -29,7 +29,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
-  if(class(stcks)=="FLStock") stcks <- FLStocks(residual=stcks)
+  if(is(stcks, "FLStock")) stcks <- FLStocks(residual=stcks)
   dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
   confS  <- ctrl2conf(ctrl,dataS)
   parS   <- defpar(dataS,confS)
@@ -87,8 +87,8 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
   #---------------------------------------------------
   # Output FLR objects into a format for SAM to read
   #---------------------------------------------------
-  if(class(stcks)=="FLStocks") stop("Not implemented for multi-fleet yet")
-  if(class(stcks)=="FLStock") stcks <- FLStocks(residual=stcks)
+  if(is(stcks, "FLStocks")) stop("Not implemented for multi-fleet yet")
+  if(is(stcks, "FLStock")) stcks <- FLStocks(residual=stcks)
   if(any(unlist(lapply(stcks,function(x)dims(x)$iter))<=1) & any(unlist(lapply(tun,function(x)dims(x)$iter))<=1))
     stop("Running in MSE mode means supplying FLStock and FLIndices with more iters than 1. Use FLSAM() instead")
 
@@ -114,7 +114,7 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
   conf <- foreach(i = 1:iters) %dopar% ctrl2conf(ctrl,data[[i]])
   par  <- foreach(i = 1:iters) %dopar% defpar(data[[i]],conf[[i]])
   checkUpdate <- function(i,iSam,iPar){
-                 if(class(iSam)!="logical"){
+                 if(is(iSam, "logical")){
                    ret <- updateStart(iPar,FLSAM2par(iSam)) } else {
                    ret <- iPar }
                  return(ret)}

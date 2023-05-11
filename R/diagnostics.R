@@ -99,7 +99,7 @@ residual.diagnostics <- function(x,title=x@name) {
   plt.dat <- index.res.l[[i]]
   abline(h=0)  
   smoother <- try(loess.smooth(plt.dat$mdl,plt.dat$std.res))
-  if(class(smoother)!="try-error")
+  if(is(smoother, "try-error"))
     lines(smoother,col="red")
   title("d) Tukey-Anscombe plot")
 

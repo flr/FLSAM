@@ -66,7 +66,7 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
         res           <- try(FLSAM(stck,Indices.temp,Control.temp))#,starting.values=base.run))
       if(!missing(set.pars))
         res           <- try(FLSAM(stck,Indices.temp,Control.temp,set.pars=set.pars))#starting.values=base.run,))      
-      if(class(res)=="try-error") {
+      if(is(res, "try-error")) {
         warning(sprintf(paste("Leave-in-out for ",iRun,"failed")))
       } else {
         result <- c(result, setNames(list(res), iRun))
@@ -230,13 +230,13 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
         } else {
           assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars))#starting.values=starting.vals,))
         }
-        if(class(assess)=="try-error"){
+        if(is(assess, "try-error")){
           starting.vals <- NULL
         } else {
           starting.vals <- assess
         }
       }
-      if(class(assess)=="try-error") {
+      if(is(assess, "try-error")) {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
         res[[as.character(yr)]] <- assess
@@ -318,13 +318,13 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
             assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars))#starting.values=starting.vals,))
           }
         #assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=starting.vals))
-        if(class(assess)=="try-error"){
+        if(is(assess, "try-error")){
           starting.vals <- NULL
         } else {
           starting.vals <- assess
         }
       }
-      if(class(assess)=="try-error") {
+      if(is(assess, "try-error")) {
         warning(sprintf("Retrospective for year %i failed\n",yr))
       } else {
         res[[as.character(yr)]] <- assess
