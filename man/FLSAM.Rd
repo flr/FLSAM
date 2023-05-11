@@ -112,13 +112,6 @@ data(NSH.sam)
 sam <- FLSAM(NSH,NSH.tun,NSH.ctrl)
 sam <- FLSAM(NSH,NSH.tun,NSH.ctrl, return.fit=TRUE)
 
-fut <- forecast(sam, fscale = NULL, catchval = NULL, fval = NULL,
-  nosim = 1000, year.base = max(fit$data$years),
-  ave.years = max(fit$data$years) + (-4:0),
-  rec.years = max(fit$data$years) + (-9:0), label = NULL,
-  overwriteSelYears = NULL, deterministic = FALSE)
-
-
 #If you want to re-use the sam object to create a pin file, use this:
 sam <- FLSAM(NSH,NSH.tun,NSH.ctrl,pin.sam=sam)
 #View results
@@ -126,11 +119,11 @@ plot(sam)
 
 #Repeat the assessment using the previous result as an initial guess
 uninit.time <- system.time(sam.uninit <- FLSAM(NSH,NSH.tun,NSH.ctrl))
-init.time   <- system.time(sam.init   <- update(sam.uninit,NSH,NSH.tun,NSH.ctrl))
+#init.time   <- system.time(sam.init   <- update(sam.uninit,NSH,NSH.tun,NSH.ctrl))
 #Big speed increase! (your results may vary: ours are about 2x)
-uninit.time[3]/init.time[3]
+#uninit.time[3]/init.time[3]
 #But assessments are the sam (phew!)
-plot(FLSAMs(uninitialised=sam.uninit,initialised=sam.init))
+#plot(FLSAMs(uninitialised=sam.uninit,initialised=sam.init))
 
 }
 \keyword{ ~kwd1 }

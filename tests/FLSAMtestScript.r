@@ -102,4 +102,4 @@ dev.off()
 ### Sample from the model uncertainty and construct new stock realisations
 ### ============================================================================
 
-mc.NSH    <- monteCarloStock(NSH,NSH.tun,NSH.sam,100, ncores=2L)
+# mc.NSH    <- monteCarloStock(NSH,NSH.tun,NSH.sam,100, ncores=2L)
