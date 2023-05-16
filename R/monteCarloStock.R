@@ -4,7 +4,7 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   ctrl              <- sam@control
   
   #-Create new stock object with nr of realisations in iter slot
-  if(is(stck, "FLStocks")){
+  if(class(stck)=="FLStocks"){
     idxStck           <- which.max(unlist(lapply(stck,function(x){x@range["maxyear"]})))
     mcstck            <- propagate(stck[[idxStck]],iter=realisations)
     mcstck            <- window(mcstck,start=range(sam)["minyear"],end=range(sam)["maxyear"])
@@ -21,6 +21,10 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   sam@control@simulate <- TRUE
   sam@control@residuals<- FALSE
   if(!is.null(set.pars)){
+    if(class(stck)=="FLStock") stcks <- FLStocks(residual=stck)
+    dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
+    confS  <- ctrl2conf(ctrl,dataS)
+    parS   <- defpar(dataS,confS)
     matchNames <- matrix(c("logN.vars","logSdLogN",
                            "logP.vars","logSdLogP",
                            "catchabilities","logFpar",
@@ -29,7 +33,7 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
                            "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
     if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
         warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
-    set.pars <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
+    set.pars.internal <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
     
 
     mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
@@ -37,9 +41,9 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
       mapDef[[i]] <- parS[[i]]
     map           <- mapDef
 
-    for(i in 1:nrow(set.pars)){
-      parS[[set.pars$SAM[i]]][set.pars$number[i]+1] <- set.pars$value[i]
-      map[[set.pars$SAM[[i]]]][set.pars$number[i]+1] <- NA
+    for(i in 1:nrow(set.pars.internal)){
+      parS[[set.pars.internal$SAM[i]]][set.pars.internal$number[i]+1] <- set.pars.internal$value[i]
+      map[[set.pars.internal$SAM[[i]]]][set.pars.internal$number[i]+1] <- NA
     }
     map=list(logSdLogN=as.factor(map$logSdLogN),
              logSdLogP=as.factor(map$logSdLogP),
@@ -49,13 +53,13 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
              logSdLogObs=as.factor(map$logSdLogObs))
     map <- map[which(names(map) %in% set.pars$SAM)]
 
-    object            <- FLSAM(stck,tun,sam@control,set.pars=set.pars,return.fit=T)
+    object            <- FLSAM(stcks,tun,sam@control,set.pars=set.pars,return.fit=T)
   } else {
     object            <- FLSAM(stck,tun,sam@control,return.fit=T)
   }
   simdat            <- replicate(realisations,
                                	c(object$data[names(object$data)!="logobs"],#all the old data
-                               	object$obj$simulate(unlist(object$pl))["logobs"]),#simulated observations
+                               	object$obj$simulate()["logobs"]),#simulated observations
                                	simplify=FALSE)
   #- Make cluster to speed up process
   ncores <- ifelse(realisations<ncores,realisations,ncores)
