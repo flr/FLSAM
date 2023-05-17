@@ -8,7 +8,11 @@ Authors@R: c(
 Description: This package provides an FLR wrapper to the SAM state-space assessment model.
 Depends: R (>= 4.1.0), FLCore (>= 2.6.0)
 Additional_repositories: http://flr-project.org/R
-Remotes: fishfollower/SAM/stockassessment
+RemoteType: github
+RemoteHost: api.github.com
+RemoteRepo: SAM
+RemoteUsername: fishfollower
+RemoteSubdir: stockassessment
 Imports: methods, utils, TMB, ellipse, MASS, stockassessment
 Suggests: reshape, plyr, RColorBrewer, doParallel
 Collate:
