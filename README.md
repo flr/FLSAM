@@ -16,9 +16,13 @@ To install this package, start R and enter:
 
 or download from the [FLSAM releases page](https://github.com/flr/FLSAM/releases/latest)
 
-**PLEASE NOTE** that this version of FLSAM requires a particular version of the 'stockassessment' package. Please install using
+**PLEASE NOTE** FLSAM requires the latest 'stockassessment' package. Please install using
 
-	devtools::install_github('fishfollower/SAM/stockassessment', ref='components')
+	devtools::install_github('fishfollower/SAM/stockassessment')
+
+or
+
+  install.packages("stockassessment", repos="https://fishfollower.r-universe.dev")
 
 ## Documentation
 - [Help pages](http://flr-project.org/FLSAM)

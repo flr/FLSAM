@@ -6,14 +6,13 @@ Authors@R: c(
   person("N.T.", "Hintzen", email = "nhintzen@pelagicfish.eu", role = "cre"),
   person("M.R.", "Payne", email = "mpa@aqua.dtu.dk", role = "aut"))
 Description: This package provides an FLR wrapper to the SAM state-space assessment model.
-Depends: R (>= 4.1.0), FLCore (>= 2.6.0)
-Additional_repositories: http://flr-project.org/R
+Depends: R (>= 4.1.0), FLCore (>= 2.6.0), stockassessment (>= 0.12.0)
 RemoteType: github
 RemoteHost: api.github.com
 RemoteRepo: SAM
 RemoteUsername: fishfollower
 RemoteSubdir: stockassessment
-Imports: methods, utils, TMB, ellipse, MASS, stockassessment
+Imports: methods, utils, TMB, ellipse, MASS
 Suggests: reshape, plyr, RColorBrewer, doParallel
 Collate:
   "FLSAM.control.R"
