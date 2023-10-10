@@ -9,6 +9,8 @@ Description: This package provides an FLR wrapper to the SAM state-space assessm
 Depends: R (>= 4.1.0), FLCore (>= 2.6.0), stockassessment (>= 0.12.0)
 Imports: methods, utils, TMB, ellipse, MASS
 Suggests: reshape, plyr, RColorBrewer, doParallel
+Remotes:
+    r-universe::fishfollower/stockassessment
 Collate:
   "FLSAM.control.R"
   "FLSAM.R"
