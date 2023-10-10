@@ -241,8 +241,8 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
                               prop.m=propM,
                               natural.mortality=natMort,
                               land.frac=landFrac,
-                              recapture=NULL, #to do: build-in recapture data
-                              keep.all.ages=FALSE)
+                              recapture=NULL)#, #to do: build-in recapture data
+#                              keep.all.ages=FALSE)
 
   # Get data weighting
   if(is.null(catch.vars)==F){
