@@ -1,6 +1,6 @@
 Package: FLSAM
 Title: An Implementation of the State-Space Assessment Model for FLR
-Version: 3.0.0
+Version: 3.0.0.9001
 Date: 2023-04-18
 Authors@R: c(
   person("N.T.", "Hintzen", email = "nhintzen@pelagicfish.eu", role = "cre"),
@@ -10,7 +10,7 @@ Depends: R (>= 4.1.0), FLCore (>= 2.6.0), stockassessment (>= 0.12.0)
 Imports: methods, utils, TMB, ellipse, MASS
 Suggests: reshape, plyr, RColorBrewer, doParallel
 Remotes:
-  r-universe::fishfollower/stockassessment
+  r-universe::fishfollower/SAM/stockassessment
 Collate:
   "FLSAM.control.R"
   "FLSAM.R"
