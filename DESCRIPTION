@@ -10,7 +10,7 @@ Depends: R (>= 4.1.0), FLCore (>= 2.6.0), stockassessment (>= 0.12.0)
 Imports: methods, utils, TMB, ellipse, MASS
 Suggests: reshape, plyr, RColorBrewer, doParallel
 Remotes:
-  fishfollower/stockassessment
+  fishfollower/SAM/stockassessment
 Collate:
   "FLSAM.control.R"
   "FLSAM.R"
