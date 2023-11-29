@@ -43,7 +43,8 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
                            "catchabilities","logFpar",
                            "power.law.exps","logQpow",
                            "f.vars","logSdLogFsta",
-                           "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
+                           "obs.vars","logSdLogObs",
+                           "itrans_rho","itrans_rho"),ncol=2,byrow=T,dimnames=list(1:7,c("FLSAM","SAM")))
     if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
         warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
     set.pars <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
@@ -63,7 +64,8 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
              logFpar=as.factor(map$logFpar),
              logQpow=as.factor(map$logQpow),
              logSdLogFsta=as.factor(map$logSdLogFsta),
-             logSdLogObs=as.factor(map$logSdLogObs))
+             logSdLogObs=as.factor(map$logSdLogObs),
+             itrans_rho=as.factor(map$itrans_rho))
     map <- map[which(names(map) %in% set.pars$SAM)]
     fit   <- sam.fit(dataS,confS,parS,map=map,sim.condRE=ctrl@simulate,...)
   } else {
