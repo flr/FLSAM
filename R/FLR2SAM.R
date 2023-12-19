@@ -86,15 +86,15 @@ conf2ctrl <- function(conf,data){
   ctrl@fracMixObs   <- conf$fracMixObs
   ctrl@constRecBreaks <- conf$constRecBreaks
   ctrl@predVarObsLink <- conf$predVarObsLink
-  ctrl@stockWeightModel <- conf$stockWeightModel
+  ctrl@stockWeightModel <- as.logical(conf$stockWeightModel)
   ctrl@stockWeightMean   <- conf$keyStockWeightMean
   ctrl@stockWeightObsVar <- conf$keyStockWeightObsVar
-  ctrl@catchWeightModel <- conf$catchWeightModel                                         
+  ctrl@catchWeightModel <- as.logical(conf$catchWeightModel)
   ctrl@catchWeightMean <- conf$keyCatchWeightMean
   ctrl@catchWeightObsVar <- conf$keyCatchWeightObsVar
-  ctrl@maturityModel <- conf$matureModel
+  ctrl@maturityModel <- as.logical(conf$matureModel)
   ctrl@maturityMean  <- conf$keyMatureMean        
-  ctrl@mortalityModel <- conf$mortalityModel
+  ctrl@mortalityModel <-as.logical(conf$mortalityModel)
   ctrl@mortalityMean   <- conf$keyMortalityMean
   ctrl@mortalityObsVar <- conf$keyMortalityObsVar
   ctrl@XtraSd <- conf$keyXtraSd
