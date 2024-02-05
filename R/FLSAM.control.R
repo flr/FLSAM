@@ -50,7 +50,7 @@ setClass("FLSAM.control",
     plus.group      =as.vector(1),   ## model the maximum age as a plus group?
     states          =as.matrix(0),   ## matrix describing the coupling of the states
     logN.vars       =as.vector(0),   ## vector of coupling of the logN variables
-    logP.vars       =as.vector(0),   ## vector of coupling of the logP variables
+    logP.vars       =as.numeric(0),   ## vector of coupling of the logP variables
     catchabilities  =as.matrix(0),   ## matrix characterising the coupling of the parameters
     power.law.exps  =as.matrix(0),   ## matrix of survey catchabilities
     f.vars          =as.matrix(0),   ## matrix of fishing mortality couplings

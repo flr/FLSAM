@@ -30,7 +30,7 @@ SAM2FLR <- function(fit,ctrl){
   colnames(res@rescov) <- paramname
 
   #- Get component information
-  if(length(ctrl@logP.vars)>0){
+  if(length(ctrl@logP.vars) > 0){
     res@components <- exp(fit$rep$comps)
     compnames <- names(ctrl@fleets)[which(ctrl@fleets==6)]
     compyears <- range(fit$data$aux[which(fit$data$aux[,2] %in% c(which(ctrl@fleets==6))),1])

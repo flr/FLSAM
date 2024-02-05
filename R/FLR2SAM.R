@@ -57,7 +57,7 @@ conf2ctrl <- function(conf,data){
   ctrl@fleets <- data$fleetTypes
   names(ctrl@fleets)  <- attr(data,"fleetNames")
     matdef            <- matrix(NA,nrow=length(ctrl@fleets),ncol=length(ctrl@range["min"]:ctrl@range["max"]),dimnames=list(names(ctrl@fleets),ctrl@range["min"]:ctrl@range["max"]))
-    matdef[]          <- conf$keyLogFsta
+   matdef[]          <- conf$keyLogFsta
   ctrl@states         <- matdef
   ctrl@cor.F          <- conf$corFlag
     matdef[]          <- conf$keyLogFpar
