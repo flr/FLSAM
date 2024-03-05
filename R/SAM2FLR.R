@@ -164,8 +164,27 @@ SIM2FLR <- function(sim,fit,ctrl){
     #- Get overall vcov and the cov of the observations
     res@vcov    <- matrix(0)
 
-    #- get parameters + sd value
-    parssummary <- data.frame(name=ac(rownames(as.data.frame(unlist(fit$pl)))),
+    #- get parameter names
+    pars2match <- unique(dimnames(sim)[[2]])
+    keepPars    <- names(fit$pl)[which(names(fit$pl) %in% pars2match)]
+    pars       <- ac(rownames(as.data.frame(unlist(fit$pl))))
+    idx       <- character()
+    for(iK in keepPars){
+      if(iK != "logAlphaSCB"){
+        grp <- pars[grepl(iK,pars)]
+        if(length(grp)>1){
+          idx <- c(idx,grp[which(!is.na(an(substr(grp,nchar(iK)+1,nchar(grp)))))])
+        } else {
+          idx <- c(idx,grp)
+        }
+      }
+      if(iK == "logAlphaSCB"){
+        grp <- pars[grepl(iK,pars)]
+        idx <- c(idx,grp)
+      }
+    }
+    #- add names + values
+    parssummary <- data.frame(name=idx,
                                     value=           sim[i,],
                                     std.dev=         NA)
     parssummary$name <- ac(parssummary$name)
