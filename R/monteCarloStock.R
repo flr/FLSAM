@@ -1,4 +1,4 @@
-monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,set.pars=NULL,ncores=detectCores()-1, ...){
+monteCarloStock_alt <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,set.pars=NULL,ncores=detectCores()-1, ...){
   
   require(doParallel)
   ctrl              <- sam@control
@@ -16,7 +16,7 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
     mcstck@stock.n[]  <- NA
     mcstck@harvest[]  <- NA
   }
-
+  
   #- Run first an assessment and generate new data to fit new assessment on
   sam@control@simulate <- TRUE
   sam@control@residuals<- FALSE
@@ -32,15 +32,15 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
                            "f.vars","logSdLogFsta",
                            "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
     if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
-        warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
+      warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
     set.pars.internal <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
     
-
+    
     mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
     for(i in names(mapDef))
       mapDef[[i]] <- parS[[i]]
     map           <- mapDef
-
+    
     for(i in 1:nrow(set.pars.internal)){
       parS[[set.pars.internal$SAM[i]]][set.pars.internal$number[i]+1] <- set.pars.internal$value[i]
       map[[set.pars.internal$SAM[[i]]]][set.pars.internal$number[i]+1] <- NA
@@ -52,22 +52,22 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
              logSdLogFsta=as.factor(map$logSdLogFsta),
              logSdLogObs=as.factor(map$logSdLogObs))
     map <- map[which(names(map) %in% set.pars$SAM)]
-
+    
     object            <- FLSAM(stcks,tun,sam@control,set.pars=set.pars,return.fit=T)
   } else {
     object            <- FLSAM(stck,tun,sam@control,return.fit=T)
   }
   simdat            <- replicate(realisations,
-                               	c(object$data[names(object$data)!="logobs"],#all the old data
-                               	object$obj$simulate()["logobs"]),#simulated observations
-                               	simplify=FALSE)
+                                 c(object$data[names(object$data)!="logobs"],#all the old data
+                                   object$obj$simulate()["logobs"]),#simulated observations
+                                 simplify=FALSE)
   #- Make cluster to speed up process
   ncores <- ifelse(realisations<ncores,realisations,ncores)
   cl <- makeCluster(ncores)
   clusterEvalQ(cl,library(FLSAM))
   clusterEvalQ(cl,library(stockassessment))
   registerDoParallel(cl)
-
+  
   #- Function to run a new assessment on each of the simulated datasets
   for(i in 1:realisations){
     if(length(which(is.na(object$data$logobs)))>0)
@@ -79,42 +79,32 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   } else {
     runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdat[[i]],object$conf,object$pl,silent=T,...))
   }
-
+  
   stopCluster(cl) #shut it down
   
-  if(return.sam){
-    resSAM <- list()
-    for(i in 1:iters){
-      if(!is.na(unlist(res[[i]]$sdrep)[1])){
-        resSAM[[i]] <- SAM2FLR(res[[i]],sam@control)
-      } else {
-        resSAM[[i]] <- NA
-      }
-    }
-    resSAM <- as(resSAM,"FLSAMs")
-  }
-
   #- Fill the results of the simulations
-  if(!return.sam){
-    samRuns <- list()
-    for(i in 1:realisations){
-      if(!is.na(unlist(runs[[i]]$sdrep)[1])){
-        samRuns[[i]]           <- SAM2FLR(runs[[i]],sam@control)
-        mcstck@stock.n[,,,,,i] <- samRuns[[i]]@stock.n
-        mcstck@harvest[,,,,,i] <- samRuns[[i]]@harvest
-        #mcstck@catch[,,,,,i]   <- subset(params(samRuns[[i]]),name=="logCatch")$value
-      }
+  samRuns <- list()
+  for(i in 1:realisations){
+    if(!is.na(unlist(runs[[i]]$sdrep)[1])){
+      samRuns[[i]]           <- SAM2FLR(runs[[i]],sam@control)
+      mcstck@stock.n[,,,,,i] <- samRuns[[i]]@stock.n
+      mcstck@harvest[,,,,,i] <- samRuns[[i]]@harvest
+      #mcstck@catch[,,,,,i]   <- subset(params(samRuns[[i]]),name=="logCatch")$value
+    }
+    else {
+      samRuns[[i]] <- NA
     }
   }
+  samRuns <- as(samRuns, "FLSAMs")
   
   #- Save randomly drawn parameters
   pars          <- lapply( samRuns , function(x) params(x)$value)
   random.param  <- matrix(unlist(pars)    , byrow= T, nrow = realisations ,dimnames =list(NULL, params(samRuns[[1]])$name ))
   if(!is.null(saveParsDir))
     save(random.param,file=saveParsDir)
-
+  
   if(return.sam)
-    ret <- resSAM
+    ret <- list(sam=samRuns,stk=mcstck)
   if(!return.sam)
     ret <- mcstck
-return(ret)}
+  return(ret)}
