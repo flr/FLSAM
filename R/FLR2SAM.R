@@ -157,24 +157,31 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
     sum.fleets <- NULL
   }
 
-  #- Prepare props, natmort and stock weigth
   if("sum" %in% names(stcks))
-    propMat   <- rbind(t(stcks[["residual"]]@mat[,,,,1,drop=T]),t(stcks[["sum"]]@mat[,drop=T]))
+      propMat   <- rbind(t(stcks[["residual"]]@mat[,,,,1,drop=T]),t(stcks[["sum"]]@mat[,drop=T]))
   if(!"sum" %in% names(stcks))
-    propMat   <- t(stcks[["residual"]]@mat[,,,,1,drop=T])
+      propMat   <- t(stcks[["residual"]]@mat[,,,,1,drop=T])
   propMat     <- propMat[ac(sort(rownames(propMat))),]
 
-  if("sum" %in% names(stcks))
-    propF     <- rbind(t(stcks[["residual"]]@harvest.spwn[,,,,1,drop=T]),t(stcks[["sum"]]@harvest.spwn[,drop=T]))
-  if(!"sum" %in% names(stcks))
-    propF     <- t(stcks[["residual"]]@harvest.spwn[,,,,1,drop=T])
-  propF       <- propF[ac(sort(rownames(propF))),]
+  if(dims(stcks[["residual"]])$area>1){
+    if("sum" %in% names(stcks))
+      propF      <- lapply(1:dims(stcks[["residual"]])$area,function(flt) rbind(t(stcks[["residual"]]@harvest.spwn[,,,,flt,drop=T]),t(stcks[["sum"]]@harvest.spwn[,drop=T])))
+    if(!"sum" %in% names(stcks))
+      propF      <-lapply(1:dims(stcks[["residual"]])$area,function(flt) t(stcks[["residual"]]@harvest.spwn[,,,,flt,drop=T]))
+    propF       <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(propF[[x]][ac(sort(rownames(propF[[x]]))),])})
+  } else {
+    if("sum" %in% names(stcks))
+      propF     <- rbind(t(stcks[["residual"]]@harvest.spwn[,,,,1,drop=T]),t(stcks[["sum"]]@harvest.spwn[,drop=T]))
+    if(!"sum" %in% names(stcks))
+      propF     <- t(stcks[["residual"]]@harvest.spwn[,,,,1,drop=T])
+    propF       <- propF[ac(sort(rownames(propF))),]
+  }
 
   if("sum" %in% names(stcks))
-    propM     <- rbind(t(stcks[["residual"]]@m.spwn[,,,,1,drop=T]),t(stcks[["sum"]]@m.spwn[,drop=T]))
+    propM   <- rbind(t(stcks[["residual"]]@m.spwn[,,,,1,drop=T]),t(stcks[["sum"]]@m.spwn[,drop=T]))
   if(!"sum" %in% names(stcks))
-    propM     <- t(stcks[["residual"]]@m.spwn[,,,,1,drop=T])
-  propM       <- propM[ac(sort(rownames(propM))),]
+    propM   <- t(stcks[["residual"]]@m.spwn[,,,,1,drop=T])
+  propM     <- propM[ac(sort(rownames(propM))),]
 
   if("sum" %in% names(stcks))
     stockWeight <- rbind(t(stcks[["residual"]]@stock.wt[,,,,1,drop=T]),t(stcks[["sum"]]@stock.wt[,drop=T]))
@@ -189,42 +196,89 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
   natMort     <- natMort[ac(sort(rownames(natMort))),]
 
   #- Prepare catch, discards, landings and landing fraction
-  if("sum" %in% names(stcks)){
-    catchWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
-    catchWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(catchWeight[[x]][ac(sort(rownames(catchWeight[[x]]))),])})
-  }
-  if(!"sum" %in% names(stcks)){
-    catchWeight   <- t(stcks[["residual"]]@catch.wt[,,,,1,drop=T])
-    catchWeight   <- catchWeight[ac(sort(rownames(catchWeight))),]
-  }
-
-  if("sum" %in% names(stcks)){
-    discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@discards.wt[,,,,x,drop=T]),t(stcks[["sum"]]@discards.wt[,drop=T])))})
-    discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(discardWeight[[x]][ac(sort(rownames(discardWeight[[x]]))),])})
-  }
-  if(!"sum" %in% names(stcks)){
-    discardWeight   <- t(stcks[["residual"]]@discards.wt[,,,,1,drop=T])
-    discardWeight   <- discardWeight[ac(sort(rownames(discardWeight))),]
-  }
-
-  if("sum" %in% names(stcks)){
-    landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@landings.wt[,,,,x,drop=T]),t(stcks[["sum"]]@landings.wt[,drop=T])))})
-    landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landingWeight[[x]][ac(sort(rownames(landingWeight[[x]]))),])})
-  }
-  if(!"sum" %in% names(stcks)){
-    landingWeight   <- t(stcks[["residual"]]@landings.wt[,,,,1,drop=T])
-    landingWeight   <- landingWeight[ac(sort(rownames(landingWeight))),]
+  if(dims(stcks[["residual"]])$area>1){
+    if("sum" %in% names(stcks)){
+      catchWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      catchWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(catchWeight[[x]][ac(sort(rownames(catchWeight[[x]]))),])})                       
+    }
+    if(!"sum" %in% names(stcks)){
+      catchWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]))})
+      catchWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(catchWeight[[x]][ac(sort(rownames(catchWeight[[x]]))),])})                       
+    }
+  } else {
+    if("sum" %in% names(stcks)){
+      catchWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      catchWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(catchWeight[[x]][ac(sort(rownames(catchWeight[[x]]))),])})
+    }
+    if(!"sum" %in% names(stcks)){
+      catchWeight   <- t(stcks[["residual"]]@catch.wt[,,,,1,drop=T])
+      catchWeight   <- catchWeight[ac(sort(rownames(catchWeight))),]
+    }
   }
 
-  if("sum" %in% names(stcks)){
-    landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@landings.n[,,,,x,drop=T])/t(stcks[["residual"]]@catch.n[,,,,x,drop=T]),t(stcks[["sum"]]@landings.n[,drop=T])/t(stcks[["sum"]]@catch.n[,drop=T])))})
-    landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landFrac[[x]][ac(sort(rownames(landFrac[[x]]))),])})
-    landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){landFrac[[x]][is.na(landFrac[[x]])] <- 1; return(landFrac[[x]])})
+  if(dims(stcks[["residual"]])$area>1){
+    if("sum" %in% names(stcks)){
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(discardWeight[[x]][ac(sort(rownames(discardWeight[[x]]))),])})                       
+    }
+    if(!"sum" %in% names(stcks)){
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]))})
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(discardWeight[[x]][ac(sort(rownames(discardWeight[[x]]))),])})                       
+    }
+  } else {
+    if("sum" %in% names(stcks)){
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(discardWeight[[x]][ac(sort(rownames(discardWeight[[x]]))),])})
+    }
+    if(!"sum" %in% names(stcks)){
+      discardWeight   <- t(stcks[["residual"]]@catch.wt[,,,,1,drop=T])
+      discardWeight   <- discardWeight[ac(sort(rownames(discardWeight))),]
+    }
   }
-  if(!"sum" %in% names(stcks)){
-    landFrac   <- t(stcks[["residual"]]@landings.n[,,,,1,drop=T]/stcks[["residual"]]@catch.n[,,,,1,drop=T])
-    landFrac   <- landFrac[ac(sort(rownames(landFrac))),]
-    landFrac[is.na(landFrac)] <- 1
+
+  if(dims(stcks[["residual"]])$area>1){
+    if("sum" %in% names(stcks)){
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landingWeight[[x]][ac(sort(rownames(landingWeight[[x]]))),])})                       
+    }
+    if(!"sum" %in% names(stcks)){
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]))})
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landingWeight[[x]][ac(sort(rownames(landingWeight[[x]]))),])})                       
+    }
+  } else {
+    if("sum" %in% names(stcks)){
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landingWeight[[x]][ac(sort(rownames(landingWeight[[x]]))),])})
+    }
+    if(!"sum" %in% names(stcks)){
+      landingWeight   <- t(stcks[["residual"]]@catch.wt[,,,,1,drop=T])
+      landingWeight   <- landingWeight[ac(sort(rownames(landingWeight))),]
+    }
+  }
+
+
+  if(dims(stcks[["residual"]])$area>1){
+    if("sum" %in% names(stcks)){
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@landings.n[,,,,x,drop=T])/t(stcks[["residual"]]@catch.n[,,,,x,drop=T]),t(stcks[["sum"]]@landings.n[,drop=T])/t(stcks[["sum"]]@catch.n[,drop=T])))})
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landFrac[[x]][ac(sort(rownames(landFrac[[x]]))),])})
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){landFrac[[x]][is.na(landFrac[[x]])] <- 1; return(landFrac[[x]])})
+    }
+    if(!"sum" %in% names(stcks)){
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(t(stcks[["residual"]]@landings.n[,,,,x,drop=T])/t(stcks[["residual"]]@catch.n[,,,,x,drop=T]))})
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landFrac[[x]][ac(sort(rownames(landFrac[[x]]))),])})
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){landFrac[[x]][is.na(landFrac[[x]])] <- 1; return(landFrac[[x]])})    
+    }
+  } else {
+    if("sum" %in% names(stcks)){
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@landings.n[,,,,x,drop=T])/t(stcks[["residual"]]@catch.n[,,,,x,drop=T]),t(stcks[["sum"]]@landings.n[,drop=T])/t(stcks[["sum"]]@catch.n[,drop=T])))})
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landFrac[[x]][ac(sort(rownames(landFrac[[x]]))),])})
+      landFrac   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){landFrac[[x]][is.na(landFrac[[x]])] <- 1; return(landFrac[[x]])})
+    }
+    if(!"sum" %in% names(stcks)){
+      landFrac   <- t(stcks[["residual"]]@landings.n[,,,,1,drop=T]/stcks[["residual"]]@catch.n[,,,,1,drop=T])
+      landFrac   <- landFrac[ac(sort(rownames(landFrac))),]
+      landFrac[is.na(landFrac)] <- 1
+    }
   }
 
 
@@ -248,12 +302,12 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
   if(is.null(catch.vars)==F){
     if("sum" %in% names(stcks)){
       idxSum      <- which(sam.dat$aux[,"fleet"] == which(sam.dat$fleetTypes == 7))
-      sam.dat$weight[idxSum] <- c(t(catch.vars[["sum"]][,drop=T]))
+      sam.dat$weight[idxSum] <- c(catch.vars[["sum"]][,drop=T])
     }
     counter     <- 1
     for(iFleet in which(sam.dat$fleetTypes==0)){
-      idxRes    <- which(sam.dat$aux[,"fleet"] == iFleet)
-      sam.dat$weight[idxRes] <- c(t(catch.vars[["residual"]][,,,,counter,drop=T]))
+      idxRes    <- which(sam.dat$aux[,"fleet"] == iFleet & sam.dat$aux[,"year"] <= max(dimnames(catch.vars[["residual"]])$year))
+      sam.dat$weight[idxRes] <- c(catch.vars[["residual"]][,,,,counter,drop=T])
       counter   <- counter + 1
     }
   }
