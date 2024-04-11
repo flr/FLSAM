@@ -50,8 +50,11 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
     
 
     mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
-    for(i in names(mapDef))
-      mapDef[[i]] <- parS[[i]]
+    for(i in names(mapDef)){
+      mapDef[[i]] <- jitter(parS[[i]],factor=0.1)
+      if(any(duplicated(mapDef[[i]])))
+        stop("mapping goes wrong, some parameters get the same starting value, retry")
+    }
     map           <- mapDef
 
     for(i in 1:nrow(set.pars)){
@@ -64,6 +67,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
              logQpow=as.factor(map$logQpow),
              logSdLogFsta=as.factor(map$logSdLogFsta),
              logSdLogObs=as.factor(map$logSdLogObs))
+
     map <- map[which(names(map) %in% set.pars$SAM)]
     fit   <- sam.fit(dataS,confS,parS,map=map,sim.condRE=ctrl@simulate,...)
   } else {
