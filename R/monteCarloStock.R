@@ -1,4 +1,4 @@
-monteCarloStock_alt <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,set.pars=NULL,ncores=detectCores()-1, ...){
+monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,set.pars=NULL,ncores=detectCores()-1, ...){
   
   require(doParallel)
   ctrl              <- sam@control
