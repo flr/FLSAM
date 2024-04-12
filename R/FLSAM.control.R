@@ -234,6 +234,7 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
       object@biomassTreat <- object@biomassTreat[-whichFleet]
       object@likFlag      <- object@likFlag[-whichFleet]
       object@fracMixObs   <- object@fracMixObs[-whichFleet]
+      object@plus.group    <- object@plus.group[-whichFleet]
     }
     #Then drop the ages 
     if(!missing("ages")) {
