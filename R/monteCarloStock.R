@@ -38,19 +38,21 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
     
     mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
     for(i in names(mapDef))
-      mapDef[[i]] <- parS[[i]]
+      mapDef[[i]] <- jitter(parS[[i]],factor=0.1)
+      if(any(duplicated(mapDef[[i]])))
+        stop("mapping goes wrong, some parameters get the same starting value, retry")
     map           <- mapDef
     
     for(i in 1:nrow(set.pars.internal)){
       parS[[set.pars.internal$SAM[i]]][set.pars.internal$number[i]+1] <- set.pars.internal$value[i]
       map[[set.pars.internal$SAM[[i]]]][set.pars.internal$number[i]+1] <- NA
     }
-    map=list(logSdLogN=as.factor(jitter(map$logSdLogN,0.1)),
-             logSdLogP=as.factor(jitter(map$logSdLogP,0.1)),
-             logFpar=as.factor(jitter(map$logFpar,0.1)),
-             logQpow=as.factor(jitter(map$logQpow,0.1)),
-             logSdLogFsta=as.factor(jitter(map$logSdLogFsta,0.1)),
-             logSdLogObs=as.factor(jitter(map$logSdLogObs,0.1)))
+    map=list(logSdLogN=as.factor(map$logSdLogN),
+             logSdLogP=as.factor(map$logSdLogP),
+             logFpar=as.factor(map$logFpar),
+             logQpow=as.factor(map$logQpow),
+             logSdLogFsta=as.factor(map$logSdLogFsta),
+             logSdLogObs=as.factor(map$logSdLogObs))
     map <- map[which(names(map) %in% set.pars$SAM)]
     
     object            <- FLSAM(stcks,tun,sam@control,set.pars=set.pars,return.fit=T)
