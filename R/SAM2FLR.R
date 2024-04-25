@@ -151,7 +151,7 @@ SAM2FLR <- function(fit,ctrl){
   res@range   <- ctrl@range
 return(res)}
 
-SIM2FLR <- function(sim,fit,ctrl){
+SIM2FLR <- function(sim,fit,ctrl,set.pars=NULL){
   resList       <-list()
   for(i in 1:nrow(sim)){
     #- Create new FLSAM object and fill with ctrl elements
@@ -167,6 +167,22 @@ SIM2FLR <- function(sim,fit,ctrl){
     #- get parameter names
     pars2match <- unique(dimnames(sim)[[2]])
     keepPars    <- names(fit$pl)[which(names(fit$pl) %in% pars2match)]
+
+    #- Fix for set.pars
+    if(!is.null(set.pars)){
+      matchNames <- matrix(c("logN.vars","logSdLogN",
+                             "logP.vars","logSdLogP",
+                             "catchabilities","logFpar",
+                             "power.law.exps","logQpow",
+                             "f.vars","logSdLogFsta",
+                             "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
+      if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
+          warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
+      set.parsSAM <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
+      for(j in 1:nrow(set.pars))
+        fit$pl[[set.parsSAM$SAM[j]]] <- fit$pl[[set.parsSAM$SAM[j]]][-(set.parsSAM$number[j]+1)]
+    }
+
     pars       <- ac(rownames(as.data.frame(unlist(fit$pl))))
     idx       <- character()
     for(iK in keepPars){
