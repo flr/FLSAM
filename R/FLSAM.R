@@ -117,42 +117,14 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
   data <- foreach(i = 1:iters) %dopar% FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),FLIndices(lapply(tun, function(x) iter(x,i))),ctrl@sumFleets,catch.vars)
   conf <- foreach(i = 1:iters) %dopar% ctrl2conf(ctrl,data[[i]])
   par  <- foreach(i = 1:iters) %dopar% defpar(data[[i]],conf[[i]])
-  checkUpdate <- function(i,iSam,iPar){
-                 if(is(iSam, "logical")){
-                   ret <- updateStart(iPar,FLSAM2par(iSam)) } else {
-                   ret <- iPar }
-                 return(ret)}
-  if(!is.null(starting.sam))
-    par <- foreach(i = 1:iters) %dopar% checkUpdate(i,starting.sam,par[[i]])
 
-#  for(i in 1:iters){
-#    iTun <- tun
-#    for(j in 1:length(tun))
-#      iTun[[j]]<- iter(iTun[[j]],i)
-#    data[[i]]  <- FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),iTun,ctrl@sumFleets,catch.vars)
-#    conf[[i]]  <- ctrl2conf(ctrl,data[[i]])
-#    par[[i]]   <- stockassessment::defpar(data[[i]],conf[[i]])
-#    if(!is.null(starting.sam)){
-#      if(class(starting.sam[[i]])!="logical")
-#        par[[i]] <- updateStart(par[[i]],FLSAM2par(starting.sam[[i]]))
-#    }
-#  }
+  res <- foreach(i = 1:iters) %dopar% try(sam.fit(data[[i]], 
+                                                  conf[[i]], par[[i]],
+                                                  sim.condRE = ctrl@simulate,
+                                                  newtonsteps = 0,
+                                                  silent = T))
 
-
-  #- First run without staring values simply because it's quicker
-#  if(!force.starting.sam){
-#    system.time(res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],defpar(data[[i]],conf[[i]]),silent=T))),...))
-#  } else {
-  res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T,...))
-#  }
-
-  #- Check for failed runs and do those with starting conditions
-#  failed <- which(is.na(unlist(lapply(res,function(x){return(unlist(x$sdrep)[1])}))))
-#  if(length(failed)>0 & !is.null(starting.sam)){
-#    resFailed <- foreach(i = failed) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T,...))
-#    res[failed] <- resFailed
-#  }
-
+  stopCluster(cl)
   #- Return sam objects
   if(return.sam){
     resSAM <- list()
@@ -165,13 +137,17 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
     }
     resSAM <- as(resSAM,"FLSAMs")
   }
-  stopCluster(cl)
   
   if(!return.sam){
     for(i in 1:iters){
       if(!is.na(unlist(res[[i]]$sdrep)[1])){
-        stcks[["residual"]]@stock.n[,,,,,i] <- exp(res[[i]]$rep$logN[,1:dims(stcks[["residual"]]@stock.n)$year])
-        stcks[["residual"]]@harvest[,,,,,i] <- res[[i]]$rep$totF[,1:dims(stcks[["residual"]]@harvest)$year]
+        stcks[["residual"]]@stock.n[, , , , , i] <- FLQuant(t(ntable(res[[i]])), dimnames = list(age = ctrl@range["min"]:ctrl@range["max"], 
+                                                                                                 year = ctrl@range["minyear"]:ctrl@range["maxyear"], unit = "unique", 
+                                                                                                 season = "all", area = "unique", iter = 1))
+        stcks[["residual"]]@harvest[, , , , , i] <- FLQuant(t(faytable(res[[i]])), dimnames = list(age = ctrl@range["min"]:ctrl@range["max"], 
+                                                                                              year = ctrl@range["minyear"]:ctrl@range["maxyear"], 
+                                                                                              unit = "unique", season = "all", area = "unique", 
+                                                                                              iter = 1))
       } else {
         stcks[["residual"]]@stock.n[,,,,,i] <- NA
         stcks[["residual"]]@harvest[,,,,,i] <- NA
