@@ -113,23 +113,22 @@ FLSAM.fast <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sa
     resSAM <- SAM2FLR(res,ctrl)
   }
   
-  if(!return.sam){
-    if(!is.na(unlist(res$sdrep)[1])){
-      stcks[["residual"]]@stock.n <- FLQuant(t(ntable(res)), dimnames = list(age = ctrl@range["min"]:ctrl@range["max"], 
-                                                                                          year = ctrl@range["minyear"]:ctrl@range["maxyear"], unit = "unique", 
-                                                                                          season = "all", area = "unique", iter = 1))
-      stcks[["residual"]]@harvest <- FLQuant(t(faytable(res)), dimnames = list(age = ctrl@range["min"]:ctrl@range["max"], 
-                                                                                            year = ctrl@range["minyear"]:ctrl@range["maxyear"], 
-                                                                                            unit = "unique", season = "all", area = "unique", 
-                                                                                            iter = 1))
-    } else {
-      stcks[["residual"]]@stock.n <- NA
-      stcks[["residual"]]@harvest <- NA
-    }
+  # fill in stock objects
+  if(!is.na(unlist(res$sdrep)[1])){
+    stcks[["residual"]]@stock.n <- FLQuant(t(ntable(res)), dimnames = list(age = ctrl@range["min"]:ctrl@range["max"], 
+                                                                           year = ctrl@range["minyear"]:ctrl@range["maxyear"], unit = "unique", 
+                                                                           season = "all", area = "unique", iter = 1))
+    stcks[["residual"]]@harvest <- FLQuant(t(faytable(res)), dimnames = list(age = ctrl@range["min"]:ctrl@range["max"], 
+                                                                             year = ctrl@range["minyear"]:ctrl@range["maxyear"], 
+                                                                             unit = "unique", season = "all", area = "unique", 
+                                                                             iter = 1))
+  } else {
+    stcks[["residual"]]@stock.n <- NA
+    stcks[["residual"]]@harvest <- NA
   }
   
   if(return.sam)
-    ret <- resSAM
+    ret <- list(sam.fit=resSAM,stk=stcks)
   if(!return.sam)
     ret <- stcks
   return(ret)
