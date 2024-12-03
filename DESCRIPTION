@@ -1,6 +1,6 @@
 Package: FLSAM
 Title: An Implementation of the State-Space Assessment Model for FLR
-Version: 3.0.0.9004
+Version: 3.0.0.9005
 Date: 2023-04-18
 Authors@R: c(
   person("N.T.", "Hintzen", email = "nhintzen@pelagicfish.eu", role = "cre"),
