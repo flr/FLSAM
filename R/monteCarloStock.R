@@ -212,7 +212,7 @@ monteCarloStockMscan <- function(stck,tun,sam,realisations,return.sam=FALSE,
     
     #run assessments
     if(!is.null(set.pars)){
-      capture.output(runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdatM[[i]],object$conf,object$pl[-lengt(object$pl)],map=map,silent=T,newtonsteps=0))
+      capture.output(runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdatM[[i]],object$conf,object$pl[-lengt(object$pl)],map=map,silent=T,newtonsteps=0)))
     } else {
       capture.output(runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdatM[[i]],object$conf,object$pl[-length(object$pl)],silent=T,newtonsteps=0)))
     }
