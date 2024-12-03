@@ -50,8 +50,11 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
     
 
     mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
-    for(i in names(mapDef))
-      mapDef[[i]] <- parS[[i]]
+    for(i in names(mapDef)){
+      mapDef[[i]] <- jitter(parS[[i]],factor=0.1)
+      if(any(duplicated(mapDef[[i]])))
+        stop("mapping goes wrong, some parameters get the same starting value, retry")
+    }
     map           <- mapDef
 
     for(i in 1:nrow(set.pars)){
@@ -64,6 +67,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
              logQpow=as.factor(map$logQpow),
              logSdLogFsta=as.factor(map$logSdLogFsta),
              logSdLogObs=as.factor(map$logSdLogObs))
+
     map <- map[which(names(map) %in% set.pars$SAM)]
     fit   <- sam.fit(dataS,confS,parS,map=map,sim.condRE=ctrl@simulate,...)
   } else {
@@ -80,107 +84,6 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
 
   return(res)
 }
-
-
-FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam=F,...){
-
-  #---------------------------------------------------
-  # Output FLR objects into a format for SAM to read
-  #---------------------------------------------------
-  if(is(stcks, "FLStocks")) stop("Not implemented for multi-fleet yet")
-  if(is(stcks, "FLStock")) stcks <- FLStocks(residual=stcks)
-  if(any(unlist(lapply(stcks,function(x)dims(x)$iter))<=1) & any(unlist(lapply(tun,function(x)dims(x)$iter))<=1))
-    stop("Running in MSE mode means supplying FLStock and FLIndices with more iters than 1. Use FLSAM() instead")
-
-  #Count iters
-  iters <- unlist(lapply(stcks,function(x)dims(x)$iter))
-
-  #Turn residuals off
-  ctrl@residuals <- FALSE
-
-  #get datasets ready
-  data  <- conf <- par <- list()
-
-  require(doParallel)
-  ncores <- detectCores()-1
-  ncores <- ifelse(iters<ncores,iters,ncores)
-  cl <- makeCluster(ncores) #set up nodes
-  clusterEvalQ(cl,library(FLSAM))
-  clusterEvalQ(cl,library(stockassessment))
-  registerDoParallel(cl)
-
-
-  data <- foreach(i = 1:iters) %dopar% FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),FLIndices(lapply(tun, function(x) iter(x,i))),ctrl@sumFleets,catch.vars)
-  conf <- foreach(i = 1:iters) %dopar% ctrl2conf(ctrl,data[[i]])
-  par  <- foreach(i = 1:iters) %dopar% defpar(data[[i]],conf[[i]])
-  checkUpdate <- function(i,iSam,iPar){
-                 if(is(iSam, "logical")){
-                   ret <- updateStart(iPar,FLSAM2par(iSam)) } else {
-                   ret <- iPar }
-                 return(ret)}
-  if(!is.null(starting.sam))
-    par <- foreach(i = 1:iters) %dopar% checkUpdate(i,starting.sam,par[[i]])
-
-#  for(i in 1:iters){
-#    iTun <- tun
-#    for(j in 1:length(tun))
-#      iTun[[j]]<- iter(iTun[[j]],i)
-#    data[[i]]  <- FLSAM2SAM(FLStocks("residual"=iter(stcks[["residual"]],i)),iTun,ctrl@sumFleets,catch.vars)
-#    conf[[i]]  <- ctrl2conf(ctrl,data[[i]])
-#    par[[i]]   <- stockassessment::defpar(data[[i]],conf[[i]])
-#    if(!is.null(starting.sam)){
-#      if(class(starting.sam[[i]])!="logical")
-#        par[[i]] <- updateStart(par[[i]],FLSAM2par(starting.sam[[i]]))
-#    }
-#  }
-
-
-  #- First run without staring values simply because it's quicker
-#  if(!force.starting.sam){
-#    system.time(res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],defpar(data[[i]],conf[[i]]),silent=T))),...))
-#  } else {
-  res <- foreach(i = 1:iters) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T,...))
-#  }
-
-  #- Check for failed runs and do those with starting conditions
-#  failed <- which(is.na(unlist(lapply(res,function(x){return(unlist(x$sdrep)[1])}))))
-#  if(length(failed)>0 & !is.null(starting.sam)){
-#    resFailed <- foreach(i = failed) %dopar% try(sam.fitfast(data[[i]],conf[[i]],par[[i]],silent=T,...))
-#    res[failed] <- resFailed
-#  }
-
-  #- Return sam objects
-  if(return.sam){
-    resSAM <- list()
-    for(i in 1:iters){
-      if(!is.na(unlist(res[[i]]$sdrep)[1])){
-        resSAM[[i]] <- SAM2FLR(res[[i]],ctrl)
-      } else {
-        resSAM[[i]] <- NA
-      }
-    }
-    resSAM <- as(resSAM,"FLSAMs")
-  }
-  stopCluster(cl)
-  
-  if(!return.sam){
-    for(i in 1:iters){
-      if(!is.na(unlist(res[[i]]$sdrep)[1])){
-        stcks[["residual"]]@stock.n[,,,,,i] <- exp(res[[i]]$rep$logN[,1:dims(stcks[["residual"]]@stock.n)$year])
-        stcks[["residual"]]@harvest[,,,,,i] <- res[[i]]$rep$totF[,1:dims(stcks[["residual"]]@harvest)$year]
-      } else {
-        stcks[["residual"]]@stock.n[,,,,,i] <- NA
-        stcks[["residual"]]@harvest[,,,,,i] <- NA
-      }
-    }
-  }
-  if(return.sam)
-    ret <- resSAM
-  if(!return.sam)
-    ret <- stcks
-  return(ret)
-}
-
 getLowerBounds<-function(parameters){
     list(sigmaObsParUS=rep(-10,length(parameters$sigmaObsParUS)))
 }
