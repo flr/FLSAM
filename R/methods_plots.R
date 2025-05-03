@@ -454,22 +454,47 @@ procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
 }
       
 #- Plot the retrospective residual pattern in any fleet
-retroResiduals <- function(x,fleet,yrs){
+retroResiduals <- function(x,fleet,yrs,cohort=F){
 
 res <- lapply(x,residuals)
 res <- lapply(res,function(y){y[which(y$fleet == fleet & y$year %in% yrs),]})
 res <- lapply(res,function(y){cbind(y,retro=max(y$year))})
 res <- do.call(rbind,res)
+res$cohort <- res$year - res$age
 
-print(xyplot(std.res ~ age | as.factor(year),data=res,type="l",groups=retro,
-auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Residual pattern in",fleet,"at age"),
-ylab="Standardized residuals",xlab="Ages",
-panel = panel.superpose,
- panel.groups = function(...) {
-    panel.grid(v=-1,h=-1,lty=3)
-    panel.xyplot(...)
-},
-scales=list(alternating=1,y=list(relation="free",rot=0))))
+if(length(unique(res$age))==1){
+      print(xyplot(std.res ~ year, data = res,                                                                  
+          type = "l", groups = retro, auto.key = list(space = "right",                                                           
+              points = FALSE, lines = TRUE, type = "l"), main = paste("Residual pattern in",                                     
+              fleet, "at age"), ylab = "Standardized residuals",                                                                 
+          xlab = "Ages", panel = panel.superpose, panel.groups = function(...) {                                                 
+              panel.grid(v = -1, h = -1, lty = 3)                                                                                
+              panel.xyplot(...)                                                                                                  
+          }, scales = list(alternating = 1, y = list(relation = "free",                                                          
+              rot = 0))))     
+    } else {
+      if(cohort){
+      print(xyplot(std.res ~ age | as.factor(cohort),data=res,type="l",groups=retro,
+      auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Residual pattern in",fleet,"at cohort"),
+      ylab="Standardized residuals",xlab="Cohort",
+      panel = panel.superpose,
+       panel.groups = function(...) {
+          panel.grid(v=-1,h=-1,lty=3)
+          panel.xyplot(...)
+      },
+      scales=list(alternating=1,y=list(relation="free",rot=0))))
+    } else  { 
+      print(xyplot(std.res ~ age | as.factor(year),data=res,type="l",groups=retro,
+      auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Residual pattern in",fleet,"at age"),
+      ylab="Standardized residuals",xlab="Ages",
+      panel = panel.superpose,
+       panel.groups = function(...) {
+          panel.grid(v=-1,h=-1,lty=3)
+          panel.xyplot(...)
+      },
+      scales=list(alternating=1,y=list(relation="free",rot=0))))
+    }
+   } 
 }
 #- Plot the retrospective selectivity pattern
 retroSelectivity <- function(x,yrs){
@@ -480,16 +505,17 @@ retroSelectivity <- function(x,yrs){
       res <- do.call(rbind,res)
 
       res <- subset(res,year %in% yrs)
+      
+        print(xyplot(value ~ an(age) | as.factor(year),data=res,type="l",groups=retro,
+        auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Retrospective pattern in F at age"),
+        ylab="F",xlab="Ages",
+        panel = panel.superpose,
+         panel.groups = function(...) {
+            panel.grid(v=-1,h=-1,lty=3)
+            panel.xyplot(...)
+        },
+        scales=list(alternating=1,y=list(relation="free",rot=0))))
 
-      print(xyplot(value ~ an(age) | as.factor(year),data=res,type="l",groups=retro,
-      auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Retrospective pattern in F at age"),
-      ylab="F",xlab="Ages",
-      panel = panel.superpose,
-       panel.groups = function(...) {
-          panel.grid(v=-1,h=-1,lty=3)
-          panel.xyplot(...)
-      },
-      scales=list(alternating=1,y=list(relation="free",rot=0))))
 }
 
 retroParams <- function(x){

@@ -382,15 +382,17 @@ setMethod("coefficients",signature(object="FLSAMs"),
         }
 )
 
-setGeneric("simulate", function(x,y,z,n,set.pars) standardGeneric("simulate"))
+setGeneric("simulate", function(x,y,z,n,set.pars,set.seed) standardGeneric("simulate"))
 
 setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",
-  n='numeric',set.pars="data.frame"),
-          function(x,y,z,n=100,set.pars=NULL){
+  n='numeric',set.pars="data.frame",set.seed="numeric"),
+          function(x,y,z,n=100,set.pars=NULL,set.seed=NULL){
             if(!is.null(set.pars))
               fit   <- FLSAM(x,y,z,return.fit=T,set.pars=set.pars)
             if(is.null(set.pars))
               fit   <- FLSAM(x,y,z,return.fit=T)
+            if(!is.null(set.seed))
+              set.seed(set.seed)
             sdrep <- sdreport(fit$obj,getJointPrecision=T)
             sigma <- as.matrix(solve(sdrep$jointPrecision))
             mu    <- c(sdrep$par.fixed,sdrep$par.random)
