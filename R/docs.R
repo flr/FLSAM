@@ -181,10 +181,16 @@ NULL
 #' @param retro Number of retrospective years (peels).
 #' @param year.range Alternatively, the assessment years to run.
 #' @param set.pars Optional \code{set.pars} (see \code{\link{FLSAM}}).
+#' @param catch.vars Optional catch weights (see \code{\link{FLSAM}}), cut to
+#'   the years of every peel.
 #' @param use.start Use the estimates of the previous (one year longer) peel
 #'   as starting values for the next peel (default \code{TRUE}, see
 #'   \code{\link{startingValues}}). Set to \code{FALSE} to start every peel
 #'   from the default starting values.
+#' @details Tag-recapture data in the control object (see
+#'   \code{\link{FLSAM.control}}) are cut per peel such that the lag between the
+#'   last recapture year and the last year of the assessment (at most one year)
+#'   is kept.
 #' @return An \code{\link{FLSAMs}} object named by assessment year; failed
 #'   peels are dropped with a warning.
 #' @seealso \code{\link{mohns.rho}}, \code{\link{retroResiduals}}

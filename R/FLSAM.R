@@ -118,7 +118,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
   #---------------------------------------------------
   if(is(stcks, "FLStock")) stcks <- FLStocks(residual=stcks)
   ctrl   <- .upgradeControl(ctrl)
-  dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
+  dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars,.recapture(ctrl))
   confS  <- ctrl2conf(ctrl,dataS)
   parS   <- defpar(dataS,confS)
   if(!is.na(ctrl@hockeyStickCurve[1]) & ctrl@srr==63)

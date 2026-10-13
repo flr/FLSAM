@@ -4,3 +4,5 @@ dev/her27/output/
 dev/overview_test.*
 dev/overview_part.*
 dev/compare_run.log
+dev/mac27/output/
+dev/mac27/test_tags.log

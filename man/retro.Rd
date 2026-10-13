@@ -6,7 +6,16 @@
 \alias{retro,FLStocks,FLIndices,FLSAM.control,numeric-method}
 \title{Retrospective analysis with FLSAM}
 \usage{
-retro(stock, indices, control, retro, year.range, set.pars, use.start)
+retro(
+  stock,
+  indices,
+  control,
+  retro,
+  year.range,
+  set.pars,
+  use.start,
+  catch.vars
+)
 
 \S4method{retro}{FLStock,FLIndices,FLSAM.control,numeric}(
   stock,
@@ -15,7 +24,8 @@ retro(stock, indices, control, retro, year.range, set.pars, use.start)
   retro,
   year.range = "missing",
   set.pars = "missing",
-  use.start = TRUE
+  use.start = TRUE,
+  catch.vars = NULL
 )
 
 \S4method{retro}{FLStocks,FLIndices,FLSAM.control,numeric}(
@@ -25,7 +35,8 @@ retro(stock, indices, control, retro, year.range, set.pars, use.start)
   retro,
   year.range = "missing",
   set.pars = "missing",
-  use.start = TRUE
+  use.start = TRUE,
+  catch.vars = NULL
 )
 }
 \arguments{
@@ -45,6 +56,9 @@ retro(stock, indices, control, retro, year.range, set.pars, use.start)
 as starting values for the next peel (default \code{TRUE}, see
 \code{\link{startingValues}}). Set to \code{FALSE} to start every peel
 from the default starting values.}
+
+\item{catch.vars}{Optional catch weights (see \code{\link{FLSAM}}), cut to
+the years of every peel.}
 }
 \value{
 An \code{\link{FLSAMs}} object named by assessment year; failed
@@ -53,6 +67,12 @@ An \code{\link{FLSAMs}} object named by assessment year; failed
 \description{
 Repeats the assessment removing one year of data at a time. Survey years
 beyond the last catch year are kept consistently in each peel.
+}
+\details{
+Tag-recapture data in the control object (see
+  \code{\link{FLSAM.control}}) are cut per peel such that the lag between the
+  last recapture year and the last year of the assessment (at most one year)
+  is kept.
 }
 \examples{
 \donttest{

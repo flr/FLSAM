@@ -26,6 +26,11 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
   one year less or more data; states are matched by year. `retro()` uses the
   previous peel as starting values for the next (`use.start=TRUE`, default).
 - `pin.R` (`FLSAM2par()`, legacy pin functionality) removed.
+- Tag-recapture data (SAM fleet type 5): `FLSAM.control(..., recapture=)`,
+  discrete one-step-ahead residuals for the recaptures, `tag.pars()`,
+  `tags.plot()`; `retro()` cuts the tag data per peel. Tested against the
+  WGWIDE 2026 NEA mackerel assessment (identical fit and retrospective peels).
+- `retro()` gains `catch.vars` (catch weights were not passed to the peels).
 - `plot(FLSAMs, ci=TRUE)`: confidence bands for retrospective peels or several
   assessments.
 - Objects saved with older versions (missing the new slots) keep working:
@@ -66,4 +71,5 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
 - `sam.out()` called itself (infinite recursion) instead of `FLSAM.out()`.
 - `obscor.plot()` gave an unclear error without correlated observations.
 - `conf2ctrl()` did not set `logP.vars` and set a wrong plus group, so
-  `SAM2FLR()` failed for fits made outside FLSAM.
+  `SAM2FLR()` failed for fits made outside FLSAM; `SAM2FLR()` identifies the
+  catch fleets by fleet type instead of by the word "catch" in their name.

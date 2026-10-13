@@ -183,13 +183,14 @@ setMethod("loi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
 #-------------------------------------------------------------------------------
 
 #' @rdname retro
-	setGeneric("retro", function(stock, indices, control, retro, year.range,set.pars,use.start)
+	setGeneric("retro", function(stock, indices, control, retro, year.range,set.pars,use.start,catch.vars)
     	standardGeneric("retro"))
 
 #' @rdname retro
 setMethod('retro', signature(stock='FLStock', indices='FLIndices', control='FLSAM.control',retro='numeric'),
-function(stock, indices, control, retro, year.range="missing",set.pars="missing",use.start=TRUE){
+function(stock, indices, control, retro, year.range="missing",set.pars="missing",use.start=TRUE,catch.vars=NULL){
     if(missing(use.start)) use.start <- TRUE
+    if(missing(catch.vars)) catch.vars <- NULL
 
   # ---------- Checks ----------------------
     if (!inherits(stock, "FLStock"))
@@ -218,6 +219,7 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
     cat("Running retrospective...\n")
     res <- list()
     starting.vals <- NULL
+    recap0        <- .recapture(control)
     for (yr in rev(year.range)){  #yr is the year in which the assessment is being simulated
       Stock <- trim(stock, year=stck.min.yr:yr)
       Indices.temp<-indices
@@ -230,20 +232,28 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
         Indices.temp[[j]] <- trim(indices[[j]],year=idx.min.yr:idx.max.yr)
       }
       control@name <- as.character(yr)
+      #- tag-recapture data: keep the same lag between the last recapture year and the last catch year
+      #  (at most one year): old tag series stay complete, recent ones are cut like the other data
+      if(!is.null(recap0)){
+        lagTag  <- min(1,max(0,stck.max.yr - max(recap0$RecaptureY)))
+        control@recapture <- recap0[recap0$RecaptureY <= (yr-lagTag) & recap0$ReleaseY <= (yr-lagTag),]
+      }
+      #- catch weights for the years of this peel
+      cv <- if(is.null(catch.vars)) NULL else FLQuants(lapply(catch.vars,function(x) window(x,end=min(yr,dims(x)$maxyear))))
       control@range["maxyear"] <- max(Stock@range["maxyear"],
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
       if(is.null(starting.vals)){
         if(missing(set.pars)){
-          assess  <- try(FLSAM(Stock, Indices.temp,control))
+          assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv))
         } else {
-          assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars))
+          assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv,set.pars=set.pars))
         }
         starting.vals <- assess
       } else {
         if(missing(set.pars)){
-          assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=if(use.start) starting.vals else NULL))
+          assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv,starting.values=if(use.start) starting.vals else NULL))
         } else {
-          assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars,starting.values=if(use.start) starting.vals else NULL))
+          assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv,set.pars=set.pars,starting.values=if(use.start) starting.vals else NULL))
         }
         if(is(assess, "try-error")){
           starting.vals <- NULL
@@ -267,8 +277,9 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
 
 #' @rdname retro
 setMethod('retro', signature(stock='FLStocks', indices='FLIndices', control='FLSAM.control',retro='numeric'),
-function(stock, indices, control, retro, year.range="missing",set.pars="missing",use.start=TRUE){
+function(stock, indices, control, retro, year.range="missing",set.pars="missing",use.start=TRUE,catch.vars=NULL){
     if(missing(use.start)) use.start <- TRUE
+    if(missing(catch.vars)) catch.vars <- NULL
 
   # ---------- Checks ----------------------
     if (!inherits(stock, "FLStocks"))
@@ -303,6 +314,7 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
     cat("Running retrospective...\n")
     res <- list()
     starting.vals <- NULL
+    recap0        <- .recapture(control)
     for (yr in rev(year.range)){  #yr is the year in which the assessment is being simulated
       Stock <- new("FLStocks")
       for(iStk in 1:length(stock)){
@@ -322,23 +334,31 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
         Indices.temp[[j]] <- trim(indices[[j]],year=idx.min.yr:idx.max.yr)
       }
       control@name <- as.character(yr)
+      #- tag-recapture data: keep the same lag between the last recapture year and the last catch year
+      #  (at most one year): old tag series stay complete, recent ones are cut like the other data
+      if(!is.null(recap0)){
+        lagTag  <- min(1,max(0,stck.max.yr - max(recap0$RecaptureY)))
+        control@recapture <- recap0[recap0$RecaptureY <= (yr-lagTag) & recap0$ReleaseY <= (yr-lagTag),]
+      }
+      #- catch weights for the years of this peel
+      cv <- if(is.null(catch.vars)) NULL else FLQuants(lapply(catch.vars,function(x) window(x,end=min(yr,dims(x)$maxyear))))
       control@range["maxyear"] <- max(max(unlist(lapply(Stock,function(x){return(x@range["maxyear"])}))),
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
 
       if(is.null(starting.vals)){
         if(missing(set.pars)){
-          assess  <- try(FLSAM(Stock, Indices.temp,control))
+          assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv))
         } else {
-          assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars))
+          assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv,set.pars=set.pars))
         }
         starting.vals <- assess
       } else {
           if(missing(set.pars)){
-            assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=if(use.start) starting.vals else NULL))
+            assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv,starting.values=if(use.start) starting.vals else NULL))
           } else {
-            assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars,starting.values=if(use.start) starting.vals else NULL))
+            assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv,set.pars=set.pars,starting.values=if(use.start) starting.vals else NULL))
           }
-        #assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=starting.vals))
+        #assess  <- try(FLSAM(Stock, Indices.temp,control,catch.vars=cv,starting.values=starting.vals))
         if(is(assess, "try-error")){
           starting.vals <- NULL
         } else {

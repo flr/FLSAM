@@ -76,6 +76,10 @@
 #'   \code{sim.condRE}).
 #' @slot residuals Calculate one-observation-ahead residuals in \code{FLSAM}.
 #' @slot sumFleets Names of the catch fleets that are summed in the sum fleet.
+#' @slot recapture Tag-recapture data (\code{data.frame} with columns \code{r}
+#'   (number recaptured), \code{ReleaseY}, \code{RecaptureY}, \code{Yearclass},
+#'   \code{Nscan}, \code{R} (number released) and \code{Type}), modelled as
+#'   fleet \code{"Recaptures"} (SAM fleet type 5). Empty when no tag data are used.
 #'
 #' @seealso \code{\link{FLSAM.control}} (constructor), \code{\link{drop.from.control}},
 #'   \code{\link{ctrl2conf}}
@@ -128,7 +132,8 @@ setClass("FLSAM.control",
     hockeyStickCurve  = "numeric", ## Smoothness of srr 63, NA = estimate
     simulate          ="logical",  ## Simulate data
     residuals         ="logical",
-    sumFleets         ="vector"),    ## Define which catch fleets should be summed over a certain period
+    sumFleets         ="vector",     ## Define which catch fleets should be summed over a certain period
+    recapture         ="data.frame"), ## Tag-recapture data (SAM fleet type 5)
   prototype=prototype(
     range           =as.numeric(1),   ## minimum age represented internally in the assessment
     plus.group      =as.vector(1),   ## model the maximum age as a plus group?
@@ -172,7 +177,8 @@ setClass("FLSAM.control",
     hockeyStickCurve  = as.numeric(NA),
     simulate          =as.logical(FALSE),
     residuals         =as.logical(TRUE),
-    sumFleets         =as.vector(0)),    ## Define which catch fleets should be summed over a certain period
+    sumFleets         =as.vector(0),     ## Define which catch fleets should be summed over a certain period
+    recapture         =data.frame()),
   validity=function(object){
                	# Everything is fine
                	return(TRUE)}
@@ -199,6 +205,10 @@ setClass("FLSAM.control",
 #' @param catch.vars Optional catch observation weights (see \code{\link{FLSAM}}).
 #' @param scaleYears Optional vector of years for which a catch multiplier is
 #'   estimated.
+#' @param recapture Optional tag-recapture data (\code{data.frame} with columns
+#'   \code{r}, \code{ReleaseY}, \code{RecaptureY}, \code{Yearclass}, \code{Nscan},
+#'   \code{R}, \code{Type}), added as the last fleet, named \code{"Recaptures"}.
+#'   See \code{\link{FLSAM.control-class}}.
 #' @return An \code{FLSAM.control} object.
 #' @seealso \code{\link{FLSAM.control-class}}, \code{\link{FLSAM}},
 #'   \code{\link{drop.from.control}}
@@ -211,14 +221,15 @@ setClass("FLSAM.control",
 #' # treat the weights of the HERAS survey as fixed variances
 #' ctrl@fixVarToWeight["HERAS"] <- TRUE
 #' @export
-FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYears=NULL) {
+FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYears=NULL,recapture=NULL) {
   #Default constructor
   #Create object
   if(length(stcks)>1 & length(sumFleets)==0) stop("sumFleets must be specified when stcks are provided")
   if(is(stcks, "FLStock")) stcks <- FLStocks(residual=stcks)
   ctrl <- new("FLSAM.control")
 
-  ctrlSAM <- defcon(FLSAM2SAM(stcks,tun,sumFleets,catch.vars))
+  if(!is.null(recapture)) recapture <- .checkRecapture(recapture)
+  ctrlSAM <- defcon(FLSAM2SAM(stcks,tun,sumFleets,catch.vars,recapture))
   if(any(!unlist(lapply(tun,function(x){return(x@type)})) %in% c("con","number","biomass","partial")))
     stop("index type not recognized. Use con, number or biomass")
 
@@ -233,21 +244,26 @@ FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYear
                             min(sapply(tun,function(x) min(x@range[c("minyear")]))))
   ctrl@fleets <-factor(unlist(lapply(tun,function(x){return(x@type)})),levels=c("con","number","biomass","partial"))
   ctrl@fleets <- c(na.omit(c(rep(0,dims(stcks[["residual"]])$area),as.numeric(ctrl@fleets),ifelse(length(sumFleets)==0,numeric(),7))))
+  nTag <- ifelse(is.null(recapture),0,1)
   if(length(ctrl@fleets==4)>0)
     ctrl@fleets[ctrl@fleets==4] <- 6
   fleet.names <- c(na.omit(c(paste("catch",dimnames(stcks[["residual"]]@catch.n)$area),names(tun),ifelse(length(sumFleets)==0,character(),"sumFleet"))))
+  if(nTag==1){
+    ctrl@fleets <- c(ctrl@fleets,5)
+    fleet.names <- c(fleet.names,"Recaptures")
+  }
   names(ctrl@fleets) <- fleet.names
 
   ctrl@plus.group <- rep(0,length(ctrl@fleets))
   for(iFleet in names(ctrl@fleets)){
     if(length(grep("catch",iFleet))>0)
       ctrl@plus.group[which(names(ctrl@fleets)==iFleet)] <- ifelse(is.na(stcks[["residual"]]@range["plusgroup"]==stcks[["residual"]]@range["max"])==0,1,0)
-    if(length(grep("catch",iFleet))==0 & iFleet != "sumFleet")
+    if(length(grep("catch",iFleet))==0 & !iFleet %in% c("sumFleet","Recaptures"))
       ctrl@plus.group[which(names(ctrl@fleets)==iFleet)] <- ifelse(is.na(tun[[iFleet]]@range["plusgroup"]==tun[[iFleet]]@range["max"])==0,1,0)
   }
 
   #Setup coupling structures - default is for each parameter to be fitted independently
-  default.coupling <- matrix(as.integer(NA),nrow=dims(stcks[["residual"]])$area+length(tun)+ifelse(length(sumFleets)==0,0,1),ncol=dims(stcks[["residual"]])$age,
+  default.coupling <- matrix(as.integer(NA),nrow=dims(stcks[["residual"]])$area+length(tun)+ifelse(length(sumFleets)==0,0,1)+nTag,ncol=dims(stcks[["residual"]])$age,
                         dimnames=list(fleet=fleet.names,age=dimnames(stcks[["residual"]]@catch.n)$age))
   ctrl@states           <- default.coupling
   ctrl@catchabilities   <- default.coupling
@@ -319,6 +335,7 @@ FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYear
   ctrl@initState          <- 0
   ctrl@hockeyStickCurve   <- as.numeric(NA)
   ctrl@sumFleets          <- sumFleets
+  if(nTag==1) ctrl@recapture <- recapture
 
   ctrl <- update(ctrl)
 
@@ -373,6 +390,7 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
       object@plus.group    <- object@plus.group[-whichFleet]
       if(length(object@fixVarToWeight)>1)
         object@fixVarToWeight <- object@fixVarToWeight[-whichFleet]
+      if("Recaptures" %in% fleets) object@recapture <- data.frame()
     }
     #Then drop the ages 
     if(!missing("ages")) {

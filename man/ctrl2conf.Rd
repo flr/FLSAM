@@ -10,7 +10,7 @@ ctrl2conf(ctrl, data)
 
 conf2ctrl(conf, data)
 
-FLSAM2SAM(stcks, tun, sumFleets = NULL, catch.vars = NULL)
+FLSAM2SAM(stcks, tun, sumFleets = NULL, catch.vars = NULL, recapture = NULL)
 }
 \arguments{
 \item{ctrl}{An \code{FLSAM.control} object.}
@@ -28,6 +28,8 @@ optionally \code{sum}).}
 
 \item{catch.vars}{Optional \code{FLQuants} (elements \code{residual} and
 optionally \code{sum}) with catch observation weights.}
+
+\item{recapture}{Optional tag-recapture data, see \code{\link{FLSAM.control}}.}
 }
 \value{
 \code{ctrl2conf}: a SAM configuration list; \code{conf2ctrl}: an

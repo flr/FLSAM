@@ -102,27 +102,27 @@ SAM2FLR <- function(fit,ctrl,keep.fit=TRUE){
                                                         area="unique",
                                                         iter=1))
                                                           
-  if(length(grep("catch",rownames(ctrl@states)))==1)
+  if(length(which(ctrl@fleets==0))==1)
     res@harvest <- FLQuant(t(faytable(fit)),
                                                         dimnames = list(age = ctrl@range["min"]:ctrl@range["max"],
                                                         year = ctrl@range["minyear"]:ctrl@range["maxyear"],
                                                         unit = "unique", season = "all", area = "unique",
                                                         iter = 1))
-  if(length(grep("catch",rownames(ctrl@states)))>1){
+  if(length(which(ctrl@fleets==0))>1){
     defaultArray<- array(0,dim=c(length(ctrl@range["min"]:ctrl@range["max"]),
                                   length(ctrl@range["minyear"]:ctrl@range["maxyear"]),
                                   1,
                                   1,
-                                  length(grep("catch",rownames(ctrl@states))),
+                                  length(which(ctrl@fleets==0)),
                                   1),
                             dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
                                           year=ctrl@range["minyear"]:ctrl@range["maxyear"],
                                           unit="unique",
                                           season="all",
-                                          area=gsub("catch ","",rownames(ctrl@states[grep("catch",rownames(ctrl@states)),])),
+                                          area=gsub("catch ","",rownames(ctrl@states[which(ctrl@fleets==0),])),
                                           iter=1))
     for(iArea in 1:dim(defaultArray)[5]){
-      ages  <- ctrl@states[grep("catch",rownames(ctrl@states))[iArea],]
+      ages  <- ctrl@states[which(ctrl@fleets==0)[iArea],]
       ages  <- ages[which(ages>=0)]
       defaultArray[names(ages),,,,iArea,] <- exp(fit$pl$logF[ages+1,])
     }
@@ -139,7 +139,7 @@ SAM2FLR <- function(fit,ctrl,keep.fit=TRUE){
                                 age=fit$data$aux[,"age"],
                                 log.obs=fit$data$logobs,
                                 log.mdl=fit$rep$predObs,
-                                std.res=residuals(fit)$residual)
+                                std.res=.samResiduals(fit))
     res@residuals$log.obs[which(is.na(res@residuals$log.obs))] <- fit$pl$missing
     res@residuals$log.mdl[which(!is.finite(res@residuals$log.mdl))] <- NA
     res@residuals$std.res[which(!is.finite(res@residuals$std.res))] <- NA
@@ -154,6 +154,10 @@ SAM2FLR <- function(fit,ctrl,keep.fit=TRUE){
       res@residuals$log.obs[which(is.na(res@residuals$log.obs))] <- fit$pl$missing
     res@residuals$log.mdl[which(!is.finite(res@residuals$log.mdl))] <- NA
   }
+
+  #- Tag-recapture observations: add the recapture year
+  if(any(fit$data$fleetTypes==5))
+    res@residuals$RecaptureY <- fit$data$aux[,"RecaptureY"]
 
   #- Finally some info and save
   info        <- data.frame(FLSAM.version=packageDescription("FLSAM")$Version,
@@ -231,30 +235,30 @@ SIM2FLR <- function(sim,fit,ctrl,set.pars=NULL){
                                                           area="unique",
                                                           iter=1))
 
-    if(length(grep("catch",rownames(ctrl@states)))==1)
-      res@harvest <- FLQuant(exp(matrix(subset(res@params,name=="logF")$value,ncol=length(ctrl@range["minyear"]:ctrl@range["maxyear"])))[ctrl@states[grep("catch",rownames(ctrl@states)),]+1,],
+    if(length(which(ctrl@fleets==0))==1)
+      res@harvest <- FLQuant(exp(matrix(subset(res@params,name=="logF")$value,ncol=length(ctrl@range["minyear"]:ctrl@range["maxyear"])))[ctrl@states[which(ctrl@fleets==0),]+1,],
                                                           dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
                                                           year=ctrl@range["minyear"]:ctrl@range["maxyear"],
                                                           unit="unique",
                                                           season="all",
                                                           area="unique",
                                                           iter=1))
-    if(length(grep("catch",rownames(ctrl@states)))>1){
+    if(length(which(ctrl@fleets==0))>1){
       stop("Multifleet simulate not implemented yet")
       defaultArray<- array(0,dim=c(length(ctrl@range["min"]:ctrl@range["max"]),
                                     length(ctrl@range["minyear"]:ctrl@range["maxyear"]),
                                     1,
                                     1,
-                                    length(grep("catch",rownames(ctrl@states))),
+                                    length(which(ctrl@fleets==0)),
                                     1),
                               dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
                                             year=ctrl@range["minyear"]:ctrl@range["maxyear"],
                                             unit="unique",
                                             season="all",
-                                            area=gsub("catch ","",rownames(ctrl@states[grep("catch",rownames(ctrl@states)),])),
+                                            area=gsub("catch ","",rownames(ctrl@states[which(ctrl@fleets==0),])),
                                             iter=1))
       for(iArea in 1:dim(defaultArray)[5]){
-        ages  <- ctrl@states[grep("catch",rownames(ctrl@states))[iArea],]
+        ages  <- ctrl@states[which(ctrl@fleets==0)[iArea],]
         ages  <- ages[which(ages>=0)]
         defaultArray[names(ages),,,,iArea,] <- exp(fit$pl$logF[ages+1,])
       }
@@ -279,9 +283,14 @@ SIM2FLR <- function(sim,fit,ctrl,set.pars=NULL){
   res <- as(resList,"FLSAMs")
 return(res)}
 
-
-
-
-
-
-
+#- One-observation-ahead residuals; tag-recapture observations (fleet type 5)
+#  are discrete and get conditional residuals with oneStepGeneric
+.samResiduals <- function(fit){
+  dis <- fit$data$fleetTypes[fit$data$aux[,"fleet"]]==5
+  if(!any(dis)) return(residuals(fit)$residual)
+  res <- rep(NA_real_,length(dis))
+  res[!dis] <- residuals(fit,subset=which(!dis))$residual
+  res[dis]  <- residuals(fit,discrete=TRUE,conditional=which(!dis),subset=which(dis),
+                         method="oneStepGeneric",range=c(0,Inf))$residual
+  return(res)
+}

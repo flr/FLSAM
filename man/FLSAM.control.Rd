@@ -9,7 +9,8 @@ FLSAM.control(
   tun,
   sumFleets = vector(),
   catch.vars = NULL,
-  scaleYears = NULL
+  scaleYears = NULL,
+  recapture = NULL
 )
 }
 \arguments{
@@ -28,6 +29,11 @@ structured), \code{"biomass"} (biomass/SSB index), \code{"con"} and
 
 \item{scaleYears}{Optional vector of years for which a catch multiplier is
 estimated.}
+
+\item{recapture}{Optional tag-recapture data (\code{data.frame} with columns
+\code{r}, \code{ReleaseY}, \code{RecaptureY}, \code{Yearclass}, \code{Nscan},
+\code{R}, \code{Type}), added as the last fleet, named \code{"Recaptures"}.
+See \code{\link{FLSAM.control-class}}.}
 }
 \value{
 An \code{FLSAM.control} object.

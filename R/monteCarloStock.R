@@ -53,7 +53,7 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   sam@control@residuals<- FALSE
   if(!is.null(set.pars)){
     stcks  <- if(is(stck,"FLStock")) FLStocks(residual=stck) else stck
-    dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
+    dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars,.recapture(ctrl))
     confS  <- ctrl2conf(ctrl,dataS)
     parS   <- defpar(dataS,confS)
     map    <- .setPars(parS,set.pars)$map
@@ -144,7 +144,7 @@ monteCarloStockMscan <- function(stck,tun,sam,realisations,return.sam=FALSE,
   sam@control@residuals<- FALSE
   if(!is.null(set.pars)){
     stcks  <- if(is(stck,"FLStock")) FLStocks(residual=stck) else stck
-    dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
+    dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars,.recapture(ctrl))
     confS  <- ctrl2conf(ctrl,dataS)
     parS   <- defpar(dataS,confS)
     map    <- .setPars(parS,set.pars)$map

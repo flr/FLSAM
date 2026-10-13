@@ -15,6 +15,7 @@
 #' @param sumFleets Names of the catch fleets summed in the \code{sum} stock.
 #' @param catch.vars Optional \code{FLQuants} (elements \code{residual} and
 #'   optionally \code{sum}) with catch observation weights.
+#' @param recapture Optional tag-recapture data, see \code{\link{FLSAM.control}}.
 #' @return \code{ctrl2conf}: a SAM configuration list; \code{conf2ctrl}: an
 #'   \code{FLSAM.control} object; \code{FLSAM2SAM}: a SAM data list.
 #' @examples
@@ -133,12 +134,19 @@ conf2ctrl <- function(conf,data){
   ctrl@logNMeanAssumption <- conf$logNMeanAssumption
   ctrl@initState <- conf$initState
   ctrl@hockeyStickCurve <- if(is.null(conf$hockeyStickCurve)) as.numeric(NA) else conf$hockeyStickCurve
+  #- tag-recapture data (fleet type 5)
+  if(any(data$fleetTypes==5)){
+    aux <- as.data.frame(data$aux)
+    idx <- which(data$fleetTypes[aux$fleet]==5)
+    ctrl@recapture <- data.frame(ReleaseY=aux$year[idx],RecaptureY=aux$RecaptureY[idx],Yearclass=aux$Yearclass[idx],
+                                 Nscan=aux$Nscan[idx],R=aux$R[idx],r=data$logobs[idx],Type=aux$Type[idx])
+  }
 
 return(ctrl)}
 
 #' @rdname ctrl2conf
 #' @export
-FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
+FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL,recapture=NULL){
 
   allMax <- max(sapply(stcks,function(x) max(x@range["maxyear"])),
             max(sapply(tun,function(x) max(x@range[c("maxyear")]))))
@@ -337,7 +345,7 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
                               prop.m=propM,
                               natural.mortality=natMort,
                               land.frac=landFrac,
-                              recapture=NULL)#, #to do: build-in recapture data
+                              recapture=if(is.null(recapture) || nrow(recapture)==0) NULL else recapture)
 #                              keep.all.ages=FALSE)
 
   # Get data weighting
@@ -355,7 +363,7 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
   }
 
   tun.var       <- lapply(tun,index.var)
-  for(iFleet in which(!sam.dat$fleetTypes %in% c(0,7))){
+  for(iFleet in which(!sam.dat$fleetTypes %in% c(0,5,7))){
     iTun        <- which(names(tun)==attr(sam.dat,"fleetNames")[iFleet])
     idxTun      <- which(sam.dat$aux[,"fleet"] == iFleet)
     tunWeight   <- as.data.frame(tun.var[[iTun]])$data
@@ -365,3 +373,18 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
   }
 return(sam.dat)}
 
+#- Check tag-recapture data: required columns, numeric R
+.checkRecapture <- function(recapture){
+  recapture <- as.data.frame(recapture)
+  cols <- c("r","ReleaseY","RecaptureY","Yearclass","Nscan","R","Type")
+  if(!all(cols %in% colnames(recapture)))
+    stop(paste("recapture needs the columns",paste(cols,collapse=", ")))
+  recapture$R <- as.numeric(recapture$R)
+  return(recapture)
+}
+
+#- Tag-recapture data stored in an FLSAM.control (NULL when absent)
+.recapture <- function(ctrl){
+  if(!.hasSlot(ctrl,"recapture") || nrow(ctrl@recapture)==0) return(NULL)
+  return(ctrl@recapture)
+}

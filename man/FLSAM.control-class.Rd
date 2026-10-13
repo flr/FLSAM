@@ -117,6 +117,11 @@ recruitment and other ages: 0 median, 1 mean, 2 mode.}
 \item{\code{residuals}}{Calculate one-observation-ahead residuals in \code{FLSAM}.}
 
 \item{\code{sumFleets}}{Names of the catch fleets that are summed in the sum fleet.}
+
+\item{\code{recapture}}{Tag-recapture data (\code{data.frame} with columns \code{r}
+(number recaptured), \code{ReleaseY}, \code{RecaptureY}, \code{Yearclass},
+\code{Nscan}, \code{R} (number released) and \code{Type}), modelled as
+fleet \code{"Recaptures"} (SAM fleet type 5). Empty when no tag data are used.}
 }}
 
 \seealso{

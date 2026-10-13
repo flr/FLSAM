@@ -72,7 +72,9 @@
     matrix.type   <-  c("range","fleets","states","catchabilities","power.law.exps","f.vars","obs.vars")
     for(sltName in slotNames(sam@control)) {
       padded.name <-  paste(c(sltName,rep(" ",longest.name-nchar(sltName))),collapse="")
-      if(sltName %in% matrix.type){
+      if(sltName == "recapture"){
+        opt <- c(opt,paste(padded.name,":",nrow(slot(sam@control,sltName)),"tag-recapture records"))
+      } else if(sltName %in% matrix.type){
         opt <- c(opt,  paste(padded.name,":",paste(formatMatrix(slot(sam@control,sltName)))))
       } else {
           opt <- c(opt,paste(padded.name,":",paste(slot(sam@control,sltName),collapse=" ")))

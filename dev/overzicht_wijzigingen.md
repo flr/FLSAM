@@ -29,6 +29,12 @@ Legenda: **B** = bugfix, **U** = uitbreiding (afstemming op SAM), **G** = lattic
 | `R/SAM2FLR.R` | `SAM2FLR()` | `keep.fit`; `plogis` i.p.v. `boot::inv.logit`; upgrade oude control | U |
 | | `SIM2FLR()` | haalde verkeerde parameters weg bij meerdere vaste waarden in één parameter | B |
 | `R/FLSAM.R` | `startingValues()`, `FLSAM(..., starting.values=)` | startwaarden uit een eerder assessment (ook met een jaar minder/meer data; logN/logF op jaar uitgelijnd; ook uit objecten zonder fit); vervangt de pin-functionaliteit | N |
+| `R/tags.R` | `tag.pars()`, `tags.plot()` | tagparameters en geobserveerde vs voorspelde terugvangsten | N |
+| `R/FLSAM.control.R`, `R/FLR2SAM.R` | slot `recapture`, `FLSAM.control(..., recapture=)`, `FLSAM2SAM(..., recapture=)`, `conf2ctrl` | tag-recapture data (SAM vloottype 5); `conf2ctrl` vulde `logP.vars` niet en zette de plusgroep fout | N, B |
+| `R/SAM2FLR.R` | `SAM2FLR()` | discrete OSA-residuen voor terugvangsten; vangstvloten herkend op type i.p.v. naam | U, B |
+| `R/looi_retro.R` | `retro()` | `catch.vars` doorgegeven; tagdata per peel ingekort | U, B |
+| `R/methods_plots.R` | `plot(FLSAMs, ci=TRUE)` | betrouwbaarheidsbanden voor retro's en meerdere modellen | U |
+| `dev/mac27/test_tags.R` | – | makreel WGWIDE 2026 via FLSAM: fit en retro-peels identiek aan stockassessment | N |
 | `R/pin.R` | – | verwijderd (pin-functionaliteit vervangen door `startingValues()`) | – |
 | `R/looi_retro.R` | `retro()` | `use.start=TRUE` (default): elke peel start vanaf de schattingen van de vorige peel | U |
 | `R/accessors.R` | `components<-`, `info<-` | `as.integer()` vernielde de waarden | B |

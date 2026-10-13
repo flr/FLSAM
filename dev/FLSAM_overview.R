@@ -193,6 +193,7 @@ NSH.stks    <- NSH + HERAS.sams            # FLStocks, one per assessment
 plot(sam)                                  # SSB, F and recruitment with confidence band
 plot(sam,sam.fixed)                        # two assessments
 plot(HERAS.sams)                           # FLSAMs
+plot(HERAS.sams,ci=TRUE)                   # NEW: with confidence bands
 plot(HERAS.sams,NSH)                       # with the FLStock
 plot(NSH,sam)
 cor.plot(sam)                              # parameter correlations
@@ -237,6 +238,11 @@ model.description(sam)                     # text description of the model
 jt <- jitter.test(sam,nojit=5,seed=1)
 attr(jt,"table")
 plot(jt)
+
+#- NEW: tag-recapture data (SAM fleet type 5) - not in the herring example data; see
+#  dev/mac27/test_tags.R for a complete example with the NEA mackerel assessment:
+#  ctrl <- FLSAM.control(MAC,MAC.tun,recapture=recap); sam <- FLSAM(MAC,MAC.tun,ctrl)
+#  tag.pars(sam); tags.plot(sam)
 
 #- Prediction-variance link: estimate a power relation between prediction and
 #  observation variance for HERAS, and plot it

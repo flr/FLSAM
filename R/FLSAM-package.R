@@ -44,4 +44,4 @@
 
 utils::globalVariables(c("year","value","lbnd","ubnd","name","age","fleet","std.res","retro","cohort",
                          "data","bdiff","x","Var1","Var2","cor","age1","age2","y","sel","p","obs",
-                         "quantity","harvest","stock","nameOrig","param","sign","idx","period","%dopar%"))
+                         "quantity","harvest","stock","nameOrig","param","sign","idx","period","liberty","pred","Type","relAge","%dopar%"))

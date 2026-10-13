@@ -52,7 +52,7 @@ FLSAM.MSE <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sam
   runIter <- function(i){
     stckI <- FLStocks(residual=iter(stcks[["residual"]],i))
     tunI  <- FLIndices(lapply(tun,function(x) if(dims(x)$iter>1) iter(x,i) else x))
-    data  <- FLSAM2SAM(stckI,tunI,ctrl@sumFleets,catch.vars)
+    data  <- FLSAM2SAM(stckI,tunI,ctrl@sumFleets,catch.vars,.recapture(ctrl))
     conf  <- ctrl2conf(ctrl,data)
     par   <- defpar(data,conf)
     try(do.call(sam.fit,c(list(data=data,conf=conf,parameters=par,sim.condRE=ctrl@simulate,
@@ -102,7 +102,7 @@ FLSAM.fast <-function(stcks,tun,ctrl,catch.vars=NULL,starting.sam=NULL,return.sa
   ctrl@residuals <- FALSE
   ctrl  <- .upgradeControl(ctrl)
 
-  data  <- FLSAM2SAM(FLStocks("residual"=stcks[["residual"]]),FLIndices(tun),ctrl@sumFleets,catch.vars)
+  data  <- FLSAM2SAM(FLStocks("residual"=stcks[["residual"]]),FLIndices(tun),ctrl@sumFleets,catch.vars,.recapture(ctrl))
   conf  <- ctrl2conf(ctrl,data)
   par   <- defpar(data,conf)
 
