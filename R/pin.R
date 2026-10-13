@@ -69,31 +69,48 @@
 
 
 # #- take default parameter values and overwrite with previous run converged parameter estimates
-# updateStart <- function(parameters,startVals){
-#   parametersUp <- parameters
-#   if("missing" %in% names(startVals))
-#     startVals <- startVals[-grep("missing",names(startVals))]
-#   for(iName in names(startVals)){
-#     if(identical(length(parametersUp[[iName]]),length(startVals[[iName]]))){
-#       parametersUp[[iName]] <- startVals[[iName]]
-#     } else {
-#       if(iName %in% c("logF","logN","logPS")){
-#         if((dim(parametersUp[[iName]])[2]-dim(startVals[[iName]])[2])==-1)
-#           parametersUp[[iName]] <- startVals[[iName]][,-ncol(startVals[[iName]])]
-#         if((dim(parametersUp[[iName]])[2]-dim(startVals[[iName]])[2])==1)
-#           parametersUp[[iName]] <- cbind(startVals[[iName]],startVals[[iName]][,ncol(startVals[[iName]])])
-#       }
-#       warnings(paste("Could not update according to starting value",iName,"as number of parameters specified does not match"))
-#     }
-#   }
-  
-#   for(iName in names(startVals)){
-#     if(length(parametersUp[[iName]][which(parametersUp[[iName]] < -5)])>0)
-#       parametersUp[[iName]][which(parametersUp[[iName]] < -5)] <- parameters[[iName]][which(parametersUp[[iName]] < -5)]
-#   }
+#' Use estimates of a previous assessment as starting values
+#'
+#' \code{updateStart} overwrites default starting values (as returned by
+#' \code{\link[stockassessment]{defpar}}) with the estimates of a previous
+#' assessment, as extracted by \code{FLSAM2par}. Parameters whose length
+#' differs are left at their default; the random effects \code{logN},
+#' \code{logF} and \code{logP} are extended or shortened by one year when
+#' needed. Used by \code{FLSAM(..., starting.values=)}.
+#'
+#' @param parameters A SAM parameter list (from \code{defpar}).
+#' @param startVals A (partial) SAM parameter list with starting values.
+#' @param sam An \code{\link{FLSAM-class}} object.
+#' @return A SAM parameter list.
+#' @rdname updateStart
+#' @export
+updateStart <- function(parameters,startVals){
+  parametersUp <- parameters
+  if("missing" %in% names(startVals))
+    startVals <- startVals[-grep("missing",names(startVals))]
+  startVals <- startVals[names(startVals) %in% names(parameters)]
+  for(iName in names(startVals)){
+    if(identical(length(parametersUp[[iName]]),length(startVals[[iName]]))){
+      parametersUp[[iName]][] <- startVals[[iName]]
+    } else {
+      if(iName %in% c("logF","logN","logP") & length(dim(startVals[[iName]]))==2){
+        if((dim(parametersUp[[iName]])[2]-dim(startVals[[iName]])[2])==-1)
+          parametersUp[[iName]][] <- startVals[[iName]][,-ncol(startVals[[iName]])]
+        if((dim(parametersUp[[iName]])[2]-dim(startVals[[iName]])[2])==1)
+          parametersUp[[iName]][] <- cbind(startVals[[iName]],startVals[[iName]][,ncol(startVals[[iName]])])
+      } else {
+        warning(paste("Could not update according to starting value",iName,"as number of parameters specified does not match"))
+      }
+    }
+  }
 
-#   return(parametersUp)}
-  
+  for(iName in names(startVals)){
+    if(length(parametersUp[[iName]][which(parametersUp[[iName]] < -5)])>0)
+      parametersUp[[iName]][which(parametersUp[[iName]] < -5)] <- parameters[[iName]][which(parametersUp[[iName]] < -5)]
+  }
+
+  return(parametersUp)}
+
 # #- Create defpar object from sam
 # FLSAM2defpar <- function(sam){
 #   ret<-list()
@@ -128,6 +145,8 @@
 # }
 
 #- Move all estimated parameters from sam to a par object
+#' @rdname updateStart
+#' @export
 FLSAM2par <- function(sam){
   ret               <- list()
   parNames          <- unique(sam@params$name)
@@ -219,14 +238,14 @@ FLSAM2par <- function(sam){
     ret$logF          <- matrix(subset(sam@params,name=="logF")$value, nrow=max(sam@control@states,na.rm=T)+1,ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1)
   if("logN" %in% parNames)
     ret$logN          <- matrix(subset(sam@params,name=="logN")$value, nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1)
-  if("logPS" %in% parNames)
+  if("logP" %in% parNames)
     ret$logP         <- matrix(subset(sam@params,name=="logP")$value, nrow=length(sam@control@logP.vars), ncol=ncol(sam@components))
   if("logSW" %in% parNames)
-    logSW           <- matrix(subset(sam@params,name=="logSW")$value,nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1+10)
+    ret$logSW <- matrix(subset(sam@params,name=="logSW")$value,nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1+10)
   if("logCW" %in% parNames) 
-    logCW           <- array(subset(sam@params,name=="logCW")$value,dim=c(sam@control@range["max"]-sam@control@range["min"]+1,sam@control@range["maxyear"]-sam@control@range["minyear"]+1+10,length(grep("catch",names(sam@control@fleets)))))
+    ret$logCW <- array(subset(sam@params,name=="logCW")$value,dim=c(sam@control@range["max"]-sam@control@range["min"]+1,sam@control@range["maxyear"]-sam@control@range["minyear"]+1+10,length(grep("catch",names(sam@control@fleets)))))
   if("logitMO" %in% parNames)
-    logitMO         <- matrix(subset(sam@params,name=="logitMO")$value,nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1+10)
+    ret$logitMO <- matrix(subset(sam@params,name=="logitMO")$value,nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1+10)
   if("logNM" %in% parNames)
-    logNM           <- matrix(subset(sam@params,name=="logNM")$value,nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1+10)
+    ret$logNM <- matrix(subset(sam@params,name=="logNM")$value,nrow=sam@control@range["max"]-sam@control@range["min"]+1, ncol=sam@control@range["maxyear"]-sam@control@range["minyear"]+1+10)
 return(ret)}

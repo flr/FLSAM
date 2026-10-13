@@ -4,25 +4,21 @@ packageStartupMessage(sprintf("\nFLSAM %s (%s)",packageDescription("FLSAM")$Vers
            packageDescription("FLSAM")$Date), "\n",
 "------------------------------------------------------------------------------
 
-* NOTE: This version of FLSAM requires a particular version of the
-    'stockassessment' package. Please install using
-	  devtools::install_github('fishfollower/SAM/stockassessment', ref='components')
-
 * This package is an FLR wrapper to SAM, the State-space Assessment Model
-    developed by Anders Nielsen, DTU-Aqua. For details regarding SAM, 
-    please consult <http://www.stockassessment.org>.
+    developed by Anders Nielsen, DTU-Aqua, and uses the 'stockassessment'
+    package (>= 0.12.0). Install or update it using
+      remotes::install_github('fishfollower/SAM/stockassessment')
+    For details regarding SAM, please consult <https://www.stockassessment.org>.
 
 * SAM and FLSAM come with ABSOLUTELY NO WARRANTY.
 
-* Please report all bugs, questions and feature requestions to the FLR
-    mailing list, flr-list@flr-project.org. We're here to help! 
+* Please report bugs, questions and feature requests at
+    <https://github.com/flr/FLSAM/issues>.
 
-* For more information on learning to use FLSAM, run vignette('FLSAM'). For 
-    the full manual as a PDF file, run vignette('FLSAM-manual'). Full
-    documentation is also availabe through the standard R help system - use
-    help(package='FLSAM') to get started there.
+* Documentation is available through the standard R help system - use
+    help(package='FLSAM') to get started.
 ------------------------------------------------------------------------------")
 
-if(packageVersion("stockassessment") != "0.12.0")
-  stop("Version of stockassessment is not compatible with FLSAM, see above.")
+if(packageVersion("stockassessment") < "0.12.0")
+  stop("Version of stockassessment is not compatible with FLSAM (>= 0.12.0 required), see above.")
 }

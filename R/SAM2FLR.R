@@ -1,4 +1,20 @@
-SAM2FLR <- function(fit,ctrl){
+#' Convert a SAM fit into an FLSAM object
+#'
+#' \code{SAM2FLR} converts a fitted \code{sam} object (from
+#' \code{\link[stockassessment]{sam.fit}} or \code{FLSAM(..., return.fit=TRUE)})
+#' into an \code{\link{FLSAM-class}} object. \code{SIM2FLR} converts a matrix
+#' of simulated parameter vectors (see \code{\link{simulate}}) into an
+#' \code{\link{FLSAMs}} object.
+#'
+#' @param fit A \code{sam} fit.
+#' @param ctrl The \code{\link{FLSAM.control-class}} object used for the fit.
+#' @param keep.fit Store \code{fit} in the \code{fit} slot of the result.
+#' @param sim Matrix of simulated parameters (rows are simulations).
+#' @param set.pars The \code{set.pars} used in the fit, if any.
+#' @return An \code{FLSAM} (\code{SAM2FLR}) or \code{FLSAMs} (\code{SIM2FLR}) object.
+#' @rdname SAM2FLR
+#' @export
+SAM2FLR <- function(fit,ctrl,keep.fit=TRUE){
 
   #- Create new FLSAM object and fill with ctrl elements
   res         <- new("FLSAM")
@@ -59,8 +75,7 @@ SAM2FLR <- function(fit,ctrl){
 
   #- Get maturity information
   if(ctrl@maturityModel){
-    require(boot)
-    res@mat <- FLQuant(t(inv.logit(fit$pl$logitMO[1:length(ctrl@range["minyear"]:ctrl@range["maxyear"]),])),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
+    res@mat <- FLQuant(t(plogis(fit$pl$logitMO[1:length(ctrl@range["minyear"]:ctrl@range["maxyear"]),])),dimnames=list(age=ctrl@range["min"]:ctrl@range["max"],
                                                         year=ctrl@range["minyear"]:ctrl@range["maxyear"],
                                                         unit="unique",
                                                         season="all",
@@ -149,8 +164,11 @@ SAM2FLR <- function(fit,ctrl){
   res@name    <- ctrl@name
   res@desc    <- ctrl@desc
   res@range   <- ctrl@range
+  if(keep.fit) res@fit <- fit
 return(res)}
 
+#' @rdname SAM2FLR
+#' @export
 SIM2FLR <- function(sim,fit,ctrl,set.pars=NULL){
   resList       <-list()
   for(i in 1:nrow(sim)){
@@ -168,19 +186,11 @@ SIM2FLR <- function(sim,fit,ctrl,set.pars=NULL){
     pars2match <- unique(dimnames(sim)[[2]])
     keepPars    <- names(fit$pl)[which(names(fit$pl) %in% pars2match)]
 
-    #- Fix for set.pars
+    #- Fix for set.pars: remove the fixed parameters (all at once per parameter)
     if(!is.null(set.pars)){
-      matchNames <- matrix(c("logN.vars","logSdLogN",
-                             "logP.vars","logSdLogP",
-                             "catchabilities","logFpar",
-                             "power.law.exps","logQpow",
-                             "f.vars","logSdLogFsta",
-                             "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
-      if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
-          warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
-      set.parsSAM <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
-      for(j in 1:nrow(set.pars))
-        fit$pl[[set.parsSAM$SAM[j]]] <- fit$pl[[set.parsSAM$SAM[j]]][-(set.parsSAM$number[j]+1)]
+      set.parsSAM <- .setParsSAM(fit$pl,set.pars)
+      for(iPar in unique(set.parsSAM$SAM))
+        fit$pl[[iPar]] <- fit$pl[[iPar]][-(set.parsSAM$number[set.parsSAM$SAM==iPar]+1)]
     }
 
     pars       <- ac(rownames(as.data.frame(unlist(fit$pl))))

@@ -7,6 +7,21 @@
   #######################################################################
 
 
+#' Residual diagnostics per fleet and age
+#'
+#' For every fleet and age a panel of six base-graphics plots: observed and
+#' fitted time series, observed vs fitted, standardised (one-observation-ahead)
+#' residuals over time, Tukey-Anscombe plot with loess smoother, normal Q-Q
+#' plot and the partial autocorrelation of the residuals.
+#'
+#' @param x An \code{\link{FLSAM-class}} object.
+#' @param title Title prefix.
+#' @return Called for its side effect.
+#' @seealso \code{\link{residual.tests}} for formal tests.
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' residual.diagnostics(NSH.sam)
+#' @export
 residual.diagnostics <- function(x,title=x@name) {
 # extracts residuals dataframe from x
   index.res <- x@residuals
@@ -99,7 +114,7 @@ residual.diagnostics <- function(x,title=x@name) {
   plt.dat <- index.res.l[[i]]
   abline(h=0)  
   smoother <- try(loess.smooth(plt.dat$mdl,plt.dat$std.res))
-  if(is(smoother, "try-error"))
+  if(!is(smoother, "try-error"))
     lines(smoother,col="red")
   title("d) Tukey-Anscombe plot")
 
@@ -139,9 +154,11 @@ residual.diagnostics <- function(x,title=x@name) {
 #residual.diagnostics(NSH.sam)
 
 #for (i in names(getSlots("FLSAM"))[-21]) slot(sm,i)=slot(NSH.sam,i)
+#' @rdname diags
 setGeneric('diags', function(object, ...)
   standardGeneric('diags'))
  
+#' @rdname diags
 setMethod("diags", signature(object="FLSAM"),
   function(object){
   

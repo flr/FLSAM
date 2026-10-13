@@ -1,6 +1,20 @@
+#' Kobe data from an FLSAM assessment
+#'
+#' Returns the SSB/Bmsy and F/Fmsy trajectory, a confidence ellipse and
+#' random draws for the last year, for use in Kobe plots (see
+#' \code{\link{plotkobe}}). Requires \pkg{plyr} and \pkg{reshape2}.
+#'
+#' @param object An \code{\link{FLSAM-class}} object (or a list of them for \code{kobeFLSAM}).
+#' @param what Which elements to return: \code{"trks"}, \code{"pts"},
+#'   \code{"ellipse"}, \code{"smry"}.
+#' @param prob Probability level of the ellipse.
+#' @param nits Number of random draws.
+#' @param bmsy,fmsy Reference points to scale SSB and F.
+#' @return A \code{data.frame} or a list of them.
+#' @rdname kobeFLSAM
+#' @export
 kobeFLSamFn=function(object,what=c("trks","smry","pts","ellipse")[1],prob=c(0.75,0.5,.25),nits=1000,bmsy=1,fmsy=1){
   
-  require(ellipse)
   require(reshape2)
   require(plyr)
   
@@ -33,6 +47,8 @@ kobeFLSamFn=function(object,what=c("trks","smry","pts","ellipse")[1],prob=c(0.75
   return(object)}
 
 #### exported function
+#' @rdname kobeFLSAM
+#' @export
 kobeFLSAM=function(object,what=c("trks","smry","pts","ellipse")[1],prob=c(0.75,0.5,.25),nits=1000,bmsy=1,fmsy=1){
   require(plyr)
   

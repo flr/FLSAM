@@ -3,13 +3,19 @@
 #-------------------------------------------------------------------------------
 
 #- Create generic function for 'looi'
+#' @rdname looi
   setGeneric('looi', function(stck,tun,ctrl,type,...) standardGeneric('looi'))
 
+#' @rdname looi
 setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="missing"),
   function(stck,tun,ctrl,type,base.run,set.pars){
-     looi(stck,tun,ctrl,type="full",base.run="missing",set.pars="missing")
+     args <- list(stck=stck,tun=tun,ctrl=ctrl,type="full")
+     if(!missing(base.run)) args$base.run <- base.run
+     if(!missing(set.pars)) args$set.pars <- set.pars
+     do.call(looi,args)
 }) 
 
+#' @rdname looi
 setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="character"),
   function(stck,tun,ctrl,type="full",base.run="missing",set.pars="missing"){
     #Check type argument
@@ -145,22 +151,28 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
 # })
 
 #- Create generic function for 'loo' and 'loi'
+#' @rdname looi
   setGeneric('loo', function(stck,tun,ctrl,type,base.run,set.pars,...) standardGeneric('loo'))
 
+#' @rdname looi
   setGeneric('loi', function(stck,tun,ctrl,type,base.run,set.pars,...) standardGeneric('loi'))
+#' @rdname looi
 setMethod("loo",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
   function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
      looi(stck,tun,ctrl,type="loo",base.run,set.pars)
 }) 
+#' @rdname looi
 setMethod("loi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
   function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
      looi(stck,tun,ctrl,type="loi",base.run,set.pars)
 }) 
 
+#' @rdname looi
 setMethod("loo",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
   function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
      looi(stck,tun,ctrl,type="loo",base.run,set.pars)
 })
+#' @rdname looi
 setMethod("loi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
   function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
      looi(stck,tun,ctrl,type="loi",base.run,set.pars)
@@ -170,9 +182,11 @@ setMethod("loi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
 # Retro function
 #-------------------------------------------------------------------------------
 
+#' @rdname retro
 	setGeneric("retro", function(stock, indices, control, retro, year.range,set.pars)
     	standardGeneric("retro"))
 
+#' @rdname retro
 setMethod('retro', signature(stock='FLStock', indices='FLIndices', control='FLSAM.control',retro='numeric'),
 function(stock, indices, control, retro, year.range="missing",set.pars="missing"){
 
@@ -250,6 +264,7 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
     return(res) 
   })  #End setMethod
 
+#' @rdname retro
 setMethod('retro', signature(stock='FLStocks', indices='FLIndices', control='FLSAM.control',retro='numeric'),
 function(stock, indices, control, retro, year.range="missing",set.pars="missing"){
 
@@ -309,7 +324,11 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
                 max(sapply(Indices.temp,function(x) max(x@range[c("maxyear")]))))
 
       if(is.null(starting.vals)){
-        assess  <- try(FLSAM(Stock, Indices.temp,control))
+        if(missing(set.pars)){
+          assess  <- try(FLSAM(Stock, Indices.temp,control))
+        } else {
+          assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars))
+        }
         starting.vals <- assess
       } else {
           if(missing(set.pars)){

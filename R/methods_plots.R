@@ -1,3 +1,32 @@
+#' Plot FLSAM assessment results
+#'
+#' Stock summary plots (SSB, Fbar and recruitment with 95\% confidence
+#' intervals) of one or more assessments, optionally together with an
+#' \code{FLStock}. The plots are made with \pkg{ggplot2} and return a
+#' \code{ggplot} object that can be modified further.
+#'
+#' @param x An \code{\link{FLSAM-class}}, \code{\link{FLSAMs}} or \code{FLStock} object.
+#' @param y Missing, or an \code{FLSAM}, \code{FLSAMs} or \code{FLStock} object
+#'   to plot together with \code{x}.
+#' @param futureYrs Include the last year (in which only survey information
+#'   is available)? Default \code{TRUE}.
+#' @param what Not used (kept for backward compatibility).
+#' @param main Plot title.
+#' @param ... Not used.
+#' @return A \code{ggplot} object.
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' plot(NSH.sam)
+#' data(HERAS.sams)
+#' plot(HERAS.sams)
+#' @name plot-FLSAM
+#' @aliases plot,FLSAM,missing-method plot,FLSAM,FLSAM-method plot,FLSAMs,missing-method plot,FLSAMs,FLStock-method plot,FLSAM,FLStock-method plot,FLStock,FLSAM-method plot,FLStock,FLSAMs-method
+NULL
+
+.plotLevels <- c("Spawning stock biomass","Fishing mortality","Recruitment")
+
+#' @rdname plot-FLSAM
+#' @export
 setMethod("plot",signature(x="FLSAM",y="missing"),
  function(x,y,futureYrs=T,what=c("ssb","fbar","rec"),...) {
     #Extract data
@@ -9,31 +38,27 @@ setMethod("plot",signature(x="FLSAM",y="missing"),
     fbar.dat <- fbar(x)
     fbar.dat$name <- "Fishing mortality"
     plot.dat    <- rbind(ssb.dat, fbar.dat,rec.dat)
-    plot.dat$name <- factor(plot.dat$name,
-                       levels=c("Spawning stock biomass","Fishing mortality","Recruitment"))
+    plot.dat$name <- factor(plot.dat$name,levels=.plotLevels)
     if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% range(x)["minyear"]:(range(x)["maxyear"]-1))
     #Plot it
-    xyplot(value+ubnd+lbnd~year|name,data=plot.dat,#...,
-                  prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
-                  main=list(x@name,cex=0.9),
-                  ylab=rev(c("SSB","Fbar","Rec")),xlab="Year",
-                  layout=c(1,3),as.table=TRUE,
-                  panel=function(...) {
-                       panel.grid(h=-1,v=-1)
-                       arg <- list(...)
-                       d<- split(data.frame(x=arg$x,y=arg$y),arg$groups[arg$subscripts])
-                       panel.polygon(c(d$ubnd$x,rev(d$lbnd$x)),c(d$ubnd$y,rev(d$lbnd$y)),
-                          col="grey",border=NA)
-                       panel.xyplot(d$value$x,d$value$y,col="black",lwd=2,type="l")
-                         },
-                  scales=list(alternating=1,y=list(relation="free",rot=0)))
+    ggplot(plot.dat,aes(x=year)) +
+      geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill="grey",colour=NA) +
+      geom_line(aes(y=value),colour="black",linewidth=1) +
+      facet_wrap(~name,ncol=1,scales="free_y") +
+      expand_limits(y=0) +
+      labs(x="Year",y=NULL,title=x@name) +
+      theme_bw()
 })
 
+#' @rdname plot-FLSAM
+#' @export
 setMethod("plot",signature(x="FLSAM",y="FLSAM"),
  function(x,y,main="",...) {
     plot(FLSAMs(x,y),...)
 })
 
+#' @rdname plot-FLSAM
+#' @export
 setMethod("plot",signature(x="FLSAMs",y="missing"),
  function(x,y,main="",futureYrs=T,...) {
     #Extract data - ssb and fbar are easy but recs harder
@@ -46,81 +71,89 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
     fbar.dat <- fbar(x)
     if(!futureYrs) fbar.dat <- fbar(x)[-c(which(diff(fbar(x)$year)<0),nrow(fbar(x))),]
     fbar.dat$var <- "Fishing mortality"
-    plot.dat    <- rbind(ssb.dat, fbar.dat,rec.dat) 
-    plot.dat$var <- factor(plot.dat$var,
-                       levels=c("Spawning stock biomass","Fishing mortality","Recruitment"))
+    plot.dat    <- rbind(ssb.dat, fbar.dat,rec.dat)
+    plot.dat$var <- factor(plot.dat$var,levels=.plotLevels)
+    plot.dat$name <- factor(plot.dat$name,levels=unique(plot.dat$name))
 
     #Plot it
-    xyplot(value~year|var,data=plot.dat,...,
-              prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
-              main=main,groups=name,type="l",
-              ylab=rev(c("SSB","Fbar","Rec")),xlab="Year",
-              layout=c(1,3),as.table=TRUE,
-              auto.key=list(space="right",lines=TRUE,points=FALSE),
-              scales=list(alternating=1,y=list(relation="free",rot=0)),
-              panel=function(...) {
-                   panel.grid(h=-1,v=-1)
-                   panel.superpose.2(...)})
+    ggplot(plot.dat,aes(x=year,y=value,colour=name)) +
+      geom_line() +
+      facet_wrap(~var,ncol=1,scales="free_y") +
+      expand_limits(y=0) +
+      labs(x="Year",y=NULL,colour=NULL,title=main) +
+      theme_bw()
 })
 
+#' @rdname plot-FLSAM
+#' @export
 setMethod("plot",signature(x="FLSAMs",y="FLStock"),
- function(x,y,main="",futureYrs,...) {
+ function(x,y,main="",futureYrs=TRUE,...) {
     #extract data from FLSAMs first
     ssb.dat <- ssb(x)
     if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
-    ssb.dat$var <- "spawning stock biomass"
+    ssb.dat$var <- "Spawning stock biomass"
     rec.dat <- rec(x)
     if(!futureYrs) rec.dat <- rec(x)[-c(which(diff(rec(x)$year)<0),nrow(rec(x))),]
-    rec.dat$var <- "recruitment"
+    rec.dat$var <- "Recruitment"
     fbar.dat <- fbar(x)
     if(!futureYrs) fbar.dat <- fbar(x)[-c(which(diff(fbar(x)$year)<0),nrow(fbar(x))),]
-    fbar.dat$var <- "fishing mortality"
-    sams.dat    <- rbind(ssb.dat, fbar.dat,rec.dat) 
+    fbar.dat$var <- "Fishing mortality"
+    sams.dat    <- rbind(ssb.dat, fbar.dat,rec.dat)
 
     #Then add the data from the stock
-    stck.dat <- rbind(data.frame(as.data.frame(rec(y)),var="recruitment"),
-                  data.frame(as.data.frame(ssb(y)),var="spawning stock biomass"),
-                  data.frame(as.data.frame(fbar(y)),var="fishing mortality"))
+    stck.dat <- rbind(data.frame(as.data.frame(rec(y)),var="Recruitment"),
+                  data.frame(as.data.frame(ssb(y)),var="Spawning stock biomass"),
+                  data.frame(as.data.frame(fbar(y)),var="Fishing mortality"))
     stck.dat$name <- y@name
     stck.dat$value <- stck.dat$data
-    
+
     #Now combine
     common.cols <- intersect(names(stck.dat),names(sams.dat))
     plot.dat <- rbind(stck.dat[,common.cols],sams.dat[,common.cols])
-    plot.dat$var <- factor(plot.dat$var,
-                       levels=c("spawning stock biomass","fishing mortality","recruitment"))
+    plot.dat$var <- factor(plot.dat$var,levels=.plotLevels)
+    plot.dat$name <- factor(plot.dat$name,levels=unique(plot.dat$name))
 
     if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% min(unlist(lapply(x,function(y){range(y)["minyear"]}))) :
                                                             max(unlist(lapply(x,function(y){range(y)["maxyear"]-1}))))
     #plot it
-    xyplot(value~year|var,data=plot.dat,...,
-              prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
-              main=main,groups=name,type="l",
-              ylab=rev(c("ssb","fbar","rec")),xlab="year",
-              layout=c(1,3),as.table=TRUE,
-              auto.key=list(space="right",lines=TRUE,points=TRUE),
-              scales=list(alternating=1,y=list(relation="free",rot=0)),
-              panel=function(...) {
-                   panel.grid(h=-1,v=-1)
-                   panel.superpose.2(...)})
+    ggplot(plot.dat,aes(x=year,y=value,colour=name)) +
+      geom_line() +
+      geom_point(size=0.8) +
+      facet_wrap(~var,ncol=1,scales="free_y") +
+      expand_limits(y=0) +
+      labs(x="Year",y=NULL,colour=NULL,title=main) +
+      theme_bw()
 })
 
+#' @rdname plot-FLSAM
+#' @export
 setMethod("plot",signature(x="FLSAM",y="FLStock"),
  function(x,y,main="",...) {
-    plot(FLSAMs(x),y,...)
+    plot(FLSAMs(x),y,main=main,...)
 })
 
+#' @rdname plot-FLSAM
+#' @export
 setMethod("plot",signature(x="FLStock",y="FLSAM"),
  function(x,y,main="",...) {
-    plot(y,x,...)
+    plot(y,x,main=main,...)
 })
 
+#' @rdname plot-FLSAM
+#' @export
 setMethod("plot",signature(x="FLStock",y="FLSAMs"),
  function(x,y,main="",...) {
-    plot(y,x,...)
+    plot(y,x,main=main,...)
 })
 
-#Components plot
+#' Components plot
+#'
+#' Stacked area plot of the estimated proportions of the components of a
+#' partial survey (fleet type 6).
+#'
+#' @param sam An \code{\link{FLSAM-class}} object with components.
+#' @return Called for its side effect (base graphics).
+#' @export
 comp.plot <- function(sam){
   require(RColorBrewer)
   if(length(sam@components)==0) stop("No component information in assessment output")
@@ -136,41 +169,87 @@ comp.plot <- function(sam){
   legend("topleft",bg="white",legend=rownames(sam@components),pch=22,pt.bg=cols,pt.cex=2)
 }
 
+#' Partial fishing mortality plot
+#'
+#' Plots the mean fishing mortality over the Fbar age range for each catch
+#' fleet of a multi-fleet assessment.
+#'
+#' @param sam An \code{\link{FLSAM-class}} object.
+#' @return A \code{ggplot} object.
+#' @export
 fpart.plot <- function(sam){
   f.dat <- f(sam)
   fbars <- sam@control@range["minfbar"]:sam@control@range["maxfbar"]
   f.dat <- subset(f.dat,age %in% fbars)
   f.dat <- aggregate(f.dat[,"value"],by=as.list(f.dat[,c("fleet","year")]),FUN=mean,na.rm=T)
-  xyplot(x ~ year,data=f.dat,groups=fleet,type="b",pch=19,
-         main=list(sam@name,cex=0.9),
-         ylab="Fbar-partial",xlab="Year",
-         panel=function(...) {
-          panel.grid(h=-1,v=-1)
-          panel.xyplot(...)
-         },
-         scales=list(alternating=1,y=list(relation="free",rot=0)))
+  ggplot(f.dat,aes(x=year,y=x,colour=fleet)) +
+    geom_line() +
+    geom_point() +
+    labs(x="Year",y="Fbar-partial",colour=NULL,title=sam@name) +
+    theme_bw()
 }
 
-#Correlation plot
+#' Parameter correlation plot
+#'
+#' Heat map of the correlation matrix of the estimated parameters (derived
+#' from the \code{vcov} slot). This is the FLSAM equivalent of
+#' \code{\link[stockassessment]{parplot}} / \code{corplot}.
+#'
+#' @param sam An \code{\link{FLSAM-class}} object.
+#' @param cols Three colours for correlations of -1, 0 and 1.
+#' @param full Show the full matrix (\code{TRUE}) or only the fitted
+#'   parameters (\code{FALSE}, default).
+#' @return A \code{ggplot} object.
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' cor.plot(NSH.sam)
+#' @export
 cor.plot <- function(sam,cols=c("red","white","blue"),full=FALSE) {
    n.coefs <- nrow(coef(sam))
    cor.mat <- cov2cor(sam@vcov)
-   if(!full) {cor.mat <- cor.mat[1:n.coefs,1:n.coefs]} #Don't show the full matrix 
+   if(!full) {cor.mat <- cor.mat[1:n.coefs,1:n.coefs]} #Don't show the full matrix
    var.names <- colnames(cor.mat)
    var.names <- factor(var.names,unique(var.names))
    var.names <- paste(var.names,do.call(c,lapply(table(var.names),seq,from=1)),sep=".")
    dimnames(cor.mat) <- list(Var2=var.names,Var1=var.names)
    plt.dat <- as.data.frame(as.table(cor.mat),responseName="cor")
-   levelplot(cor ~ Var2 * Var1,plt.dat,
-       at=seq(-1,1,by=0.02),zlim=c(-1,1),
-       scales=list(x=list(rot=90)),
-       xlab="",ylab="",main=sam@name,
-       col.regions=colorRampPalette(cols,space="Lab")(102))
+   ggplot(plt.dat,aes(x=Var2,y=Var1,fill=cor)) +
+     geom_tile() +
+     scale_fill_gradient2(low=cols[1],mid=cols[2],high=cols[3],midpoint=0,limits=c(-1,1)) +
+     labs(x=NULL,y=NULL,fill="Correlation",title=sam@name) +
+     theme_bw() +
+     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 }
 
 #Otolith plot (resample from the variance co-variance matrix and create a plot of all the resampled value)
+#' Joint uncertainty of SSB and Fbar ("otolith" plot)
+#'
+#' Draws SSB and Fbar in a given year from their estimated joint
+#' (multivariate normal) distribution and shows the two-dimensional
+#' confidence region with contours, optionally with marginal densities.
+#'
+#' @param object An \code{\link{FLSAM-class}} object.
+#' @param year Year of the plot (default the last year).
+#' @param plot Draw the plot.
+#' @param show.points Show the individual draws.
+#' @param do.contours Draw contours of the cumulative density.
+#' @param margin.plots Add marginal density plots.
+#' @param show.estimate Show the point estimate.
+#' @param n Number of draws.
+#' @param pch Plot symbol of the draws.
+#' @param alpha Confidence level of the marginal intervals (default 0.05).
+#' @param show.grid Draw a grid.
+#' @param n.grid Grid size of the kernel density estimate.
+#' @param contour.args List of arguments passed to \code{contour}.
+#' @param ... Not used.
+#' @return The contour object (or the draws) invisibly.
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' otolith(NSH.sam, year=2010, n=1000)
+#' @rdname otolith
   setGeneric("otolith", function(object, ...)
     standardGeneric("otolith"))
+#' @rdname otolith
 setMethod("otolith", signature(object="FLSAM"),
 function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.contours=TRUE,
                       margin.plots=TRUE, show.estimate=TRUE,
@@ -318,6 +397,23 @@ function(object, year=object@range["maxyear"], plot=TRUE, show.points=FALSE, do.
 })
 
 #-Observation variance plot
+#' Observation variance plots
+#'
+#' \code{obsvar.plot} shows the estimated observation standard deviations by
+#' data source; \code{obscv.plot} plots them against their CV;
+#' \code{obscor.plot} shows the estimated observation correlation matrices of
+#' fleets with an \code{"AR"} or \code{"US"} correlation structure. See
+#' \code{\link{obssd.plot}} and \code{\link{obscor.empirical.plot}} for
+#' ggplot2 alternatives.
+#'
+#' @param sam An \code{\link{FLSAM-class}} object.
+#' @return Called for its side effect (base graphics).
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' obsvar.plot(NSH.sam)
+#' obscv.plot(NSH.sam)
+#' @rdname obsvar.plot
+#' @export
 obsvar.plot <- function(sam){
                   obv <- obs.var(sam)
                   obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
@@ -329,6 +425,8 @@ obsvar.plot <- function(sam){
               }
 
 #-CV versus observation variance plot
+#' @rdname obsvar.plot
+#' @export
 obscv.plot  <- function(sam){
 
   obv <- obs.var(sam)
@@ -340,8 +438,9 @@ obscv.plot  <- function(sam){
 }
 
 #-Observation correlation plot
+#' @rdname obsvar.plot
+#' @export
 obscor.plot <- function(sam){
-  require(ellipse)
   oc <- sam@obscov
   idx <- apply(sam@control@cor.obs,1,function(x){any(x>=0,na.rm=T)})
   for(i in 1:length(oc)){
@@ -356,6 +455,26 @@ obscor.plot <- function(sam){
 }
 
 #-Processes error plot: expressed as deviation in type = "mort","n","tsb"
+#' Process error plots
+#'
+#' Shows the process error of an assessment, i.e. the difference between the
+#' estimated numbers at age and the numbers predicted from last year's numbers
+#' with the survivor equation, expressed in numbers (\code{type="n"}),
+#' mortality (\code{"mort"}) or total biomass (\code{"tsb"}). Use an
+#' \code{FLStock} updated with the assessment results (\code{stock + sam}).
+#'
+#' @param stck An \code{FLStock} with estimated \code{stock.n} and \code{harvest}.
+#' @param weight Weights used for \code{type="tsb"}: \code{"stock.wt"} or \code{"catch.wt"}.
+#' @param type \code{"n"}, \code{"mort"} or \code{"tsb"}.
+#' @param rel Express the deviations relative (\%) instead of absolute.
+#' @return The \code{ggplot} object (printed, returned invisibly).
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' NSH <- NSH + NSH.sam
+#' procerr.plot(NSH, type="n")
+#' procerr.plot(NSH, type="mort", rel=TRUE)
+#' procerr.plot(NSH, type="tsb", weight="stock.wt")
+#' @export
 procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
 
       #- convert N-at-age, F-at-age and m-at-age
@@ -403,19 +522,15 @@ procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
           nmwcomb[,"ndiff"] <- nmwcomb[,"ndiff"] / nmwcomb[,"n"] * 100
         inp   <- nmwcomb[,c(1:6,grep("ndiff",colnames(nmwcomb)))]
         colnames(inp)[7] <- "data"
-        inpQ  <- as(inp,"FLQuant")
-        x_at <- pretty(1:(max(as.data.frame(inpQ)$year)-min(as.data.frame(inpQ)$year))+1)-1
-        x_labels <- formatC(pretty(as.data.frame(inpQ)$year), digits = 0, format = "f")
         if(rel)
           yTxt <- "% difference numbers at age"
         if(rel==F)
           yTxt <- "Numbers at age"
-        pic   <- barchart(data ~ year | as.factor(age),data=as.data.frame(inpQ),origin = 0, scales = list(x=list(at=x_at,labels=x_labels),y="free"),col=1,horizontal=F,
-                          xlab="Year",ylab=yTxt,main="Process error deviation in N",
-                          panel=function(...) {
-                            panel.grid(h=-1,v=0);
-                            panel.barchart(...)})
-        print(pic)
+        pic   <- ggplot(inp,aes(x=year,y=data)) +
+                   geom_col(fill="black") +
+                   facet_wrap(~age,scales="free_y") +
+                   labs(x="Year",y=yTxt,title="Process error deviation in N") +
+                   theme_bw()
       }
       if(type=="mort"){
         #- Deviance from mortality
@@ -426,34 +541,57 @@ procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
         if(rel==F)
           inp   <- nmwcomb[,c(1:6,grep("mdiff",colnames(nmwcomb)))]
         colnames(inp)[7] <- "data"
-        inpQ  <- as(inp,"FLQuant")
+        inp$sign <- factor(ifelse(inp$data<0,"negative","positive"),levels=c("negative","positive"))
         if(rel)
           yTxt <- "% difference mortality (year)"
         if(rel==F)
           yTxt <- "Mortality (year)"
-        pic   <- bubbles(age ~ year,data=inpQ,bub.scale=5,col=c("black","red"),xlab="Years",ylab=yTxt,main="Process error deviation in M")
-        print(pic)
+        pic   <- ggplot(inp,aes(x=year,y=age)) +
+                   geom_point(aes(size=abs(data),colour=sign),shape=1) +
+                   scale_colour_manual(values=c(negative="black",positive="red"),drop=FALSE) +
+                   scale_size_area(max_size=8) +
+                   labs(x="Years",y="Age",size=yTxt,colour=NULL,title="Process error deviation in M") +
+                   theme_bw()
       }
       if(type=="tsb"){
-        x_at <- pretty(1:(max(bdiff$year)-min(bdiff$year)+1))-1
-        x_labels <- formatC(pretty(bdiff$year), digits = 0, format = "f")
-        
         if(rel)
           bdiff$bdiff <- bdiff$bdiff/bnorm$bnorm *100
         if(rel)
           yTxt <- "% difference in biomass (t)"
         if(rel==F)
           yTxt <- "Biomass (t)"
-        pic <- barchart(bdiff ~ year,data=bdiff,origin = 0, col=1,horizontal=F,scales = list(x=list(at=x_at,labels=x_labels)),
-                          xlab="Year",ylab=yTxt,main="Process error deviation in biomass",
-                          panel=function(...) {
-                            panel.grid(h=-1,v=0);
-                            panel.barchart(...)})
-        print(pic)
+        pic <- ggplot(bdiff,aes(x=year,y=bdiff)) +
+                 geom_col(fill="black") +
+                 labs(x="Year",y=yTxt,title="Process error deviation in biomass") +
+                 theme_bw()
       }
+      print(pic)
+      return(invisible(pic))
 }
-      
-#- Plot the retrospective residual pattern in any fleet
+
+#' Retrospective diagnostic plots
+#'
+#' \code{retroResiduals} plots the residual pattern of one fleet across the
+#' peels of a retrospective analysis, \code{retroSelectivity} the fishing
+#' mortality at age, and \code{retroParams} the estimated parameters by
+#' assessment year. The plots are printed and returned invisibly as
+#' \code{ggplot} objects.
+#'
+#' @param x An \code{\link{FLSAMs}} object from \code{\link{retro}}.
+#' @param fleet Name of the fleet.
+#' @param yrs Years to include.
+#' @param cohort Plot residuals by cohort instead of by year.
+#' @return A \code{ggplot} object (invisibly).
+#' @examples
+#' \donttest{
+#' data(NSH); data(NSH.sam)
+#' r <- retro(NSH, NSH.tun, NSH.ctrl, retro=3)
+#' retroResiduals(r, "HERAS", 2005:2011)
+#' retroSelectivity(r, 2005:2010)
+#' retroParams(r)
+#' }
+#' @rdname retroPlots
+#' @export
 retroResiduals <- function(x,fleet,yrs,cohort=F){
 
 res <- lapply(x,residuals)
@@ -461,42 +599,33 @@ res <- lapply(res,function(y){y[which(y$fleet == fleet & y$year %in% yrs),]})
 res <- lapply(res,function(y){cbind(y,retro=max(y$year))})
 res <- do.call(rbind,res)
 res$cohort <- res$year - res$age
+res$retro  <- factor(res$retro)
 
 if(length(unique(res$age))==1){
-      print(xyplot(std.res ~ year, data = res,                                                                  
-          type = "l", groups = retro, auto.key = list(space = "right",                                                           
-              points = FALSE, lines = TRUE, type = "l"), main = paste("Residual pattern in",                                     
-              fleet, "at age"), ylab = "Standardized residuals",                                                                 
-          xlab = "Ages", panel = panel.superpose, panel.groups = function(...) {                                                 
-              panel.grid(v = -1, h = -1, lty = 3)                                                                                
-              panel.xyplot(...)                                                                                                  
-          }, scales = list(alternating = 1, y = list(relation = "free",                                                          
-              rot = 0))))     
+      pic <- ggplot(res,aes(x=year,y=std.res,colour=retro)) +
+               labs(x="Years",title=paste("Residual pattern in",fleet,"at age"))
     } else {
       if(cohort){
-      print(xyplot(std.res ~ age | as.factor(cohort),data=res,type="l",groups=retro,
-      auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Residual pattern in",fleet,"at cohort"),
-      ylab="Standardized residuals",xlab="Cohort",
-      panel = panel.superpose,
-       panel.groups = function(...) {
-          panel.grid(v=-1,h=-1,lty=3)
-          panel.xyplot(...)
-      },
-      scales=list(alternating=1,y=list(relation="free",rot=0))))
-    } else  { 
-      print(xyplot(std.res ~ age | as.factor(year),data=res,type="l",groups=retro,
-      auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Residual pattern in",fleet,"at age"),
-      ylab="Standardized residuals",xlab="Ages",
-      panel = panel.superpose,
-       panel.groups = function(...) {
-          panel.grid(v=-1,h=-1,lty=3)
-          panel.xyplot(...)
-      },
-      scales=list(alternating=1,y=list(relation="free",rot=0))))
-    }
-   } 
+        pic <- ggplot(res,aes(x=age,y=std.res,colour=retro)) +
+                 facet_wrap(~cohort) +
+                 labs(x="Ages",title=paste("Residual pattern in",fleet,"at cohort"))
+      } else  {
+        pic <- ggplot(res,aes(x=age,y=std.res,colour=retro)) +
+                 facet_wrap(~year) +
+                 labs(x="Ages",title=paste("Residual pattern in",fleet,"at age"))
+      }
+   }
+pic <- pic +
+         geom_hline(yintercept=0,linetype=3) +
+         geom_line() +
+         labs(y="Standardized residuals",colour="Assessment") +
+         theme_bw()
+print(pic)
+return(invisible(pic))
 }
-#- Plot the retrospective selectivity pattern
+
+#' @rdname retroPlots
+#' @export
 retroSelectivity <- function(x,yrs){
 
       res <- lapply(x,f)
@@ -505,23 +634,23 @@ retroSelectivity <- function(x,yrs){
       res <- do.call(rbind,res)
 
       res <- subset(res,year %in% yrs)
-      
-        print(xyplot(value ~ an(age) | as.factor(year),data=res,type="l",groups=retro,
-        auto.key=list(space="right",points=FALSE,lines=TRUE,type="l"),main=paste("Retrospective pattern in F at age"),
-        ylab="F",xlab="Ages",
-        panel = panel.superpose,
-         panel.groups = function(...) {
-            panel.grid(v=-1,h=-1,lty=3)
-            panel.xyplot(...)
-        },
-        scales=list(alternating=1,y=list(relation="free",rot=0))))
+      res$retro <- factor(res$retro)
 
+      pic <- ggplot(res,aes(x=an(age),y=value,colour=retro)) +
+               geom_line() +
+               facet_wrap(~year,scales="free_y") +
+               labs(x="Ages",y="F",colour="Assessment",title="Retrospective pattern in F at age") +
+               theme_bw()
+      print(pic)
+      return(invisible(pic))
 }
 
+#' @rdname retroPlots
+#' @export
 retroParams <- function(x){
   retroPars     <- lapply(x,params)
-  subretroPars  <- lapply(retroPars,function(y){return(subset(y,name %in% c("logFpar","lowQpow","logSdLogFsta","logSdLogN","logSdLogObs","rec_loga",
-                                                                            "rec_logb","rho","logScale","logScaleSSB","logPowSSB","logSdSSB")))})
+  subretroPars  <- lapply(retroPars,function(y){return(subset(y,name %in% c("logFpar","logQpow","logSdLogFsta","logSdLogN","logSdLogObs",
+                                                                            "logSdLogTotalObs","transfIRARdist","rec_pars","itrans_rho","logScale")))})
   subretroPars  <- lapply(as.list(1:length(subretroPars)),function(y){return(cbind(year=names(subretroPars)[y],subretroPars[[y]]))})
   subretroPars  <- lapply(subretroPars,function(y){
                           lapply(as.list(names(table(ac(y$name)))),
@@ -532,12 +661,30 @@ retroParams <- function(x){
                                              return(tmpy)})})
   subretroPars  <- do.call(rbind,lapply(subretroPars,function(y){do.call(rbind,y)}))
 
-  print(xyplot(exp(value) ~ an(year) | as.factor(nameOrig),data=subretroPars,groups=name,scale=list(y="free"),type="b",pch=19,xlab="Assessment year",ylab="Parameter value"))
+  pic <- ggplot(subretroPars,aes(x=an(year),y=exp(value),colour=name,group=name)) +
+           geom_line() +
+           geom_point() +
+           facet_wrap(~nameOrig,scales="free_y") +
+           labs(x="Assessment year",y="Parameter value",colour=NULL) +
+           theme_bw() +
+           theme(legend.position="none")
+  print(pic)
+  return(invisible(pic))
   }
 
-#kobeplot
+#' Kobe plot of an FLSAM assessment
+#'
+#' Plots the SSB/Bmsy versus F/Fmsy trajectory using the \pkg{kobe} package.
+#'
+#' @param object An \code{\link{FLSAM-class}} object.
+#' @param fmsy,bmsy Reference points used to scale F and SSB.
+#' @param nits Number of random draws.
+#' @param prob Probability level.
+#' @param ref.year Year to highlight (default the last assessment year).
+#' @return A \code{ggplot} object.
+#' @export
 plotkobe <- function(object,fmsy=1,bmsy=1,nits=1000,prob=c(0.95),ref.year=NULL){
-  if(is.null(ref.year)) ref.year <- dims(NSH.sam)$maxyear
+  if(is.null(ref.year)) ref.year <- object@range["maxyear"]
   require(kobe)
 
   yft <- kobeFLSAM(object,bmsy=bmsy,fmsy=fmsy,what="trks",prob=prob,nits=nits)
@@ -547,6 +694,3 @@ plotkobe <- function(object,fmsy=1,bmsy=1,nits=1000,prob=c(0.95),ref.year=NULL){
     geom_path(aes(stock,harvest)) +
     geom_point(aes(stock,harvest),data=subset(yft,year==ref.year & quantity=="value"),pch=19,cex=2)
 }
-
-      
-        

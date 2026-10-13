@@ -1,5 +1,32 @@
+#' Convert between FLSAM.control and the SAM configuration list
+#'
+#' \code{ctrl2conf} translates an \code{\link{FLSAM.control-class}} object into
+#' the configuration list used by \code{\link[stockassessment]{sam.fit}}
+#' (starting from \code{\link[stockassessment]{defcon}}); \code{conf2ctrl}
+#' does the reverse. \code{FLSAM2SAM} converts the FLR data objects into the
+#' SAM data list (\code{\link[stockassessment]{setup.sam.data}}).
+#'
+#' @param ctrl An \code{FLSAM.control} object.
+#' @param data A SAM data list as returned by \code{FLSAM2SAM}.
+#' @param conf A SAM configuration list.
+#' @param stcks An \code{FLStocks} object with element \code{residual} (and
+#'   optionally \code{sum}).
+#' @param tun An \code{FLIndices} object.
+#' @param sumFleets Names of the catch fleets summed in the \code{sum} stock.
+#' @param catch.vars Optional \code{FLQuants} (elements \code{residual} and
+#'   optionally \code{sum}) with catch observation weights.
+#' @return \code{ctrl2conf}: a SAM configuration list; \code{conf2ctrl}: an
+#'   \code{FLSAM.control} object; \code{FLSAM2SAM}: a SAM data list.
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' dat  <- FLSAM2SAM(FLStocks(residual=NSH), NSH.tun, NSH.ctrl@sumFleets)
+#' conf <- ctrl2conf(NSH.ctrl, dat)
+#' str(conf, max.level=1)
+#' @rdname ctrl2conf
+#' @export
 ctrl2conf <- function(ctrl,data){
-  noAges            <- diff(range(data$minAgePerFleet[data$minAgePerFleet>=0],data$maxAgePerFleet[data$maxAgePerFleet>=0]))+1
+  ctrl              <- .upgradeControl(ctrl)
+  noAges           <- diff(range(data$minAgePerFleet[data$minAgePerFleet>=0],data$maxAgePerFleet[data$maxAgePerFleet>=0]))+1
   conf              <- defcon(data)
   conf$minAge[]       <- ctrl@range["min"];
   conf$maxAge[]       <- ctrl@range["max"];
@@ -27,7 +54,7 @@ ctrl2conf <- function(ctrl,data){
   conf$keyBiomassTreat[] <- rep(-1,data$noFleets)
   conf$keyBiomassTreat[which(data$fleetTypes %in% c(3,4,5))] <- ctrl@biomassTreat[which(ctrl@fleets %in% c(3,4,5))]
   conf$obsLikelihoodFlag[] <- factor(ctrl@likFlag,levels=c("LN","ALN"))
-  conf$fixVarToWeight[] <- 0
+  conf$fixVarToWeight[] <- as.integer(rep_len(ctrl@fixVarToWeight,data$noFleets))
 
   # new variables
   conf$fracMixF[]     <- ctrl@fracMixF
@@ -49,8 +76,12 @@ ctrl2conf <- function(ctrl,data){
   conf$keyXtraSd[] <- ctrl@XtraSd
   conf$logNMeanAssumption[] <- ctrl@logNMeanAssumption
   conf$initState[] <- ctrl@initState
+  if(!is.na(ctrl@hockeyStickCurve[1]))
+    conf$hockeyStickCurve <- ctrl@hockeyStickCurve[1]
 return(conf)}
 
+#' @rdname ctrl2conf
+#' @export
 conf2ctrl <- function(conf,data){
   ctrl    <- new("FLSAM.control")
   ctrl@range <- c(min=conf$minAge,max=conf$maxAge,plusgroup=ifelse(conf$maxAgePlusGroup==1,conf$maxAge,NA),minyear=min(data$years),maxyear=max(data$years),minfbar=conf$fbarRange[1],maxfbar=conf$fbarRange[2])
@@ -66,8 +97,8 @@ conf2ctrl <- function(conf,data){
   ctrl@power.law.exps <- matdef
     matdef[]          <- conf$keyVarF
   ctrl@f.vars         <- matdef
-    matdef[]          <- conf$keyVarLogN
-  ctrl@logN.vars      <- matdef
+  ctrl@logN.vars      <- setNames(as.vector(conf$keyVarLogN),ctrl@range["min"]:ctrl@range["max"])
+  ctrl@plus.group     <- conf$maxAgePlusGroup
     matdef[]          <- conf$keyVarObs
   ctrl@obs.vars       <- matdef
   ctrl@cor.obs.Flag   <- conf$obsCorStruct
@@ -78,7 +109,7 @@ conf2ctrl <- function(conf,data){
   ctrl@srr            <- as.integer(conf$stockRecruitmentModelCode)
   ctrl@biomassTreat   <- conf$keyBiomassTreat
   ctrl@likFlag        <- conf$obsLikelihoodFlag
-  ctrl@fixVarToWeight <- as.logical(conf$fixVarToWeight)
+  ctrl@fixVarToWeight <- setNames(as.logical(rep_len(conf$fixVarToWeight,length(ctrl@fleets))),names(ctrl@fleets))
 
 
   ctrl@fracMixF    <- conf$fracMixF
@@ -100,10 +131,12 @@ conf2ctrl <- function(conf,data){
   ctrl@XtraSd <- conf$keyXtraSd
   ctrl@logNMeanAssumption <- conf$logNMeanAssumption
   ctrl@initState <- conf$initState
+  ctrl@hockeyStickCurve <- if(is.null(conf$hockeyStickCurve)) as.numeric(NA) else conf$hockeyStickCurve
 
 return(ctrl)}
 
-
+#' @rdname ctrl2conf
+#' @export
 FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
 
   allMax <- max(sapply(stcks,function(x) max(x@range["maxyear"])),
@@ -218,40 +251,40 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
 
   if(dims(stcks[["residual"]])$area>1){
     if("sum" %in% names(stcks)){
-      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@discards.wt[,,,,x,drop=T]),t(stcks[["sum"]]@discards.wt[,drop=T])))})
       discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(discardWeight[[x]][ac(sort(rownames(discardWeight[[x]]))),])})                       
     }
     if(!"sum" %in% names(stcks)){
-      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]))})
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(t(stcks[["residual"]]@discards.wt[,,,,x,drop=T]))})
       discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(discardWeight[[x]][ac(sort(rownames(discardWeight[[x]]))),])})                       
     }
   } else {
     if("sum" %in% names(stcks)){
-      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@discards.wt[,,,,x,drop=T]),t(stcks[["sum"]]@discards.wt[,drop=T])))})
       discardWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(discardWeight[[x]][ac(sort(rownames(discardWeight[[x]]))),])})
     }
     if(!"sum" %in% names(stcks)){
-      discardWeight   <- t(stcks[["residual"]]@catch.wt[,,,,1,drop=T])
+      discardWeight   <- t(stcks[["residual"]]@discards.wt[,,,,1,drop=T])
       discardWeight   <- discardWeight[ac(sort(rownames(discardWeight))),]
     }
   }
 
   if(dims(stcks[["residual"]])$area>1){
     if("sum" %in% names(stcks)){
-      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@landings.wt[,,,,x,drop=T]),t(stcks[["sum"]]@landings.wt[,drop=T])))})
       landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landingWeight[[x]][ac(sort(rownames(landingWeight[[x]]))),])})                       
     }
     if(!"sum" %in% names(stcks)){
-      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]))})
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(t(stcks[["residual"]]@landings.wt[,,,,x,drop=T]))})
       landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landingWeight[[x]][ac(sort(rownames(landingWeight[[x]]))),])})                       
     }
   } else {
     if("sum" %in% names(stcks)){
-      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@catch.wt[,,,,x,drop=T]),t(stcks[["sum"]]@catch.wt[,drop=T])))})
+      landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(rbind(t(stcks[["residual"]]@landings.wt[,,,,x,drop=T]),t(stcks[["sum"]]@landings.wt[,drop=T])))})
       landingWeight   <- lapply(as.list(1:dims(stcks[["residual"]])$area),function(x){return(landingWeight[[x]][ac(sort(rownames(landingWeight[[x]]))),])})
     }
     if(!"sum" %in% names(stcks)){
-      landingWeight   <- t(stcks[["residual"]]@catch.wt[,,,,1,drop=T])
+      landingWeight   <- t(stcks[["residual"]]@landings.wt[,,,,1,drop=T])
       landingWeight   <- landingWeight[ac(sort(rownames(landingWeight))),]
     }
   }
@@ -282,7 +315,15 @@ FLSAM2SAM <- function(stcks,tun,sumFleets=NULL,catch.vars=NULL){
   }
 
 
-    sam.dat <-setup.sam.data(fleet=NULL,
+  #- Landing and discard weights default to catch weights where not available
+  fillWt <- function(x,y){
+    if(is.list(x)) return(mapply(fillWt,x,y,SIMPLIFY=FALSE))
+    x[is.na(x)] <- y[is.na(x)]
+    return(x)}
+  landingWeight <- fillWt(landingWeight,catchWeight)
+  discardWeight <- fillWt(discardWeight,catchWeight)
+
+    sam.dat <-setup.sam.data(fleets=NULL,
                               surveys=surveysFLR,
                               residual.fleets=residual.fleets, # Notice list
                               sum.residual.fleets=sum.fleets,

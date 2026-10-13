@@ -1,5 +1,6 @@
 # merge {{{
 # merge results from FLSAM into FLStock
+#' @rdname FLSAM-merge
 setMethod("merge", signature(x="FLStock", y="FLSAM"),
   function(x, y, ...)
   {
@@ -36,6 +37,7 @@ setMethod("merge", signature(x="FLStock", y="FLSAM"),
   }
 )   # }}}
 
+#' @rdname FLSAM-merge
 setMethod("+", signature(e1="FLStock", e2="FLSAM"),
   function(e1, e2) {
     if(validObject(e1) & validObject(e2))
@@ -44,6 +46,7 @@ setMethod("+", signature(e1="FLStock", e2="FLSAM"),
       stop("Input objects are not valid: validObject == FALSE")
     }
 )
+#' @rdname FLSAM-merge
 setMethod("+", signature(e1="FLSAM", e2="FLStock"),
 	function(e1, e2) {
     if(validObject(e1) & validObject(e2))
@@ -53,6 +56,7 @@ setMethod("+", signature(e1="FLSAM", e2="FLStock"),
     }
 )   # }}}
 
+#' @rdname FLSAM-merge
 setMethod("+", signature(e1="FLStock", e2="FLSAMs"),
   function(e1, e2) {
     if(validObject(e1) & validObject(e2))
@@ -61,6 +65,7 @@ setMethod("+", signature(e1="FLStock", e2="FLSAMs"),
       stop("Input objects are not valid: validObject == FALSE")
     }
 )
+#' @rdname FLSAM-merge
 setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
 	function(e1, e2) {
     if(validObject(e1) & validObject(e2))
@@ -70,6 +75,7 @@ setMethod("+", signature(e1="FLSAMs", e2="FLStock"),
     }
 )   # }}}
 
+#' @rdname FLSAM-merge
 setMethod("+", signature(e1="FLSAM", e2="FLStocks"),
 	function(e1, e2) {
     if(validObject(e1) & validObject(e2)){
@@ -93,6 +99,7 @@ setMethod("+", signature(e1="FLSAM", e2="FLStocks"),
     }
 )   # }}}
 
+#' @rdname FLSAM-merge
 setMethod("+", signature(e1="FLStocks", e2="FLSAM"),
 	function(e1, e2) {
     eone <- e2;    etwo <- e1
@@ -152,6 +159,7 @@ setMethod("+", signature(e1="FLStocks", e2="FLSAM"),
 }
 
 #ssb          {{{
+#' @rdname accessors
 setMethod("ssb", signature(object="FLSAM"),
         function(object, ...) {
           res <- .extract.params(object,"logssb")   
@@ -162,6 +170,7 @@ setMethod("ssb", signature(object="FLSAM"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("ssb", signature(object="FLSAMs"),
         function(object, ...) {
           res <- list()
@@ -173,12 +182,15 @@ setMethod("ssb", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
     setGeneric("components", function(object) standardGeneric("components"))
+#' @rdname accessors
 setMethod("components", signature(object="FLSAM"),
         function(object) {
         return(object@components)}
 )       # }}}
 
+#' @rdname accessors
 setMethod("components", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -190,6 +202,7 @@ setMethod("components", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("fbar", signature(object="FLSAM"),
         function(object, ...) {
           res <- .extract.params(object,"logfbar")   
@@ -200,6 +213,7 @@ setMethod("fbar", signature(object="FLSAM"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("fbar", signature(object="FLSAMs"),
         function(object, ...) {
           res <- list()
@@ -211,6 +225,7 @@ setMethod("fbar", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("tsb", signature(object="FLSAM"),
         function(object, ...) {
           res <- .extract.params(object,"logtsb")   
@@ -221,6 +236,7 @@ setMethod("tsb", signature(object="FLSAM"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("tsb", signature(object="FLSAMs"),
         function(object, ...) {
           res <- list()
@@ -232,6 +248,7 @@ setMethod("tsb", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("catch", signature(object="FLSAM"),
         function(object, ...) {
           res <- .extract.params(object,"logCatch")   
@@ -242,6 +259,7 @@ setMethod("catch", signature(object="FLSAM"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("catch", signature(object="FLSAMs"),
         function(object, ...) {
           res <- list()
@@ -253,12 +271,14 @@ setMethod("catch", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("n", signature(object="FLSAM"),
         function(object, ...) {
 	  return(subset(.extract.states(object),age>=0))
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("n", signature(object="FLSAMs"),
         function(object, ...) {
           res <- list()
@@ -270,12 +290,14 @@ setMethod("n", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("catch.n", signature(object="FLSAM"),
         function(object, ...) {
 	  return(subset(residuals(object),age>=0 & fleet %in% names(which(object@control@fleets == 0))))
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("catch.n", signature(object="FLSAMs"),
         function(object, ...) {
           res <- list()
@@ -288,7 +310,9 @@ setMethod("catch.n", signature(object="FLSAMs"),
 )       # }}}
 
 
+#' @rdname accessors
     setGeneric("f", function(object) standardGeneric("f"))
+#' @rdname accessors
 setMethod("f", signature(object="FLSAM"),
         function(object) {
           f.states <- subset(.extract.states(object),age<0)
@@ -313,6 +337,7 @@ setMethod("f", signature(object="FLSAM"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("f", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -324,6 +349,7 @@ setMethod("f", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("rec", signature(object="FLSAM"),
         function(object, ...) {
           rec.rtn <- subset(n(object),age==object@range["min"])
@@ -332,6 +358,7 @@ setMethod("rec", signature(object="FLSAM"),
         }
 )       # }}}
 
+#' @rdname accessors
 setMethod("rec", signature(object="FLSAMs"),
         function(object, ...) {
           res <- list()
@@ -343,25 +370,31 @@ setMethod("rec", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname AIC-FLSAM
 setMethod("AIC",signature(object="FLSAM"),
         function(object, ...) {
         return(2*object@nopar +2*object@nlogl)
         }
 )
 
+#' @rdname AIC-FLSAM
 setMethod("AIC",signature(object="FLSAMs"),
         function(object, ...) {
         return(sapply(object,AIC,...))
         }
 )
 
+#' @rdname parameter.accessors
 setGeneric("coef",useAsDefault=coef)
+#' @rdname parameter.accessors
 setGeneric("coefficients",useAsDefault=coefficients)
+#' @rdname parameter.accessors
 setMethod("coef",signature(object="FLSAM"),
         function(object,...) {
           return(object@params[1:object@nopar,])
         }
 )
+#' @rdname parameter.accessors
 setMethod("coef", signature(object="FLSAMs"),
         function(object, ...) {
           res <- list()
@@ -372,18 +405,22 @@ setMethod("coef", signature(object="FLSAMs"),
           return(do.call(rbind,res))
         }
 )       # }}}
+#' @rdname parameter.accessors
 setMethod("coefficients",signature(object="FLSAM"),
         function(object, ...) {
           return(coef(object))
         })
+#' @rdname parameter.accessors
 setMethod("coefficients",signature(object="FLSAMs"),
         function(object, ...) {
           return(coef(object))
         }
 )
 
+#' @rdname simulate-FLSAM
 setGeneric("simulate", function(x,y,z,n,set.pars,set.seed) standardGeneric("simulate"))
 
+#' @rdname simulate-FLSAM
 setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",
   n='numeric',set.pars="data.frame",set.seed="numeric"),
           function(x,y,z,n=100,set.pars=NULL,set.seed=NULL){
@@ -470,8 +507,17 @@ setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",
        val.params <- .extract.params(object,ext$val)
        if(nrow(val.params)!=0){
         rownames(val.params) <- NULL
-         if(type=="recruitment")
-           val.res <- cbind(expand.grid(fleet=c("srr a","srr b"),age=c(ctrl@range["min"])),val.params)
+         if(type=="recruitment"){
+           #rec_pars are reported both as parameter and as derived quantity: keep them once
+           nRec     <- length(object@params$name[object@params$name=="rec_pars"])
+           if(.hasSlot(object,"fit") && !is.null(object@fit)){
+             nRec <- length(object@fit$pl$rec_pars)
+           } else if(nRec %% 2 == 0 && isTRUE(all.equal(val.params$value[seq_len(nRec/2)],val.params$value[nRec/2+seq_len(nRec/2)]))){
+             nRec <- nRec/2
+           }
+           val.params <- val.params[seq_len(min(nRec,nrow(val.params))),,drop=FALSE]
+           val.res <- cbind(expand.grid(fleet=paste("srr",letters[seq_len(nrow(val.params))]),age=c(object@control@range["min"])),val.params)
+         }
          if(type=="harvest correlation")
            val.res <- cbind(expand.grid(fleet=names(object@control@fleets[which(object@control@fleets==0)]),age="all"),val.params)
        } else {
@@ -489,12 +535,15 @@ setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",
 }
 
 
+#' @rdname accessors
   setGeneric('catchabilities', function(object) standardGeneric('catchabilities'))
+#' @rdname accessors
 setMethod("catchabilities",signature(object="FLSAM"),
   function(object) {
     .extract.fleet.parameters(object,"catchability")
 })
 
+#' @rdname accessors
 setMethod("catchabilities", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -506,12 +555,15 @@ setMethod("catchabilities", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
   setGeneric('obs.var', function(object) standardGeneric('obs.var'))
+#' @rdname accessors
 setMethod("obs.var",signature(object="FLSAM"),
     function(object) {
        .extract.fleet.parameters(object,"observation variance")
 })
 
+#' @rdname accessors
 setMethod("obs.var", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -523,12 +575,15 @@ setMethod("obs.var", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
   setGeneric('power.law.exps', function(object) standardGeneric('power.law.exps'))
+#' @rdname accessors
 setMethod("power.law.exps",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"power law")
 })
 
+#' @rdname accessors
 setMethod("power.law.exps", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -540,12 +595,15 @@ setMethod("power.law.exps", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
   setGeneric('catch.scale', function(object) standardGeneric('catch.scale'))
+#' @rdname accessors
 setMethod("catch.scale",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"catch multiplier")
 })
 
+#' @rdname accessors
 setMethod("catch.scale", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -558,12 +616,15 @@ setMethod("catch.scale", signature(object="FLSAMs"),
 )       # }}}
 
 
+#' @rdname accessors
   setGeneric('n.var', function(object) standardGeneric('n.var'))
+#' @rdname accessors
 setMethod("n.var",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"number variance")
 })
 
+#' @rdname accessors
 setMethod("n.var", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -575,12 +636,15 @@ setMethod("n.var", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
   setGeneric('f.var', function(object) standardGeneric('f.var'))
+#' @rdname accessors
 setMethod("f.var",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"harvest variance")
 })
 
+#' @rdname accessors
 setMethod("f.var", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -593,12 +657,15 @@ setMethod("f.var", signature(object="FLSAMs"),
 )       # }}}
 
 
+#' @rdname accessors
   setGeneric('cor.F', function(object) standardGeneric('cor.F'))
+#' @rdname accessors
 setMethod("cor.F",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"harvest correlation")
 })
 
+#' @rdname accessors
 setMethod("cor.F", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -611,12 +678,15 @@ setMethod("cor.F", signature(object="FLSAMs"),
 )       # }}}
 
 
+#' @rdname accessors
   setGeneric('cor.obs', function(object) standardGeneric('cor.obs'))
+#' @rdname accessors
 setMethod("cor.obs",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"observation correlation")
 })
 
+#' @rdname accessors
 setMethod("cor.obs", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -628,12 +698,15 @@ setMethod("cor.obs", signature(object="FLSAMs"),
         }
 )       # }}}
 
+#' @rdname accessors
   setGeneric('rec.pars', function(object) standardGeneric('rec.pars'))
+#' @rdname accessors
 setMethod("rec.pars",signature(object="FLSAM"),
    function(object) {
     .extract.fleet.parameters(object,"recruitment")
 })
 
+#' @rdname accessors
 setMethod("rec.pars", signature(object="FLSAMs"),
         function(object) {
           res <- list()
@@ -650,8 +723,10 @@ setMethod("rec.pars", signature(object="FLSAMs"),
 #-------------------------------------------------------------------------------
 
 #- Create generic function for 'lr.test'
+#' @rdname lr.test
   setGeneric('lr.test', function(object,...,type="sequential") standardGeneric('lr.test'))
 
+#' @rdname lr.test
 setMethod("lr.test",signature("FLSAMs"),
   function(object,...,type="sequential"){
     sams    <- object
@@ -711,16 +786,50 @@ setMethod("lr.test",signature("FLSAMs"),
     
     
     
+#' @rdname lr.test
 setMethod("lr.test",signature("FLSAM"),
   function(object,...,type="sequential"){
     lr.test(FLSAMs(object,...),type=type)
   }
 )
 
-#- Create generic function for 'lr.test'
+#' Mohn's rho of a retrospective analysis
+#'
+#' Calculates the relative difference between the terminal-year estimate of
+#' each retrospective peel and the estimate for the same year in the
+#' reference (most recent) assessment, following Mohn (1999) and
+#' \code{\link[stockassessment]{mohn}}: \code{100 * (peel - ref) / ref}.
+#' A positive rho means that the peels overestimated the quantity.
+#'
+#' @param retro An \code{\link{FLSAMs}} object, as returned by \code{\link{retro}},
+#'   named by assessment year.
+#' @param ref.year The reference assessment year (default: the most recent).
+#' @param span Number of peels to include (default 5).
+#' @param type Quantity: \code{"fbar"}, \code{"ssb"} or \code{"rec"}.
+#' @param ... Not used.
+#' @return A \code{data.frame} with columns \code{rho} (\%) and \code{year},
+#'   one row per peel (the reference year has rho 0). The mean rho over the
+#'   peels (Mohn's rho) is stored in the attribute \code{"mohn"}.
+#' @note Versions of FLSAM before 3.1 returned \code{100 * (1 - peel/ref)},
+#'   i.e. the opposite sign, and \code{ref.year} had no working default.
+#' @references Mohn, R. (1999). The retrospective problem in sequential
+#'   population analysis. ICES Journal of Marine Science 56: 473-488.
+#' @examples
+#' \donttest{
+#' data(NSH); data(NSH.sam)
+#' r <- retro(NSH, NSH.tun, NSH.ctrl, retro=3)
+#' mohns.rho(r, type="ssb")
+#' attr(mohns.rho(r, type="fbar"), "mohn")
+#' }
+#' @rdname mohns.rho
+#' @export
   setGeneric('mohns.rho', function(retro,ref.year,span,type,...) standardGeneric('mohns.rho'))
+#' @rdname mohns.rho
 setMethod("mohns.rho",signature("FLSAMs"),
-function(retro,ref.year=max(an(names(retro)),na.rm=T),span=5,type="fbar",...){
+function(retro,ref.year,span,type,...){
+  if(missing(ref.year)) ref.year <- max(an(names(retro)),na.rm=T)
+  if(missing(span))     span     <- 5
+  if(missing(type))     type     <- "fbar"
   if(type == "fbar")
     retro.fbar  <- lapply(retro,fbar)
   if(type == "ssb")
@@ -741,6 +850,7 @@ function(retro,ref.year=max(an(names(retro)),na.rm=T),span=5,type="fbar",...){
   colnames(refFs) <- c("year","refvalue","refCV","reflbnd","refubnd")
   combFs      <- merge(refFs,termFs,by="year")
   combFs      <- combFs[order(combFs$year),]
-  rhos        <- (1-combFs$value/combFs$refvalue)*100
+  rhos        <- (combFs$value/combFs$refvalue-1)*100
   rho$rho     <- rhos
+  attr(rho,"mohn") <- mean(rho$rho[rho$year!=ref.year])
 return(rho)})

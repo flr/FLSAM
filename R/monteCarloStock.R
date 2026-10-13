@@ -1,10 +1,41 @@
-monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,saveSimdataDir=NULL,set.pars=NULL,ncores=detectCores()-1, ...){
+#' Monte Carlo realisations of a stock assessment
+#'
+#' Simulates new observations from a fitted assessment (conditional on the
+#' estimated random effects), refits the assessment to each simulated data
+#' set and returns an \code{FLStock} with one iteration per realisation.
+#' \code{monteCarloStockMscan} also profiles an additive change in natural
+#' mortality (\code{mscan}) for each realisation and uses the best one.
+#' Runs in parallel with \pkg{doParallel}.
+#'
+#' @param stck An \code{FLStock} (or \code{FLStocks}).
+#' @param tun An \code{FLIndices}.
+#' @param sam The \code{\link{FLSAM-class}} assessment of \code{stck}.
+#' @param realisations Number of realisations.
+#' @param return.sam Also return the \code{FLSAMs} of the realisations.
+#' @param saveParsDir,saveSimdataDir,saveNLLs Optional file names to save the
+#'   parameters, the simulated data and the negative log-likelihoods.
+#' @param set.pars Optional \code{set.pars} (see \code{\link{FLSAM}}).
+#' @param mscan Vector of additive changes in natural mortality.
+#' @param ncores Number of cores.
+#' @param catch.vars Optional catch weights (see \code{\link{FLSAM}}).
+#' @param ... Further arguments passed to \code{sam.fit}.
+#' @return An \code{FLStock} with \code{realisations} iterations, or a list
+#'   with elements \code{sam} (\code{FLSAMs}) and \code{stk} (and \code{addm}).
+#'   Realisations that do not converge are \code{NA}.
+#' @examples
+#' \donttest{
+#' data(NSH); data(NSH.sam)
+#' newStock <- monteCarloStock(NSH, NSH.tun, NSH.sam, 10, ncores=2)
+#' }
+#' @rdname monteCarloStock
+#' @export
+monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsDir=NULL,saveSimdataDir=NULL,set.pars=NULL,ncores=detectCores()-1,catch.vars=NULL, ...){
   
   require(doParallel)
   ctrl              <- sam@control
   
   #-Create new stock object with nr of realisations in iter slot
-  if(class(stck)=="FLStocks"){
+  if(is(stck,"FLStocks")){
     idxStck           <- which.max(unlist(lapply(stck,function(x){x@range["maxyear"]})))
     mcstck            <- propagate(stck[[idxStck]],iter=realisations)
     mcstck            <- window(mcstck,start=range(sam)["minyear"],end=range(sam)["maxyear"])
@@ -21,43 +52,15 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   sam@control@simulate <- TRUE
   sam@control@residuals<- FALSE
   if(!is.null(set.pars)){
-    if(class(stck)=="FLStock") stcks <- FLStocks(residual=stck)
+    stcks  <- if(is(stck,"FLStock")) FLStocks(residual=stck) else stck
     dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
     confS  <- ctrl2conf(ctrl,dataS)
     parS   <- defpar(dataS,confS)
-    matchNames <- matrix(c("logN.vars","logSdLogN",
-                           "logP.vars","logSdLogP",
-                           "catchabilities","logFpar",
-                           "power.law.exps","logQpow",
-                           "f.vars","logSdLogFsta",
-                           "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
-    if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
-      warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
-    set.pars.internal <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
+    map    <- .setPars(parS,set.pars)$map
     
-    
-    mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
-    for(i in names(mapDef))
-      mapDef[[i]] <- jitter(parS[[i]],factor=0.1)
-      if(any(duplicated(mapDef[[i]])))
-        stop("mapping goes wrong, some parameters get the same starting value, retry")
-    map           <- mapDef
-    
-    for(i in 1:nrow(set.pars.internal)){
-      parS[[set.pars.internal$SAM[i]]][set.pars.internal$number[i]+1] <- set.pars.internal$value[i]
-      map[[set.pars.internal$SAM[[i]]]][set.pars.internal$number[i]+1] <- NA
-    }
-    map=list(logSdLogN=as.factor(map$logSdLogN),
-             logSdLogP=as.factor(map$logSdLogP),
-             logFpar=as.factor(map$logFpar),
-             logQpow=as.factor(map$logQpow),
-             logSdLogFsta=as.factor(map$logSdLogFsta),
-             logSdLogObs=as.factor(map$logSdLogObs))
-    map <- map[which(names(map) %in% set.pars$SAM)]
-    
-    object            <- FLSAM(stcks,tun,sam@control,set.pars=set.pars,return.fit=T)
+    object            <- FLSAM(stcks,tun,sam@control,catch.vars=catch.vars,set.pars=set.pars,return.fit=T)
   } else {
-    object            <- FLSAM(stck,tun,sam@control,return.fit=T)
+    object            <- FLSAM(stck,tun,sam@control,catch.vars=catch.vars,return.fit=T)
   }
   simdat            <- replicate(realisations,
                                  c(object$data[names(object$data)!="logobs"],#all the old data
@@ -90,21 +93,20 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
   #- Fill the results of the simulations
   samRuns <- list()
   for(i in 1:realisations){
-    if(!is.na(unlist(runs[[i]]$sdrep)[1])){
-      samRuns[[i]]           <- SAM2FLR(runs[[i]],sam@control)
-      mcstck@stock.n[,,,,,i] <- samRuns[[i]]@stock.n
-      mcstck@harvest[,,,,,i] <- samRuns[[i]]@harvest
+    if(!is(runs[[i]],"try-error")){
+      samRuns[[ac(i)]]       <- SAM2FLR(runs[[i]],sam@control,keep.fit=FALSE)
+      mcstck@stock.n[,,,,,i] <- samRuns[[ac(i)]]@stock.n
+      mcstck@harvest[,,,,,i] <- samRuns[[ac(i)]]@harvest
       #mcstck@catch[,,,,,i]   <- subset(params(samRuns[[i]]),name=="logCatch")$value
     }
-    else {
-      samRuns[[i]] <- NA
-    }
   }
+  if(length(samRuns)<realisations)
+    warning(paste(realisations-length(samRuns),"realisation(s) failed to converge and are set to NA"))
   samRuns <- as(samRuns, "FLSAMs")
   
   #- Save randomly drawn parameters
   pars          <- lapply( samRuns , function(x) params(x)$value)
-  random.param  <- matrix(unlist(pars)    , byrow= T, nrow = realisations ,dimnames =list(NULL, params(samRuns[[1]])$name ))
+  random.param  <- matrix(unlist(pars)    , byrow= T, nrow = length(samRuns) ,dimnames =list(NULL, params(samRuns[[1]])$name ))
   if(!is.null(saveParsDir))
     save(random.param,file=saveParsDir)
   
@@ -114,15 +116,17 @@ monteCarloStock <- function(stck,tun,sam,realisations,return.sam=FALSE,saveParsD
     ret <- mcstck
   return(ret)}
 
+#' @rdname monteCarloStock
+#' @export
 monteCarloStockMscan <- function(stck,tun,sam,realisations,return.sam=FALSE,
                                  saveParsDir=NULL,saveNLLs=NULL,saveSimdataDir=NULL,
-                                 set.pars=NULL,mscan=NULL,ncores=detectCores()-1, ...){
+                                 set.pars=NULL,mscan=NULL,ncores=detectCores()-1,catch.vars=NULL, ...){
   
   require(doParallel)
   ctrl              <- sam@control
   
   #-Create new stock object with nr of realisations in iter slot
-  if(class(stck)=="FLStocks"){
+  if(is(stck,"FLStocks")){
     idxStck           <- which.max(unlist(lapply(stck,function(x){x@range["maxyear"]})))
     mcstck            <- propagate(stck[[idxStck]],iter=realisations)
     mcstck            <- window(mcstck,start=range(sam)["minyear"],end=range(sam)["maxyear"])
@@ -139,43 +143,15 @@ monteCarloStockMscan <- function(stck,tun,sam,realisations,return.sam=FALSE,
   sam@control@simulate <- TRUE
   sam@control@residuals<- FALSE
   if(!is.null(set.pars)){
-    if(class(stck)=="FLStock") stcks <- FLStocks(residual=stck)
+    stcks  <- if(is(stck,"FLStock")) FLStocks(residual=stck) else stck
     dataS  <- FLSAM2SAM(stcks,tun,ctrl@sumFleets,catch.vars)
     confS  <- ctrl2conf(ctrl,dataS)
     parS   <- defpar(dataS,confS)
-    matchNames <- matrix(c("logN.vars","logSdLogN",
-                           "logP.vars","logSdLogP",
-                           "catchabilities","logFpar",
-                           "power.law.exps","logQpow",
-                           "f.vars","logSdLogFsta",
-                           "obs.vars","logSdLogObs"),ncol=2,byrow=T,dimnames=list(1:6,c("FLSAM","SAM")))
-    if(any(!set.pars$par %in% matchNames[,"FLSAM"]))
-      warning(paste(set.pars$par[which(!set.pars$par %in% matchNames[,"FLSAM"])],"cannot be set"))
-    set.pars.internal <- merge(set.pars,matchNames,by.x="par",by.y="FLSAM")
+    map    <- .setPars(parS,set.pars)$map
     
-    
-    mapDef        <- as.list(matchNames[,"SAM"]); names(mapDef) <- matchNames[,"SAM"]
-    for(i in names(mapDef))
-      mapDef[[i]] <- jitter(parS[[i]],factor=0.1)
-      if(any(duplicated(mapDef[[i]])))
-        stop("mapping goes wrong, some parameters get the same starting value, retry")
-    map           <- mapDef
-    
-    for(i in 1:nrow(set.pars.internal)){
-      parS[[set.pars.internal$SAM[i]]][set.pars.internal$number[i]+1] <- set.pars.internal$value[i]
-      map[[set.pars.internal$SAM[[i]]]][set.pars.internal$number[i]+1] <- NA
-    }
-    map=list(logSdLogN=as.factor(map$logSdLogN),
-             logSdLogP=as.factor(map$logSdLogP),
-             logFpar=as.factor(map$logFpar),
-             logQpow=as.factor(map$logQpow),
-             logSdLogFsta=as.factor(map$logSdLogFsta),
-             logSdLogObs=as.factor(map$logSdLogObs))
-    map <- map[which(names(map) %in% set.pars$SAM)]
-    
-    object            <- FLSAM(stcks,tun,sam@control,set.pars=set.pars,return.fit=T)
+    object            <- FLSAM(stcks,tun,sam@control,catch.vars=catch.vars,set.pars=set.pars,return.fit=T)
   } else {
-    object            <- FLSAM(stck,tun,sam@control,return.fit=T)
+    object            <- FLSAM(stck,tun,sam@control,catch.vars=catch.vars,return.fit=T)
   }
   simdat            <- replicate(realisations,
                                  c(object$data[names(object$data)!="logobs"],#all the old data
@@ -212,13 +188,13 @@ monteCarloStockMscan <- function(stck,tun,sam,realisations,return.sam=FALSE,
     
     #run assessments
     if(!is.null(set.pars)){
-      capture.output(runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdatM[[i]],object$conf,object$pl[-lengt(object$pl)],map=map,silent=T,newtonsteps=0)))
+      capture.output(runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdatM[[i]],object$conf,object$pl[-length(object$pl)],map=map,silent=T,newtonsteps=0)))
     } else {
       capture.output(runs <- foreach(i = 1:realisations) %dopar% try(sam.fit(simdatM[[i]],object$conf,object$pl[-length(object$pl)],silent=T,newtonsteps=0)))
     }
 
-    storeNLL[,ac(iM)] <- unlist(lapply(runs,function(x){try(x$opt$objective)}))
-    save(storeNLL,file=saveNLLs)    
+    storeNLL[,ac(iM)] <- unlist(lapply(runs,function(x){if(is(x,"try-error")) NA else x$opt$objective}))
+    if(!is.null(saveNLLs)) save(storeNLL,file=saveNLLs)
     stopCluster(cl)
   }
 
@@ -248,21 +224,20 @@ monteCarloStockMscan <- function(stck,tun,sam,realisations,return.sam=FALSE,
   #- Fill the results of the simulations
   samRuns <- list()
   for(i in 1:realisations){
-    if(!is.na(unlist(runs[[i]]$sdrep)[1])){
-      samRuns[[i]]           <- SAM2FLR(runs[[i]],sam@control)
-      mcstck@stock.n[,,,,,i] <- samRuns[[i]]@stock.n
-      mcstck@harvest[,,,,,i] <- samRuns[[i]]@harvest
+    if(!is(runs[[i]],"try-error")){
+      samRuns[[ac(i)]]       <- SAM2FLR(runs[[i]],sam@control,keep.fit=FALSE)
+      mcstck@stock.n[,,,,,i] <- samRuns[[ac(i)]]@stock.n
+      mcstck@harvest[,,,,,i] <- samRuns[[ac(i)]]@harvest
       #mcstck@catch[,,,,,i]   <- subset(params(samRuns[[i]]),name=="logCatch")$value
     }
-    else {
-      samRuns[[i]] <- NA
-    }
   }
+  if(length(samRuns)<realisations)
+    warning(paste(realisations-length(samRuns),"realisation(s) failed to converge and are set to NA"))
   samRuns <- as(samRuns, "FLSAMs")
   
   #- Save randomly drawn parameters
   pars          <- lapply( samRuns , function(x) params(x)$value)
-  random.param  <- matrix(unlist(pars)    , byrow= T, nrow = realisations ,dimnames =list(NULL, params(samRuns[[1]])$name ))
+  random.param  <- matrix(unlist(pars)    , byrow= T, nrow = length(samRuns) ,dimnames =list(NULL, params(samRuns[[1]])$name ))
   if(!is.null(saveParsDir))
     save(random.param,file=saveParsDir)
   

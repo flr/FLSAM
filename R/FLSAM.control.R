@@ -1,3 +1,86 @@
+#' FLSAM.control class
+#'
+#' Configuration object for an \code{\link{FLSAM}} assessment. It holds the
+#' FLR representation of the SAM configuration list (see
+#' \code{\link[stockassessment]{defcon}} and \code{\link[stockassessment]{sam.fit}}).
+#' Most slots are coupling ("binding") matrices: rows are fleets, columns are
+#' ages. Equal integers indicate that one parameter is shared, consecutive
+#' integers starting at zero must be used, and \code{-1} (or \code{NA}) means
+#' the parameter is not used. Run \code{update()} on the object after editing
+#' couplings to renumber them consecutively.
+#'
+#' @slot name,desc Name and description.
+#' @slot range Named vector with \code{min}, \code{max}, \code{plusgroup},
+#'   \code{minyear}, \code{maxyear}, \code{minfbar}, \code{maxfbar}.
+#' @slot fleets Named vector with the SAM fleet type of each fleet: 0 catch,
+#'   2 age-structured survey, 3 biomass/SSB index, 6 partial survey (components),
+#'   7 sum-of-fleets catch.
+#' @slot plus.group Per fleet: is the oldest age a plus group (1) or not (0)
+#'   (SAM: \code{maxAgePlusGroup}).
+#' @slot states Coupling of the fishing mortality states (SAM: \code{keyLogFsta}).
+#' @slot logN.vars Coupling of the log(N) process variances by age (SAM: \code{keyVarLogN}).
+#' @slot logP.vars Coupling of the log(P) process variances of partial surveys (SAM: \code{keyVarLogP}).
+#' @slot catchabilities Coupling of survey catchabilities (SAM: \code{keyLogFpar}).
+#' @slot power.law.exps Coupling of density-dependent catchability power
+#'   parameters (SAM: \code{keyQpow}). Also allowed for SSB and FSB indices.
+#' @slot f.vars Coupling of the log(F) process variances (SAM: \code{keyVarF}).
+#' @slot obs.vars Coupling of observation variances (SAM: \code{keyVarObs}).
+#' @slot srr Stock-recruitment code (SAM: \code{stockRecruitmentModelCode}):
+#'   0 random walk, 1 Ricker, 2 Beverton-Holt, 3 piece-wise constant,
+#'   61 hockey stick, 62 AR(1), 63 bent hyperbola, 64/65 power functions,
+#'   66 Shepherd, 67 Deriso, 68 Saila-Lorda, 69 sigmoidal Beverton-Holt,
+#'   90-93 splines, and the depensatory variants (2xx, 4xx).
+#' @slot scaleNoYears,scaleYears,scalePars Catch scaling: number of years,
+#'   the years, and the year x age coupling of the scale parameters
+#'   (SAM: \code{noScaledYears}, \code{keyScaledYears}, \code{keyParScaledYA}).
+#' @slot cor.F Correlation structure of the F increments per catch fleet
+#'   (SAM: \code{corFlag}): 0 independent, 1 compound symmetry, 2 AR(1),
+#'   3 separable AR(1).
+#' @slot cor.obs Coupling of the AR(1) observation correlation parameters
+#'   (SAM: \code{keyCorObs}).
+#' @slot cor.obs.Flag Observation covariance structure per fleet: \code{"ID"},
+#'   \code{"AR"} or \code{"US"} (SAM: \code{obsCorStruct}).
+#' @slot biomassTreat Treatment of biomass indices (SAM: \code{keyBiomassTreat}):
+#'   -1 not a biomass index, 0 SSB index, 1 catch index, 2 FSB index,
+#'   3 total catch, 4 total landings, 5 TSB index, 6 TSN index, 10 Fbar index.
+#' @slot timeout Not used anymore (kept for backward compatibility).
+#' @slot likFlag Observation likelihood per fleet: \code{"LN"} log-normal or
+#'   \code{"ALN"} additive logistic normal (SAM: \code{obsLikelihoodFlag}).
+#' @slot fixVarToWeight Logical per fleet: if weights are supplied
+#'   (\code{catch.vars} or \code{index.var}) are they relative weights
+#'   (\code{FALSE}) or fixed variances (\code{TRUE}). A single value is
+#'   recycled over fleets (SAM: \code{fixVarToWeight}).
+#' @slot fracMixF,fracMixN,fracMixObs Fraction of a t(3) distribution mixed
+#'   into the logF increments, the logN increments (by age) and the
+#'   observations (by fleet).
+#' @slot constRecBreaks Break years for srr 3, or log-SSB knots for spline
+#'   recruitment models.
+#' @slot predVarObsLink Coupling of the prediction-variance link parameters
+#'   (fleet x age).
+#' @slot stockWeightModel,stockWeightMean,stockWeightObsVar Stock weight
+#'   process model switch and couplings of its mean and observation variance.
+#' @slot catchWeightModel,catchWeightMean,catchWeightObsVar Catch weight
+#'   process model switch and couplings.
+#' @slot maturityModel,maturityMean Maturity process model switch and coupling
+#'   (SAM: \code{matureModel}, \code{keyMatureMean}).
+#' @slot mortalityModel,mortalityMean,mortalityObsVar Natural mortality process
+#'   model switch and couplings.
+#' @slot XtraSd Integer matrix with 4 columns (fleet, year, age, coupling)
+#'   adding extra observation uncertainty (SAM: \code{keyXtraSd}).
+#' @slot logNMeanAssumption What the population model corresponds to for
+#'   recruitment and other ages: 0 median, 1 mean, 2 mode.
+#' @slot initState Add initial-state parameters for the latent processes (0/1).
+#' @slot hockeyStickCurve Smoothness of srr 63 (bent hyperbola). \code{NA}
+#'   (default) estimates it, a positive value fixes it.
+#' @slot simulate Simulate conditional on estimated random effects (SAM:
+#'   \code{sim.condRE}).
+#' @slot residuals Calculate one-observation-ahead residuals in \code{FLSAM}.
+#' @slot sumFleets Names of the catch fleets that are summed in the sum fleet.
+#'
+#' @seealso \code{\link{FLSAM.control}} (constructor), \code{\link{drop.from.control}},
+#'   \code{\link{ctrl2conf}}
+#' @rdname FLSAM.control-class
+#' @exportClass FLSAM.control
 setClass("FLSAM.control",
  representation(
     name            ="character",
@@ -42,6 +125,7 @@ setClass("FLSAM.control",
     XtraSd            = "matrix",##
     logNMeanAssumption= "vector",##
     initState         = "numeric",##
+    hockeyStickCurve  = "numeric", ## Smoothness of srr 63, NA = estimate
     simulate          ="logical",  ## Simulate data
     residuals         ="logical",
     sumFleets         ="vector"),    ## Define which catch fleets should be summed over a certain period
@@ -85,6 +169,7 @@ setClass("FLSAM.control",
     XtraSd            = as.matrix(0),
     logNMeanAssumption= as.vector(0),
     initState         = as.numeric(0),
+    hockeyStickCurve  = as.numeric(NA),
     simulate          =as.logical(FALSE),
     residuals         =as.logical(TRUE),
     sumFleets         =as.vector(0)),    ## Define which catch fleets should be summed over a certain period
@@ -95,6 +180,37 @@ setClass("FLSAM.control",
 
 
 
+#' Create a default FLSAM.control object
+#'
+#' Creates an \code{\link{FLSAM.control-class}} object with a syntactically
+#' correct starting configuration, derived from
+#' \code{\link[stockassessment]{defcon}}. The default configuration is a first
+#' guess only: it is the responsibility of the user to find an appropriate
+#' configuration for the stock.
+#'
+#' @param stcks An \code{FLStock}, or an \code{FLStocks} with elements
+#'   \code{residual} and (optionally) \code{sum} for sum-of-fleets catches.
+#'   Multiple catch fleets are given as areas of the \code{residual} stock.
+#' @param tun An \code{FLIndices} object. Index types \code{"number"} (age
+#'   structured), \code{"biomass"} (biomass/SSB index), \code{"con"} and
+#'   \code{"partial"} (partial surveys modelled as components) are allowed.
+#' @param sumFleets Names of the catch fleets (areas) that are summed into the
+#'   \code{sum} stock; required when \code{stcks} has more than one element.
+#' @param catch.vars Optional catch observation weights (see \code{\link{FLSAM}}).
+#' @param scaleYears Optional vector of years for which a catch multiplier is
+#'   estimated.
+#' @return An \code{FLSAM.control} object.
+#' @seealso \code{\link{FLSAM.control-class}}, \code{\link{FLSAM}},
+#'   \code{\link{drop.from.control}}
+#' @examples
+#' data(NSH)
+#' ctrl <- FLSAM.control(NSH, NSH.tun)
+#' # bind HERAS catchabilities for ages 5-8 and renumber
+#' ctrl@catchabilities["HERAS", as.character(5:8)] <- 101
+#' ctrl <- update(ctrl)
+#' # treat the weights of the HERAS survey as fixed variances
+#' ctrl@fixVarToWeight["HERAS"] <- TRUE
+#' @export
 FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYears=NULL) {
   #Default constructor
   #Create object
@@ -180,7 +296,7 @@ FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYear
   ctrl@cor.obs.Flag[]     <- ctrlSAM$obsCorStruct
   ctrl@biomassTreat       <- ctrlSAM$keyBiomassTreat
   ctrl@likFlag[]          <- ctrlSAM$obsLikelihoodFlag
-  ctrl@fixVarToWeight     <- ifelse(ctrlSAM$fixVarToWeight==0,FALSE,TRUE)
+  ctrl@fixVarToWeight     <- ifelse(ctrlSAM$fixVarToWeight==0,FALSE,TRUE); names(ctrl@fixVarToWeight) <- fleet.names
 
   ctrl@fracMixF           <- ctrlSAM$fracMixF
   ctrl@fracMixN           <- ctrlSAM$fracMixN
@@ -201,6 +317,7 @@ FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYear
   ctrl@XtraSd             <- ctrlSAM$keyXtraSd
   ctrl@logNMeanAssumption <- c(0,0)
   ctrl@initState          <- 0
+  ctrl@hockeyStickCurve   <- as.numeric(NA)
   ctrl@sumFleets          <- sumFleets
 
   ctrl <- update(ctrl)
@@ -209,10 +326,29 @@ FLSAM.control <- function(stcks,tun,sumFleets=vector(),catch.vars=NULL,scaleYear
   return(ctrl)
 }
 
-#Function for dropping ages or surveys from a FLSAM.control
+#' Drop fleets or ages from an FLSAM.control object
+#'
+#' Removes one or more fleets and/or age groups from an
+#' \code{\link{FLSAM.control-class}} object and renumbers the couplings with
+#' \code{update()}. When a partial-survey fleet (type 6) is dropped, all
+#' partial-survey fleets are dropped.
+#'
+#' @param object An \code{FLSAM.control} object.
+#' @param fleets Names of the fleets to drop.
+#' @param ages Names of the ages to drop.
+#' @param ... Not used.
+#' @return An \code{FLSAM.control} object.
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' drop.from.control(NSH.ctrl, fleets="IBTS0")
+#' drop.from.control(NSH.ctrl, ages=8:9)
+#' @rdname drop.from.control
+#' @export
     setGeneric("drop.from.control",function(object,...) standardGeneric("drop.from.control"))
+#' @rdname drop.from.control
 setMethod("drop.from.control",signature(object="FLSAM.control"),
   function(object,fleets="missing",ages="missing") {
+    object <- .upgradeControl(object)
     #Drop the fleets first
     if(!missing("fleets")){
       whichFleet      <- which(names(object@fleets) %in% fleets)
@@ -235,6 +371,8 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
       object@likFlag      <- object@likFlag[-whichFleet]
       object@fracMixObs   <- object@fracMixObs[-whichFleet]
       object@plus.group    <- object@plus.group[-whichFleet]
+      if(length(object@fixVarToWeight)>1)
+        object@fixVarToWeight <- object@fixVarToWeight[-whichFleet]
     }
     #Then drop the ages 
     if(!missing("ages")) {
@@ -264,8 +402,26 @@ setMethod("drop.from.control",signature(object="FLSAM.control"),
     return(object)
 })
 
+#' Renumber the couplings of an FLSAM.control object
+#'
+#' Renumbers all coupling matrices and vectors of an
+#' \code{\link{FLSAM.control-class}} object so that the parameter indices are
+#' consecutive and start at zero, keeping \code{-1} for unused entries. Run
+#' this after modifying couplings by hand.
+#'
+#' @param object An \code{FLSAM.control} object.
+#' @return The renumbered \code{FLSAM.control} object.
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' ctrl <- NSH.ctrl
+#' ctrl@catchabilities["HERAS", as.character(5:8)] <- 101
+#' update(ctrl)@catchabilities
+#' @aliases update,FLSAM.control-method
+#' @rdname update-FLSAM.control
+#' @export
 setMethod("update", signature(object="FLSAM.control"),
   function(object){
+  object <- .upgradeControl(object)
   for(iSlt in slotNames(object)){
     if(is(slot(object,iSlt), "matrix")){
       isNA <- which(slot(object,iSlt)==-1)
@@ -273,7 +429,7 @@ setMethod("update", signature(object="FLSAM.control"),
       slot(object,iSlt)[]  <-  as.numeric(factor(slot(object,iSlt)))-1
       slot(object,iSlt)[isNA] <- -1
     }
-    if(iSlt %in% c("logN.vars","scalePars","logP.vars","StockWeightMean","StockWeightObsVar","CatchWeightMean","CatchWeightObsVar","MaturityMean","MortalityMean","MortalityObsVar")){
+    if(iSlt %in% c("logN.vars","scalePars","logP.vars","stockWeightMean","stockWeightObsVar","catchWeightMean","catchWeightObsVar","maturityMean","mortalityMean","mortalityObsVar")){
       isNA <- which(slot(object,iSlt)==-1)
       slot(object,iSlt)[]  <- as.numeric(factor(slot(object,iSlt)))-1
       slot(object,iSlt)[isNA] <- -1
@@ -284,28 +440,34 @@ setMethod("update", signature(object="FLSAM.control"),
 
 setValidity("FLSAM.control",
   function(object){
+    msg <- character()
     #-1 All slots populated
-    if(object@plus.group) if(is.na(object@range["plusgroup"])==T){stop("Specify plusgroup in object@range")}
-    if(any(is.na(object@range[-3])==T)) stop("Specify values in object@range")
-    if(any(is.na(object@logN.vars)==T)) stop("Not all ages in logN.vars specified")
+    if(any(object@plus.group==1) && is.na(object@range["plusgroup"]))
+      msg <- c(msg,"Specify plusgroup in object@range")
+    if(any(is.na(object@range[-which(names(object@range)=="plusgroup")])))
+      msg <- c(msg,"Specify values in object@range")
+    if(any(is.na(object@logN.vars)))
+      msg <- c(msg,"Not all ages in logN.vars specified")
 
     #-2 Settings within range
-    if(!object@srr %in% c(493,490,401,402,290,293,267,266,264,261,260,201,202,90:93,66:69,63,61,60,3,2,1,0)) stop("SRR type outisde possible setting range")
-    if(range(object@fleets)[1] < 0 | range(object@fleets)[2] > 4) stop(paste("Fleet type",names(object@fleets)[which(object@fleets < 0 | object@fleets > 4)],"outside possible setting range"))
+    if(!object@srr %in% c(0:3,60:69,90:93,201,202,260,261,263,264,266,267,290,293,401,402,490,493))
+      msg <- c(msg,"SRR type outside possible setting range")
+    if(any(!object@fleets %in% c(0:3,5:7)))
+      msg <- c(msg,paste("Fleet type of",paste(names(object@fleets)[!object@fleets %in% c(0:3,5:7)],collapse=", "),"outside possible setting range"))
+    if(any(!object@biomassTreat %in% c(-1,0:6,10)))
+      msg <- c(msg,"biomassTreat outside possible setting range (-1, 0-6, 10)")
+    if(!length(object@fixVarToWeight) %in% c(1,length(object@fleets)))
+      msg <- c(msg,"fixVarToWeight must have length 1 or one value per fleet")
 
-    #-3 Dimension and dimnames check
-    dmns <- list()
-    dms  <- list()
-    for(iSlt in slotNames(object)){
-      if(is(slot(object,iSlt), "matrix")){
-        dmns[[iSlt]]  <- dimnames(slot(object,iSlt))
-        dms[[iSlt]]   <- dim(slot(object,iSlt))
-      }
-    }
-    
-    #check sumFleets year ranges
-    if(any(apply(matrix(unlist(dmns),length(unlist(dmns[[1]])),length(dmns)),1,duplicated)[2,]==F)) stop("Dimnames are not the same for parameter sections")
-    if(any(apply(matrix(unlist(dms), length(unlist(dms[[1]])), length(dms)), 1,duplicated)[2,]==F)) stop("Dimensions are not the same for parameter sections")
+    #-3 Dimension and dimnames check of the fleet x age coupling matrices
+    fltAge <- c("states","catchabilities","power.law.exps","f.vars","obs.vars")
+    dmns   <- lapply(fltAge,function(x) dimnames(slot(object,x)))
+    if(!all(sapply(dmns,identical,dmns[[1]])))
+      msg <- c(msg,paste("Dimnames are not the same for",paste(fltAge,collapse=", ")))
+    if(!identical(rownames(object@cor.obs),rownames(object@states)) | ncol(object@cor.obs)!=(ncol(object@states)-1))
+      msg <- c(msg,"Dimensions of cor.obs do not match the fleet x age-1 structure")
+
+    if(length(msg)==0) return(TRUE) else return(msg)
   }
 )
 

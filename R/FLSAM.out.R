@@ -1,6 +1,25 @@
   ### ======================================================================================================
   ### write.FLSAM.out - Used to generate a "pseudo-ica.out" file from FLSAM
   ### ======================================================================================================
+#' Write an assessment summary in "ica.out" style
+#'
+#' Produces formatted tables with the input data, the survey indices, the
+#' model configuration, the estimated parameters and all estimated values,
+#' which can be written to a text file.
+#'
+#' @param stck An \code{FLStock}.
+#' @param tun An \code{FLIndices}.
+#' @param sam An \code{\link{FLSAM-class}} object.
+#' @param format Title format of the tables.
+#' @param ... Arguments passed to \code{FLSAM.out}.
+#' @param x An \code{FLQuant} or matrix to format.
+#' @return A character vector.
+#' @examples
+#' data(NSH); data(NSH.sam)
+#' out <- FLSAM.out(NSH, NSH.tun, NSH.sam, format="Table %i")
+#' \dontrun{write(out, file="sam.out")}
+#' @rdname FLSAM.out
+#' @export
   FLSAM.out   <-  function(stck,tun,sam,format="TABLE %i.") {
     #Check  validity of objects
     if(!validObject(stck) | !is.FLStock(stck)) {stop("\"stck\" argument is not a valid FLStock object")}
@@ -181,11 +200,15 @@
   
   }
   
+#' @rdname FLSAM.out
+#' @export
   sam.out   <-  function(...) {
     sam.out(...)
   }
   
   
+#' @rdname FLSAM.out
+#' @export
   formatQuant <- function(x) {
     #Drop extraneous dimensions
     mat.obj <-  drop(x@.Data)   
@@ -204,6 +227,8 @@
       
   }   #End function, end setMethod
 
+#' @rdname FLSAM.out
+#' @export
   formatMatrix <- function(x){
     #Write output
     opt <-  capture.output({

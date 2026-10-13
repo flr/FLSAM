@@ -1,31 +1,39 @@
 Package: FLSAM
 Title: An Implementation of the State-Space Assessment Model for FLR
-Version: 3.0.0.9005
-Date: 2023-04-18
+Version: 3.1.0
+Date: 2026-10-13
 Authors@R: c(
   person("N.T.", "Hintzen", email = "nhintzen@pelagicfish.eu", role = "cre"),
   person("M.R.", "Payne", email = "mpa@aqua.dtu.dk", role = "aut"))
 Description: This package provides an FLR wrapper to the SAM state-space assessment model.
 Depends: R (>= 4.1.0), FLCore (>= 2.6.0), stockassessment (>= 0.12.0)
-Imports: methods, utils, TMB, ellipse, MASS
-Suggests: reshape, plyr, RColorBrewer, doParallel
+Imports: methods, utils, stats, graphics, grDevices, parallel, TMB, ellipse, MASS, ggplot2
+Suggests: reshape2, plyr, RColorBrewer, doParallel, foreach, kobe
 Collate:
+  "FLSAM-package.R"
   "FLSAM.control.R"
   "FLSAM.R"
   "FLSAM.MSE.R"
   "FLSAM.out.R"
   "FLR2SAM.R"
   "SAM2FLR.R"
-  "accessors.R"       
-  "af.R"              
+  "accessors.R"
+  "af.R"
   "anf.r"
+  "data.R"
   "diagnostics.R"
+  "docs.R"
+  "diagnostics_sam.R"
   "kobe-FLSAM.R"
   "looi_retro.R"
   "methods_plots.R"
   "methods.R"
   "monteCarloStock.R"
   "pin.R"
+  "sam_tools.R"
+  "upgrade.R"
   "zzz.R"
 License: GPL (>= 2)
 LazyLoad: no
+Encoding: UTF-8
+Config/roxygen2/version: 8.0.0
