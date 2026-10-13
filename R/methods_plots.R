@@ -12,6 +12,8 @@
 #'   is available)? Default \code{TRUE}.
 #' @param what Not used (kept for backward compatibility).
 #' @param main Plot title.
+#' @param ci Show the 95\% confidence intervals of every assessment as a
+#'   shaded band (\code{FLSAMs}; default \code{FALSE}).
 #' @param ... Not used.
 #' @return A \code{ggplot} object.
 #' @examples
@@ -19,6 +21,7 @@
 #' plot(NSH.sam)
 #' data(HERAS.sams)
 #' plot(HERAS.sams)
+#' plot(HERAS.sams, ci=TRUE)
 #' @name plot-FLSAM
 #' @aliases plot,FLSAM,missing-method plot,FLSAM,FLSAM-method plot,FLSAMs,missing-method plot,FLSAMs,FLStock-method plot,FLSAM,FLStock-method plot,FLStock,FLSAM-method plot,FLStock,FLSAMs-method
 NULL
@@ -60,7 +63,7 @@ setMethod("plot",signature(x="FLSAM",y="FLSAM"),
 #' @rdname plot-FLSAM
 #' @export
 setMethod("plot",signature(x="FLSAMs",y="missing"),
- function(x,y,main="",futureYrs=T,...) {
+ function(x,y,main="",futureYrs=T,ci=FALSE,...) {
     #Extract data - ssb and fbar are easy but recs harder
     ssb.dat <- ssb(x)
     if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
@@ -76,9 +79,11 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
     plot.dat$name <- factor(plot.dat$name,levels=unique(plot.dat$name))
 
     #Plot it
-    ggplot(plot.dat,aes(x=year,y=value,colour=name,linetype=name)) +
+    p <- ggplot(plot.dat,aes(x=year,y=value,colour=name,linetype=name))
+    if(ci) p <- p + geom_ribbon(aes(ymin=lbnd,ymax=ubnd,fill=name),alpha=0.12,colour=NA,show.legend=FALSE)
+    p +
       geom_line() +
-      .discreteScales(nlevels(plot.dat$name),name=NULL) +
+      .discreteScales(nlevels(plot.dat$name),name=NULL,fill=ci) +
       facet_wrap(~var,ncol=1,scales="free_y") +
       expand_limits(y=0) +
       labs(x="Year",y=NULL,title=main) +
@@ -88,7 +93,7 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
 #' @rdname plot-FLSAM
 #' @export
 setMethod("plot",signature(x="FLSAMs",y="FLStock"),
- function(x,y,main="",futureYrs=TRUE,...) {
+ function(x,y,main="",futureYrs=TRUE,ci=FALSE,...) {
     #extract data from FLSAMs first
     ssb.dat <- ssb(x)
     if(!futureYrs) ssb.dat <- ssb(x)[-c(which(diff(ssb(x)$year)<0),nrow(ssb(x))),]
@@ -109,6 +114,7 @@ setMethod("plot",signature(x="FLSAMs",y="FLStock"),
     stck.dat$value <- stck.dat$data
 
     #Now combine
+    stck.dat$lbnd <- stck.dat$ubnd <- NA
     common.cols <- intersect(names(stck.dat),names(sams.dat))
     plot.dat <- rbind(stck.dat[,common.cols],sams.dat[,common.cols])
     plot.dat$var <- factor(plot.dat$var,levels=.plotLevels)
@@ -117,10 +123,12 @@ setMethod("plot",signature(x="FLSAMs",y="FLStock"),
     if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% min(unlist(lapply(x,function(y){range(y)["minyear"]}))) :
                                                             max(unlist(lapply(x,function(y){range(y)["maxyear"]-1}))))
     #plot it
-    ggplot(plot.dat,aes(x=year,y=value,colour=name,linetype=name)) +
+    p <- ggplot(plot.dat,aes(x=year,y=value,colour=name,linetype=name))
+    if(ci) p <- p + geom_ribbon(aes(ymin=lbnd,ymax=ubnd,fill=name),data=subset(plot.dat,!is.na(lbnd)),alpha=0.12,colour=NA,show.legend=FALSE)
+    p +
       geom_line() +
       geom_point(size=0.8) +
-      .discreteScales(nlevels(plot.dat$name),name=NULL) +
+      .discreteScales(nlevels(plot.dat$name),name=NULL,fill=ci) +
       facet_wrap(~var,ncol=1,scales="free_y") +
       expand_limits(y=0) +
       labs(x="Year",y=NULL,title=main) +

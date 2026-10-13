@@ -84,13 +84,14 @@ return(conf)}
 #' @export
 conf2ctrl <- function(conf,data){
   ctrl    <- new("FLSAM.control")
-  ctrl@range <- c(min=conf$minAge,max=conf$maxAge,plusgroup=ifelse(conf$maxAgePlusGroup==1,conf$maxAge,NA),minyear=min(data$years),maxyear=max(data$years),minfbar=conf$fbarRange[1],maxfbar=conf$fbarRange[2])
+  ctrl@range <- c(min=conf$minAge,max=conf$maxAge,plusgroup=ifelse(conf$maxAgePlusGroup[1]==1,conf$maxAge,NA),minyear=min(data$years),maxyear=max(data$years),minfbar=conf$fbarRange[1],maxfbar=conf$fbarRange[2])
   ctrl@fleets <- data$fleetTypes
   names(ctrl@fleets)  <- attr(data,"fleetNames")
     matdef            <- matrix(NA,nrow=length(ctrl@fleets),ncol=length(ctrl@range["min"]:ctrl@range["max"]),dimnames=list(names(ctrl@fleets),ctrl@range["min"]:ctrl@range["max"]))
    matdef[]          <- conf$keyLogFsta
   ctrl@states         <- matdef
   ctrl@cor.F          <- conf$corFlag
+  ctrl@logP.vars      <- conf$keyVarLogP
     matdef[]          <- conf$keyLogFpar
   ctrl@catchabilities <- matdef
     matdef[]          <- conf$keyQpow

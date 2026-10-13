@@ -15,9 +15,9 @@
 
 \S4method{plot}{FLSAM,FLSAM}(x, y, main = "", ...)
 
-\S4method{plot}{FLSAMs,missing}(x, y, main = "", futureYrs = T, ...)
+\S4method{plot}{FLSAMs,missing}(x, y, main = "", futureYrs = T, ci = FALSE, ...)
 
-\S4method{plot}{FLSAMs,FLStock}(x, y, main = "", futureYrs = TRUE, ...)
+\S4method{plot}{FLSAMs,FLStock}(x, y, main = "", futureYrs = TRUE, ci = FALSE, ...)
 
 \S4method{plot}{FLSAM,FLStock}(x, y, main = "", ...)
 
@@ -39,6 +39,9 @@ is available)? Default \code{TRUE}.}
 \item{...}{Not used.}
 
 \item{main}{Plot title.}
+
+\item{ci}{Show the 95\% confidence intervals of every assessment as a
+shaded band (\code{FLSAMs}; default \code{FALSE}).}
 }
 \value{
 A \code{ggplot} object.
@@ -54,4 +57,5 @@ data(NSH); data(NSH.sam)
 plot(NSH.sam)
 data(HERAS.sams)
 plot(HERAS.sams)
+plot(HERAS.sams, ci=TRUE)
 }

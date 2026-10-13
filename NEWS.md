@@ -26,6 +26,8 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
   one year less or more data; states are matched by year. `retro()` uses the
   previous peel as starting values for the next (`use.start=TRUE`, default).
 - `pin.R` (`FLSAM2par()`, legacy pin functionality) removed.
+- `plot(FLSAMs, ci=TRUE)`: confidence bands for retrospective peels or several
+  assessments.
 - Objects saved with older versions (missing the new slots) keep working:
   `FLSAM()`, `ctrl2conf()`, `update()`, `drop.from.control()`, `SAM2FLR()`,
   `FLSAM.out()` and printing upgrade them automatically; `upgradeFLSAM()`
@@ -63,3 +65,5 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
   than one simulation with `set.pars`.
 - `sam.out()` called itself (infinite recursion) instead of `FLSAM.out()`.
 - `obscor.plot()` gave an unclear error without correlated observations.
+- `conf2ctrl()` did not set `logP.vars` and set a wrong plus group, so
+  `SAM2FLR()` failed for fits made outside FLSAM.
