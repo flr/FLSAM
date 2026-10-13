@@ -57,7 +57,7 @@ fc <- try(FLSAM.forecast(NSH.sam,fscale=c(1,1,1),ave.years=(lastYr-2):lastYr,rec
 if(!inherits(fc,"try-error")){
   print(fc); write.csv(fc,file.path(outDir,"sf_forecast.csv"),row.names=FALSE)
   plotTry("sf_forecast", ggplot(fc,aes(year,value))+
-            geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill=pal[3],alpha=0.4)+geom_line(colour=pal[1],linewidth=1)+
+            geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill=pal[1],alpha=0.15)+geom_line(colour=pal[1],linewidth=1)+
             facet_wrap(~quantity,scales="free_y")+theme_bw()+labs(x="Year",y=NULL,title="FLSAM.forecast: status quo F"))
 }
 mf <- try(FLSAM.modelforecast(NSH.sam,fscale=c(1,1,1)))

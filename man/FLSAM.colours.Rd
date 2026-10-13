@@ -13,10 +13,12 @@ FLSAM.colours(n = 4)
 A character vector of colours.
 }
 \description{
-Returns \code{n} colours for the ggplot2 plots of FLSAM. The default palette
-is dark blue (\code{"#004868"}), orange (\code{"#FF800A"}), light blue
-(\code{"#00BADC"}) and green (\code{"#31C381"}); more colours are
-interpolated between these. Set your own palette with
+Returns \code{n} distinct (qualitative) colours for the ggplot2 plots of
+FLSAM. The palette starts with dark blue (\code{"#004868"}), orange
+(\code{"#FF800A"}), light blue (\code{"#00BADC"}) and green
+(\code{"#31C381"}), followed by seven contrasting colours. When more colours
+are needed than the palette holds, the colours are recycled and the plots
+distinguish the series by line type. Set your own palette with
 \code{options(FLSAM.palette=c(...))}.
 }
 \examples{

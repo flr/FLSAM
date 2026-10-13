@@ -42,7 +42,7 @@ setMethod("plot",signature(x="FLSAM",y="missing"),
     if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% range(x)["minyear"]:(range(x)["maxyear"]-1))
     #Plot it
     ggplot(plot.dat,aes(x=year)) +
-      geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill=.col("light"),alpha=0.4,colour=NA) +
+      geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill=.col("main"),alpha=0.15,colour=NA) +
       geom_line(aes(y=value),colour=.col("main"),linewidth=1) +
       facet_wrap(~name,ncol=1,scales="free_y") +
       expand_limits(y=0) +
@@ -76,12 +76,12 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
     plot.dat$name <- factor(plot.dat$name,levels=unique(plot.dat$name))
 
     #Plot it
-    ggplot(plot.dat,aes(x=year,y=value,colour=name)) +
+    ggplot(plot.dat,aes(x=year,y=value,colour=name,linetype=name)) +
       geom_line() +
-      scale_colour_manual(values=FLSAM.colours(nlevels(plot.dat$name))) +
+      .discreteScales(nlevels(plot.dat$name),name=NULL) +
       facet_wrap(~var,ncol=1,scales="free_y") +
       expand_limits(y=0) +
-      labs(x="Year",y=NULL,colour=NULL,title=main) +
+      labs(x="Year",y=NULL,title=main) +
       theme_bw()
 })
 
@@ -117,13 +117,13 @@ setMethod("plot",signature(x="FLSAMs",y="FLStock"),
     if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% min(unlist(lapply(x,function(y){range(y)["minyear"]}))) :
                                                             max(unlist(lapply(x,function(y){range(y)["maxyear"]-1}))))
     #plot it
-    ggplot(plot.dat,aes(x=year,y=value,colour=name)) +
+    ggplot(plot.dat,aes(x=year,y=value,colour=name,linetype=name)) +
       geom_line() +
       geom_point(size=0.8) +
-      scale_colour_manual(values=FLSAM.colours(nlevels(plot.dat$name))) +
+      .discreteScales(nlevels(plot.dat$name),name=NULL) +
       facet_wrap(~var,ncol=1,scales="free_y") +
       expand_limits(y=0) +
-      labs(x="Year",y=NULL,colour=NULL,title=main) +
+      labs(x="Year",y=NULL,title=main) +
       theme_bw()
 })
 
@@ -157,12 +157,11 @@ setMethod("plot",signature(x="FLStock",y="FLSAMs"),
 #' @return Called for its side effect (base graphics).
 #' @export
 comp.plot <- function(sam){
-  require(RColorBrewer)
   if(length(sam@components)==0) stop("No component information in assessment output")
   yrs <- as.numeric(range(dimnames(sam@components)$years)[1]):as.numeric(range(dimnames(sam@components)$years)[2])
   plot(0,0,type="n",xlim=range(yrs),ylim=c(0,1),yaxs="i",xaxs="i",xlab="Year",ylab="Fraction")
   area.plot.dat <- apply(sam@components,2,function(x) 1-cumsum(c(0,x))/sum(x))
-  cols<- rev(brewer.pal(nrow(sam@components),"PuOr"))
+  cols<- FLSAM.colours(nrow(sam@components))
   for(i in 1:nrow(sam@components)) {
     x.to.plot <- c(yrs,rev(yrs))
     y.to.plot <- c(area.plot.dat[i,],rev(area.plot.dat[i+1,]))
@@ -606,15 +605,15 @@ res$cohort <- res$year - res$age
 res$retro  <- factor(res$retro)
 
 if(length(unique(res$age))==1){
-      pic <- ggplot(res,aes(x=year,y=std.res,colour=retro)) +
+      pic <- ggplot(res,aes(x=year,y=std.res,colour=retro,linetype=retro)) +
                labs(x="Years",title=paste("Residual pattern in",fleet,"at age"))
     } else {
       if(cohort){
-        pic <- ggplot(res,aes(x=age,y=std.res,colour=retro)) +
+        pic <- ggplot(res,aes(x=age,y=std.res,colour=retro,linetype=retro)) +
                  facet_wrap(~cohort) +
                  labs(x="Ages",title=paste("Residual pattern in",fleet,"at cohort"))
       } else  {
-        pic <- ggplot(res,aes(x=age,y=std.res,colour=retro)) +
+        pic <- ggplot(res,aes(x=age,y=std.res,colour=retro,linetype=retro)) +
                  facet_wrap(~year) +
                  labs(x="Ages",title=paste("Residual pattern in",fleet,"at age"))
       }
@@ -622,8 +621,8 @@ if(length(unique(res$age))==1){
 pic <- pic +
          geom_hline(yintercept=0,linetype=3) +
          geom_line() +
-         scale_colour_manual(values=FLSAM.colours(nlevels(res$retro))) +
-         labs(y="Standardized residuals",colour="Assessment") +
+         .discreteScales(nlevels(res$retro),name="Assessment") +
+         labs(y="Standardized residuals") +
          theme_bw()
 print(pic)
 return(invisible(pic))
@@ -641,11 +640,11 @@ retroSelectivity <- function(x,yrs){
       res <- subset(res,year %in% yrs)
       res$retro <- factor(res$retro)
 
-      pic <- ggplot(res,aes(x=an(age),y=value,colour=retro)) +
+      pic <- ggplot(res,aes(x=an(age),y=value,colour=retro,linetype=retro)) +
                geom_line() +
-               scale_colour_manual(values=FLSAM.colours(nlevels(res$retro))) +
+               .discreteScales(nlevels(res$retro),pal=.retroColours,name="Assessment") +
                facet_wrap(~year,scales="free_y") +
-               labs(x="Ages",y="F",colour="Assessment",title="Retrospective pattern in F at age") +
+               labs(x="Ages",y="F",title="Retrospective pattern in F at age") +
                theme_bw()
       print(pic)
       return(invisible(pic))
@@ -666,11 +665,18 @@ retroParams <- function(x){
                                               tmpy$name <- paste(tmpy$name,1:nrow(tmpy))
                                              return(tmpy)})})
   subretroPars  <- do.call(rbind,lapply(subretroPars,function(y){do.call(rbind,y)}))
+  #- number the series within each parameter (facet), so colours restart in every facet
+  subretroPars$idx <- NA
+  for(iPar in unique(subretroPars$nameOrig)){
+    i <- subretroPars$nameOrig==iPar
+    subretroPars$idx[i] <- match(subretroPars$name[i],unique(subretroPars$name[i]))
+  }
+  subretroPars$idx <- factor(subretroPars$idx)
 
-  pic <- ggplot(subretroPars,aes(x=an(year),y=exp(value),colour=name,group=name)) +
+  pic <- ggplot(subretroPars,aes(x=an(year),y=exp(value),colour=idx,linetype=idx,group=name)) +
            geom_line() +
            geom_point() +
-           scale_colour_manual(values=FLSAM.colours(length(unique(subretroPars$name)))) +
+           .discreteScales(nlevels(subretroPars$idx)) +
            facet_wrap(~nameOrig,scales="free_y") +
            labs(x="Assessment year",y="Parameter value",colour=NULL) +
            theme_bw() +

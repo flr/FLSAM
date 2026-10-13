@@ -2,12 +2,14 @@
 # Run the 2026 North Sea herring assessment (her.27.3a47d, HAWG 2026) with one
 # FLSAM version and make the diagnostic plots of report_plots.R.
 # Called by compare_her27.R in a fresh R session per version:
-#   Rscript run_version.R <FLSAM library> <label> <output dir> <assessment dir> <n retro>
+#   Rscript run_version.R <FLSAM library> <label> <output dir> <assessment dir> <n retro> [reuse]
+# reuse = TRUE: load the fits saved earlier and only redo the plots
 # Reproduces model_sf.R and model_mf.R (data_sms2023, addM = 0.02, IBP 2021 configs).
 #-------------------------------------------------------------------------------
 args      <- commandArgs(TRUE)
 lib       <- args[1]; label <- args[2]; outRoot <- args[3]; assessDir <- args[4]
 nRetro    <- as.numeric(args[5])
+reuse     <- length(args)>5 && as.logical(args[6])
 outDir    <- file.path(outRoot,label); dir.create(outDir,showWarnings=FALSE,recursive=TRUE)
 
 suppressMessages({library(FLSAM,lib.loc=lib); library(ggplot2)})
@@ -26,6 +28,9 @@ plotTry <- function(name,expr,...){
 }
 timing <- list()
 
+if(reuse){
+  load(file.path(outDir,"assessment.RData"))
+} else {
 #===============================================================================
 # Single fleet (model_sf.R)
 #===============================================================================
@@ -49,6 +54,7 @@ NSH3.ctrl@residuals <- TRUE
 timing$mf <- system.time(NSH3f.sam <- FLSAM(NSH3f,NSH.tun,NSH3.ctrl,silent=TRUE))["elapsed"]
 ctrl3R <- NSH3.ctrl; ctrl3R@residuals <- FALSE
 timing$mf.retro <- system.time(NSH3f.retro <- retro(NSH3f,NSH.tun,ctrl3R,retro=nRetro))["elapsed"]
+}
 
 #===============================================================================
 # Diagnostic plots as in report_plots.R (same calls for both versions)
@@ -90,6 +96,7 @@ res <- list(version=as.character(packageVersion("FLSAM",lib.loc=lib)),timing=unl
             sf.retro=lapply(NSH.retro,function(x) list(nlogl=x@nlogl,ssb=ssb(x),fbar=fbar(x),rec=rec(x))),
             mf.retro=lapply(NSH3f.retro,function(x) list(nlogl=x@nlogl,ssb=ssb(x),fbar=fbar(x),rec=rec(x))),
             mohn=mohn)
+if(reuse) res$timing <- readRDS(file.path(outDir,"results.rds"))$timing
 saveRDS(res,file.path(outDir,"results.rds"))
-save(NSH,NSH.tun,NSH.ctrl,NSH.sam,NSH.retro,NSH3f,NSH3.ctrl,NSH3f.sam,NSH3f.retro,file=file.path(outDir,"assessment.RData"))
+if(!reuse) save(NSH,NSH.tun,NSH.ctrl,NSH.sam,NSH.retro,NSH3f,NSH3.ctrl,NSH3f.sam,NSH3f.retro,file=file.path(outDir,"assessment.RData"))
 cat("done",label,"\n"); print(unlist(timing))

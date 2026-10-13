@@ -240,7 +240,7 @@ predsd.plot <- function(sam,fleet,age=NULL,type="log",N=20000){
   curve    <- data.frame(x=xTrans(pred),sd=sdFun(alpha,beta,pred),lbnd=qi[1,],ubnd=qi[2,])
   pts      <- data.frame(x=xTrans(exp(predObs)),sd=sdFun(alpha,beta,exp(predObs)))
   ggplot(curve,aes(x=x)) +
-    geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill=.col("light"),alpha=0.4) +
+    geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill=.col("main"),alpha=0.15) +
     geom_line(aes(y=sd),colour=.col("main")) +
     geom_point(aes(y=sd),data=pts,shape=3,colour=.col("accent")) +
     labs(x=ifelse(type=="log","Prediction (log)","Prediction"),y="Standard deviation",
@@ -280,20 +280,24 @@ data.plot <- function(sam){
 #'
 #' Fishing mortality at age scaled to the maximum F in each year, by year and
 #' catch fleet (comparable to \code{\link[stockassessment]{fselectivityplot}}).
+#' Years are coloured by period.
 #'
 #' @param sam An \code{\link{FLSAM-class}} object.
+#' @param period Length (years) of the periods that get their own colour.
 #' @return A \code{ggplot} object.
 #' @examples
 #' data(NSH); data(NSH.sam)
 #' fselectivity.plot(NSH.sam)
 #' @export
-fselectivity.plot <- function(sam){
+fselectivity.plot <- function(sam,period=10){
   fs      <- f(sam)
   fs$sel  <- fs$value/ave(fs$value,fs$fleet,fs$year,FUN=max)
-  ggplot(fs,aes(x=age,y=sel,group=year,colour=year)) +
+  start   <- floor(fs$year/period)*period
+  fs$period <- factor(paste0(start,"-",start+period-1),levels=unique(paste0(sort(unique(start)),"-",sort(unique(start))+period-1)))
+  ggplot(fs,aes(x=age,y=sel,group=year,colour=period,linetype=period)) +
     geom_line() +
     facet_wrap(~fleet) +
-    scale_colour_gradient(low=.col("light"),high=.col("main")) +
-    labs(x="Age",y="F / max(F)",colour="Year",title=sam@name) +
+    .discreteScales(nlevels(fs$period),name="Years") +
+    labs(x="Age",y="F / max(F)",title=sam@name) +
     theme_bw()
 }

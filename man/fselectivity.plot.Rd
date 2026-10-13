@@ -4,10 +4,12 @@
 \alias{fselectivity.plot}
 \title{Selectivity plot}
 \usage{
-fselectivity.plot(sam)
+fselectivity.plot(sam, period = 10)
 }
 \arguments{
 \item{sam}{An \code{\link{FLSAM-class}} object.}
+
+\item{period}{Length (years) of the periods that get their own colour.}
 }
 \value{
 A \code{ggplot} object.
@@ -15,6 +17,7 @@ A \code{ggplot} object.
 \description{
 Fishing mortality at age scaled to the maximum F in each year, by year and
 catch fleet (comparable to \code{\link[stockassessment]{fselectivityplot}}).
+Years are coloured by period.
 }
 \examples{
 data(NSH); data(NSH.sam)
