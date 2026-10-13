@@ -29,12 +29,14 @@ FLSAM.colours <- function(n=4){
 }
 
 #- Matching colour and linetype scales for a discrete variable: colours are
-#  recycled when there are more levels than colours, then the linetype changes
-.discreteScales <- function(n,pal=NULL,name=waiver()){
+#  recycled when there are more levels than colours, then the linetype changes.
+#  recentSolid=TRUE: the last levels (e.g. most recent assessments) are solid
+#  and the first (oldest) levels get the other line types
+.discreteScales <- function(n,pal=NULL,name=waiver(),recentSolid=FALSE){
   if(is.null(pal)) pal <- unname(getOption("FLSAM.palette",FLSAM.colours(11)))
   nc  <- length(pal)
   list(scale_colour_manual(values=rep(pal,length.out=n),name=name),
-       scale_linetype_manual(values=rep(c("solid","dashed","dotted","dotdash"),each=nc,length.out=n),name=name))
+       scale_linetype_manual(values=(if(recentSolid) rev else identity)(rep(c("solid","dashed","dotted","dotdash"),each=nc,length.out=n)),name=name))
 }
 
 #- Colours of the retrospective selectivity plot (as in FLSAM <= 3.0, FLCore lattice theme)

@@ -421,10 +421,12 @@ obsvar.plot <- function(sam){
                   obv <- obs.var(sam)
                   obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
                   obv <- obv[order(obv$value),]
+                  flt <- factor(obv$fleet)
+                  cols <- FLSAM.colours(nlevels(flt))
                   bp <- barplot(obv$value,ylab="Observation Variance",
-                         main="Observation variances by data source",col=factor(obv$fleet))
+                         main="Observation variances by data source",col=cols[flt])
                   axis(1,at=bp,labels=obv$str,las=3,lty=0,mgp=c(0,0,0))
-                  legend("topleft",levels(obv$fleet),pch=15,col=1:nlevels(obv$fleet),pt.cex=1.5)
+                  legend("topleft",levels(flt),pch=15,col=cols,pt.cex=1.5)
               }
 
 #-CV versus observation variance plot
@@ -436,7 +438,7 @@ obscv.plot  <- function(sam){
   obv$str <- paste(obv$fleet,ifelse(is.na(obv$age),"",obv$age))
   obv <- obv[order(obv$value),]
   plot(obv$value,obv$CV,xlab="Observation variance",ylab="CV of estimate",log="x",
-    pch=16,col=obv$fleet,main="Observation variance vs uncertainty")
+    pch=16,col=FLSAM.colours(nlevels(factor(obv$fleet)))[factor(obv$fleet)],main="Observation variance vs uncertainty")
   text(obv$value,obv$CV,obv$str,pos=4,cex=0.75,xpd=NA)
 }
 
@@ -621,7 +623,7 @@ if(length(unique(res$age))==1){
 pic <- pic +
          geom_hline(yintercept=0,linetype=3) +
          geom_line() +
-         .discreteScales(nlevels(res$retro),name="Assessment") +
+         .discreteScales(nlevels(res$retro),name="Assessment",recentSolid=TRUE) +
          labs(y="Standardized residuals") +
          theme_bw()
 print(pic)
@@ -642,7 +644,7 @@ retroSelectivity <- function(x,yrs){
 
       pic <- ggplot(res,aes(x=an(age),y=value,colour=retro,linetype=retro)) +
                geom_line() +
-               .discreteScales(nlevels(res$retro),pal=.retroColours,name="Assessment") +
+               .discreteScales(nlevels(res$retro),pal=.retroColours,name="Assessment",recentSolid=TRUE) +
                facet_wrap(~year,scales="free_y") +
                labs(x="Ages",y="F",title="Retrospective pattern in F at age") +
                theme_bw()

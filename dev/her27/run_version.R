@@ -60,6 +60,11 @@ timing$mf.retro <- system.time(NSH3f.retro <- retro(NSH3f,NSH.tun,ctrl3R,retro=n
 # Diagnostic plots as in report_plots.R (same calls for both versions)
 #===============================================================================
 pdf(file.path(outDir,"sf_fit.pdf")); residual.diagnostics(NSH.sam); dev.off()
+#- residual.diagnostics: one png per fleet and age (sf and mf)
+dir.create(file.path(outDir,"resdiag"),showWarnings=FALSE)
+unlink(list.files(file.path(outDir,"resdiag"),full.names=TRUE))
+png(file.path(outDir,"resdiag","sf_%03d.png"),width=1500,height=1300,res=130); residual.diagnostics(NSH.sam); dev.off()
+png(file.path(outDir,"resdiag","mf_%03d.png"),width=1500,height=1300,res=130); residual.diagnostics(NSH3f.sam); dev.off()
 plotTry("sf_stock_trajectory",          plot(NSH.sam))
 plotTry("sf_cor_params",                cor.plot(NSH.sam),width=2000,height=2000)
 plotTry("sf_procErr_N",                 procerr.plot(NSH+NSH.sam,weight="stock.wt",type="n",rel=T))
