@@ -8,8 +8,8 @@
 
 #' @rdname looi
 setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="missing"),
-  function(stck,tun,ctrl,type,base.run,set.pars){
-     args <- list(stck=stck,tun=tun,ctrl=ctrl,type="full")
+  function(stck,tun,ctrl,type,base.run,set.pars,catch.vars=NULL){
+     args <- list(stck=stck,tun=tun,ctrl=ctrl,type="full",catch.vars=catch.vars)
      if(!missing(base.run)) args$base.run <- base.run
      if(!missing(set.pars)) args$set.pars <- set.pars
      do.call(looi,args)
@@ -17,7 +17,7 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
 
 #' @rdname looi
 setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",type="character"),
-  function(stck,tun,ctrl,type="full",base.run="missing",set.pars="missing"){
+  function(stck,tun,ctrl,type="full",base.run="missing",set.pars="missing",catch.vars=NULL){
     #Check type argument
     if(is.na(pmatch(toupper(type),c("LOI","LOO","FULL")))) {
       stop(sprintf("Invalid 'type' argument: %s",type)) }
@@ -45,9 +45,9 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
     #Perform the initial base assessment i.e. "everybody-in"
     if(missing(base.run)){
       if(missing(set.pars)){
-        base.run <- FLSAM(stck,tun,ctrl)  #Has to work
+        base.run <- FLSAM(stck,tun,ctrl,catch.vars=catch.vars)  #Has to work
       } else {
-        base.run <- FLSAM(stck,tun,ctrl,set.pars=set.pars)
+        base.run <- FLSAM(stck,tun,ctrl,set.pars=set.pars,catch.vars=catch.vars)
       }
     }
     result <- FLSAMs("All fleets"=base.run)
@@ -69,9 +69,9 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
       Control.temp@range["minyear"] <- min(stck@range["minyear"],
                                            min(sapply(Indices.temp,function(x) min(x@range[c("minyear")]))))
       if(missing(set.pars))
-        res           <- try(FLSAM(stck,Indices.temp,Control.temp))#,starting.values=base.run))
+        res           <- try(FLSAM(stck,Indices.temp,Control.temp,catch.vars=catch.vars))#,starting.values=base.run))
       if(!missing(set.pars))
-        res           <- try(FLSAM(stck,Indices.temp,Control.temp,set.pars=set.pars))#starting.values=base.run,))      
+        res           <- try(FLSAM(stck,Indices.temp,Control.temp,set.pars=set.pars,catch.vars=catch.vars))#starting.values=base.run,))      
       if(is(res, "try-error")) {
         warning(sprintf(paste("Leave-in-out for ",iRun,"failed")))
       } else {
@@ -158,24 +158,24 @@ setMethod("looi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control",t
   setGeneric('loi', function(stck,tun,ctrl,type,base.run,set.pars,...) standardGeneric('loi'))
 #' @rdname looi
 setMethod("loo",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
-  function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
-     looi(stck,tun,ctrl,type="loo",base.run,set.pars)
+  function(stck,tun,ctrl,type,base.run="missing",set.pars="missing",catch.vars=NULL){
+     looi(stck,tun,ctrl,type="loo",base.run,set.pars,catch.vars=catch.vars)
 }) 
 #' @rdname looi
 setMethod("loi",signature(stck="FLStock",tun="FLIndices",ctrl="FLSAM.control"),
-  function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
-     looi(stck,tun,ctrl,type="loi",base.run,set.pars)
+  function(stck,tun,ctrl,type,base.run="missing",set.pars="missing",catch.vars=NULL){
+     looi(stck,tun,ctrl,type="loi",base.run,set.pars,catch.vars=catch.vars)
 }) 
 
 #' @rdname looi
 setMethod("loo",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
-  function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
-     looi(stck,tun,ctrl,type="loo",base.run,set.pars)
+  function(stck,tun,ctrl,type,base.run="missing",set.pars="missing",catch.vars=NULL){
+     looi(stck,tun,ctrl,type="loo",base.run,set.pars,catch.vars=catch.vars)
 })
 #' @rdname looi
 setMethod("loi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
-  function(stck,tun,ctrl,type,base.run="missing",set.pars="missing"){
-     looi(stck,tun,ctrl,type="loi",base.run,set.pars)
+  function(stck,tun,ctrl,type,base.run="missing",set.pars="missing",catch.vars=NULL){
+     looi(stck,tun,ctrl,type="loi",base.run,set.pars,catch.vars=catch.vars)
 })
 
 #-------------------------------------------------------------------------------

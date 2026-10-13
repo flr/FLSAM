@@ -159,6 +159,8 @@ NULL
 #' @param type \code{"full"}, \code{"LOO"} or \code{"LOI"}.
 #' @param base.run Optional \code{FLSAM} with all fleets, to avoid refitting it.
 #' @param set.pars Optional \code{set.pars} (see \code{\link{FLSAM}}).
+#' @param catch.vars Optional catch weights (see \code{\link{FLSAM}}), used in
+#'   every run.
 #' @param ... Not used.
 #' @return An \code{\link{FLSAMs}} object named by the fleet combination.
 #' @examples

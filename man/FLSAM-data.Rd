@@ -12,10 +12,16 @@
 \alias{SOL.tun}
 \alias{SOL.ctrl}
 \alias{SOL.sam}
+\alias{MAC}
+\alias{MAC.tun}
+\alias{MAC.ctrl}
+\alias{MAC.cvars}
+\alias{MAC.sam}
 \title{Example datasets}
 \source{
 ICES. 2012. Report of the Herring Assessment Working Group for the
   Area South of 62 N (HAWG). ICES CM 2012/ACOM:06.
+  Mackerel: ICES WGWIDE 2026, mac.27.nea assessment input data.
 }
 \description{
 FLR objects to run example assessments.
@@ -34,6 +40,16 @@ FLR objects to run example assessments.
   \item \code{data(SOL)}, \code{data(SOL.sam)}: \code{SOL}, \code{SOL.tun},
     \code{SOL.ctrl} and \code{SOL.sam}, a sole example with the
     corresponding assessment.
+  \item \code{data(MAC)}: \code{MAC} (\code{FLStock}), \code{MAC.tun}
+    (\code{FLIndices}), \code{MAC.ctrl} (\code{\link{FLSAM.control-class}})
+    and \code{MAC.cvars} (\code{FLQuants}, fixed catch variances before 2000)
+    for North East Atlantic mackerel, 1998 onwards, with the configuration of
+    model 0.01 of the WGWIDE 2026 assessment: egg survey (SSB index), IESSNS
+    and tag-based index with AR(1) correlated observations, IESSNS recruitment
+    index and steel-tag recaptures (\code{MAC.ctrl@recapture}, fleet type 5).
+  \item \code{data(MAC.sam)}: \code{MAC.sam}, the corresponding assessment
+    (without a stored fit). Refit with
+    \code{FLSAM(MAC,MAC.tun,MAC.ctrl,catch.vars=MAC.cvars)}.
 }
 Objects created with FLSAM versions before 3.1 can be updated with
 \code{\link{upgradeFLSAM}}.
@@ -45,5 +61,7 @@ plot(NSH.sam)
 NSH <- NSH + NSH.sam
 data(HERAS.sams)
 lr.test(HERAS.sams)
+data(MAC); data(MAC.sam)
+tag.pars(MAC.sam)
 }
 \keyword{datasets}

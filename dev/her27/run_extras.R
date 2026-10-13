@@ -34,6 +34,29 @@ plotTry("mf_data_overview",     data.plot(NSH3f.sam))
 plotTry("sf_selectivity",       fselectivity.plot(NSH.sam))
 plotTry("mf_selectivity",       fselectivity.plot(NSH3f.sam),width=2400,height=1200)
 
+#- Readable parameter names, parameter comparison and analytical SSB-Fbar ellipse ------
+pt <- parameter.table(FLSAMs(single.fleet=NSH.sam,multi.fleet=NSH3f.sam))
+write.csv(pt,file.path(outDir,"parameter_table.csv"),row.names=FALSE)
+plotTry("sf_mf_params_comparison", params.plot(FLSAMs(single.fleet=NSH.sam,multi.fleet=NSH3f.sam)),width=2600,height=2000)
+plotTry("sf_retro_params_comparison", params.plot(NSH.retro),width=2600,height=2000)
+plotTry("sf_ssbfbar_ellipse",   ssbfbar.ellipse(NSH.sam,years=(lastYr-4):lastYr))
+plotTry("sf_mf_ssbfbar_ellipse",ssbfbar.ellipse(FLSAMs(single.fleet=NSH.sam,multi.fleet=NSH3f.sam),years=lastYr))
+plotTry("sf_retro_ci",          plot(NSH.retro,ci=TRUE),width=2000,height=1600)
+plotTry("sf_mf_ci",             plot(FLSAMs(single.fleet=NSH.sam,multi.fleet=NSH3f.sam),ci=TRUE),width=2000,height=1600)
+
+#- Mackerel example data of the package: tag-recapture data ------------------------------
+data(MAC); data(MAC.sam)
+cat("
+== Mackerel (data(MAC.sam)): tag-recapture parameters
+"); print(tag.pars(MAC.sam))
+MAC.ctrl@residuals <- FALSE
+mac <- FLSAM(MAC,MAC.tun,MAC.ctrl,catch.vars=MAC.cvars,starting.values=MAC.sam,silent=TRUE)
+cat("mackerel refit nlogl:",nlogl(mac),"(stored:",nlogl(MAC.sam),")
+")
+plotTry("mac_tags",             tags.plot(mac),width=2400,height=1600)
+plotTry("mac_params",           params.plot(MAC.sam),width=2400,height=1800)
+plotTry("mac_stock",            plot(MAC.sam))
+
 #- Jitter test -------------------------------------------------------------------
 cat("\n== Jitter test (sf, 5 runs)\n")
 jt <- try(jitter.test(NSH.sam,nojit=5,seed=1))

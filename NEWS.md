@@ -26,6 +26,11 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
   one year less or more data; states are matched by year. `retro()` uses the
   previous peel as starting values for the next (`use.start=TRUE`, default).
 - `pin.R` (`FLSAM2par()`, legacy pin functionality) removed.
+- New example data `data(MAC)` / `data(MAC.sam)`: NEA mackerel 1998 onwards
+  (WGWIDE 2026, model 0.01) with tag recaptures, fixed catch variances
+  (`MAC.cvars`), an SSB index and AR(1) correlated survey observations; the
+  fit reproduces the WGWIDE likelihood (585.6876). Built by `data-raw/MAC.R`.
+- `loo()`, `loi()` and `looi()` accept `catch.vars`.
 - `parameter.table()`: all estimated parameters with readable names (e.g.
   "catchability HERAS 5-8"), type, back-transformed value and 95% CI;
   `params.plot()` compares them between assessments or retrospective peels;

@@ -244,10 +244,10 @@ jt <- jitter.test(sam,nojit=5,seed=1)
 attr(jt,"table")
 plot(jt)
 
-#- NEW: tag-recapture data (SAM fleet type 5) - not in the herring example data; see
-#  dev/mac27/test_tags.R for a complete example with the NEA mackerel assessment:
-#  ctrl <- FLSAM.control(MAC,MAC.tun,recapture=recap); sam <- FLSAM(MAC,MAC.tun,ctrl)
-#  tag.pars(sam); tags.plot(sam)
+#- NEW: tag-recapture data (SAM fleet type 5) - not in the herring example data;
+#  see the mackerel example data (data(MAC)) and dev/FLSAM_overview_mackerel.R
+data(MAC.sam)
+tag.pars(MAC.sam)
 
 #- Prediction-variance link: estimate a power relation between prediction and
 #  observation variance for HERAS, and plot it

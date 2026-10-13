@@ -3,3 +3,5 @@ NSH.sam
 SOL: SOL SOL.tun SOL.ctrl
 SOL.sam
 HERAS.sams
+MAC: MAC MAC.tun MAC.ctrl MAC.cvars
+MAC.sam

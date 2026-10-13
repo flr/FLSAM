@@ -14,7 +14,7 @@
 \usage{
 looi(stck, tun, ctrl, type, ...)
 
-\S4method{looi}{FLStock,FLIndices,FLSAM.control,missing}(stck, tun, ctrl, type, base.run, set.pars)
+\S4method{looi}{FLStock,FLIndices,FLSAM.control,missing}(stck, tun, ctrl, type, base.run, set.pars, catch.vars = NULL)
 
 \S4method{looi}{FLStock,FLIndices,FLSAM.control,character}(
   stck,
@@ -22,20 +22,53 @@ looi(stck, tun, ctrl, type, ...)
   ctrl,
   type = "full",
   base.run = "missing",
-  set.pars = "missing"
+  set.pars = "missing",
+  catch.vars = NULL
 )
 
 loo(stck, tun, ctrl, type, base.run, set.pars, ...)
 
 loi(stck, tun, ctrl, type, base.run, set.pars, ...)
 
-\S4method{loo}{FLStock,FLIndices,FLSAM.control}(stck, tun, ctrl, type, base.run = "missing", set.pars = "missing")
+\S4method{loo}{FLStock,FLIndices,FLSAM.control}(
+  stck,
+  tun,
+  ctrl,
+  type,
+  base.run = "missing",
+  set.pars = "missing",
+  catch.vars = NULL
+)
 
-\S4method{loi}{FLStock,FLIndices,FLSAM.control}(stck, tun, ctrl, type, base.run = "missing", set.pars = "missing")
+\S4method{loi}{FLStock,FLIndices,FLSAM.control}(
+  stck,
+  tun,
+  ctrl,
+  type,
+  base.run = "missing",
+  set.pars = "missing",
+  catch.vars = NULL
+)
 
-\S4method{loo}{FLStocks,FLIndices,FLSAM.control}(stck, tun, ctrl, type, base.run = "missing", set.pars = "missing")
+\S4method{loo}{FLStocks,FLIndices,FLSAM.control}(
+  stck,
+  tun,
+  ctrl,
+  type,
+  base.run = "missing",
+  set.pars = "missing",
+  catch.vars = NULL
+)
 
-\S4method{loi}{FLStocks,FLIndices,FLSAM.control}(stck, tun, ctrl, type, base.run = "missing", set.pars = "missing")
+\S4method{loi}{FLStocks,FLIndices,FLSAM.control}(
+  stck,
+  tun,
+  ctrl,
+  type,
+  base.run = "missing",
+  set.pars = "missing",
+  catch.vars = NULL
+)
 }
 \arguments{
 \item{stck}{An \code{FLStock} (or \code{FLStocks}).}
@@ -51,6 +84,9 @@ loi(stck, tun, ctrl, type, base.run, set.pars, ...)
 \item{base.run}{Optional \code{FLSAM} with all fleets, to avoid refitting it.}
 
 \item{set.pars}{Optional \code{set.pars} (see \code{\link{FLSAM}}).}
+
+\item{catch.vars}{Optional catch weights (see \code{\link{FLSAM}}), used in
+every run.}
 }
 \value{
 An \code{\link{FLSAMs}} object named by the fleet combination.
