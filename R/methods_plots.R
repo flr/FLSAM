@@ -42,8 +42,8 @@ setMethod("plot",signature(x="FLSAM",y="missing"),
     if(!futureYrs) plot.dat    <- subset(plot.dat,year %in% range(x)["minyear"]:(range(x)["maxyear"]-1))
     #Plot it
     ggplot(plot.dat,aes(x=year)) +
-      geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill="grey",colour=NA) +
-      geom_line(aes(y=value),colour="black",linewidth=1) +
+      geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill=.col("light"),alpha=0.4,colour=NA) +
+      geom_line(aes(y=value),colour=.col("main"),linewidth=1) +
       facet_wrap(~name,ncol=1,scales="free_y") +
       expand_limits(y=0) +
       labs(x="Year",y=NULL,title=x@name) +
@@ -78,6 +78,7 @@ setMethod("plot",signature(x="FLSAMs",y="missing"),
     #Plot it
     ggplot(plot.dat,aes(x=year,y=value,colour=name)) +
       geom_line() +
+      scale_colour_manual(values=FLSAM.colours(nlevels(plot.dat$name))) +
       facet_wrap(~var,ncol=1,scales="free_y") +
       expand_limits(y=0) +
       labs(x="Year",y=NULL,colour=NULL,title=main) +
@@ -119,6 +120,7 @@ setMethod("plot",signature(x="FLSAMs",y="FLStock"),
     ggplot(plot.dat,aes(x=year,y=value,colour=name)) +
       geom_line() +
       geom_point(size=0.8) +
+      scale_colour_manual(values=FLSAM.colours(nlevels(plot.dat$name))) +
       facet_wrap(~var,ncol=1,scales="free_y") +
       expand_limits(y=0) +
       labs(x="Year",y=NULL,colour=NULL,title=main) +
@@ -185,6 +187,7 @@ fpart.plot <- function(sam){
   ggplot(f.dat,aes(x=year,y=x,colour=fleet)) +
     geom_line() +
     geom_point() +
+    scale_colour_manual(values=FLSAM.colours(length(unique(f.dat$fleet)))) +
     labs(x="Year",y="Fbar-partial",colour=NULL,title=sam@name) +
     theme_bw()
 }
@@ -196,7 +199,8 @@ fpart.plot <- function(sam){
 #' \code{\link[stockassessment]{parplot}} / \code{corplot}.
 #'
 #' @param sam An \code{\link{FLSAM-class}} object.
-#' @param cols Three colours for correlations of -1, 0 and 1.
+#' @param cols Three colours for correlations of -1, 0 and 1 (default from
+#'   \code{\link{FLSAM.colours}}).
 #' @param full Show the full matrix (\code{TRUE}) or only the fitted
 #'   parameters (\code{FALSE}, default).
 #' @return A \code{ggplot} object.
@@ -204,7 +208,7 @@ fpart.plot <- function(sam){
 #' data(NSH); data(NSH.sam)
 #' cor.plot(NSH.sam)
 #' @export
-cor.plot <- function(sam,cols=c("red","white","blue"),full=FALSE) {
+cor.plot <- function(sam,cols=c(.col("accent"),"white",.col("main")),full=FALSE) {
    n.coefs <- nrow(coef(sam))
    cor.mat <- cov2cor(sam@vcov)
    if(!full) {cor.mat <- cor.mat[1:n.coefs,1:n.coefs]} #Don't show the full matrix
@@ -527,7 +531,7 @@ procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
         if(rel==F)
           yTxt <- "Numbers at age"
         pic   <- ggplot(inp,aes(x=year,y=data)) +
-                   geom_col(fill="black") +
+                   geom_col(fill=.col("main")) +
                    facet_wrap(~age,scales="free_y") +
                    labs(x="Year",y=yTxt,title="Process error deviation in N") +
                    theme_bw()
@@ -548,7 +552,7 @@ procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
           yTxt <- "Mortality (year)"
         pic   <- ggplot(inp,aes(x=year,y=age)) +
                    geom_point(aes(size=abs(data),colour=sign),shape=1) +
-                   scale_colour_manual(values=c(negative="black",positive="red"),drop=FALSE) +
+                   scale_colour_manual(values=c(negative=.col("main"),positive=.col("accent")),drop=FALSE) +
                    scale_size_area(max_size=8) +
                    labs(x="Years",y="Age",size=yTxt,colour=NULL,title="Process error deviation in M") +
                    theme_bw()
@@ -561,7 +565,7 @@ procerr.plot <- function(stck,weight="stock.wt",type="n",rel=F){
         if(rel==F)
           yTxt <- "Biomass (t)"
         pic <- ggplot(bdiff,aes(x=year,y=bdiff)) +
-                 geom_col(fill="black") +
+                 geom_col(fill=.col("main")) +
                  labs(x="Year",y=yTxt,title="Process error deviation in biomass") +
                  theme_bw()
       }
@@ -618,6 +622,7 @@ if(length(unique(res$age))==1){
 pic <- pic +
          geom_hline(yintercept=0,linetype=3) +
          geom_line() +
+         scale_colour_manual(values=FLSAM.colours(nlevels(res$retro))) +
          labs(y="Standardized residuals",colour="Assessment") +
          theme_bw()
 print(pic)
@@ -638,6 +643,7 @@ retroSelectivity <- function(x,yrs){
 
       pic <- ggplot(res,aes(x=an(age),y=value,colour=retro)) +
                geom_line() +
+               scale_colour_manual(values=FLSAM.colours(nlevels(res$retro))) +
                facet_wrap(~year,scales="free_y") +
                labs(x="Ages",y="F",colour="Assessment",title="Retrospective pattern in F at age") +
                theme_bw()
@@ -664,6 +670,7 @@ retroParams <- function(x){
   pic <- ggplot(subretroPars,aes(x=an(year),y=exp(value),colour=name,group=name)) +
            geom_line() +
            geom_point() +
+           scale_colour_manual(values=FLSAM.colours(length(unique(subretroPars$name)))) +
            facet_wrap(~nameOrig,scales="free_y") +
            labs(x="Assessment year",y="Parameter value",colour=NULL) +
            theme_bw() +

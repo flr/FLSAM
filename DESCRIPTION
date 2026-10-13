@@ -21,6 +21,7 @@ Collate:
   "af.R"
   "anf.r"
   "data.R"
+  "colours.R"
   "diagnostics.R"
   "docs.R"
   "diagnostics_sam.R"

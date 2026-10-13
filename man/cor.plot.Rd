@@ -4,12 +4,13 @@
 \alias{cor.plot}
 \title{Parameter correlation plot}
 \usage{
-cor.plot(sam, cols = c("red", "white", "blue"), full = FALSE)
+cor.plot(sam, cols = c(.col("accent"), "white", .col("main")), full = FALSE)
 }
 \arguments{
 \item{sam}{An \code{\link{FLSAM-class}} object.}
 
-\item{cols}{Three colours for correlations of -1, 0 and 1.}
+\item{cols}{Three colours for correlations of -1, 0 and 1 (default from
+\code{\link{FLSAM.colours}}).}
 
 \item{full}{Show the full matrix (\code{TRUE}) or only the fitted
 parameters (\code{FALSE}, default).}

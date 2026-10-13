@@ -15,6 +15,9 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
 - Diagnostics (ggplot2): `residual.tests()`, `jitter.test()`,
   `obscor.empirical.plot()`, `obssd.plot()`, `predsd.plot()`, `data.plot()`,
   `fselectivity.plot()`.
+- Plot colours from `FLSAM.colours()`: default palette dark blue #004868,
+  orange #FF800A, light blue #00BADC, green #31C381; change with
+  `options(FLSAM.palette=...)`.
 - Objects saved with older versions (missing the new slots) keep working:
   `FLSAM()`, `ctrl2conf()`, `update()`, `drop.from.control()`, `SAM2FLR()`,
   `FLSAM.out()` and printing upgrade them automatically; `upgradeFLSAM()`

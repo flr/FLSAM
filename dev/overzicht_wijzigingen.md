@@ -54,6 +54,9 @@ Legenda: **B** = bugfix, **U** = uitbreiding (afstemming op SAM), **G** = lattic
 | `R/upgrade.R` | `upgradeFLSAM()`, `samfit()`, `.upgradeControl()`, `show`/`print`-methodes | oude objecten (zonder nieuwe slots) upgraden, ook automatisch bij printen; toegang tot de SAM-fit | N |
 | `R/sam_tools.R` | `FLSAM.forecast()`, `FLSAM.modelforecast()`, `FLSAM.refpts()`, `FLSAM.ypr()`, `FLSAM.catchbyfleet()`, `model.description()` | wrappers rond stockassessment, geven data.frames terug | N |
 | `R/diagnostics_sam.R` | `residual.tests()`, `jitter.test()`, `obscor.empirical.plot()`, `obssd.plot()`, `predsd.plot()`, `data.plot()`, `fselectivity.plot()` | diagnostics zoals in SAM, in ggplot2 | N |
+| `R/colours.R` | `FLSAM.colours()`, `.col()` | PFA-kleuren als standaardpalet van alle ggplot2-plots (`options(FLSAM.palette=)`) | N |
+| `R/methods_plots.R`, `R/diagnostics_sam.R` | ggplot2-plots | kleuren uit `FLSAM.colours()` | U |
+| `dev/her27/` | `run_version.R`, `run_extras.R`, `compare_her27.R` | vergelijking op de HAWG 2026 haring-assessment (sf + mf, retro 10): 116/116 identiek | N |
 | `R/FLSAM-package.R`, `R/docs.R`, `R/data.R` | – | package-, groeps- en datadocumentatie; imports | N |
 | `DESCRIPTION` | – | versie 3.1.0, Imports (+ggplot2, stats, graphics, grDevices, parallel), Suggests, Collate | U |
 | `NAMESPACE` | – | nu gegenereerd door roxygen2 (`exportPattern` behouden) | D |

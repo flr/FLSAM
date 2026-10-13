@@ -58,7 +58,7 @@ residual.tests <- function(sam,plot=TRUE,p.breaks=c(0,0.001,0.05,0.1,1)){
   pic <- ggplot(pdat,aes(x=age,y=fleet,fill=class)) +
            geom_tile(colour="white") +
            geom_text(aes(label=sprintf("%.3f",p)),size=2.5) +
-           scale_fill_brewer(palette="Blues",direction=-1,drop=FALSE) +
+           scale_fill_manual(values=grDevices::colorRampPalette(c(.col("main"),.col("light"),"white"))(length(p.breaks)-1),drop=FALSE) +
            facet_wrap(~test,scales="free_x") +
            labs(x="Age",y=NULL,fill="p-value",title=paste("Residual tests",sam@name)) +
            theme_bw()
@@ -159,7 +159,7 @@ obscor.empirical.plot <- function(sam){
   ggplot(dat,aes(x=factor(age1),y=factor(age2),fill=cor)) +
     geom_tile() +
     geom_text(aes(label=sprintf("%.2f",cor)),size=2.5) +
-    scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=0,limits=c(-1,1)) +
+    scale_fill_gradient2(low=.col("accent"),mid="white",high=.col("main"),midpoint=0,limits=c(-1,1)) +
     facet_wrap(~fleet,scales="free") +
     labs(x="Age",y="Age",fill="Correlation",title="Empirical correlation of residuals") +
     theme_bw()
@@ -188,6 +188,7 @@ obssd.plot <- function(sam,show.rel.w=FALSE){
   obv$y      <- if(show.rel.w) obv$rel.w else obv$value
   ggplot(obv,aes(x=name,y=y,fill=fleet)) +
     geom_col() +
+    scale_fill_manual(values=FLSAM.colours(length(unique(obv$fleet)))) +
     labs(x=NULL,y=ifelse(show.rel.w,"Relative weight","SD"),fill=NULL,title=sam@name) +
     theme_bw() +
     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
@@ -239,9 +240,9 @@ predsd.plot <- function(sam,fleet,age=NULL,type="log",N=20000){
   curve    <- data.frame(x=xTrans(pred),sd=sdFun(alpha,beta,pred),lbnd=qi[1,],ubnd=qi[2,])
   pts      <- data.frame(x=xTrans(exp(predObs)),sd=sdFun(alpha,beta,exp(predObs)))
   ggplot(curve,aes(x=x)) +
-    geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill="grey80") +
-    geom_line(aes(y=sd)) +
-    geom_point(aes(y=sd),data=pts,shape=3) +
+    geom_ribbon(aes(ymin=lbnd,ymax=ubnd),fill=.col("light"),alpha=0.4) +
+    geom_line(aes(y=sd),colour=.col("main")) +
+    geom_point(aes(y=sd),data=pts,shape=3,colour=.col("accent")) +
     labs(x=ifelse(type=="log","Prediction (log)","Prediction"),y="Standard deviation",
          title=paste0("Pred-std relation: ",names(sam@control@fleets)[fleet]," age ",paste(range(age),collapse="-"))) +
     theme_bw()
@@ -270,7 +271,7 @@ data.plot <- function(sam){
   dat$fleet <- factor(dat$fleet,levels=rev(names(sam@control@fleets)))
   ggplot(dat,aes(x=year,y=fleet,fill=obs)) +
     geom_tile(colour="white") +
-    scale_fill_gradient(low="grey80",high="black") +
+    scale_fill_gradient(low=.col("light"),high=.col("main")) +
     labs(x="Year",y=NULL,fill="No. ages\nobserved",title=sam@name) +
     theme_bw()
 }
@@ -292,7 +293,7 @@ fselectivity.plot <- function(sam){
   ggplot(fs,aes(x=age,y=sel,group=year,colour=year)) +
     geom_line() +
     facet_wrap(~fleet) +
-    scale_colour_viridis_c() +
+    scale_colour_gradient(low=.col("light"),high=.col("main")) +
     labs(x="Age",y="F / max(F)",colour="Year",title=sam@name) +
     theme_bw()
 }
