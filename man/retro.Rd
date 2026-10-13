@@ -6,7 +6,7 @@
 \alias{retro,FLStocks,FLIndices,FLSAM.control,numeric-method}
 \title{Retrospective analysis with FLSAM}
 \usage{
-retro(stock, indices, control, retro, year.range, set.pars)
+retro(stock, indices, control, retro, year.range, set.pars, use.start)
 
 \S4method{retro}{FLStock,FLIndices,FLSAM.control,numeric}(
   stock,
@@ -14,7 +14,8 @@ retro(stock, indices, control, retro, year.range, set.pars)
   control,
   retro,
   year.range = "missing",
-  set.pars = "missing"
+  set.pars = "missing",
+  use.start = TRUE
 )
 
 \S4method{retro}{FLStocks,FLIndices,FLSAM.control,numeric}(
@@ -23,7 +24,8 @@ retro(stock, indices, control, retro, year.range, set.pars)
   control,
   retro,
   year.range = "missing",
-  set.pars = "missing"
+  set.pars = "missing",
+  use.start = TRUE
 )
 }
 \arguments{
@@ -38,6 +40,11 @@ retro(stock, indices, control, retro, year.range, set.pars)
 \item{year.range}{Alternatively, the assessment years to run.}
 
 \item{set.pars}{Optional \code{set.pars} (see \code{\link{FLSAM}}).}
+
+\item{use.start}{Use the estimates of the previous (one year longer) peel
+as starting values for the next peel (default \code{TRUE}, see
+\code{\link{startingValues}}). Set to \code{FALSE} to start every peel
+from the default starting values.}
 }
 \value{
 An \code{\link{FLSAMs}} object named by assessment year; failed

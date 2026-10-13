@@ -23,7 +23,9 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
   `fselectivity.plot()` colours years by period (`period=10`).
 - `FLSAM(..., starting.values=)` works again (`startingValues()`): an earlier
   assessment (`FLSAM` with or without stored fit, or a `sam` fit), also with
-  one year less or more data; states are matched by year.
+  one year less or more data; states are matched by year. `retro()` uses the
+  previous peel as starting values for the next (`use.start=TRUE`, default).
+- `pin.R` (`FLSAM2par()`, legacy pin functionality) removed.
 - Objects saved with older versions (missing the new slots) keep working:
   `FLSAM()`, `ctrl2conf()`, `update()`, `drop.from.control()`, `SAM2FLR()`,
   `FLSAM.out()` and printing upgrade them automatically; `upgradeFLSAM()`

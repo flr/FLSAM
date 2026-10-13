@@ -249,7 +249,8 @@ lr.test(sam,sam.pv)
 #===============================================================================
 # 7. Retrospective and leave-one-out analyses
 #===============================================================================
-NSH.retro <- retro(NSH,NSH.tun,NSH.ctrl,retro=3)
+NSH.retro <- retro(NSH,NSH.tun,NSH.ctrl,retro=3)   # NEW: each peel starts from the previous peel (use.start=TRUE)
+# retro(NSH,NSH.tun,NSH.ctrl,retro=3,use.start=FALSE)  # every peel from the default starting values
 plot(NSH.retro)
 mohns.rho(NSH.retro,type="ssb")            # CHANGED: defaults work, sign as Mohn (1999)
 attr(mohns.rho(NSH.retro,type="fbar"),"mohn")   # NEW: mean Mohn's rho
@@ -326,5 +327,4 @@ af(c("a","b"))                             # as.factor
 anf(factor(c("1","2")))                    # factor -> numeric
 diags(sam)[1:3,]                           # residual data for custom plots (needs plyr)
 # SIM2FLR(), sam.fitfast(), clean.void.catches(), getLowerBounds(), getUpperBounds():
-#   internal helpers; FLSAM2par() and FLSAM(..., starting.values=): legacy pin
-#   functionality, not maintained
+#   internal helpers

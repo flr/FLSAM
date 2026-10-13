@@ -183,12 +183,13 @@ setMethod("loi",signature(stck="FLStocks",tun="FLIndices",ctrl="FLSAM.control"),
 #-------------------------------------------------------------------------------
 
 #' @rdname retro
-	setGeneric("retro", function(stock, indices, control, retro, year.range,set.pars)
+	setGeneric("retro", function(stock, indices, control, retro, year.range,set.pars,use.start)
     	standardGeneric("retro"))
 
 #' @rdname retro
 setMethod('retro', signature(stock='FLStock', indices='FLIndices', control='FLSAM.control',retro='numeric'),
-function(stock, indices, control, retro, year.range="missing",set.pars="missing"){
+function(stock, indices, control, retro, year.range="missing",set.pars="missing",use.start=TRUE){
+    if(missing(use.start)) use.start <- TRUE
 
   # ---------- Checks ----------------------
     if (!inherits(stock, "FLStock"))
@@ -240,9 +241,9 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
         starting.vals <- assess
       } else {
         if(missing(set.pars)){
-          assess  <- try(FLSAM(Stock, Indices.temp,control))#,starting.values=starting.vals))
+          assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=if(use.start) starting.vals else NULL))
         } else {
-          assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars))#starting.values=starting.vals,))
+          assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars,starting.values=if(use.start) starting.vals else NULL))
         }
         if(is(assess, "try-error")){
           starting.vals <- NULL
@@ -266,7 +267,8 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
 
 #' @rdname retro
 setMethod('retro', signature(stock='FLStocks', indices='FLIndices', control='FLSAM.control',retro='numeric'),
-function(stock, indices, control, retro, year.range="missing",set.pars="missing"){
+function(stock, indices, control, retro, year.range="missing",set.pars="missing",use.start=TRUE){
+    if(missing(use.start)) use.start <- TRUE
 
   # ---------- Checks ----------------------
     if (!inherits(stock, "FLStocks"))
@@ -332,9 +334,9 @@ function(stock, indices, control, retro, year.range="missing",set.pars="missing"
         starting.vals <- assess
       } else {
           if(missing(set.pars)){
-            assess  <- try(FLSAM(Stock, Indices.temp,control))#,starting.values=starting.vals))
+            assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=if(use.start) starting.vals else NULL))
           } else {
-            assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars))#starting.values=starting.vals,))
+            assess  <- try(FLSAM(Stock, Indices.temp,control,set.pars=set.pars,starting.values=if(use.start) starting.vals else NULL))
           }
         #assess  <- try(FLSAM(Stock, Indices.temp,control,starting.values=starting.vals))
         if(is(assess, "try-error")){

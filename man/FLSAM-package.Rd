@@ -35,6 +35,7 @@ All plots are made with \pkg{ggplot2} (except a few base-graphics plots:
 
 Authors:
 \itemize{
+  \item N.T. Hintzen \email{nhintzen@pelagicfish.eu}
   \item M.R. Payne \email{mpa@aqua.dtu.dk}
 }
 
