@@ -77,7 +77,14 @@ setClass("FLSAM",
 #'   observations (elements \code{residual} and optionally \code{sum}).
 #' @param return.fit If \code{TRUE}, return the raw \code{sam} fit instead of
 #'   an \code{FLSAM} object.
-#' @param starting.values Legacy option (pin functionality), no longer maintained.
+#' @param starting.values Optional earlier assessment whose estimates are used
+#'   as starting values: an \code{FLSAM} object (with or without stored fit,
+#'   e.g. last year's assessment or a retrospective peel) or a \code{sam} fit.
+#'   Fixed-effect parameters are copied when their number matches the current
+#'   configuration; the states (\code{logN}, \code{logF}) are matched by year,
+#'   and years that are not in the earlier assessment get the value of the
+#'   nearest year. Parameters that do not match keep their default starting
+#'   value (with a message). See \code{\link{startingValues}}.
 #' @param set.pars Optional \code{data.frame} with columns \code{par},
 #'   \code{number} and \code{value} to fix parameters at a given value
 #'   (on the SAM, mostly log, scale). \code{number} is the zero-based index
@@ -117,7 +124,7 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
   if(!is.na(ctrl@hockeyStickCurve[1]) & ctrl@srr==63)
     parS$rec_pars[3] <- log(ctrl@hockeyStickCurve[1])
   if(!is.null(starting.values))
-    parS <- updateStart(parS,FLSAM2par(starting.values))
+    parS <- startingValues(parS,dataS,starting.values)
 
   if(!is.null(set.pars)){
     sp    <- .setPars(parS,set.pars)
@@ -137,6 +144,77 @@ FLSAM <-function(stcks,tun,ctrl,catch.vars=NULL,return.fit=F,starting.values=NUL
 
   return(res)
 }
+
+#' Starting values from an earlier assessment
+#'
+#' Fills a SAM parameter list (as returned by
+#' \code{\link[stockassessment]{defpar}}) with the estimates of an earlier
+#' assessment, which may cover different years (e.g. one year less of data).
+#' Used by \code{FLSAM(..., starting.values=)}.
+#'
+#' Fixed-effect parameters are copied when their length matches. The random
+#' effects \code{logN} and \code{logF} are matched by year: years of the new
+#' data that are not in the earlier assessment get the value of the nearest
+#' earlier year (or the first year). Everything else keeps its default.
+#'
+#' @param par A SAM parameter list, e.g. \code{stockassessment::defpar(data, conf)}.
+#' @param data The SAM data list of the new assessment (for its years).
+#' @param start An \code{FLSAM} object (with or without stored fit) or a \code{sam} fit.
+#' @param verbose Report the parameters that keep their default value.
+#' @return The SAM parameter list with starting values.
+#' @examples
+#' \donttest{
+#' data(NSH); data(NSH.sam)
+#' #- last year's assessment as starting values for this year's assessment
+#' sam.last <- FLSAM(window(NSH,end=2010),
+#'                   FLIndices(lapply(NSH.tun,window,end=2011)),NSH.ctrl)
+#' sam.now  <- FLSAM(NSH,NSH.tun,NSH.ctrl,starting.values=sam.last)
+#' }
+#' @export
+startingValues <- function(par,data,start,verbose=TRUE){
+  #- Earlier estimates as list + their years
+  if(is(start,"sam")){
+    pl <- start$pl; yrsOld <- start$data$years; fromParams <- FALSE
+  } else if(is(start,"FLSAM")){
+    if(.hasSlot(start,"fit") && !is.null(start@fit)){
+      pl <- start@fit$pl; yrsOld <- start@fit$data$years; fromParams <- FALSE
+    } else {
+      #- no stored fit (e.g. saved with an older version): use the params slot
+      p  <- start@params
+      pl <- lapply(split(p$value,factor(p$name,levels=unique(p$name))),identity)
+      yrsOld <- start@range["minyear"]:start@range["maxyear"]; fromParams <- TRUE
+    }
+  } else {
+    stop("starting.values must be an FLSAM object or a sam fit")
+  }
+  yrsNew <- data$years
+  kept   <- character()
+  for(n in intersect(names(par),names(pl))){
+    new <- par[[n]]; old <- pl[[n]]
+    if(length(new)==0) next
+    if(n %in% c("logN","logF")){
+      #- states x years: match by year
+      nr <- nrow(new)
+      if(is.null(dim(old))){
+        if(length(old) != nr*length(yrsOld)){ kept <- c(kept,n); next }
+        old <- matrix(old,nrow=nr)
+      }
+      if(nrow(old)!=nr || ncol(old)!=length(yrsOld)){ kept <- c(kept,n); next }
+      idx <- pmax(findInterval(yrsNew,yrsOld),1)       # same year, else nearest earlier year
+      par[[n]][] <- old[,idx,drop=FALSE]
+    } else {
+      #- the params slot holds some parameters twice (as parameter and as derived quantity)
+      if(fromParams && length(old)==2*length(new)) old <- old[seq_along(new)]
+      if(length(old)==length(new)){
+        par[[n]][] <- old
+      } else {
+        kept <- c(kept,n)
+      }
+    }
+  }
+  if(verbose && length(kept)>0)
+    message("starting.values: default starting values kept for ",paste(kept,collapse=", "))
+  return(par)}
 
 #' Parameters that can be fixed with set.pars
 #'

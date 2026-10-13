@@ -104,6 +104,16 @@ sp <- data.frame(par=c("obs.vars","cor.F"),number=c(1,0),value=c(log(0.3),2))
 sam.fixed <- FLSAM(NSH,NSH.tun,NSH.ctrl,set.pars=sp)
 c(free=nopar(sam),fixed=nopar(sam.fixed))
 
+#- NEW: starting values from an earlier assessment, also with one year less (or more) data
+NSH.last  <- window(NSH,end=2010)          # "last year's" assessment
+NSH.tun.last <- FLIndices(lapply(NSH.tun,function(x) trim(x,year=dims(x)$minyear:min(dims(x)$maxyear,2011))))
+ctrl.last <- NSH.ctrl; ctrl.last@range["maxyear"] <- 2011
+sam.last  <- FLSAM(NSH.last,NSH.tun.last,ctrl.last)
+sam.sv    <- FLSAM(NSH,NSH.tun,NSH.ctrl,starting.values=sam.last)   # same optimum, fewer iterations
+c(default=samfit(sam)$opt$iterations,starting.values=samfit(sam.sv)$opt$iterations)
+sam.sv2   <- FLSAM(NSH,NSH.tun,NSH.ctrl,starting.values=NSH.sam)    # also from objects without stored fit
+pars      <- startingValues(defpar(dat,conf),dat,sam.last)          # the underlying function
+
 #- Fast fit for simulations, results in the FLStock   # CHANGED: works when surveys extend beyond the catches
 NSH.fast <- FLSAM.fast(NSH,NSH.tun,NSH.ctrl)
 NSH.fast[["residual"]]@stock.n[,ac(2009:2011)]

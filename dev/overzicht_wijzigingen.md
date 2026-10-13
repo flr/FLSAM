@@ -28,6 +28,7 @@ Legenda: **B** = bugfix, **U** = uitbreiding (afstemming op SAM), **G** = lattic
 | | `FLSAMs`, `sam.fitfast()` e.d. | alleen documentatie | D |
 | `R/SAM2FLR.R` | `SAM2FLR()` | `keep.fit`; `plogis` i.p.v. `boot::inv.logit`; upgrade oude control | U |
 | | `SIM2FLR()` | haalde verkeerde parameters weg bij meerdere vaste waarden in één parameter | B |
+| `R/FLSAM.R` | `startingValues()`, `FLSAM(..., starting.values=)` | startwaarden uit een eerder assessment (ook met een jaar minder/meer data; logN/logF op jaar uitgelijnd; ook uit objecten zonder fit); vervangt de pin-functionaliteit | N |
 | `R/pin.R` | `FLSAM2par()` | code ongewijzigd (pin-functionaliteit wordt niet meer gebruikt); alleen een documentatiestub (intern) | D |
 | `R/accessors.R` | `components<-`, `info<-` | `as.integer()` vernielde de waarden | B |
 | | overige accessors | documentatie | D |

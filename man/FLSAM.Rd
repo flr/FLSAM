@@ -31,7 +31,14 @@ observations (elements \code{residual} and optionally \code{sum}).}
 \item{return.fit}{If \code{TRUE}, return the raw \code{sam} fit instead of
 an \code{FLSAM} object.}
 
-\item{starting.values}{Legacy option (pin functionality), no longer maintained.}
+\item{starting.values}{Optional earlier assessment whose estimates are used
+as starting values: an \code{FLSAM} object (with or without stored fit,
+e.g. last year's assessment or a retrospective peel) or a \code{sam} fit.
+Fixed-effect parameters are copied when their number matches the current
+configuration; the states (\code{logN}, \code{logF}) are matched by year,
+and years that are not in the earlier assessment get the value of the
+nearest year. Parameters that do not match keep their default starting
+value (with a message). See \code{\link{startingValues}}.}
 
 \item{set.pars}{Optional \code{data.frame} with columns \code{par},
 \code{number} and \code{value} to fix parameters at a given value
