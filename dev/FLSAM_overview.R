@@ -233,6 +233,11 @@ data.plot(sam)                             # data overview
 fselectivity.plot(sam)                     # F / max(F) by age, coloured by period
 fselectivity.plot(sam,period=5)
 model.description(sam)                     # text description of the model
+parameter.table(sam)                       # NEW: parameters with readable names and 95% CI
+params.plot(sam)                           # NEW: parameter plot ...
+params.plot(HERAS.sams)                    #      ... and comparison between assessments
+ssbfbar.ellipse(sam,years=2007:2011)       # NEW: analytical SSB-Fbar confidence ellipse(s)
+ssbfbar.ellipse(HERAS.sams)
 
 #- Jitter test: refit from perturbed starting values
 jt <- jitter.test(sam,nojit=5,seed=1)
@@ -263,7 +268,9 @@ attr(mohns.rho(NSH.retro,type="fbar"),"mohn")   # NEW: mean Mohn's rho
 retroResiduals(NSH.retro,"HERAS",2005:2011)
 retroResiduals(NSH.retro,"HERAS",2005:2011,cohort=TRUE)
 retroSelectivity(NSH.retro,2006:2011)
-retroParams(NSH.retro)
+retroParams(NSH.retro)                     # parameters by assessment year (readable names)
+params.plot(NSH.retro)                     # NEW: parameters of the peels side by side
+ssbfbar.ellipse(NSH.retro,years=2008)      # NEW: SSB-Fbar ellipse of 2008 in every peel
 
 NSH.loo <- loo(NSH,NSH.tun,NSH.ctrl)       # leave one fleet out
 plot(NSH.loo)

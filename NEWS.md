@@ -26,6 +26,12 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
   one year less or more data; states are matched by year. `retro()` uses the
   previous peel as starting values for the next (`use.start=TRUE`, default).
 - `pin.R` (`FLSAM2par()`, legacy pin functionality) removed.
+- `parameter.table()`: all estimated parameters with readable names (e.g.
+  "catchability HERAS 5-8"), type, back-transformed value and 95% CI;
+  `params.plot()` compares them between assessments or retrospective peels;
+  `cor.plot()` and `retroParams()` use the readable names.
+- `ssbfbar.ellipse()`: analytical confidence ellipse of SSB and Fbar for one or
+  more years and assessments.
 - Tag-recapture data (SAM fleet type 5): `FLSAM.control(..., recapture=)`,
   discrete one-step-ahead residuals for the recaptures, `tag.pars()`,
   `tags.plot()`; `retro()` cuts the tag data per peel. Tested against the

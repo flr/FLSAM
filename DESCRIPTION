@@ -30,6 +30,7 @@ Collate:
   "methods_plots.R"
   "methods.R"
   "monteCarloStock.R"
+  "params_named.R"
   "sam_tools.R"
   "tags.R"
   "upgrade.R"

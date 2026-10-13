@@ -29,6 +29,8 @@ Legenda: **B** = bugfix, **U** = uitbreiding (afstemming op SAM), **G** = lattic
 | `R/SAM2FLR.R` | `SAM2FLR()` | `keep.fit`; `plogis` i.p.v. `boot::inv.logit`; upgrade oude control | U |
 | | `SIM2FLR()` | haalde verkeerde parameters weg bij meerdere vaste waarden in één parameter | B |
 | `R/FLSAM.R` | `startingValues()`, `FLSAM(..., starting.values=)` | startwaarden uit een eerder assessment (ook met een jaar minder/meer data; logN/logF op jaar uitgelijnd; ook uit objecten zonder fit); vervangt de pin-functionaliteit | N |
+| `R/params_named.R` | `parameter.table()`, `params.plot()`, `ssbfbar.ellipse()` | parameters met leesbare namen (o.b.v. de koppelingen), vergelijkingsplot; analytische SSB-Fbar-ellips | N |
+| `R/methods_plots.R` | `cor.plot()`, `retroParams()` | leesbare parameternamen | U |
 | `R/tags.R` | `tag.pars()`, `tags.plot()` | tagparameters en geobserveerde vs voorspelde terugvangsten | N |
 | `R/FLSAM.control.R`, `R/FLR2SAM.R` | slot `recapture`, `FLSAM.control(..., recapture=)`, `FLSAM2SAM(..., recapture=)`, `conf2ctrl` | tag-recapture data (SAM vloottype 5); `conf2ctrl` vulde `logP.vars` niet en zette de plusgroep fout | N, B |
 | `R/SAM2FLR.R` | `SAM2FLR()` | discrete OSA-residuen voor terugvangsten; vangstvloten herkend op type i.p.v. naam | U, B |

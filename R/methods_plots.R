@@ -222,6 +222,10 @@ cor.plot <- function(sam,cols=c(.col("accent"),"white",.col("main")),full=FALSE)
    var.names <- colnames(cor.mat)
    var.names <- factor(var.names,unique(var.names))
    var.names <- paste(var.names,do.call(c,lapply(table(var.names),seq,from=1)),sep=".")
+   #- readable names (see parameter.table) for the estimated parameters
+   labs <- tryCatch({tab <- parameter.table(sam); tab$label[!is.na(tab$std.dev) & tab$std.dev>0]},error=function(e) NULL)
+   if(!is.null(labs) && length(labs)==length(var.names) && !any(duplicated(labs))) var.names <- labs
+   var.names <- factor(var.names,levels=var.names)
    dimnames(cor.mat) <- list(Var2=var.names,Var1=var.names)
    plt.dat <- as.data.frame(as.table(cor.mat),responseName="cor")
    ggplot(plt.dat,aes(x=Var2,y=Var1,fill=cor)) +
@@ -664,32 +668,34 @@ retroSelectivity <- function(x,yrs){
 #' @rdname retroPlots
 #' @export
 retroParams <- function(x){
-  retroPars     <- lapply(x,params)
-  subretroPars  <- lapply(retroPars,function(y){return(subset(y,name %in% c("logFpar","logQpow","logSdLogFsta","logSdLogN","logSdLogObs",
-                                                                            "logSdLogTotalObs","transfIRARdist","rec_pars","itrans_rho","logScale")))})
-  subretroPars  <- lapply(as.list(1:length(subretroPars)),function(y){return(cbind(year=names(subretroPars)[y],subretroPars[[y]]))})
-  subretroPars  <- lapply(subretroPars,function(y){
-                          lapply(as.list(names(table(ac(y$name)))),
-                                 function(z){tmpy <- subset(y,name==z)
-                                             tmpy$nameOrig <- tmpy$name
-                                             if(nrow(tmpy)>1)
-                                              tmpy$name <- paste(tmpy$name,1:nrow(tmpy))
-                                             return(tmpy)})})
-  subretroPars  <- do.call(rbind,lapply(subretroPars,function(y){do.call(rbind,y)}))
-  #- number the series within each parameter (facet), so colours restart in every facet
-  subretroPars$idx <- NA
-  for(iPar in unique(subretroPars$nameOrig)){
-    i <- subretroPars$nameOrig==iPar
-    subretroPars$idx[i] <- match(subretroPars$name[i],unique(subretroPars$name[i]))
+  facetName <- c(logFpar="catchability",logQpow="q power",logScale="catch scaling",
+                 logSdLogObs="obs sd",logSdLogTotalObs="obs sd total",logXtraSd="extra obs sd",predVarObs="pred-var power",
+                 logSdLogFsta="F process sd",logSdLogN="N process sd",logSdLogP="component process sd",
+                 transfIRARdist="obs correlation",itrans_rho="F correlation",rec_pars="SR parameter",
+                 logitReleaseSurvival="tag release survival",logitRecapturePhi="tag recapture phi")
+  tab  <- parameter.table(x)
+  tab  <- tab[tab$name %in% names(facetName),]
+  tab$facet <- factor(facetName[tab$name],levels=unique(facetName[tab$name]))
+  tab$short <- trimws(mapply(function(l,f) sub(paste0("^",f),"",l),tab$label,as.character(tab$facet)))
+  tab$short[tab$short==""] <- as.character(tab$number[tab$short==""])
+  tab$year  <- an(as.character(tab$model))
+  #- number the series within each facet, so colours restart in every facet
+  tab$idx <- NA
+  for(iPar in levels(tab$facet)){
+    i <- tab$facet==iPar
+    tab$idx[i] <- match(tab$label[i],unique(tab$label[i]))
   }
-  subretroPars$idx <- factor(subretroPars$idx)
+  tab$idx <- factor(tab$idx)
+  lab <- tab[tab$year==max(tab$year),]
 
-  pic <- ggplot(subretroPars,aes(x=an(year),y=exp(value),colour=idx,linetype=idx,group=name)) +
+  pic <- ggplot(tab,aes(x=year,y=value,colour=idx,linetype=idx,group=label)) +
            geom_line() +
            geom_point() +
-           .discreteScales(nlevels(subretroPars$idx)) +
-           facet_wrap(~nameOrig,scales="free_y") +
-           labs(x="Assessment year",y="Parameter value",colour=NULL) +
+           geom_text(aes(label=short),data=lab,hjust=-0.1,size=2.5,show.legend=FALSE) +
+           .discreteScales(nlevels(tab$idx)) +
+           scale_x_continuous(expand=expansion(mult=c(0.03,0.35))) +
+           facet_wrap(~facet,scales="free_y") +
+           labs(x="Assessment year",y="Parameter value (back-transformed)",colour=NULL) +
            theme_bw() +
            theme(legend.position="none")
   print(pic)
