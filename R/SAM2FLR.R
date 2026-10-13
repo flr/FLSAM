@@ -15,6 +15,7 @@
 #' @rdname SAM2FLR
 #' @export
 SAM2FLR <- function(fit,ctrl,keep.fit=TRUE){
+  ctrl        <- .upgradeControl(ctrl)
 
   #- Create new FLSAM object and fill with ctrl elements
   res         <- new("FLSAM")

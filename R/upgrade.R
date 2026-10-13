@@ -42,7 +42,9 @@ upgradeFLSAM <- function(object){
   ctrl <- .upgradeSlots(ctrl,"FLSAM.control")
   #- fixVarToWeight is fleet specific since SAM 0.12.0
   if(length(ctrl@fixVarToWeight)==1 & length(ctrl@fleets)>1)
-    ctrl@fixVarToWeight <- setNames(rep(ctrl@fixVarToWeight,length(ctrl@fleets)),names(ctrl@fleets))
+    ctrl@fixVarToWeight <- rep(ctrl@fixVarToWeight,length(ctrl@fleets))
+  if(length(ctrl@fixVarToWeight)==length(ctrl@fleets))
+    names(ctrl@fixVarToWeight) <- names(ctrl@fleets)
   return(ctrl)
 }
 
@@ -83,3 +85,23 @@ setMethod("samfit", signature(object="FLSAMs"),
     class(res) <- "samset"
     return(res)
 })
+
+#- Printing objects saved with older FLSAM versions (missing slots) upgrades them first
+#' @rdname upgradeFLSAM
+#' @aliases show,FLSAM.control-method
+setMethod("show",signature(object="FLSAM.control"),
+  function(object) methods::showDefault(.upgradeControl(object)))
+
+#' @rdname upgradeFLSAM
+#' @aliases show,FLSAM-method
+setMethod("show",signature(object="FLSAM"),
+  function(object){
+    methods::showDefault(upgradeFLSAM(object))
+})
+
+#' @rdname upgradeFLSAM
+#' @param x An \code{FLSAM} object.
+#' @param ... Not used.
+#' @aliases print,FLSAM-method
+setMethod("print",signature(x="FLSAM"),
+  function(x,...) show(x))

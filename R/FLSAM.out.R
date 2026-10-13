@@ -21,6 +21,7 @@
 #' @rdname FLSAM.out
 #' @export
   FLSAM.out   <-  function(stck,tun,sam,format="TABLE %i.") {
+    sam <- upgradeFLSAM(sam)
     #Check  validity of objects
     if(!validObject(stck) | !is.FLStock(stck)) {stop("\"stck\" argument is not a valid FLStock object")}
     if(!validObject(tun)) {stop("\"tun\" argument is not a valid FLIndices object")}

@@ -1,11 +1,12 @@
 
 # FLSAM
-- Version: 2.1.1
-- Date: 2020-05-26
-- Author: M.R. Payne <mpa ΑΤ aqua.dtu.dk>, N.T. Hintzen <niels.hintzen ΑΤ wur.nl>
-- Maintainer: M.R. Payne <mpa ΑΤ aqua.dtu.dk>, N.T. Hintzen <niels.hintzen ΑΤ wur.nl>
-- Repository: <https://github.com/flr/FLCore/>
-- Bug reports: <https://github.com/flr/FLCore/issues>
+- Version: 3.1.0
+- Date: 2026-10-13
+- Author: M.R. Payne <mpa ΑΤ aqua.dtu.dk>, N.T. Hintzen <nhintzen ΑΤ pelagicfish.eu>
+- Maintainer: N.T. Hintzen <nhintzen ΑΤ pelagicfish.eu>
+- Repository: <https://github.com/flr/FLSAM/>
+- Bug reports: <https://github.com/flr/FLSAM/issues>
+- Changes: see [NEWS.md](NEWS.md)
 
 ## Overview
 The FLSAM package provides an FLR version of SAM, the State-space Assessment Model developed by Anders Nielsen, DTU-Aqua. For details regarding SAM, please consult <http://www.stockassessment.org>. 

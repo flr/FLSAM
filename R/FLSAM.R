@@ -77,8 +77,7 @@ setClass("FLSAM",
 #'   observations (elements \code{residual} and optionally \code{sum}).
 #' @param return.fit If \code{TRUE}, return the raw \code{sam} fit instead of
 #'   an \code{FLSAM} object.
-#' @param starting.values An \code{FLSAM} object whose estimates are used as
-#'   starting values.
+#' @param starting.values Legacy option (pin functionality), no longer maintained.
 #' @param set.pars Optional \code{data.frame} with columns \code{par},
 #'   \code{number} and \code{value} to fix parameters at a given value
 #'   (on the SAM, mostly log, scale). \code{number} is the zero-based index

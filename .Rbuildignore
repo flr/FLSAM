@@ -6,3 +6,4 @@ Makefile
 .git/
 ^appveyor\.yml$
 ^_pkgdown\.yml$
+^dev$

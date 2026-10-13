@@ -2,12 +2,25 @@
 % Please edit documentation in R/upgrade.R
 \name{upgradeFLSAM}
 \alias{upgradeFLSAM}
+\alias{show,FLSAM.control-method}
+\alias{show,FLSAM-method}
+\alias{print,FLSAM-method}
 \title{Upgrade FLSAM objects created with an older FLSAM version}
 \usage{
 upgradeFLSAM(object)
+
+\S4method{show}{FLSAM.control}(object)
+
+\S4method{show}{FLSAM}(object)
+
+\S4method{print}{FLSAM}(x, ...)
 }
 \arguments{
 \item{object}{An \code{FLSAM.control}, \code{FLSAM} or \code{FLSAMs} object.}
+
+\item{x}{An \code{FLSAM} object.}
+
+\item{...}{Not used.}
 }
 \value{
 The upgraded object.
