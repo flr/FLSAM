@@ -54,3 +54,7 @@ Alignment with stockassessment (SAM) 0.12.0 (master of fishfollower/SAM).
 - `residual.diagnostics()` never drew the smoother; `components<-` and
   `info<-` corrupted the values; `plotkobe()` used a global `NSH.sam`;
   `SIM2FLR()` removed the wrong parameters when several were fixed.
+- `simulate()` could not be called without `set.pars`, and failed for more
+  than one simulation with `set.pars`.
+- `sam.out()` called itself (infinite recursion) instead of `FLSAM.out()`.
+- `obscor.plot()` gave an unclear error without correlated observations.

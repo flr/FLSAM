@@ -185,16 +185,17 @@ SIM2FLR <- function(sim,fit,ctrl,set.pars=NULL){
 
     #- get parameter names
     pars2match <- unique(dimnames(sim)[[2]])
-    keepPars    <- names(fit$pl)[which(names(fit$pl) %in% pars2match)]
+    pl          <- fit$pl   #- copy per simulation: the fixed parameters are removed below
+    keepPars    <- names(pl)[which(names(pl) %in% pars2match)]
 
     #- Fix for set.pars: remove the fixed parameters (all at once per parameter)
     if(!is.null(set.pars)){
-      set.parsSAM <- .setParsSAM(fit$pl,set.pars)
+      set.parsSAM <- .setParsSAM(pl,set.pars)
       for(iPar in unique(set.parsSAM$SAM))
-        fit$pl[[iPar]] <- fit$pl[[iPar]][-(set.parsSAM$number[set.parsSAM$SAM==iPar]+1)]
+        pl[[iPar]] <- pl[[iPar]][-(set.parsSAM$number[set.parsSAM$SAM==iPar]+1)]
     }
 
-    pars       <- ac(rownames(as.data.frame(unlist(fit$pl))))
+    pars       <- ac(rownames(as.data.frame(unlist(pl))))
     idx       <- character()
     for(iK in keepPars){
       if(iK != "logAlphaSCB"){

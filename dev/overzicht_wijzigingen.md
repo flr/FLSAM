@@ -80,6 +80,9 @@ Tijdens het werk extra gevonden:
 - `SIM2FLR()` verwijderde verkeerde parameters als er meerdere in één parametervector vastgezet waren.
 - `monteCarloStockMscan()`: typfout `lengt(`; de default `ncores=detectCores()-1` faalde als `parallel` niet geladen was.
 - `plot(FLSAMs, FLStock)` had geen default voor `futureYrs`.
+- `simulate()` kon niet zonder `set.pars` worden aangeroepen; met `set.pars` faalde het bij meer dan één simulatie (`SIM2FLR` haalde per simulatie opnieuw parameters weg).
+- `sam.out()` riep zichzelf aan (oneindige recursie) in plaats van `FLSAM.out()`.
+- `obscor.plot()` gaf een onduidelijke foutmelding zonder gecorreleerde observaties.
 - `.onAttach` stopte bij elke stockassessment-versie ≠ 0.12.0.
 - In de oude `set.pars` werd de volgorde van de parameters in de TMB-map bepaald door `jitter()`, dus willekeurig.
 

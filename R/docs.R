@@ -112,11 +112,14 @@ NULL
 #' @param n Number of draws.
 #' @param set.pars Optional \code{set.pars} (see \code{\link{FLSAM}}).
 #' @param set.seed Optional random seed.
-#' @return An \code{\link{FLSAMs}} object with \code{n} elements.
+#' @return An \code{\link{FLSAMs}} object with \code{n} elements. These hold the
+#'   simulated parameters, \code{stock.n} and \code{harvest}, but no derived
+#'   quantities: calculate SSB, Fbar etc. via the \code{FLStock}
+#'   (\code{stock + sims}).
 #' @examples
 #' \donttest{
 #' data(NSH); data(NSH.sam)
-#' sims <- simulate(NSH, NSH.tun, NSH.ctrl, n=10, set.pars=NULL, set.seed=1)
+#' sims <- simulate(NSH, NSH.tun, NSH.ctrl, n=10, set.seed=1)
 #' }
 #' @name simulate-FLSAM
 NULL

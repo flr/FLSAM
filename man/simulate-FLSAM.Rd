@@ -3,12 +3,12 @@
 \name{simulate-FLSAM}
 \alias{simulate-FLSAM}
 \alias{simulate}
-\alias{simulate,FLStock,FLIndices,FLSAM.control,numeric,data.frame,numeric-method}
+\alias{simulate,FLStock,FLIndices,FLSAM.control-method}
 \title{Simulate assessments from the estimated uncertainty}
 \usage{
 simulate(x, y, z, n, set.pars, set.seed)
 
-\S4method{simulate}{FLStock,FLIndices,FLSAM.control,numeric,data.frame,numeric}(x, y, z, n = 100, set.pars = NULL, set.seed = NULL)
+\S4method{simulate}{FLStock,FLIndices,FLSAM.control}(x, y, z, n = 100, set.pars = NULL, set.seed = NULL)
 }
 \arguments{
 \item{x}{An \code{FLStock}.}
@@ -24,7 +24,10 @@ simulate(x, y, z, n, set.pars, set.seed)
 \item{set.seed}{Optional random seed.}
 }
 \value{
-An \code{\link{FLSAMs}} object with \code{n} elements.
+An \code{\link{FLSAMs}} object with \code{n} elements. These hold the
+  simulated parameters, \code{stock.n} and \code{harvest}, but no derived
+  quantities: calculate SSB, Fbar etc. via the \code{FLStock}
+  (\code{stock + sims}).
 }
 \description{
 Fits the assessment and draws \code{n} parameter vectors (fixed and random
@@ -34,6 +37,6 @@ matrix of the fit; each draw is converted into an \code{FLSAM} object.
 \examples{
 \donttest{
 data(NSH); data(NSH.sam)
-sims <- simulate(NSH, NSH.tun, NSH.ctrl, n=10, set.pars=NULL, set.seed=1)
+sims <- simulate(NSH, NSH.tun, NSH.ctrl, n=10, set.seed=1)
 }
 }

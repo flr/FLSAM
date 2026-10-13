@@ -204,7 +204,7 @@
 #' @rdname FLSAM.out
 #' @export
   sam.out   <-  function(...) {
-    sam.out(...)
+    FLSAM.out(...)
   }
   
   

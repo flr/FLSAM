@@ -1,3 +1,6 @@
 dev/compare_output/
 dev/compare_run.log
 dev/her27/output/
+dev/overview_test.*
+dev/overview_part.*
+dev/compare_run.log

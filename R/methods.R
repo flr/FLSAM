@@ -421,9 +421,11 @@ setMethod("coefficients",signature(object="FLSAMs"),
 setGeneric("simulate", function(x,y,z,n,set.pars,set.seed) standardGeneric("simulate"))
 
 #' @rdname simulate-FLSAM
-setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control",
-  n='numeric',set.pars="data.frame",set.seed="numeric"),
+setMethod("simulate",signature(x="FLStock",y="FLIndices",z="FLSAM.control"),
           function(x,y,z,n=100,set.pars=NULL,set.seed=NULL){
+            if(missing(n))        n        <- 100
+            if(missing(set.pars)) set.pars <- NULL
+            if(missing(set.seed)) set.seed <- NULL
             if(!is.null(set.pars))
               fit   <- FLSAM(x,y,z,return.fit=T,set.pars=set.pars)
             if(is.null(set.pars))

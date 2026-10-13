@@ -447,6 +447,7 @@ obscv.plot  <- function(sam){
 #' @export
 obscor.plot <- function(sam){
   oc <- sam@obscov
+  if(length(oc)==0) stop("No correlated observations (cor.obs.Flag 'AR' or 'US') in this assessment")
   idx <- apply(sam@control@cor.obs,1,function(x){any(x>=0,na.rm=T)})
   for(i in 1:length(oc)){
     ridx <- which(!is.na(sam@control@cor.obs[idx,]))

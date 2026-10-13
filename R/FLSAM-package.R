@@ -33,7 +33,7 @@
 #' @importFrom utils packageDescription packageVersion capture.output relist write.table
 #' @importFrom parallel detectCores makeCluster clusterEvalQ stopCluster
 #' @importFrom TMB MakeADFun oneStepPredict sdreport
-#' @importFrom ellipse plotcorr
+#' @importFrom ellipse plotcorr ellipse
 #' @importFrom MASS kde2d
 #' @importFrom graphics abline axis barplot contour grid layout lcm legend lines par points polygon text title
 #' @importFrom grDevices colorRampPalette
